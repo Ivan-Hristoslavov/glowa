@@ -1,0 +1,69 @@
+import createIntlMiddleware from "next-intl/middleware";
+import { NextResponse, type NextRequest } from "next/server";
+
+import { routing } from "@/i18n/routing";
+import { updateSession } from "@/lib/supabase/proxy";
+
+const handleI18nRouting = createIntlMiddleware(routing);
+
+/** Paths (after the locale prefix) that require a signed-in user. */
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/profile",
+  "/bookings",
+  "/favorites",
+  "/settings",
+];
+
+/** Paths a signed-in user should not see. */
+const AUTH_ONLY_PREFIXES = ["/login", "/signup"];
+
+function stripLocale(pathname: string) {
+  const [, maybeLocale, ...rest] = pathname.split("/");
+  const isLocale = (routing.locales as readonly string[]).includes(maybeLocale);
+  return {
+    locale: isLocale ? maybeLocale : routing.defaultLocale,
+    path: isLocale ? `/${rest.join("/")}` : pathname,
+  };
+}
+
+export async function proxy(request: NextRequest) {
+  // i18n first: it owns redirects to the locale-prefixed URL.
+  const intlResponse = handleI18nRouting(request);
+
+  const { response, claims } = await updateSession(request, intlResponse);
+
+  // A locale redirect has no page to protect yet; the redirected request
+  // comes back through here with the prefix in place.
+  if (response.status >= 300 && response.status < 400) {
+    return response;
+  }
+
+  const { locale, path } = stripLocale(request.nextUrl.pathname);
+  const isSignedIn = Boolean(claims?.sub);
+
+  if (!isSignedIn && PROTECTED_PREFIXES.some((p) => path.startsWith(p))) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/login`;
+    url.searchParams.set("next", request.nextUrl.pathname);
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
+  }
+
+  if (isSignedIn && AUTH_ONLY_PREFIXES.some((p) => path.startsWith(p))) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/profile`;
+    url.search = "";
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
+  }
+
+  return response;
+}
+
+export const config = {
+  // Everything except API routes, Next internals and files with an extension.
+  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+};

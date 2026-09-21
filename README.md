@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# glowa
 
-## Getting Started
+A premium booking, CRM and growth platform for beauty professionals — built in
+Bulgaria, designed for Europe. Bulgarian, English and Romanian from day one.
 
-First, run the development server:
+> **Working on this repo?** Read [`PROJECT_CONTEXT.md`](./PROJECT_CONTEXT.md)
+> first. It holds the architecture, the data model, the design system and the
+> current TODO list, and it is updated at the end of every work session.
+
+## Requirements
+
+- Node.js 22+
+- A Supabase project
+- Supabase CLI (optional locally; 2.81+ recommended)
+
+## Setup
 
 ```bash
+npm install
+cp .env.example .env.local   # then fill in the values
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app runs at <http://localhost:3000> and redirects to `/bg`, `/en` or `/ro`
+based on the `Accept-Language` header.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Name | Scope | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | public | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | public | Publishable key; every request it makes is subject to RLS |
+| `NEXT_PUBLIC_SITE_URL` | public | Absolute origin, used for auth redirects and OG metadata |
+| `SUPABASE_SECRET_KEY` | **server only** | Service role. Bypasses RLS — server-side admin tasks only |
+| `OPENAI_API_KEY` | **server only** | Visual asset generation and the AI assistant |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | **server only** | Google Calendar OAuth (Prompt 4) |
 
-## Learn More
+No secret value belongs in this repository, in generated documentation, or in
+any `NEXT_PUBLIC_` variable.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command | Does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run check` | Lint + typecheck |
+| `npm run db:types` | Regenerate `src/types/database.ts` from the live schema |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database
 
-## Deploy on Vercel
+Migrations live in `supabase/migrations/` and are applied in filename order.
+Every schema change is a migration committed to the repo — never a change made
+by hand in the dashboard.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+supabase link --project-ref <ref>
+supabase db push          # apply migrations
+psql "$DATABASE_URL" -f supabase/seed.sql   # optional demo content
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`supabase/seed.sql` creates three invented demo salons. Every row is flagged
+`is_demo = true` and every slug starts with `demo-`. Remove it all with:
+
+```sql
+delete from public.businesses where is_demo;
+```
+
+## Security notes
+
+- Row Level Security is enabled on every table, and `anon` can read only the
+  eight relations that back public discovery.
+- Server code identifies the caller with `supabase.auth.getClaims()`, which
+  verifies the JWT signature. `getSession()` must never gate access.
+- Double-booking is prevented by a Postgres exclusion constraint, inside the
+  inserting transaction.
+- OAuth tokens live in the `private` schema, which no client role can reach.

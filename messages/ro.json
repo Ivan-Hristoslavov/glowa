@@ -1,0 +1,82 @@
+{
+  "brand": {
+    "name": "glowa",
+    "tagline": "BEAUTY MOVES PEOPLE",
+    "madeIn": "Creat în Bulgaria, pentru lume"
+  },
+  "common": {
+    "loading": "Se încarcă…",
+    "save": "Salvează",
+    "cancel": "Anulează",
+    "back": "Înapoi",
+    "next": "Înainte",
+    "close": "Închide",
+    "search": "Caută",
+    "retry": "Încearcă din nou",
+    "required": "Câmp obligatoriu",
+    "optional": "opțional"
+  },
+  "nav": {
+    "product": "Produs",
+    "pricing": "Prețuri",
+    "about": "Despre",
+    "resources": "Resurse",
+    "login": "Autentificare",
+    "getStarted": "Începe gratuit",
+    "dashboard": "Panou",
+    "profile": "Profil",
+    "language": "Limbă",
+    "theme": "Temă",
+    "themeLight": "Deschisă",
+    "themeDark": "Întunecată",
+    "themeSystem": "Sistem"
+  },
+  "home": {
+    "eyebrow": "BEAUTY GETS EASIER",
+    "titleLine1": "Mai multă frumusețe.",
+    "titleLine2": "Mai puțină birocrație.",
+    "subtitle": "Glowa este platforma modernă pentru programări online, administrarea salonului și clienți mai fericiți — totul într-un singur loc.",
+    "ctaPrimary": "Începe gratuit",
+    "ctaSecondary": "Descoperă produsul",
+    "badges": {
+      "noCard": "Fără card bancar",
+      "fastSetup": "Gata în câteva minute",
+      "localSupport": "Asistență locală"
+    },
+    "foundation": {
+      "title": "Fundația este pregătită",
+      "body": "Acesta este stratul de bază GLOWA: sistem de design, schemă Supabase cu RLS, autentificare și trei limbi. Ecranele de produs se construiesc în pașii următori.",
+      "status": "Pasul 1 din 5 · Fundație"
+    }
+  },
+  "auth": {
+    "loginTitle": "Bine ai revenit",
+    "loginSubtitle": "Autentifică-te pentru a-ți gestiona afacerea și programările.",
+    "signupTitle": "Creează-ți contul GLOWA",
+    "signupSubtitle": "Gratuit la început. Fără card bancar.",
+    "email": "E-mail",
+    "password": "Parolă",
+    "fullName": "Nume complet",
+    "signIn": "Autentificare",
+    "signUp": "Înregistrare",
+    "signOut": "Deconectare",
+    "forgotPassword": "Ai uitat parola?",
+    "noAccount": "Nu ai cont?",
+    "hasAccount": "Ai deja un cont?",
+    "checkEmail": "Verifică-ți e-mailul",
+    "checkEmailBody": "Am trimis un link de confirmare la {email}.",
+    "errors": {
+      "invalidCredentials": "E-mail sau parolă greșită.",
+      "emailInUse": "Există deja un cont cu acest e-mail.",
+      "weakPassword": "Parola trebuie să aibă cel puțin 8 caractere.",
+      "generic": "Ceva nu a mers. Încearcă din nou."
+    }
+  },
+  "errors": {
+    "notFoundTitle": "Pagina nu a fost găsită",
+    "notFoundBody": "Linkul poate fi expirat sau pagina a fost mutată.",
+    "genericTitle": "Ceva nu a mers",
+    "genericBody": "Am încercat, dar nu a funcționat. Reîncearcă într-o clipă.",
+    "goHome": "Spre pagina principală"
+  }
+}

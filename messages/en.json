@@ -1,0 +1,82 @@
+{
+  "brand": {
+    "name": "glowa",
+    "tagline": "BEAUTY MOVES PEOPLE",
+    "madeIn": "Built in Bulgaria, for the world"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "search": "Search",
+    "retry": "Try again",
+    "required": "Required",
+    "optional": "optional"
+  },
+  "nav": {
+    "product": "Product",
+    "pricing": "Pricing",
+    "about": "About",
+    "resources": "Resources",
+    "login": "Log in",
+    "getStarted": "Start free",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
+  },
+  "home": {
+    "eyebrow": "BEAUTY GETS EASIER",
+    "titleLine1": "More beauty.",
+    "titleLine2": "Less admin.",
+    "subtitle": "Glowa is the modern platform for online booking, salon management and happier clients — all in one place.",
+    "ctaPrimary": "Start free",
+    "ctaSecondary": "Explore the product",
+    "badges": {
+      "noCard": "No credit card",
+      "fastSetup": "Ready in minutes",
+      "localSupport": "Local support"
+    },
+    "foundation": {
+      "title": "The foundation is in place",
+      "body": "This is the GLOWA base layer: design system, Supabase schema with RLS, authentication and three languages. Product surfaces are built in the next steps.",
+      "status": "Step 1 of 5 · Foundation"
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to manage your business and bookings.",
+    "signupTitle": "Create your GLOWA account",
+    "signupSubtitle": "Free to start. No credit card.",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "No account yet?",
+    "hasAccount": "Already have an account?",
+    "checkEmail": "Check your email",
+    "checkEmailBody": "We sent a confirmation link to {email}.",
+    "errors": {
+      "invalidCredentials": "Wrong email or password.",
+      "emailInUse": "An account with this email already exists.",
+      "weakPassword": "Password must be at least 8 characters.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The link may be outdated or the page has moved.",
+    "genericTitle": "Something went wrong",
+    "genericBody": "We tried, but it did not work. Please try again in a moment.",
+    "goHome": "Go home"
+  }
+}
