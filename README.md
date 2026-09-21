@@ -68,12 +68,26 @@ psql "$DATABASE_URL" -f supabase/seed.sql   # optional demo content
 delete from public.businesses where is_demo;
 ```
 
+## What works today
+
+- **Discovery** — full-text and trigram search over salons and their services,
+  filtered by category and city.
+- **Business profiles** — services, team, opening hours, policies, reviews and a
+  clearly-labelled link out to the salon's own Google review page.
+- **Booking** — location → service → specialist → date → time → confirm, with
+  availability computed in Postgres from opening hours, staff hours, time off,
+  buffers and the business's lead-time and advance-window policy.
+- **Customer area** — bookings with cancel and reschedule, favourites, reviews,
+  notification preferences, avatar upload, add-to-calendar.
+
 ## Security notes
 
-- Row Level Security is enabled on every table, and `anon` can read only the
-  eight relations that back public discovery.
+- Row Level Security is enabled on every table. `anon` can read only the eight
+  relations that back public discovery and execute exactly two read-only RPCs.
 - Server code identifies the caller with `supabase.auth.getClaims()`, which
   verifies the JWT signature. `getSession()` must never gate access.
 - Double-booking is prevented by a Postgres exclusion constraint, inside the
-  inserting transaction.
+  inserting transaction — not by an application-level check.
+- A customer cannot set a booking's price, duration, tenant or status: a BEFORE
+  trigger derives them from the service.
 - OAuth tokens live in the `private` schema, which no client role can reach.

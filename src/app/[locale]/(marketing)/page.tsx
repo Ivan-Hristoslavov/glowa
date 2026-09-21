@@ -1,16 +1,25 @@
-import { CalendarCheck, Check, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarCheck, Check, ShieldCheck, Sparkles } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { GlowaMark } from "@/components/brand/glowa-logo";
+import { Section } from "@/components/common/section";
+import { BusinessCard } from "@/components/discovery/business-card";
+import { SearchForm } from "@/components/discovery/search-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
+import { listCities, searchBusinesses } from "@/lib/queries/discovery";
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const t = await getTranslations("home");
+  const [cities, featured] = await Promise.all([
+    listCities(),
+    searchBusinesses({ limit: 3 }),
+  ]);
 
   const badges = [
     { key: "noCard", icon: ShieldCheck },
@@ -31,7 +40,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           className="bg-brand-sage/35 pointer-events-none absolute -bottom-52 -left-40 size-[24rem] rounded-full blur-3xl"
         />
 
-        <div className="relative mx-auto w-full max-w-6xl px-4 pt-16 pb-20 sm:px-6 sm:pt-24 sm:pb-28">
+        <div className="relative mx-auto w-full max-w-6xl px-4 pt-16 pb-16 sm:px-6 sm:pt-24 sm:pb-20">
           <p className="text-primary text-xs font-semibold tracking-[0.28em] uppercase">
             {t("eyebrow")}
           </p>
@@ -45,12 +54,16 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             {t("subtitle")}
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="glowa-card mt-8 max-w-2xl p-3 sm:p-4">
+            <SearchForm cities={cities} variant="hero" />
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
               <Link href="/signup">{t("ctaPrimary")}</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/login">{t("ctaSecondary")}</Link>
+              <Link href="/search">{t("ctaSecondary")}</Link>
             </Button>
           </div>
 
@@ -64,6 +77,33 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </ul>
         </div>
       </section>
+
+      {featured.length > 0 ? (
+        <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
+          <Section
+            title={t("featured.title")}
+            description={t("featured.subtitle")}
+            action={
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/search">
+                  {t("featured.all")}
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </Button>
+            }
+          >
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((business) => (
+                <BusinessCard
+                  key={business.id}
+                  business={business}
+                  locale={locale as Locale}
+                />
+              ))}
+            </div>
+          </Section>
+        </section>
+      ) : null}
 
       {/* An honest build-status panel. No invented traction numbers: the
           product has none yet, and the brief forbids inventing them. */}
@@ -80,10 +120,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             </p>
             <ul className="text-muted-foreground mt-5 grid gap-2 text-sm sm:grid-cols-2">
               {[
-                "Next.js · TypeScript · Tailwind · shadcn/ui",
-                "Supabase · migrations · Row Level Security",
-                "BG / EN / RO via i18n keys",
-                "GLOWA tokens · light and dark",
+                "Search, filters and business profiles",
+                "Real-time availability from the database",
+                "Cancel, reschedule and add to calendar",
+                "Reviews tied to completed visits",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2">
                   <Check className="text-primary size-4 shrink-0" aria-hidden />

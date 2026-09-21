@@ -18,14 +18,17 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | Step | Scope | State |
 | --- | --- | --- |
 | Prompt 1 | Foundation, design system, Supabase, auth, i18n | **Done** |
-| Prompt 2 | Customer experience: discovery, booking, profile, calendar | Not started |
+| Prompt 2 | Customer experience: discovery, booking, profile, calendar | **Done** |
 | Prompt 3 | Business app: dashboard, calendar, staff, services, CRM, marketing | Not started |
 | Prompt 4 | Integrations, AI, growth layer | Not started |
 | Prompt 5 | Production polish, QA, Vercel | Not started |
 
-Verified at the end of Prompt 1: `npm run lint`, `npm run typecheck` and
-`npm run build` all pass; the app renders in bg/en/ro, light and dark; the
-Supabase security advisor reports no warnings.
+Verified at the end of Prompt 2: `npm run lint`, `npm run typecheck` and
+`npm run build` pass. Booking was exercised end to end in the browser (search →
+business → service → specialist → slot → confirm → detail → reschedule) and
+over the REST API (double-book rejected, tampered insert normalised, cancel and
+status history correct). The Supabase security advisor reports no unintended
+findings — see §9.
 
 ---
 
@@ -36,8 +39,8 @@ Supabase security advisor reports no warnings.
 - **Tailwind CSS v4** (CSS-first config; no `tailwind.config.*`)
 - **shadcn/ui** — `radix-nova` style, Radix primitives, Lucide icons
 - **next-intl 4** for routing and messages
-- **Supabase** — Postgres, Auth, RLS, Storage (Storage unused so far)
-- `next-themes`, `zod` v4, `date-fns` + `@date-fns/tz`
+- **Supabase** — Postgres, Auth, RLS, Storage
+- `next-themes`, `sonner`, `zod` v4, `date-fns` + `@date-fns/tz`
 
 ### Next.js 16 specifics that differ from older training data
 
@@ -47,8 +50,19 @@ Supabase security advisor reports no warnings.
   `LayoutProps<"/[locale]">`. Regenerate with `npx next typegen` after adding routes.
 - `params` and `searchParams` are promises.
 - There is no `src/app/layout.tsx`: `src/app/[locale]/layout.tsx` is the root
-  layout (it renders `<html>`/`<body>`), which is the documented next-intl setup.
-  `src/app/not-found.tsx` therefore renders its own document.
+  layout, which is the documented next-intl setup. `src/app/not-found.tsx`
+  therefore renders its own document.
+- The React Compiler lint rules are on. Two consequences we hit: `Date.now()` may
+  not be called during render (time-dependent logic lives in
+  `describeAppointmentWindow`), and `setState` may not be called synchronously in
+  an effect body (`SlotPicker` is remounted via `key` instead of self-clearing).
+
+### next-intl navigation
+
+`defineRouting` has no `pathnames` map, so `Link`/`router` take plain strings and
+add the locale prefix themselves: `` href={`/business/${slug}`} ``. The
+`{ pathname, params }` object form is **not** available — it only exists when
+localized pathnames are configured.
 
 ---
 
@@ -59,61 +73,51 @@ src/
   app/
     [locale]/
       layout.tsx            root layout: fonts, theme, NextIntlClientProvider
-      not-found.tsx
+      error.tsx  not-found.tsx
       (marketing)/          public surface — header + footer chrome
-        layout.tsx
-        page.tsx            landing page
-      (auth)/               signed-out surface — centred card chrome
-        layout.tsx
-        actions.ts          signIn / signUp / signOut server actions
-        login/page.tsx
-        signup/page.tsx
-      (customer)/           signed-in customer surface
-        layout.tsx
-        profile/page.tsx
-    auth/
-      confirm/route.ts      email OTP landing (locale-independent)
-      signout/route.ts
-    not-found.tsx           document-level fallback outside any locale
-    globals.css             GLOWA design tokens
+        page.tsx            landing: hero search + featured salons
+        search/             discovery with filters (+ loading.tsx)
+        business/[slug]/    profile page
+        business/[slug]/book/  booking funnel (noindex)
+      (auth)/               signed-out surface
+        actions.ts          signIn / signUp / signOut
+        login/  signup/
+      (customer)/           signed-in surface
+        profile/            dashboard: counts, next appointment
+        bookings/           list (+ loading.tsx) and [id]/ detail
+        favorites/  reviews/  settings/
+    api/appointments/[id]/ics/   .ics download (RLS-protected)
+    auth/confirm/  auth/signout/
+    not-found.tsx  globals.css
   components/
-    auth/                   auth form (client)
-    brand/                  GlowaMark, GlowaLogo
-    layout/                 site header/footer, locale switcher, theme toggle
-    ui/                     shadcn primitives (generated — edit deliberately)
-    theme-provider.tsx
-  i18n/
-    routing.ts              locales, default, prefix strategy, currency map
-    request.ts              per-request messages + timezone
-    navigation.ts           locale-aware Link / router / redirect
+    auth/ booking/ brand/ common/ customer/ discovery/ layout/ ui/
+  i18n/            routing · request · navigation
   lib/
-    env.ts                  zod-validated public env; lazy server secrets
-    supabase/
-      client.ts             browser client (publishable key, RLS applies)
-      server.ts             request-scoped server client + getVerifiedClaims
-      proxy.ts              session refresh for src/proxy.ts
-      admin.ts              service-role client, `server-only`
-    utils.ts                cn()
-  types/database.ts         generated from the live schema
-  proxy.ts                  i18n + session refresh + route protection
-messages/                   bg.json · en.json · ro.json
-supabase/
-  migrations/               the schema, in order
-  seed.sql                  demo content (all rows flagged is_demo)
+    actions/       booking · favorites · reviews · settings  ("use server")
+    calendar/      provider adapters: types · google · ics
+    queries/       server-only reads: discovery · appointments
+    supabase/      client · server · proxy · admin
+    business-categories.ts   shared client+server constants
+    booking-errors.ts        RPC hint -> message key
+    env.ts  format.ts  localized.ts  utils.ts
+  types/database.ts
+  proxy.ts
+messages/          bg.json · en.json · ro.json (316 keys each, verified equal)
+supabase/          migrations/ · seed.sql
 ```
 
-Domain boundary rule: a surface owns its chrome and its server actions; shared
-logic goes to `src/lib`, shared visuals to `src/components`. The marketing,
-customer and business surfaces share one component language but keep their own
-information hierarchy.
+Domain boundary rule: a surface owns its chrome; shared logic goes to `src/lib`
+and shared visuals to `src/components`. Anything importing `server-only` must
+never be reachable from a client component — that is why the category constants
+live in `lib/business-categories.ts` rather than in `lib/queries/discovery.ts`.
 
 ---
 
 ## 4. Design system
 
 Tokens live in `src/app/globals.css`. Brand values are `--glowa-*`; every
-semantic token (`--primary`, `--card`, …) is derived from them, so re-palletting
-touches one block. Dark mode is a designed theme, not an inversion.
+semantic token is derived from them. Dark mode is a designed theme, not an
+inversion.
 
 | Role | Light | Dark |
 | --- | --- | --- |
@@ -125,47 +129,38 @@ touches one block. Dark mode is a designed theme, not an inversion.
 | sage | `#A9B6A6` | `#344238` |
 | line | `#DDD5CE` | `#26302F` |
 
-- **Type**: Inter for all UI (`--font-sans`), loaded with `latin`, `latin-ext`,
-  `cyrillic` and `cyrillic-ext`. Noto Serif Display is the editorial display
-  face, opt-in through `.font-heading` only — body copy stays in the sans so
-  Bulgarian and Romanian remain highly legible.
-- **Radius**: `--radius: 0.875rem` (14px controls); cards use `rounded-xl` (~20px).
-- **Shadows**: `--shadow-card / -lift / -pop`, soft and layered.
-- **Utilities**: `glowa-card`, `glowa-focus`.
-- **Motion**: `--ease-glowa` spring-ish easing; a global `prefers-reduced-motion`
-  guard disables animation.
-- **Logo**: `GlowaMark` / `GlowaLogo` in `src/components/brand/`. Geometric G,
-  stroke-based so it holds at 16px, with the lower-left sweep in coral.
-  `monochrome` prop for favicon, print and on-image use. Wordmark is always
-  lowercase `glowa`; tagline `BEAUTY MOVES PEOPLE`.
+- **Type**: Inter for UI (`latin`, `latin-ext`, `cyrillic`, `cyrillic-ext`);
+  Noto Serif Display is opt-in through `.font-heading` only.
+- **Radius** `0.875rem`; cards `rounded-xl`. **Shadows** `--shadow-card/-lift/-pop`.
+- **Utilities** `glowa-card`, `glowa-focus`. Global `prefers-reduced-motion` guard.
+- **Logo**: `GlowaMark` / `GlowaLogo`, stroke-based, `monochrome` variant.
 
-**Not yet done (Prompt 2+):** generated hero photography, category imagery, the
-custom illustration family, empty-state art, favicon/app icon export. No
-generated assets exist yet, so `public/` still holds the create-next-app SVGs;
-they are unused by any page and get deleted when the real asset set lands.
+**Still to do (visual):** generated hero photography, category imagery, the
+custom illustration family, empty-state artwork, favicon/app icon. Cards and
+hero areas currently fall back to a brand gradient plus a mark, which is
+deliberate — a placeholder that belongs to the brand rather than stock imagery.
+`public/*.svg` are leftover create-next-app files and are unused.
 
 ---
 
 ## 5. Internationalisation
 
-- Locales `bg` (default), `en`, `ro`; `localePrefix: "always"`, so every URL is
-  `/{locale}/…` and hreflang/canonical stay unambiguous.
-- Messages in `messages/{locale}.json`. No hard-coded UI strings.
-- `Link`, `useRouter`, `redirect` come from `@/i18n/navigation`, never from
-  `next/link` or `next/navigation`, inside localized routes.
-- Business-authored content (service names, descriptions, staff titles) is
-  stored as `jsonb` shaped `{"bg": …, "en": …, "ro": …}` and validated by
-  `app.is_localized_text`. `services.name` must contain at least `bg`.
-- Default timezone `Europe/Sofia`, per-business and per-profile overridable.
-- Currency per locale is mapped in `i18n/routing.ts`; the business's own
-  currency always wins for prices.
+- `bg` (default), `en`, `ro`; `localePrefix: "always"`.
+- `messages/{locale}.json`, key sets verified identical across the three.
+- `Link` / `useRouter` / `redirect` come from `@/i18n/navigation`.
+- Business content is `jsonb` shaped `{"bg","en","ro"}`, validated by
+  `app.is_localized_text`; read through `pickLocalized`, which falls back to the
+  default locale and then to any populated translation.
+- All money and date formatting goes through `src/lib/format.ts`, which is
+  timezone-explicit: every schedule surface states the salon's zone and warns
+  when the viewer's zone differs.
 
 ---
 
 ## 6. Data model
 
-Fifteen public tables plus one private one. Money is integer minor units.
-Times are `timestamptz`.
+Fifteen public tables plus one private one, one view, five RPCs. Money is
+integer minor units; times are `timestamptz`.
 
 ```
 profiles ─┬─ businesses ─┬─ business_members ── staff_profiles ─┬─ staff_working_hours
@@ -188,134 +183,225 @@ appointments ─┬─ appointment_status_history
 
 Notable decisions:
 
-- **`business_clients` is separate from `profiles`.** A salon's CRM record —
-  notes, tags, spend, consent — belongs to the salon. It never grants access to
-  the person's global GLOWA profile, and it works for walk-ins with no account.
-- **Double-booking is prevented by the database**, not by application code:
-  `appointments_no_staff_overlap` is a GiST exclusion constraint over
-  `(staff_profile_id, tstzrange(starts_at, ends_at))` for pending and confirmed
-  rows. Two concurrent bookings cannot both win.
+- **`business_clients` is separate from `profiles`.** A salon's CRM record
+  belongs to the salon and never grants access to the person's GLOWA profile.
+- **Double-booking is prevented by the database**: `appointments_no_staff_overlap`
+  is a GiST exclusion constraint over `(staff_profile_id, tstzrange(starts_at,
+  ends_at))` for pending and confirmed rows.
 - **Customers cannot dictate booking facts.** `app.enforce_customer_booking_fields`
   runs BEFORE INSERT/UPDATE: for a non-member it derives `business_id`,
-  `price_cents`, `currency` and `ends_at` from the service, forces
-  `status = 'pending'`, and on update allows nothing but cancelling their own
-  pending/confirmed appointment.
-- **Reviews are GLOWA's own.** External provider reviews are never copied in;
-  `businesses.google_review_url` is a link-out, and `review_invitations` records
+  `price_cents`, `currency`, `ends_at` and the service/customer snapshot, forces
+  `status = 'pending'`, strips `internal_notes`, and on update allows nothing but
+  cancelling their own appointment inside the business's cancellation window.
+  Verified: a crafted REST insert with `price_cents: 1`, `status: "confirmed"`,
+  a five-minute duration and `internal_notes` came back at the real price,
+  pending, 75 minutes, notes stripped.
+- **Reviews are GLOWA's own.** External reviews are never copied in;
+  `businesses.google_review_url` is a link-out and `review_invitations` records
   who was asked without claiming to know Google's state.
-- **OAuth tokens live in `private.calendar_credentials`**, a schema with no
-  grants to `anon`/`authenticated` at all. `external_calendar_connections` holds
-  only the non-secret connection metadata.
-- **`is_demo`** on businesses, appointments, clients, reviews, payments and
-  campaigns. Demo rows are filterable and deletable in one statement.
-- **Status history and audit logs are append-only** for clients: written by
-  SECURITY DEFINER triggers, and `INSERT/UPDATE/DELETE` is revoked from
-  `authenticated`.
+- **OAuth tokens live in `private.calendar_credentials`**, with no grants to any
+  client role. `external_calendar_connections` holds only metadata.
+- **`is_demo`** on businesses, appointments, clients, reviews, payments, campaigns.
+- **Status history and audit logs are append-only** for clients.
+
+### Availability and booking
+
+`public.get_available_slots(service, from, to, staff?, location?)` is the single
+source of availability. It intersects business hours with staff working hours per
+day in the business's timezone, walks a 15-minute grid, requires room for
+duration + both buffers, and subtracts existing pending/confirmed appointments
+and staff time off. It also applies `booking_policy.min_lead_minutes` and
+`max_advance_days`, and refuses ranges over 62 days.
+
+It is **SECURITY DEFINER on purpose**: public availability must account for staff
+time off, which customers deliberately cannot read. Only slot boundaries leave
+the function, and only for an active service at an active business.
+
+`public.book_appointment` is SECURITY INVOKER — the insert passes through RLS and
+the guard trigger exactly as a direct insert would; what the RPC adds is the
+check against real availability. The exclusion constraint remains the authority
+on races: two callers can pass the availability check in the same instant and
+Postgres rejects the loser, which surfaces as `hint = 'slot_taken'`.
+
+`public.cancel_appointment` is INVOKER (the trigger enforces the window).
+`public.reschedule_appointment` is DEFINER, because moving an appointment in time
+is precisely what the customer guard forbids; it re-does every check itself
+(ownership, status, policy, window, availability) and then sets a
+transaction-local `app.trusted_write` flag that the trigger honours. PostgREST
+gives clients no way to set that flag, and no other function sets it.
+
+**Error contract:** the RPCs signal specific failures through the Postgres `hint`
+field (`slot_unavailable`, `slot_taken`, `window_closed`, `reschedule_disabled`,
+`not_cancellable`, `not_reschedulable`). `lib/booking-errors.ts` narrows that to
+a union so an unexpected code degrades to a friendly sentence instead of leaking
+SQL.
+
+**Scaling note:** `SlotPicker` fetches a 21-day window in one call and groups it
+client-side, which makes day switching instant and lets the day strip grey out
+full days. For a salon with many bookable staff this response grows quickly; a
+dedicated "days with availability" summary RPC is the fix before real volume.
+
+### Search
+
+`businesses.search_vector` is a generated `tsvector` over the name and the three
+translations of the description and pitch, configured `simple` because one column
+has to serve Bulgarian, English and Romanian and Postgres ships no Bulgarian
+stemmer. GIN on the vector, trigram GIN on `businesses.name` and `locations.city`.
+`public.search_businesses` returns the card payload in one query: match, filter by
+category and city, join the rating summary and the minimum active price.
+`public.business_rating_summary` is a `security_invoker` view, so a hidden review
+never reaches an average.
 
 ### Authorization
 
-`app` (a non-exposed schema) holds the SECURITY DEFINER helpers that policies
-call: `is_business_member`, `has_business_role`, `is_business_manager`,
-`is_business_admin`, `is_business_public`, `business_of_{location,staff,service,
-appointment}`, `owns_appointment`, `owns_calendar_connection`. They are SECURITY
-DEFINER so a policy on `business_members` can ask "is this user a member?"
-without recursing; each checks `auth.uid()` itself, `EXECUTE` is revoked from
-`PUBLIC` and granted explicitly.
+`app` (a non-exposed schema) holds the SECURITY DEFINER helpers policies call, so
+a policy on `business_members` can ask "is this user a member?" without recursing.
+Policy shape throughout: `TO authenticated` plus an ownership or membership
+predicate, `(select auth.uid())` for the initplan, both `USING` and `WITH CHECK`
+on updates, and write policies split per action.
 
-Policy shape throughout: `TO authenticated` **plus** an ownership or membership
-predicate, `(select auth.uid())` for the initplan, and both `USING` and
-`WITH CHECK` on updates. Write policies are split per action so they do not add
-a second permissive SELECT policy.
+**Role grants:**
+- `anon` — `SELECT` on eight discovery relations plus the rating view;
+  `EXECUTE` on `search_businesses` and `get_available_slots`. Nothing else.
+  Default privileges for `anon` on new tables, sequences **and functions** are
+  revoked, so a new object starts closed.
+- `authenticated` — table DML subject to RLS, plus the three booking RPCs.
+- `private` schema — no grants at all.
 
-`anon` has `SELECT` on exactly eight relations — `businesses`, `locations`,
-`business_hours`, `staff_profiles`, `staff_working_hours`, `services`,
-`service_staff`, `reviews` — and nothing else; default privileges for `anon` on
-new tables are revoked, so a new table starts closed.
+### Storage
+
+`avatars` (public read, 2 MB) and `business-media` (public read, 10 MB). Write
+policies key on the first path segment: the caller's user id for avatars, a
+business id the caller manages for business media, resolved through
+`app.try_uuid` so a non-uuid folder fails closed instead of erroring.
 
 ### Migrations
 
 | File | Contents |
 | --- | --- |
-| `20260921120000_extensions_enums_helpers.sql` | pgcrypto, btree_gist, `app`/`private` schemas, 16 enums, shared helpers |
-| `20260921120100_core_schema.sql` | profiles, businesses, members, locations, hours, staff, services |
-| `20260921120200_bookings_and_engagement.sql` | appointments, CRM, preferences, reviews, payments, calendars, marketing, audit |
-| `20260921120300_rls_and_grants.sql` | RLS helpers, integrity triggers, all policies, Data API grants |
-| `20260921120400_policy_and_index_tuning.sql` | split write policies, review edit guard, FK covering indexes |
-| `20260921120500_anon_grant_lockdown.sql` | reduce `anon` to the public discovery tables |
+| `…120000_extensions_enums_helpers.sql` | pgcrypto, btree_gist, `app`/`private`, 16 enums, shared helpers |
+| `…120100_core_schema.sql` | profiles, businesses, members, locations, hours, staff, services |
+| `…120200_bookings_and_engagement.sql` | appointments, CRM, preferences, reviews, payments, calendars, marketing, audit |
+| `…120300_rls_and_grants.sql` | RLS helpers, integrity triggers, all policies, Data API grants |
+| `…120400_policy_and_index_tuning.sql` | split write policies, review edit guard, FK covering indexes |
+| `…120500_anon_grant_lockdown.sql` | reduce `anon` to the public discovery tables |
+| `…130000_discovery_and_booking.sql` | pg_trgm, search vector, rating view, `search_businesses`, `get_available_slots` |
+| `…130100_booking_rpcs_and_storage.sql` | guard trigger v2, book/cancel/reschedule RPCs, storage buckets and policies |
+| `…130200_helper_execute_grants.sql` | EXECUTE on the helpers that CHECK constraints call |
+| `…140000_rpc_execute_lockdown.sql` | revoke RPC EXECUTE from PUBLIC |
+| `…140100_rpc_anon_revoke.sql` | revoke write RPCs from `anon` by name; close default privileges on functions |
 
-Every schema change is a migration committed here. Regenerate types afterwards
-with `npm run db:types`.
+Two of these were written because a check failed, not from a plan:
+`130200` because a CHECK-constraint function's EXECUTE is verified as the writing
+role (unlike a trigger function's, which is checked at `CREATE TRIGGER`), so
+every insert failed with *permission denied for function is_localized_text*; and
+`140100` because Supabase's default privileges grant functions to `anon`
+explicitly, so revoking from `PUBLIC` alone left the write RPCs reachable.
+
+Regenerate types after any change: `npm run db:types`.
 
 ---
 
 ## 7. Auth
 
-- Email + password today. The `on_auth_user_created` trigger creates the
-  matching `profiles` row (including for future OAuth sign-ups).
-- **Server code identifies the caller with `supabase.auth.getClaims()`**, never
-  `getSession()`: `getClaims` verifies the JWT signature. `getVerifiedClaims()`
-  and `getCurrentUserId()` in `lib/supabase/server.ts` wrap it.
-- `src/proxy.ts` refreshes the session on every matched request, then gates
-  `/dashboard`, `/profile`, `/bookings`, `/favorites`, `/settings` and bounces
-  signed-in users away from `/login` and `/signup`. Pages re-check server-side;
-  the proxy is a convenience, not the security boundary.
-- Sign-up confirmation links land on `/auth/confirm`, outside the locale
-  segment. Both redirect targets reject anything that is not a same-origin
-  relative path.
+- Email + password. `on_auth_user_created` creates the `profiles` row.
+- Server code identifies the caller with `supabase.auth.getClaims()`, never
+  `getSession()`.
+- `src/proxy.ts` refreshes the session and gates `/dashboard`, `/profile`,
+  `/bookings`, `/favorites`, `/settings`. Pages re-check server-side.
+- `/auth/confirm` handles email OTP; both redirect targets reject anything that
+  is not a same-origin relative path.
 
 ---
 
-## 8. Environment variables
+## 8. Calendar
 
-Public (safe in the browser):
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
-`NEXT_PUBLIC_SITE_URL`.
+`lib/calendar/` defines a `CalendarProvider` interface with two halves:
 
-Server-only (never `NEXT_PUBLIC_`, never committed):
-`SUPABASE_SECRET_KEY`, `OPENAI_API_KEY`, `GOOGLE_CLIENT_ID`,
-`GOOGLE_CLIENT_SECRET`.
-
-`.env.example` documents all of them by name. `.env.local` is gitignored. The
-separate Supabase database password mentioned in the brief is deliberately not
-stored anywhere in this repository.
+- **Stateless (works today):** `buildAddUrl` returns a Google Calendar template
+  link, and `/api/appointments/[id]/ics` serves an RFC 5545 file that Apple
+  Calendar and Outlook accept. The route reads through the normal
+  request-scoped client, so RLS decides ownership — another user's id returns
+  404, verified.
+- **Connected (Prompt 4):** `getAuthorizationUrl` builds the Google OAuth URL
+  with least-privilege scopes (`calendar.events.owned`, `calendar.freebusy`) and
+  returns `null` unless `GOOGLE_CLIENT_ID` is set, so the settings page hides the
+  affordance instead of offering a dead end. Tokens will go to
+  `private.calendar_credentials`; appointments map to provider event ids through
+  `calendar_event_links`, never a Google column on `appointments`.
 
 ---
 
-## 9. Demo data
+## 9. Known advisor findings (reviewed, accepted)
+
+- `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
+  plus no grants.
+- `get_available_slots` is SECURITY DEFINER and callable by `anon` and
+  `authenticated` — intentional, explained in §6.
+- `reschedule_appointment` is SECURITY DEFINER and callable by `authenticated` —
+  intentional, explained in §6. No longer callable by `anon`.
+- **Leaked password protection is disabled.** This is a dashboard setting nobody
+  has flipped: Authentication → Policies → enable HaveIBeenPwned checks. Worth
+  doing before real users.
+
+---
+
+## 10. Demo and test data
 
 `supabase/seed.sql` creates three invented salons (`demo-hair-lab-sofia`,
-`demo-black-scissors`, `demo-bloom-nails`) with locations, opening hours, staff
-and services. Every row carries `is_demo = true` and every slug starts with
-`demo-`. It has been applied to the development project. It is re-runnable
-(fixed UUIDs + `on conflict do nothing`) and removable with
-`delete from public.businesses where is_demo;`.
+`demo-black-scissors`, `demo-bloom-nails`) with locations, hours, staff and
+services. Every row carries `is_demo = true` and every slug starts with `demo-`.
+Re-runnable; remove with `delete from public.businesses where is_demo;`.
+
+A **QA fixture user** exists in the development project for browser testing:
+`qa.customer@glowa.test`, id `22222222-2222-4222-8222-222222222201`. It was
+inserted directly into `auth.users` (Supabase rejects undeliverable domains at
+sign-up) and owns a couple of test appointments. It is **not** part of
+`seed.sql`, its password is deliberately not recorded here, and it must never
+exist in production.
+
+Set a password for it (dev project only):
+
+```sql
+update auth.users
+set encrypted_password = extensions.crypt('<choose-one>', extensions.gen_salt('bf'))
+where email = 'qa.customer@glowa.test';
+```
+
+Remove it:
+
+```sql
+delete from auth.users where email = 'qa.customer@glowa.test';
+```
+
+Note for anyone doing the same: GoTrue scans several `auth.users` varchar columns
+into non-nullable Go strings, so a hand-inserted user needs `''` rather than
+`NULL` in `confirmation_token`, `recovery_token`, `email_change*`, `phone_change*`
+and `reauthentication_token`, or login fails with "Database error querying schema".
 
 No number shown anywhere in the product may be derived from demo data, and no
-traction claim ("1,000 businesses", "50,000 bookings", "4.9/5") may appear
-unless it is real.
+traction claim may appear unless it is real.
 
 ---
 
-## 10. Known TODOs for the next prompts
+## 11. Known TODOs for the next prompts
 
-1. **Prompt 2** — search/discovery, business profile pages, the booking flow,
-   customer profile area, Google Calendar "add to calendar", review submission.
-   Add a server-side availability calculation and a booking RPC that layers
-   policy checks (lead time, advance window, opening hours, time off) on top of
-   the exclusion constraint.
-2. The marketing pages currently render dynamically because `SiteHeader` reads
-   auth state. Split the auth-dependent part into a client island (or a
-   `<Suspense>` boundary) so the landing page can be static.
-3. Password reset is not implemented; the "forgot password" link is a
-   placeholder pointing at `/login`.
-4. `pricing`, `business/[slug]`, `bookings`, `favorites`, `settings` and the
-   whole `(business)/dashboard` tree from the brief's route map do not exist yet.
-5. No tests yet. Prompt 5 asks for tests on critical booking logic; the
-   exclusion constraint and the booking triggers are the first things to cover.
-6. Supabase CLI installed locally is **v2.26.9**, older than `supabase db query`
-   (needs 2.79+) and `supabase db advisors` (needs 2.81.3+). Schema work in this
-   session went through the Supabase MCP server instead. `brew upgrade supabase`
-   when convenient.
-7. No Storage buckets yet — needed for business media and generated assets.
-8. `public/*.svg` are leftover create-next-app assets; delete them with the
-   first real asset drop.
+1. **Prompt 3** — the business app: dashboard, calendar with drag/drop, staff,
+   services, client CRM, reviews moderation, payments, marketing, analytics.
+2. The marketing pages render dynamically because `SiteHeader` reads auth state.
+   Split the auth-dependent part into a client island or a `<Suspense>` boundary
+   so the landing page and search can be static.
+3. Password reset is not implemented; the "forgot password" link is a placeholder.
+4. `pricing` from the brief's route map does not exist yet.
+5. No tests. Prompt 5 asks for tests on critical booking logic; the exclusion
+   constraint, the guard trigger and `get_available_slots` are the first targets.
+6. Availability day-summary RPC (see the scaling note in §6).
+7. Notification channels other than email are shown as "soon" — there is no
+   provider behind them yet. Sending itself is Prompt 4.
+8. `payment_records` has no provider behind it; the booking flow never asks for
+   payment. Deposits are modelled but unused.
+9. Supabase CLI installed locally is **v2.26.9**; `supabase db query` needs 2.79+
+   and `supabase db advisors` needs 2.81.3+. Schema work goes through the
+   Supabase MCP server instead. `brew upgrade supabase` when convenient.
+10. OpenAI-generated visual assets (§4) — no OpenAI connection is configured in
+    the build environment yet, so nothing has been generated.

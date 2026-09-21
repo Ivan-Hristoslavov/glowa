@@ -414,6 +414,7 @@ export type Database = {
           logo_url: string | null
           name: string
           phone: string | null
+          search_vector: unknown
           short_pitch: Json | null
           slug: string
           status: Database["public"]["Enums"]["business_status"]
@@ -439,6 +440,7 @@ export type Database = {
           logo_url?: string | null
           name: string
           phone?: string | null
+          search_vector?: unknown
           short_pitch?: Json | null
           slug: string
           status?: Database["public"]["Enums"]["business_status"]
@@ -464,6 +466,7 @@ export type Database = {
           logo_url?: string | null
           name?: string
           phone?: string | null
+          search_vector?: unknown
           short_pitch?: Json | null
           slug?: string
           status?: Database["public"]["Enums"]["business_status"]
@@ -1380,10 +1383,181 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      business_rating_summary: {
+        Row: {
+          average_rating: number | null
+          business_id: string | null
+          review_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      book_appointment: {
+        Args: {
+          p_customer_notes?: string
+          p_location_id?: string
+          p_service_id: string
+          p_staff_profile_id: string
+          p_starts_at: string
+        }
+        Returns: {
+          business_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_notes: string | null
+          customer_phone: string | null
+          customer_profile_id: string | null
+          ends_at: string
+          id: string
+          internal_notes: string | null
+          is_demo: boolean
+          location_id: string | null
+          price_cents: number
+          service_id: string | null
+          service_name_snapshot: Json | null
+          source: Database["public"]["Enums"]["appointment_source"]
+          staff_profile_id: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["appointment_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "appointments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      cancel_appointment: {
+        Args: { p_appointment_id: string; p_reason?: string }
+        Returns: {
+          business_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_notes: string | null
+          customer_phone: string | null
+          customer_profile_id: string | null
+          ends_at: string
+          id: string
+          internal_notes: string | null
+          is_demo: boolean
+          location_id: string | null
+          price_cents: number
+          service_id: string | null
+          service_name_snapshot: Json | null
+          source: Database["public"]["Enums"]["appointment_source"]
+          staff_profile_id: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["appointment_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "appointments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      get_available_slots: {
+        Args: {
+          p_from: string
+          p_location_id?: string
+          p_service_id: string
+          p_staff_profile_id?: string
+          p_to: string
+        }
+        Returns: {
+          ends_at: string
+          staff_profile_id: string
+          starts_at: string
+        }[]
+      }
+      reschedule_appointment: {
+        Args: {
+          p_appointment_id: string
+          p_new_staff_profile_id?: string
+          p_new_starts_at: string
+        }
+        Returns: {
+          business_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_notes: string | null
+          customer_phone: string | null
+          customer_profile_id: string | null
+          ends_at: string
+          id: string
+          internal_notes: string | null
+          is_demo: boolean
+          location_id: string | null
+          price_cents: number
+          service_id: string | null
+          service_name_snapshot: Json | null
+          source: Database["public"]["Enums"]["appointment_source"]
+          staff_profile_id: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["appointment_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "appointments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      search_businesses: {
+        Args: {
+          p_category?: Database["public"]["Enums"]["business_category"]
+          p_city?: string
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+        }
+        Returns: {
+          average_rating: number
+          category: Database["public"]["Enums"]["business_category"]
+          city: string
+          country_code: string
+          cover_image_url: string
+          currency: string
+          id: string
+          logo_url: string
+          min_price_cents: number
+          name: string
+          review_count: number
+          service_categories: Database["public"]["Enums"]["service_category"][]
+          short_pitch: Json
+          slug: string
+        }[]
+      }
     }
     Enums: {
       appointment_source:
