@@ -38,6 +38,14 @@ The "no text" clause matters twice over: text baked into an image cannot be
 translated into Bulgarian, English and Romanian, and a generated glyph is
 usually malformed anyway.
 
+## Typography
+
+Not generated either, and not picked from a specimen: the five candidate
+pairings were rendered with the product's own Bulgarian and Romanian strings
+and compared side by side. **Onest** (UI) + **Playfair Display** (headings)
+won. Both carry `latin`, `latin-ext` and `cyrillic`, which Romanian `ș`/`ț`
+and Bulgarian both need.
+
 ## What is *not* generated
 
 - **The G mark and wordmark** — hand-authored SVG in

@@ -6,6 +6,7 @@ import { GlowaMark } from "@/components/brand/glowa-logo";
 import { FEATURE_ICONS, type FeatureIconKey } from "@/components/brand/feature-icons";
 import { Section } from "@/components/common/section";
 import { BusinessCard } from "@/components/discovery/business-card";
+import { CategoryGrid } from "@/components/discovery/category-grid";
 import { SearchForm } from "@/components/discovery/search-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,22 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             </p>
           </div>
         </div>
+      </section>
+
+      {/* ---------------------------------------------------------- categories */}
+      <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
+        <div className="mb-8 max-w-2xl">
+          <p className="text-primary text-xs font-semibold tracking-[0.24em] uppercase">
+            {t("categories.eyebrow")}
+          </p>
+          <h2 className="font-heading mt-3 text-3xl leading-tight text-balance sm:text-4xl">
+            {t("categories.title")}
+          </h2>
+          <p className="text-muted-foreground mt-3 text-pretty">
+            {t("categories.subtitle")}
+          </p>
+        </div>
+        <CategoryGrid />
       </section>
 
       {/* ------------------------------------------------------------ features */}

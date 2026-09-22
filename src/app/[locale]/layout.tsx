@@ -1,7 +1,7 @@
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
-import { Inter, Noto_Serif_Display } from "next/font/google";
+import { Onest, Playfair_Display } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -13,13 +13,20 @@ import "../globals.css";
 
 // Cyrillic and latin-ext coverage is a hard requirement: the same face has to
 // carry Bulgarian, English and Romanian without falling back.
-const inter = Inter({
+//
+// Onest over Inter for the UI: it was drawn Cyrillic-first, so Bulgarian body
+// copy reads warmer and less like a system font.
+const onest = Onest({
   variable: "--font-sans",
-  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
+  subsets: ["latin", "latin-ext", "cyrillic"],
   display: "swap",
 });
 
-const notoSerifDisplay = Noto_Serif_Display({
+// Playfair over Noto Serif Display for headings: its Cyrillic is properly
+// drawn rather than a Latin face with Cyrillic bolted on, and the high stroke
+// contrast is the editorial register the brand asks for. Weights are limited
+// to what the design actually uses.
+const playfairDisplay = Playfair_Display({
   variable: "--font-heading",
   subsets: ["latin", "latin-ext", "cyrillic"],
   display: "swap",
@@ -78,7 +85,7 @@ export default async function LocaleLayout({
     <html
       lang={localeHrefLang[locale]}
       suppressHydrationWarning
-      className={`${inter.variable} ${notoSerifDisplay.variable} h-full antialiased`}
+      className={`${onest.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider

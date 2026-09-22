@@ -157,8 +157,17 @@ inversion.
 | sage | `#A9B6A6` | `#344238` |
 | line | `#DDD5CE` | `#26302F` |
 
-- **Type**: Inter for UI (`latin`, `latin-ext`, `cyrillic`, `cyrillic-ext`);
-  Noto Serif Display is opt-in through `.font-heading` only.
+- **Type**: **Onest** for UI and **Playfair Display** for headings, both loaded
+  with `latin`, `latin-ext` and `cyrillic`. Chosen by rendering the real
+  Bulgarian and Romanian strings in five candidate pairings rather than judging
+  font names: Onest is drawn Cyrillic-first, so Bulgarian body copy reads warmer
+  than Inter; Playfair's Cyrillic is properly drawn rather than a Latin face
+  with Cyrillic bolted on, and its stroke contrast is the editorial register the
+  brand asks for. Cormorant Garamond was rejected as too fragile for Cyrillic at
+  display size. The display face stays opt-in through `.font-heading` — body
+  copy is never set in it. Playfair is a didone, so headings take near-zero
+  tracking (tight tracking clogs the hairlines) and gain weight at display
+  sizes instead.
 - **Radius** `0.875rem`; cards `rounded-xl`. **Shadows** `--shadow-card/-lift/-pop`.
 - **Utilities** `glowa-card`, `glowa-focus`. Global `prefers-reduced-motion` guard.
 - **Logo**: `GlowaMark` / `GlowaLogo`, stroke-based, `monochrome` variant.

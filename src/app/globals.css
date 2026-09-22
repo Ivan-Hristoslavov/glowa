@@ -213,15 +213,27 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "cv11", "ss01";
     text-rendering: optimizeLegibility;
   }
 
   /* Editorial display face is opt-in via .font-heading, never the body font:
-     Cyrillic and Romanian text must stay in the highly legible sans. */
+     Cyrillic and Romanian text must stay in the highly legible sans.
+
+     Playfair is a didone - high stroke contrast with fine hairlines. Tight
+     tracking closes those up and makes it look cramped, so headings get
+     near-zero tracking and a medium weight for presence instead. */
   .font-heading {
     font-family: var(--font-heading);
-    letter-spacing: -0.015em;
+    font-weight: 500;
+    letter-spacing: -0.004em;
+  }
+
+  /* At display sizes the hairlines can carry more weight without clogging. */
+  h1.font-heading,
+  .font-heading.text-4xl,
+  .font-heading.text-5xl,
+  .font-heading.text-6xl {
+    font-weight: 600;
   }
 
   ::selection {

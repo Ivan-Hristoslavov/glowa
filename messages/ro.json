@@ -152,7 +152,12 @@
       "point3": "Bulgară, engleză și română din prima zi."
     },
     "heroAlt": "O clientă și stilistul ei într-un salon luminos, în timpul consultației",
-    "trustLine": "Creat în Bulgaria, pentru lume"
+    "trustLine": "Creat în Bulgaria, pentru lume",
+    "categories": {
+      "eyebrow": "DESCOPERĂ DUPĂ CATEGORIE",
+      "title": "De la tuns la o zi de spa.",
+      "subtitle": "Alege ce cauți și vezi saloanele care îl oferă."
+    }
   },
   "auth": {
     "loginTitle": "Bine ai revenit",
