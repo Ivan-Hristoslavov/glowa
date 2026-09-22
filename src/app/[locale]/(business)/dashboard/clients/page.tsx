@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { EmptyState } from "@/components/common/empty-state";
+import { emptyStateArt } from "@/lib/brand-assets";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/i18n/navigation";
@@ -72,6 +73,7 @@ export default async function ClientsPage({
       {clients.length === 0 ? (
         <EmptyState
           icon={Users}
+          image={query ? undefined : emptyStateArt.clients}
           title={query ? t("noResults") : t("empty")}
           body={query ? undefined : t("emptyBody")}
         />

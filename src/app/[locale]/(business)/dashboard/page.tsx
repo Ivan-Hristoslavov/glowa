@@ -14,6 +14,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MetricCard } from "@/components/admin/metric-card";
 import { PublishBusinessButton } from "@/components/admin/publish-business-button";
 import { EmptyState } from "@/components/common/empty-state";
+import { emptyStateArt } from "@/lib/brand-assets";
 import { Section } from "@/components/common/section";
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -197,7 +198,12 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
         }
       >
         {today.length === 0 ? (
-          <EmptyState icon={CalendarDays} title={t("noToday")} body={t("noTodayBody")} />
+          <EmptyState
+            icon={CalendarDays}
+            image={emptyStateArt.calendar}
+            title={t("noToday")}
+            body={t("noTodayBody")}
+          />
         ) : (
           <ul className="divide-border/70 glowa-card divide-y">
             {today.map((appointment) => (

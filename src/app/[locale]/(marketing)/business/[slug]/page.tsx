@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { fallbackBusinessImage } from "@/lib/brand-assets";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { pickLocalized } from "@/lib/localized";
 import { getBusinessBySlug } from "@/lib/queries/discovery";
@@ -96,6 +97,9 @@ export default async function BusinessPage({
   const description = pickLocalized(business.description, activeLocale);
   const staffById = new Map(business.staff_profiles.map((s) => [s.id, s]));
 
+  const heroImage =
+    business.cover_image_url ?? fallbackBusinessImage(business.category, business.slug);
+
   const mapsUrl = primaryLocation
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         [primaryLocation.address_line1, primaryLocation.city, primaryLocation.country_code]
@@ -108,9 +112,9 @@ export default async function BusinessPage({
     <main className="pb-16">
       {/* Hero */}
       <div className="bg-secondary relative h-44 w-full overflow-hidden sm:h-64">
-        {business.cover_image_url ? (
+        {heroImage ? (
           <Image
-            src={business.cover_image_url}
+            src={heroImage}
             alt=""
             fill
             priority

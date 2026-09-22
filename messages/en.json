@@ -107,7 +107,52 @@
       "title": "What works today",
       "body": "The customer experience is live: search, business profiles, real-time booking, cancel and reschedule, reviews and calendar sync.",
       "status": "Step 2 of 5 · Customer experience"
-    }
+    },
+    "features": {
+      "eyebrow": "EVERYTHING YOU NEED",
+      "title": "Built for the people who make",
+      "titleAccent": "the world more beautiful.",
+      "subtitle": "Glowa gives you the tools to run, organise and grow your business — simply and effectively.",
+      "booking": {
+        "title": "Online booking",
+        "body": "Clients book around the clock, with no phone tag and no waiting."
+      },
+      "teamCalendar": {
+        "title": "Calendar and team",
+        "body": "Run the whole team's schedule from one shared calendar."
+      },
+      "clients": {
+        "title": "Client base",
+        "body": "History, notes and preferences for every client, in one place."
+      },
+      "payments": {
+        "title": "Payments",
+        "body": "Online payments and deposits, ready to switch on."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "body": "Automated messages and campaigns to your own clients."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "body": "Track revenue, utilisation and growth without a spreadsheet."
+      },
+      "assistant": {
+        "title": "AI assistant",
+        "body": "Answers questions about the business and helps you write."
+      }
+    },
+    "growth": {
+      "eyebrow": "MORE THAN SOFTWARE",
+      "title": "A partner in your growth.",
+      "body": "We think technology should hand back time for the part you actually love — your clients.",
+      "cta": "Start free",
+      "point1": "Set up in minutes, not weeks.",
+      "point2": "One calendar for the whole team and every location.",
+      "point3": "Bulgarian, English and Romanian from day one."
+    },
+    "heroAlt": "A client and stylist in a bright salon during a consultation",
+    "trustLine": "Built in Bulgaria, for the world"
   },
   "auth": {
     "loginTitle": "Welcome back",

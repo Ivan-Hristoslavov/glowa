@@ -47,6 +47,7 @@ the CRM trigger skipped it for the same reason.
 - **next-intl 4** for routing and messages
 - **Supabase** — Postgres, Auth, RLS, Storage
 - `next-themes`, `sonner`, `zod` v4, `date-fns` + `@date-fns/tz`
+- `sharp` (dev only) for the brand-asset conversion script
 
 ### Next.js 16 specifics that differ from older training data
 
@@ -162,11 +163,23 @@ inversion.
 - **Utilities** `glowa-card`, `glowa-focus`. Global `prefers-reduced-motion` guard.
 - **Logo**: `GlowaMark` / `GlowaLogo`, stroke-based, `monochrome` variant.
 
-**Still to do (visual):** generated hero photography, category imagery, the
-custom illustration family, empty-state artwork, favicon/app icon. Cards and
-hero areas currently fall back to a brand gradient plus a mark, which is
-deliberate — a placeholder that belongs to the brand rather than stock imagery.
-`public/*.svg` are leftover create-next-app files and are unused.
+**Imagery.** The visual set is generated and in place — see
+[`docs/visual-assets.md`](./docs/visual-assets.md) for provenance, the shared
+art direction and every prompt. Sixteen assets in `public/brand/`: three heroes
+(light, dark, portrait), six category photographs, three demo-salon covers and
+four empty-state illustrations, all produced with OpenAI image generation
+against one direction and served as WebP. `src/lib/brand-assets.ts` is the only
+place their paths are written down.
+
+Deliberately **not** generated: the G mark, the feature icon family and the
+favicon are hand-authored SVG. A raster icon at 20px is mush and cannot inherit
+`currentColor`; the mark has to hold at 16px and in monochrome. Generated
+imagery is supporting material — the booking and admin surfaces stay crisp and
+typographic rather than becoming image collages.
+
+The fallback rule lives in `fallbackBusinessImage()`: a business's own cover
+wins, then generated art for its category, then the brand gradient — never a
+photograph of the wrong trade.
 
 ---
 
@@ -552,5 +565,6 @@ traction claim may appear unless it is real.
     Supabase MCP server instead. `brew upgrade supabase` when convenient.
 12. **Leaked password protection is still disabled** in the Supabase dashboard
     (see §9). Worth enabling before real users.
-13. No OpenAI connection is configured in the build environment, so no generated
-    visual assets exist (§4) and the AI assistant renders its unavailable state.
+13. The generated visual set and the AI assistant are both live (§4, §8b). The
+    key lives only in `.env.local`; Vercel needs `OPENAI_API_KEY` set as a
+    server-side env var at deploy time (Prompt 5).

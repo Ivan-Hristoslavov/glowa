@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { EmptyState } from "@/components/common/empty-state";
+import { emptyStateArt } from "@/lib/brand-assets";
 import { AppointmentCard } from "@/components/customer/appointment-card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -44,6 +45,7 @@ export default async function BookingsPage({ params }: PageProps<"/[locale]/book
           {upcoming.length === 0 ? (
             <EmptyState
               icon={CalendarDays}
+              image={emptyStateArt.bookings}
               title={t("empty")}
               body={t("emptyBody")}
               action={

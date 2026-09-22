@@ -107,7 +107,52 @@
       "title": "Ce funcționează deja",
       "body": "Experiența clientului este live: căutare, profiluri de saloane, programare în timp real, anulare și reprogramare, recenzii și sincronizare cu calendarul.",
       "status": "Pasul 2 din 5 · Experiența clientului"
-    }
+    },
+    "features": {
+      "eyebrow": "TOT CE AI NEVOIE",
+      "title": "Creat pentru oamenii care fac",
+      "titleAccent": "lumea mai frumoasă.",
+      "subtitle": "Glowa îți oferă instrumentele ca să îți administrezi, organizezi și dezvolți afacerea — simplu și eficient.",
+      "booking": {
+        "title": "Programări online",
+        "body": "Clienții rezervă non-stop, fără telefoane și fără așteptare."
+      },
+      "teamCalendar": {
+        "title": "Calendar și echipă",
+        "body": "Gestionează programul întregii echipe dintr-un calendar comun."
+      },
+      "clients": {
+        "title": "Bază de clienți",
+        "body": "Istoric, note și preferințe pentru fiecare client, într-un singur loc."
+      },
+      "payments": {
+        "title": "Plăți",
+        "body": "Plăți online și avansuri, gata de activat."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "body": "Mesaje automate și campanii către clienții tăi."
+      },
+      "analytics": {
+        "title": "Analize",
+        "body": "Urmărește venituri, ocupare și creștere fără foi de calcul."
+      },
+      "assistant": {
+        "title": "Asistent AI",
+        "body": "Răspunde la întrebări despre afacere și te ajută la redactare."
+      }
+    },
+    "growth": {
+      "eyebrow": "MAI MULT DECÂT SOFTWARE",
+      "title": "Un partener în creșterea ta.",
+      "body": "Credem că tehnologia trebuie să îți dea înapoi timpul pentru ceea ce iubești cu adevărat — clienții tăi.",
+      "cta": "Începe gratuit",
+      "point1": "Configurare în minute, nu în săptămâni.",
+      "point2": "Un singur calendar pentru toată echipa și toate locațiile.",
+      "point3": "Bulgară, engleză și română din prima zi."
+    },
+    "heroAlt": "O clientă și stilistul ei într-un salon luminos, în timpul consultației",
+    "trustLine": "Creat în Bulgaria, pentru lume"
   },
   "auth": {
     "loginTitle": "Bine ai revenit",

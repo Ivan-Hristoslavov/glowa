@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { CampaignEditor, type CampaignDraft } from "@/components/admin/campaign-editor";
 import { EmptyState } from "@/components/common/empty-state";
+import { emptyStateArt } from "@/lib/brand-assets";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
@@ -44,7 +45,12 @@ export default async function MarketingPage({
       </div>
 
       {campaigns.length === 0 ? (
-        <EmptyState icon={Megaphone} title={t("empty")} body={t("emptyBody")} />
+        <EmptyState
+          icon={Megaphone}
+          image={emptyStateArt.campaigns}
+          title={t("empty")}
+          body={t("emptyBody")}
+        />
       ) : (
         <ul className="glowa-card divide-border/70 divide-y">
           {campaigns.map((campaign) => {

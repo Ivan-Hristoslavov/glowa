@@ -48,6 +48,15 @@ any `NEXT_PUBLIC_` variable.
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run check` | Lint + typecheck |
 | `npm run db:types` | Regenerate `src/types/database.ts` from the live schema |
+| `npm run assets:build <src>` | Re-encode generated PNGs into `public/brand/` WebP |
+
+## Visual assets
+
+Photography and illustrations in `public/brand/` were generated for this project
+with OpenAI image generation against a single art direction, then converted to
+WebP. Provenance, the shared direction and every prompt are in
+[`docs/visual-assets.md`](./docs/visual-assets.md). The logo, the icon family and
+the favicon are hand-authored SVG, not generated.
 
 ## Database
 

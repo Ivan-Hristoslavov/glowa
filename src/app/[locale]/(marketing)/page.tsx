@@ -1,7 +1,9 @@
 import { ArrowRight, CalendarCheck, Check, ShieldCheck, Sparkles } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import Image from "next/image";
 
 import { GlowaMark } from "@/components/brand/glowa-logo";
+import { FEATURE_ICONS, type FeatureIconKey } from "@/components/brand/feature-icons";
 import { Section } from "@/components/common/section";
 import { BusinessCard } from "@/components/discovery/business-card";
 import { SearchForm } from "@/components/discovery/search-form";
@@ -9,13 +11,25 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { brandAssets } from "@/lib/brand-assets";
 import { listCities, searchBusinesses } from "@/lib/queries/discovery";
+
+const FEATURES: FeatureIconKey[] = [
+  "booking",
+  "teamCalendar",
+  "clients",
+  "payments",
+  "marketing",
+  "analytics",
+  "assistant",
+];
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const t = await getTranslations("home");
+  const brand = await getTranslations("brand");
   const [cities, featured] = await Promise.all([
     listCities(),
     searchBusinesses({ limit: 3 }),
@@ -29,8 +43,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   return (
     <main>
+      {/* ---------------------------------------------------------------- hero */}
       <section className="relative overflow-hidden">
-        {/* Soft brand washes rather than a flat block of colour. */}
         <div
           aria-hidden
           className="bg-brand-soft/45 pointer-events-none absolute -top-40 -right-32 size-[26rem] rounded-full blur-3xl"
@@ -40,44 +54,151 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           className="bg-brand-sage/35 pointer-events-none absolute -bottom-52 -left-40 size-[24rem] rounded-full blur-3xl"
         />
 
-        <div className="relative mx-auto w-full max-w-6xl px-4 pt-16 pb-16 sm:px-6 sm:pt-24 sm:pb-20">
-          <p className="text-primary text-xs font-semibold tracking-[0.28em] uppercase">
-            {t("eyebrow")}
-          </p>
+        <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 pt-14 pb-16 sm:px-6 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:pb-24">
+          <div>
+            <p className="text-primary text-xs font-semibold tracking-[0.28em] uppercase">
+              {t("eyebrow")}
+            </p>
 
-          <h1 className="font-heading mt-5 max-w-3xl text-4xl leading-[1.05] text-balance sm:text-6xl">
-            <span className="block">{t("titleLine1")}</span>
-            <span className="text-primary block">{t("titleLine2")}</span>
-          </h1>
+            <h1 className="font-heading mt-5 text-4xl leading-[1.05] text-balance sm:text-6xl">
+              <span className="block">{t("titleLine1")}</span>
+              <span className="text-primary block">{t("titleLine2")}</span>
+            </h1>
 
-          <p className="text-muted-foreground mt-6 max-w-xl text-base leading-relaxed text-pretty sm:text-lg">
-            {t("subtitle")}
-          </p>
+            <p className="text-muted-foreground mt-6 max-w-xl text-base leading-relaxed text-pretty sm:text-lg">
+              {t("subtitle")}
+            </p>
 
-          <div className="glowa-card mt-8 max-w-2xl p-3 sm:p-4">
-            <SearchForm cities={cities} variant="hero" />
+            <div className="glowa-card mt-8 max-w-xl p-3 sm:p-4">
+              <SearchForm cities={cities} variant="hero" />
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg">
+                <Link href="/signup">{t("ctaPrimary")}</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/search">{t("ctaSecondary")}</Link>
+              </Button>
+            </div>
+
+            <ul className="text-muted-foreground mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+              {badges.map(({ key, icon: Icon }) => (
+                <li key={key} className="flex items-center gap-2">
+                  <Icon className="text-primary size-4" aria-hidden />
+                  {t(`badges.${key}`)}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href="/signup">{t("ctaPrimary")}</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/search">{t("ctaSecondary")}</Link>
-            </Button>
+          {/* Two exposures of the same scene rather than one image dimmed by
+              CSS: the dark theme gets a photograph actually lit for it. The
+              swap is class-based, so server and client render the same markup. */}
+          <div className="relative">
+            <div className="glowa-card relative aspect-[4/3] overflow-hidden rounded-2xl p-0 shadow-[var(--shadow-pop)]">
+              <Image
+                src={brandAssets.heroLight}
+                alt={t("heroAlt")}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-cover dark:hidden"
+              />
+              <Image
+                src={brandAssets.heroDark}
+                alt={t("heroAlt")}
+                fill
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="hidden object-cover dark:block"
+              />
+            </div>
+            <p className="text-muted-foreground mt-3 text-center text-[0.7rem] tracking-[0.18em] uppercase lg:text-right">
+              {t("trustLine")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------ features */}
+      <section className="border-border/60 border-y">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-primary text-xs font-semibold tracking-[0.24em] uppercase">
+              {t("features.eyebrow")}
+            </p>
+            <h2 className="font-heading mt-4 text-3xl leading-tight text-balance sm:text-4xl">
+              {t("features.title")}{" "}
+              <span className="text-primary">{t("features.titleAccent")}</span>
+            </h2>
+            <p className="text-muted-foreground mt-4 text-pretty">
+              {t("features.subtitle")}
+            </p>
           </div>
 
-          <ul className="text-muted-foreground mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-            {badges.map(({ key, icon: Icon }) => (
-              <li key={key} className="flex items-center gap-2">
-                <Icon className="text-primary size-4" aria-hidden />
-                {t(`badges.${key}`)}
-              </li>
-            ))}
+          <ul className="mt-12 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURES.map((key) => {
+              const Icon = FEATURE_ICONS[key];
+              return (
+                <li key={key} className="text-center sm:text-left">
+                  <span className="bg-secondary text-primary mx-auto flex size-12 items-center justify-center rounded-xl sm:mx-0">
+                    <Icon className="size-6" />
+                  </span>
+                  <h3 className="mt-4 font-medium">{t(`features.${key}.title`)}</h3>
+                  <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                    {t(`features.${key}.body`)}
+                  </p>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
 
+      {/* -------------------------------------------------------------- growth */}
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-14">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl sm:aspect-[3/2] lg:aspect-[4/5]">
+            <Image
+              src={brandAssets.heroMobile}
+              alt={t("heroAlt")}
+              fill
+              sizes="(max-width: 1024px) 100vw, 45vw"
+              className="object-cover"
+            />
+          </div>
+
+          <div>
+            <p className="text-primary text-xs font-semibold tracking-[0.24em] uppercase">
+              {t("growth.eyebrow")}
+            </p>
+            <h2 className="font-heading mt-4 text-3xl leading-tight text-balance sm:text-4xl">
+              {t("growth.title")}
+            </h2>
+            <p className="text-muted-foreground mt-4 leading-relaxed text-pretty">
+              {t("growth.body")}
+            </p>
+
+            <ul className="mt-6 space-y-3">
+              {["point1", "point2", "point3"].map((point) => (
+                <li key={point} className="flex items-start gap-2.5 text-sm">
+                  <Check className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
+                  {t(`growth.${point}`)}
+                </li>
+              ))}
+            </ul>
+
+            <Button asChild size="lg" className="mt-8">
+              <Link href="/signup">
+                {t("growth.cta")}
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------ featured */}
       {featured.length > 0 ? (
         <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
           <Section
@@ -107,7 +228,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* An honest build-status panel. No invented traction numbers: the
           product has none yet, and the brief forbids inventing them. */}
-      <section className="mx-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
+      <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
         <div className="glowa-card flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:gap-8 sm:p-8">
           <GlowaMark className="size-10 shrink-0" />
           <div className="flex-1">
@@ -118,19 +239,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <p className="text-muted-foreground mt-2 max-w-2xl text-sm leading-relaxed">
               {t("foundation.body")}
             </p>
-            <ul className="text-muted-foreground mt-5 grid gap-2 text-sm sm:grid-cols-2">
-              {[
-                "Search, filters and business profiles",
-                "Real-time availability from the database",
-                "Cancel, reschedule and add to calendar",
-                "Reviews tied to completed visits",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <Check className="text-primary size-4 shrink-0" aria-hidden />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <p className="text-muted-foreground mt-4 text-xs">{brand("madeIn")}</p>
           </div>
         </div>
       </section>

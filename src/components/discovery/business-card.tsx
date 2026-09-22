@@ -6,6 +6,7 @@ import { Rating } from "@/components/common/rating";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { fallbackBusinessImage } from "@/lib/brand-assets";
 import { formatPrice } from "@/lib/format";
 import { pickLocalized } from "@/lib/localized";
 import type { SearchResult } from "@/lib/queries/discovery";
@@ -23,23 +24,26 @@ export async function BusinessCard({ business, locale }: BusinessCardProps) {
   const pitch = pickLocalized(business.short_pitch, locale);
   const isDemo = business.slug.startsWith("demo-");
 
+  // A business's own cover wins; otherwise generated art for its category, and
+  // only then the brand gradient. Never a stock photo of the wrong trade.
+  const image =
+    business.cover_image_url ?? fallbackBusinessImage(business.category, business.slug);
+
   return (
     <Link
       href={`/business/${business.slug}`}
       className="glowa-focus group glowa-card hover:shadow-lift focus-visible:ring-ring/60 flex flex-col overflow-hidden transition-shadow duration-300 focus-visible:ring-2 focus-visible:outline-none"
     >
       <div className="bg-secondary relative aspect-[16/10] overflow-hidden">
-        {business.cover_image_url ? (
+        {image ? (
           <Image
-            src={business.cover_image_url}
+            src={image}
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          // Photography is generated in a later pass; until then a branded
-          // placeholder beats a grey box or a stock image.
           <div className="from-brand-soft/70 via-secondary to-brand-sage/40 flex h-full items-center justify-center bg-gradient-to-br">
             <Sparkles className="text-primary/70 size-7" aria-hidden />
           </div>
