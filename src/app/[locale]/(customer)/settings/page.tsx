@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/common/section";
 import { Separator } from "@/components/ui/separator";
 import { routing, type Locale } from "@/i18n/routing";
+import Image from "next/image";
+
+import { featureArt } from "@/lib/brand-assets";
 import { isGoogleCalendarConnectable } from "@/lib/calendar";
 import { createClient } from "@/lib/supabase/server";
 
@@ -102,7 +105,18 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/sett
       <Separator />
 
       <Section title={t("notifications")} description={t("notificationsBody")}>
-        <NotificationSettings initial={notificationState} />
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+          <Image
+            src={featureArt.reminders}
+            alt=""
+            width={96}
+            height={96}
+            className="hidden size-24 shrink-0 rounded-xl object-cover sm:block"
+          />
+          <div className="min-w-0 flex-1">
+            <NotificationSettings initial={notificationState} />
+          </div>
+        </div>
       </Section>
 
       <Separator />

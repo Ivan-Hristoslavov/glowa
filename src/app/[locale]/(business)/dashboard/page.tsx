@@ -14,6 +14,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MetricCard } from "@/components/admin/metric-card";
 import { PublishBusinessButton } from "@/components/admin/publish-business-button";
 import { EmptyState } from "@/components/common/empty-state";
+import Image from "next/image";
+
 import { emptyStateArt } from "@/lib/brand-assets";
 import { Section } from "@/components/common/section";
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
@@ -114,7 +116,16 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
           <CalendarCheck className="size-4" aria-hidden />
           <AlertTitle>{t("draftTitle")}</AlertTitle>
           <AlertDescription className="space-y-3">
-            <p>{t("draftBody")}</p>
+            <div className="flex items-start gap-4">
+              <Image
+                src={emptyStateArt.onboarding.light}
+                alt=""
+                width={72}
+                height={72}
+                className="hidden size-16 shrink-0 rounded-lg object-cover sm:block"
+              />
+              <p>{t("draftBody")}</p>
+            </div>
             <PublishBusinessButton businessId={membership.businessId} />
           </AlertDescription>
         </Alert>
@@ -200,7 +211,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
         {today.length === 0 ? (
           <EmptyState
             icon={CalendarDays}
-            image={emptyStateArt.calendar}
+            art={emptyStateArt.calendar}
             title={t("noToday")}
             body={t("noTodayBody")}
           />

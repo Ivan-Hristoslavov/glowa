@@ -73,7 +73,7 @@ export default async function ClientsPage({
       {clients.length === 0 ? (
         <EmptyState
           icon={Users}
-          image={query ? undefined : emptyStateArt.clients}
+          art={query ? undefined : emptyStateArt.clients}
           title={query ? t("noResults") : t("empty")}
           body={query ? undefined : t("emptyBody")}
         />

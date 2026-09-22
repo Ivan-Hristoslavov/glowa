@@ -45,7 +45,7 @@ export default async function BookingsPage({ params }: PageProps<"/[locale]/book
           {upcoming.length === 0 ? (
             <EmptyState
               icon={CalendarDays}
-              image={emptyStateArt.bookings}
+              art={emptyStateArt.bookings}
               title={t("empty")}
               body={t("emptyBody")}
               action={

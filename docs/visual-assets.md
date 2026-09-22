@@ -65,10 +65,13 @@ stay crisp, fast and typographic; no screen is turned into an image collage.
 | --- | --- | --- |
 | `hero-salon-light.webp` | 1600w | Landing hero, light theme |
 | `hero-salon-dark.webp` | 1600w | Landing hero, dark theme (lit for dark, not dimmed) |
-| `hero-mobile.webp` | 1100w | Growth section; portrait crop |
-| `category-hair/barber/nails/skincare/lashes/spa.webp` | 900w | Business cards and profile heroes with no cover of their own |
-| `cover-hair-lab/black-scissors/bloom-nails.webp` | 1400w | The three seeded demo salons |
-| `empty-bookings/calendar/clients/campaigns.webp` | 600w | Empty states |
+| `hero-mobile.webp` | 1600w | Growth section; portrait crop |
+| `hero-barber.webp`, `hero-spa.webp` | 1600w | Spare hero exposures |
+| `category-hair/barber/nails/skincare/lashes/spa.webp` | 1100w | Business cards and profile heroes with no cover of their own |
+| `cover-hair-lab/black-scissors/bloom-nails.webp` | 1100w | The three seeded demo salons |
+| `feature-*.webp` (10) | 600w | Landing feature grid, settings, marketing |
+| `empty-*.webp` (5 light + 4 dark) | 600w | Empty states, per theme |
+| `og-cover.webp` | 1200×630 | Social share card |
 
 `src/lib/brand-assets.ts` is the only place these paths are written down, and
 `fallbackBusinessImage()` encodes the rule: a business's own cover wins, then
@@ -93,6 +96,17 @@ the shared direction above.
 - **cover-\*** — interiors with nobody in frame, one per demo salon's character.
 - **empty-\*** — an open appointment book, an empty calendar grid with one
   coral square, three portrait silhouettes, an envelope with a small heart.
+
+## The social card and the app icon
+
+`npm run assets:social <backdrop.png>` composes `og-cover.webp` from the
+generated backdrop plus a warm scrim, the mark and the wordmark, and writes
+`src/app/apple-icon.png` from the same geometry. The wordmark is set in the real
+UI font rather than a system fallback: `FONTCONFIG_FILE` points librsvg at a
+directory holding Onest, so nothing is installed on the machine that runs it.
+
+Without an OG image a shared link renders as a bare URL in every messenger,
+which is why this is not optional polish.
 
 ## Regenerating
 

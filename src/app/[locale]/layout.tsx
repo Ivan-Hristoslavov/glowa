@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { localeHrefLang, routing } from "@/i18n/routing";
+import { brandAssets } from "@/lib/brand-assets";
 import { publicEnv } from "@/lib/env";
 
 import "../globals.css";
@@ -66,6 +67,21 @@ export async function generateMetadata({
       locale: localeHrefLang[locale as keyof typeof localeHrefLang],
       title: `glowa — ${brand("tagline")}`,
       description: t("subtitle"),
+      // Without this a shared link renders as a bare URL in every messenger.
+      images: [
+        {
+          url: brandAssets.ogImage,
+          width: 1200,
+          height: 630,
+          alt: `glowa — ${brand("tagline")}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `glowa — ${brand("tagline")}`,
+      description: t("subtitle"),
+      images: [brandAssets.ogImage],
     },
   };
 }

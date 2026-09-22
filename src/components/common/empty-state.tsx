@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import type { EmptyStateArt } from "@/lib/brand-assets";
 import { cn } from "@/lib/utils";
 
 type EmptyStateProps = {
@@ -11,10 +12,11 @@ type EmptyStateProps = {
   action?: ReactNode;
   className?: string;
   /**
-   * Generated illustration for this state. The icon stays as the fallback, so
-   * a surface without dedicated art still reads as designed rather than broken.
+   * Generated illustration for this state, with a version drawn for each
+   * theme. The icon stays as the fallback, so a surface without dedicated art
+   * still reads as designed rather than broken.
    */
-  image?: string;
+  art?: EmptyStateArt;
 };
 
 /**
@@ -28,7 +30,7 @@ export function EmptyState({
   body,
   action,
   className,
-  image,
+  art,
 }: EmptyStateProps) {
   return (
     <div
@@ -37,14 +39,25 @@ export function EmptyState({
         className,
       )}
     >
-      {image ? (
-        <Image
-          src={image}
-          alt=""
-          width={168}
-          height={168}
-          className="size-36 rounded-xl object-cover sm:size-40"
-        />
+      {art ? (
+        // Both versions ship and CSS picks one, so the server and the client
+        // render the same markup and there is no theme flash.
+        <>
+          <Image
+            src={art.light}
+            alt=""
+            width={168}
+            height={168}
+            className="size-36 rounded-xl object-cover sm:size-40 dark:hidden"
+          />
+          <Image
+            src={art.dark}
+            alt=""
+            width={168}
+            height={168}
+            className="hidden size-36 rounded-xl object-cover sm:size-40 dark:block"
+          />
+        </>
       ) : (
         <span className="bg-secondary text-secondary-foreground flex size-12 items-center justify-center rounded-full">
           <Icon className="size-5" aria-hidden />

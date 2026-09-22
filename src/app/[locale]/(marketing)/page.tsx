@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { brandAssets } from "@/lib/brand-assets";
+import { brandAssets, featureArt } from "@/lib/brand-assets";
 import { listCities, searchBusinesses } from "@/lib/queries/discovery";
 
 const FEATURES: FeatureIconKey[] = [
@@ -158,9 +158,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               const Icon = FEATURE_ICONS[key];
               return (
                 <li key={key} className="text-center sm:text-left">
-                  <span className="bg-secondary text-primary mx-auto flex size-12 items-center justify-center rounded-xl sm:mx-0">
+                  {/* Illustration where there is room for it, icon where there
+                      is not: a raster drawing at 24px is mush, and the icon
+                      family was drawn for exactly that size. */}
+                  <span className="bg-secondary text-primary mx-auto flex size-12 items-center justify-center rounded-xl sm:hidden">
                     <Icon className="size-6" />
                   </span>
+                  <Image
+                    src={featureArt[key]}
+                    alt=""
+                    width={72}
+                    height={72}
+                    className="hidden size-16 rounded-xl object-cover sm:block"
+                  />
                   <h3 className="mt-4 font-medium">{t(`features.${key}.title`)}</h3>
                   <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
                     {t(`features.${key}.body`)}

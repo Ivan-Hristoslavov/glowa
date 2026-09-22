@@ -174,11 +174,17 @@ inversion.
 
 **Imagery.** The visual set is generated and in place — see
 [`docs/visual-assets.md`](./docs/visual-assets.md) for provenance, the shared
-art direction and every prompt. Sixteen assets in `public/brand/`: three heroes
-(light, dark, portrait), six category photographs, three demo-salon covers and
-four empty-state illustrations, all produced with OpenAI image generation
-against one direction and served as WebP. `src/lib/brand-assets.ts` is the only
-place their paths are written down.
+art direction and every prompt. In `public/brand/`: five heroes, six category
+photographs, three demo-salon covers, a ten-piece feature illustration family,
+five empty states with dark companions for four of them, and the social share
+card — all produced with OpenAI image generation against one direction and
+served as WebP. `src/lib/brand-assets.ts` is the only place their paths are
+written down.
+
+Empty states ship both themes and let CSS pick, the same way the hero does, so
+the server and the client render identical markup and there is no theme flash.
+`src/app/apple-icon.png` and the share card are built from the mark's own
+geometry by `npm run assets:social`.
 
 Deliberately **not** generated: the G mark, the feature icon family and the
 favicon are hand-authored SVG. A raster icon at 20px is mush and cannot inherit

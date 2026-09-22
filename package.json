@@ -11,7 +11,8 @@
     "db:types": "supabase gen types typescript --project-id reaobqtmwmesmpgdkzwi > src/types/database.ts",
     "db:diff": "supabase db diff",
     "check": "npm run lint && npm run typecheck",
-    "assets:build": "node scripts/build-brand-assets.mjs"
+    "assets:build": "node scripts/build-brand-assets.mjs",
+    "assets:social": "node scripts/build-social-card.mjs"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",

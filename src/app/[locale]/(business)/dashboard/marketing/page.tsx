@@ -2,9 +2,11 @@ import { Info, Megaphone } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import Image from "next/image";
+
 import { CampaignEditor, type CampaignDraft } from "@/components/admin/campaign-editor";
 import { EmptyState } from "@/components/common/empty-state";
-import { emptyStateArt } from "@/lib/brand-assets";
+import { emptyStateArt, featureArt } from "@/lib/brand-assets";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
@@ -36,18 +38,27 @@ export default async function MarketingPage({
         {editable ? <CampaignEditor businessId={membership.businessId} /> : null}
       </div>
 
-      <div className="border-border/70 bg-secondary/40 rounded-xl border p-4">
-        <p className="flex items-start gap-2 text-sm font-medium">
-          <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-          {t("sendingDisabled")}
-        </p>
-        <p className="text-muted-foreground mt-2 text-sm">{t("sendingDisabledBody")}</p>
+      <div className="border-border/70 bg-secondary/40 flex items-start gap-4 rounded-xl border p-4">
+        <Image
+          src={featureArt.growth}
+          alt=""
+          width={72}
+          height={72}
+          className="hidden size-16 shrink-0 rounded-lg object-cover sm:block"
+        />
+        <div>
+          <p className="flex items-start gap-2 text-sm font-medium">
+            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+            {t("sendingDisabled")}
+          </p>
+          <p className="text-muted-foreground mt-2 text-sm">{t("sendingDisabledBody")}</p>
+        </div>
       </div>
 
       {campaigns.length === 0 ? (
         <EmptyState
           icon={Megaphone}
-          image={emptyStateArt.campaigns}
+          art={emptyStateArt.campaigns}
           title={t("empty")}
           body={t("emptyBody")}
         />

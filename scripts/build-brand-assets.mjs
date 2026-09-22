@@ -21,9 +21,11 @@ if (!source) {
 // Width and quality per role: heroes carry the page, category and cover art is
 // never shown larger than a card, flat illustrations compress hard.
 const RULES = [
+  { match: /^og-/, width: 1200, quality: 82 },
   { match: /^hero-/, width: 1600, quality: 80 },
   { match: /^(category|cover)-/, width: 1100, quality: 76 },
-  { match: /^empty-/, width: 600, quality: 82 },
+  // Flat illustrations compress hard and are never shown large.
+  { match: /^(empty|feature)-/, width: 600, quality: 82 },
 ];
 
 await mkdir(dest, { recursive: true });

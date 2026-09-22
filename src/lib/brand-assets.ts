@@ -18,6 +18,10 @@ export const brandAssets = {
   heroLight: `${BASE}/hero-salon-light.webp`,
   heroDark: `${BASE}/hero-salon-dark.webp`,
   heroMobile: `${BASE}/hero-mobile.webp`,
+  heroBarber: `${BASE}/hero-barber.webp`,
+  heroSpa: `${BASE}/hero-spa.webp`,
+  /** Backdrop for the social share card; the wordmark is composited on top. */
+  ogImage: `${BASE}/og-cover.webp`,
 } as const;
 
 export const categoryImages = {
@@ -29,12 +33,38 @@ export const categoryImages = {
   spa: `${BASE}/category-spa.webp`,
 } as const;
 
-export const emptyStateArt = {
-  bookings: `${BASE}/empty-bookings.webp`,
-  calendar: `${BASE}/empty-calendar.webp`,
-  clients: `${BASE}/empty-clients.webp`,
-  campaigns: `${BASE}/empty-campaigns.webp`,
+/**
+ * Feature illustrations. Larger than an icon and used where a surface is
+ * introducing a capability rather than labelling a control.
+ */
+export const featureArt = {
+  booking: `${BASE}/feature-booking.webp`,
+  teamCalendar: `${BASE}/feature-calendar.webp`,
+  clients: `${BASE}/feature-clients.webp`,
+  payments: `${BASE}/feature-payments.webp`,
+  reviews: `${BASE}/feature-reviews.webp`,
+  marketing: `${BASE}/feature-marketing.webp`,
+  analytics: `${BASE}/feature-analytics.webp`,
+  assistant: `${BASE}/feature-assistant.webp`,
+  reminders: `${BASE}/feature-reminders.webp`,
+  growth: `${BASE}/feature-growth.webp`,
 } as const;
+
+/**
+ * Empty-state art. Each state has a light and a dark version drawn for its own
+ * background rather than one image dimmed by CSS, matching how the two themes
+ * are treated everywhere else.
+ */
+export const emptyStateArt = {
+  bookings: { light: `${BASE}/empty-bookings.webp`, dark: `${BASE}/empty-bookings-dark.webp` },
+  calendar: { light: `${BASE}/empty-calendar.webp`, dark: `${BASE}/empty-calendar-dark.webp` },
+  clients: { light: `${BASE}/empty-clients.webp`, dark: `${BASE}/empty-clients-dark.webp` },
+  campaigns: { light: `${BASE}/empty-campaigns.webp`, dark: `${BASE}/empty-campaigns-dark.webp` },
+  /** Only one version: it appears on a coral-washed surface in both themes. */
+  onboarding: { light: `${BASE}/empty-onboarding.webp`, dark: `${BASE}/empty-onboarding.webp` },
+} as const;
+
+export type EmptyStateArt = (typeof emptyStateArt)[keyof typeof emptyStateArt];
 
 /** Cover art for the seeded demo salons, keyed by slug. */
 export const demoCovers: Record<string, string> = {
