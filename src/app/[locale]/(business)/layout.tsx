@@ -12,7 +12,11 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { getActiveMembership, listMemberships } from "@/lib/queries/business";
+import {
+  claimPendingInvitations,
+  getActiveMembership,
+  listMemberships,
+} from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function BusinessLayout({
@@ -23,10 +27,23 @@ export default async function BusinessLayout({
   const t = await getTranslations("admin.nav");
   const statusLabels = await getTranslations("admin.status");
 
-  const [memberships, active] = await Promise.all([
+  let [memberships, active] = await Promise.all([
     listMemberships(),
     getActiveMembership(),
   ]);
+
+  // Someone invited after they already had an account would otherwise be sent
+  // to onboarding to create a business they do not need. Claim first, ask
+  // second.
+  if (!active) {
+    const claimed = await claimPendingInvitations();
+    if (claimed > 0) {
+      [memberships, active] = await Promise.all([
+        listMemberships(),
+        getActiveMembership(),
+      ]);
+    }
+  }
 
   // The proxy already requires a session; this requires a business.
   if (!active) redirect(`/${locale}/onboarding`);

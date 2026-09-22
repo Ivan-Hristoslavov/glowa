@@ -86,7 +86,7 @@ export function AuthForm({ mode, action, nextPath }: AuthFormProps) {
           <Label htmlFor="password">{t("password")}</Label>
           {!isSignUp ? (
             <Link
-              href="/login"
+              href="/forgot-password"
               className="text-muted-foreground hover:text-foreground text-xs"
             >
               {t("forgotPassword")}

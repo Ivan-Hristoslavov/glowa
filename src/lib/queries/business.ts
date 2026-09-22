@@ -19,6 +19,19 @@ export type Membership = {
   logoUrl: string | null;
 };
 
+/**
+ * Turns any invitation addressed to the caller's own verified email into a
+ * real membership. Cheap and idempotent, so it is safe to call on the paths
+ * where a new member would first appear: right after sign-in, and when the
+ * business shell finds no membership and is about to send them to onboarding.
+ */
+export async function claimPendingInvitations(): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("claim_pending_invitations");
+  if (error) return 0;
+  return data ?? 0;
+}
+
 export async function listMemberships(): Promise<Membership[]> {
   const supabase = await createClient();
   const { data, error } = await supabase

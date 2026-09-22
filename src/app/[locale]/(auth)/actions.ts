@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { redirect } from "@/i18n/navigation";
 import { publicEnv } from "@/lib/env";
+import { claimPendingInvitations } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthFormState = {
@@ -59,6 +60,9 @@ export async function signInAction(
   if (error) {
     return { status: "error", message: t("invalidCredentials") };
   }
+
+  // A colleague invited before they had an account gets their access here.
+  await claimPendingInvitations();
 
   revalidatePath("/", "layout");
   const next = safeNextPath(formData.get("next"));
@@ -123,4 +127,78 @@ export async function signOutAction() {
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect({ href: "/", locale });
+}
+
+const emailSchema = z.object({ email: z.email() });
+
+/**
+ * Always reports success. Telling an anonymous caller whether an address has an
+ * account is an enumeration oracle, and the UI copy is written to match:
+ * "if an account exists for this address, we sent a link".
+ */
+export async function requestPasswordReset(
+  _prev: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const locale = await getLocale();
+  const parsed = emailSchema.safeParse({ email: formData.get("email") });
+
+  if (!parsed.success) {
+    const t = await getTranslations("auth.errors");
+    return { status: "error", message: t("generic") };
+  }
+
+  const supabase = await createClient();
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=/${locale}/reset-password`,
+  });
+
+  return { status: "check-email", email: parsed.data.email };
+}
+
+const newPasswordSchema = z
+  .object({
+    password: z.string().min(8).max(200),
+    confirm: z.string().min(8).max(200),
+  })
+  .refine((value) => value.password === value.confirm, { path: ["confirm"] });
+
+/**
+ * Runs against the recovery session that /auth/confirm established, so there is
+ * no token to pass around in the form.
+ */
+export async function updatePassword(
+  _prev: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const locale = await getLocale();
+  const t = await getTranslations("auth");
+
+  const parsed = newPasswordSchema.safeParse({
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+  });
+
+  if (!parsed.success) {
+    const mismatch = parsed.error.issues.some((issue) => issue.path[0] === "confirm");
+    return {
+      status: "error",
+      message: mismatch ? t("resetErrors.mismatch") : t("errors.weakPassword"),
+    };
+  }
+
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (typeof claims?.claims?.sub !== "string") {
+    return { status: "error", message: t("resetErrors.expired") };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) {
+    return { status: "error", message: t("resetErrors.generic") };
+  }
+
+  revalidatePath("/", "layout");
+  redirect({ href: "/profile", locale });
+  return unreachable;
 }

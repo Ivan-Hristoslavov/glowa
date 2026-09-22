@@ -180,6 +180,25 @@
       "emailInUse": "An account with this email already exists.",
       "weakPassword": "Password must be at least 8 characters.",
       "generic": "Something went wrong. Please try again."
+    },
+    "forgotTitle": "Forgot your password",
+    "forgotSubtitle": "Enter your email and we will send you a link to set a new one.",
+    "sendReset": "Send link",
+    "sending": "Sending…",
+    "resetSent": "Check your email",
+    "resetSentBody": "If an account exists for {email}, we sent a link to reset the password. It is valid for one hour.",
+    "backToLogin": "Back to sign in",
+    "resetTitle": "New password",
+    "resetSubtitle": "Pick a password you do not use anywhere else.",
+    "newPassword": "New password",
+    "confirmPassword": "Repeat password",
+    "updatePassword": "Save password",
+    "updating": "Saving…",
+    "passwordUpdated": "Password changed",
+    "resetErrors": {
+      "mismatch": "The passwords do not match.",
+      "expired": "That link has expired or was already used. Request a new one.",
+      "generic": "The change did not go through. Please try again."
     }
   },
   "search": {

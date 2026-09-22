@@ -1479,6 +1479,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      claim_pending_invitations: { Args: never; Returns: number }
       create_business: {
         Args: {
           p_address?: string

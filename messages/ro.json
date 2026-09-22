@@ -180,6 +180,25 @@
       "emailInUse": "Există deja un cont cu acest e-mail.",
       "weakPassword": "Parola trebuie să aibă cel puțin 8 caractere.",
       "generic": "Ceva nu a mers. Încearcă din nou."
+    },
+    "forgotTitle": "Ai uitat parola",
+    "forgotSubtitle": "Introdu e-mailul și îți trimitem un link pentru o parolă nouă.",
+    "sendReset": "Trimite linkul",
+    "sending": "Se trimite…",
+    "resetSent": "Verifică-ți e-mailul",
+    "resetSentBody": "Dacă există un cont pentru {email}, am trimis un link de resetare. Este valabil o oră.",
+    "backToLogin": "Înapoi la autentificare",
+    "resetTitle": "Parolă nouă",
+    "resetSubtitle": "Alege o parolă pe care nu o folosești în altă parte.",
+    "newPassword": "Parolă nouă",
+    "confirmPassword": "Repetă parola",
+    "updatePassword": "Salvează parola",
+    "updating": "Se salvează…",
+    "passwordUpdated": "Parola a fost schimbată",
+    "resetErrors": {
+      "mismatch": "Parolele nu se potrivesc.",
+      "expired": "Linkul a expirat sau a fost deja folosit. Cere unul nou.",
+      "generic": "Schimbarea nu a reușit. Încearcă din nou."
     }
   },
   "search": {
