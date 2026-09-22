@@ -45,6 +45,10 @@ const serverEnvSource = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  RESEND_FROM: process.env.RESEND_FROM,
+  RESEND_REPLY_TO: process.env.RESEND_REPLY_TO,
+  CRON_SECRET: process.env.CRON_SECRET,
 } satisfies Record<string, string | undefined>;
 
 export type ServerEnvKey = keyof typeof serverEnvSource;

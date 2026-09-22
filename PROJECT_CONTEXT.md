@@ -348,6 +348,9 @@ business id the caller manages for business media, resolved through
 | `…090000_business_workspace.sql` | onboarding RPC, CRM sync trigger, dashboard metrics, campaign audience, realtime |
 | `…100000_walkin_identity.sql` | a walk-in appointment may be identified by name alone |
 | `…100100_crm_walkin_sync.sql` | same for `business_clients`; CRM trigger accepts a name; backfill |
+| `…200000_claim_invitations.sql` | `claim_pending_invitations()` links an invited membership to the account that signs in |
+| `…210000_notification_outbox.sql` | `notification_deliveries`, opt-out lookup, appointment trigger, worker claim |
+| `…220000_book_appointment_self_derive.sql` | `book_appointment` writes a complete row instead of relying on the guard trigger |
 
 Four of these were written because something failed, not from a plan:
 
@@ -366,8 +369,22 @@ Four of these were written because something failed, not from a plan:
   matches on it as the weakest of four branches. Found by using the calendar,
   not by reading the schema.
 
+- `220000` — `book_appointment` inserted a placeholder row (one minute long, no
+  price, no identity) and let the customer guard trigger fill it in. The guard
+  returns early for a business member, because a member using the admin
+  calendar supplies those fields themselves. So an owner booking a treatment at
+  their own salon kept the placeholders and failed
+  `appointments_identified_customer` outright — and would have been priced at
+  zero if it had not. The RPC now writes the whole row; the guard still
+  overrides everything for a non-member, so the trust boundary is unchanged.
+  Found by trying to book, not by reading the schema.
+
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
+
+`npm run db:types` writes to a temp file and moves it into place. The plain
+redirect form truncated `src/types/database.ts` to zero bytes whenever the
+command failed, which is exactly when you least want it emptied.
 
 Regenerate types after any change: `npm run db:types`.
 
@@ -470,6 +487,69 @@ that does nothing.
 
 ---
 
+## 8c. Notifications
+
+A message is a database row before it is a send. `notification_deliveries` is
+the outbox, and `idempotency_key` is unique, so "enqueue twice" is one row.
+
+**Enqueued by trigger, not by the action.** `appointments_notifications` fires
+after insert or after a change to `status` / `starts_at`, so every path that
+touches an appointment — customer web, admin calendar, walk-in, a future
+import — produces the same messages without remembering to. It also means the
+rows are written inside the booking transaction: a booking that commits always
+has its confirmation queued, and one that rolls back never does.
+
+| Event | When | Scheduled for |
+| --- | --- | --- |
+| `booking_confirmation` | insert, status pending or confirmed | now |
+| `reminder` | insert, and again on reschedule | `starts_at` − the customer's lead (default 24 h) |
+| `reschedule` | `starts_at` changed while active | now |
+| `cancellation` | status → `cancelled` | now |
+| `review_request` | status → `completed` | `completed_at` + 3 h |
+
+A reminder whose time is no longer the appointment's is flipped to `skipped`
+with `error = 'superseded'` in the same statement that queues its replacement.
+Demo rows and `source = 'import'` are skipped entirely, as is any appointment
+with no reachable contact.
+
+**Opt-out** is `app.notifications_enabled`: absence of a row means yes, and a
+business-specific `notification_preferences` row beats the account-wide one, so
+muting one salon does not mute the rest.
+
+**The worker.** `claim_notification_deliveries(limit)` is `service_role`-only
+and claims with `for update skip locked`, so two instances never take the same
+row. Claiming flips the row to `sending` *before* the provider call: a crash
+leaves evidence instead of a silent second send. Rows stuck in `sending` are
+reclaimed after 15 minutes and abandoned after five attempts.
+
+**Channels.** `lib/notifications/channels/` holds one adapter per transport
+behind a `ChannelAdapter` interface. Email resolves to Resend when
+`RESEND_API_KEY` and `RESEND_FROM` are set, otherwise to a console adapter that
+refuses to configure itself in production — a deployment missing its key leaves
+messages queued and visible rather than marking them sent. SMS, WhatsApp, Viber
+and push are real enum values with no adapter; they resolve to `null` and the
+row goes back in the queue instead of being faked.
+
+`Idempotency-Key` goes to the provider too. Our unique key stops re-enqueueing;
+the provider's stops a retry after an ambiguous failure, where the request
+landed but the response never came back.
+
+**Rendering happens at send time**, from the appointment, not from a snapshot
+on the outbox row. A name corrected after booking reaches the customer
+corrected, and no personal data is duplicated into the queue. Copy lives in
+`messages/{bg,en,ro}.json` under `notifications`; the HTML is a single-column
+inline-styled table with the light-mode brand colours written out literally,
+because no mail client resolves CSS variables.
+
+**Driving it.** `GET /api/cron/notifications` drains the queue, authorized by a
+bearer `CRON_SECRET` compared in constant time; `POST` does the same and
+schedules a second pass via `after()` so a fresh booking's confirmation does not
+wait for the next tick. `vercel.json` schedules it every minute — note that
+Vercel's Hobby plan only permits daily crons, so a Pro plan (or any external
+scheduler holding the secret) is required for minute-level reminders.
+
+---
+
 ## 8b. AI assistant
 
 `lib/ai/` defines an `AssistantProvider` interface with one OpenAI
@@ -564,14 +644,13 @@ traction claim may appear unless it is real.
 5. Availability fetches a 21-day window in one call and analytics aggregates six
    months in TypeScript. Both are fine at salon volume and both become RPCs
    before a chain uses them.
-6. Password reset is not implemented; the "forgot password" link is a
-   placeholder.
-7. Notification channels other than email are shown as "soon"; there is no
-   provider behind any of them. Sending is Prompt 4.
+6. Notification channels other than email have no provider and resolve to
+   `null` (§8c). A queued SMS stays queued rather than being marked sent.
 8. `payment_records` has no provider. Deposits are modelled but unused.
-9. Staff invitations create an `invited` membership row but send no email, and
-   nothing yet promotes that row to `active` when the invitee signs in — that
-   match-on-login step is still to write.
+9. Staff invitations are claimed on sign-in and again in the business layout
+   (`claim_pending_invitations`), but no invitation *email* is sent yet — the
+   invitee has to be told out of band. Wiring it to the outbox is the next
+   step; the outbox currently only carries appointment events.
 10. Multi-location is modelled throughout but only lightly exercised: the
     calendar filters by location on the booking side, and the admin calendar
     shows all locations at once.
@@ -583,3 +662,9 @@ traction claim may appear unless it is real.
 13. The generated visual set and the AI assistant are both live (§4, §8b). The
     key lives only in `.env.local`; Vercel needs `OPENAI_API_KEY` set as a
     server-side env var at deploy time (Prompt 5).
+14. `SUPABASE_SECRET_KEY` is not in `.env.local`, so the notification worker
+    cannot run locally — it is the only thing between the queue and a real
+    send. Copy it from the Supabase dashboard (Settings → API → secret key).
+15. Marketing campaigns still only preview an audience. `marketing_messages`
+    has its own `idempotency_key` and is not yet wired to the outbox; the
+    campaign sender is the remaining half of Prompt 4's growth work.

@@ -768,5 +768,53 @@
       "disclaimer": "The assistant can be wrong. Check important numbers in the calendar and analytics.",
       "dataNote": "We send only aggregate metrics for the selected period — no names, emails or phone numbers."
     }
+  },
+  "notifications": {
+    "booking_confirmation": {
+      "subject": "Your appointment at {business} is booked",
+      "heading": "You're booked in",
+      "body": "{business} has confirmed your appointment. If anything changes, you can cancel or move it from your profile."
+    },
+    "reminder": {
+      "subject": "Reminder: {business}, {when}",
+      "heading": "See you soon",
+      "body": "A reminder about your upcoming appointment at {business}. If you can't make it, cancel in time so the slot goes to someone else."
+    },
+    "cancellation": {
+      "subject": "Your appointment at {business} was cancelled",
+      "heading": "Appointment cancelled",
+      "body": "Your booking at {business} has been cancelled. Book a new time whenever it suits you."
+    },
+    "reschedule": {
+      "subject": "New time at {business}: {when}",
+      "heading": "Your appointment moved",
+      "body": "Your booking at {business} is now at a different time. If this wasn't you, contact the salon."
+    },
+    "review_request": {
+      "subject": "How was {business}?",
+      "heading": "How did it go?",
+      "body": "Thanks for trusting {business}. A minute of your time helps the salon and the next person deciding."
+    },
+    "marketing": {
+      "subject": "News from {business}",
+      "heading": "News from {business}",
+      "body": "You're receiving this because you agreed to hear about offers from {business}."
+    },
+    "label": {
+      "service": "Service",
+      "when": "When",
+      "staff": "With",
+      "where": "Where",
+      "phone": "Phone"
+    },
+    "action": {
+      "manageBooking": "View your booking",
+      "leaveReview": "Leave a review",
+      "bookAgain": "Book again"
+    },
+    "footer": {
+      "signature": "The {business} team",
+      "sentBy": "Sent with GLOWA"
+    }
   }
 }

@@ -768,5 +768,53 @@
       "disclaimer": "Asistentul poate greși. Verifică cifrele importante în calendar și analize.",
       "dataNote": "Trimitem doar indicatori agregați pentru perioada selectată — fără nume, e-mailuri sau telefoane."
     }
+  },
+  "notifications": {
+    "booking_confirmation": {
+      "subject": "Programarea ta la {business} este confirmată",
+      "heading": "Gata, ești programat",
+      "body": "{business} ți-a confirmat programarea. Dacă se schimbă ceva, o poți anula sau muta din profilul tău."
+    },
+    "reminder": {
+      "subject": "Memento: {business}, {when}",
+      "heading": "Ne vedem curând",
+      "body": "Îți amintim de programarea ta la {business}. Dacă nu poți ajunge, anuleaz-o din timp ca locul să rămână liber."
+    },
+    "cancellation": {
+      "subject": "Programarea ta la {business} a fost anulată",
+      "heading": "Programare anulată",
+      "body": "Programarea ta la {business} a fost anulată. Alege o oră nouă când îți convine."
+    },
+    "reschedule": {
+      "subject": "Oră nouă la {business}: {when}",
+      "heading": "Ți-am mutat programarea",
+      "body": "Programarea ta la {business} este acum la altă oră. Dacă nu ai făcut tu schimbarea, contactează salonul."
+    },
+    "review_request": {
+      "subject": "Cum a fost la {business}?",
+      "heading": "Cum a fost?",
+      "body": "Mulțumim că ai ales {business}. Un minut din timpul tău ajută salonul și pe următorul client."
+    },
+    "marketing": {
+      "subject": "Noutăți de la {business}",
+      "heading": "Noutăți de la {business}",
+      "body": "Primești acest mesaj pentru că ai acceptat să afli despre ofertele {business}."
+    },
+    "label": {
+      "service": "Serviciu",
+      "when": "Când",
+      "staff": "Cu",
+      "where": "Unde",
+      "phone": "Telefon"
+    },
+    "action": {
+      "manageBooking": "Vezi programarea",
+      "leaveReview": "Lasă o recenzie",
+      "bookAgain": "Programează-te din nou"
+    },
+    "footer": {
+      "signature": "Echipa {business}",
+      "sentBy": "Trimis prin GLOWA"
+    }
   }
 }

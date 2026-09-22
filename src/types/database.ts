@@ -828,6 +828,91 @@ export type Database = {
           },
         ]
       }
+      notification_deliveries: {
+        Row: {
+          appointment_id: string | null
+          attempts: number
+          business_id: string
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          error: string | null
+          event_type: Database["public"]["Enums"]["notification_event"]
+          id: string
+          idempotency_key: string
+          last_attempt_at: string | null
+          locale: string
+          profile_id: string | null
+          provider: string | null
+          provider_message_id: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          attempts?: number
+          business_id: string
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error?: string | null
+          event_type: Database["public"]["Enums"]["notification_event"]
+          id?: string
+          idempotency_key: string
+          last_attempt_at?: string | null
+          locale?: string
+          profile_id?: string | null
+          provider?: string | null
+          provider_message_id?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          attempts?: number
+          business_id?: string
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error?: string | null
+          event_type?: Database["public"]["Enums"]["notification_event"]
+          id?: string
+          idempotency_key?: string
+          last_attempt_at?: string | null
+          locale?: string
+          profile_id?: string | null
+          provider?: string | null
+          provider_message_id?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_deliveries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_deliveries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           business_id: string | null
@@ -1477,6 +1562,35 @@ export type Database = {
           to: "appointments"
           isOneToOne: true
           isSetofReturn: false
+        }
+      }
+      claim_notification_deliveries: {
+        Args: { p_limit?: number }
+        Returns: {
+          appointment_id: string | null
+          attempts: number
+          business_id: string
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          error: string | null
+          event_type: Database["public"]["Enums"]["notification_event"]
+          id: string
+          idempotency_key: string
+          last_attempt_at: string | null
+          locale: string
+          profile_id: string | null
+          provider: string | null
+          provider_message_id: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "notification_deliveries"
+          isOneToOne: false
+          isSetofReturn: true
         }
       }
       claim_pending_invitations: { Args: never; Returns: number }
