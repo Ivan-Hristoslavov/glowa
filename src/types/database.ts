@@ -1479,6 +1479,50 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_business: {
+        Args: {
+          p_address?: string
+          p_category: Database["public"]["Enums"]["business_category"]
+          p_city: string
+          p_currency?: string
+          p_locale?: string
+          p_name: string
+          p_phone?: string
+          p_timezone?: string
+        }
+        Returns: {
+          booking_policy: Json
+          category: Database["public"]["Enums"]["business_category"]
+          cover_image_url: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          default_locale: string
+          description: Json | null
+          email: string | null
+          gallery: Json
+          google_review_url: string | null
+          id: string
+          is_demo: boolean
+          legal_name: string | null
+          logo_url: string | null
+          name: string
+          phone: string | null
+          search_vector: unknown
+          short_pitch: Json | null
+          slug: string
+          status: Database["public"]["Enums"]["business_status"]
+          timezone: string
+          updated_at: string
+          website: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "businesses"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       get_available_slots: {
         Args: {
           p_from: string
@@ -1491,6 +1535,37 @@ export type Database = {
           ends_at: string
           staff_profile_id: string
           starts_at: string
+        }[]
+      }
+      get_business_dashboard: {
+        Args: { p_business_id: string; p_from: string; p_to: string }
+        Returns: {
+          appointments_cancelled: number
+          appointments_completed: number
+          appointments_no_show: number
+          appointments_total: number
+          average_rating: number
+          booked_minutes: number
+          capacity_minutes: number
+          completed_revenue_cents: number
+          expected_revenue_cents: number
+          new_clients: number
+          returning_clients: number
+          review_count: number
+          unanswered_reviews: number
+        }[]
+      }
+      preview_campaign_audience: {
+        Args: { p_audience?: Json; p_business_id: string; p_limit?: number }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+          last_visit_at: string
+          phone: string
+          tags: string[]
+          total_spend_cents: number
+          total_visits: number
         }[]
       }
       reschedule_appointment: {

@@ -9,6 +9,7 @@ const handleI18nRouting = createIntlMiddleware(routing);
 /** Paths (after the locale prefix) that require a signed-in user. */
 const PROTECTED_PREFIXES = [
   "/dashboard",
+  "/onboarding",
   "/profile",
   "/bookings",
   "/favorites",

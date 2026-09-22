@@ -79,6 +79,11 @@ delete from public.businesses where is_demo;
   buffers and the business's lead-time and advance-window policy.
 - **Customer area** — bookings with cancel and reschedule, favourites, reviews,
   notification preferences, avatar upload, add-to-calendar.
+- **Business app** (`/dashboard`) — onboarding, metrics, a live day/week calendar
+  with staff columns and drag-to-move, services, team and working hours, a CRM
+  that builds itself from appointments, review replies, payment records,
+  campaign drafts with audience preview, analytics, and an AI assistant that
+  only ever sees aggregate figures.
 
 ## Security notes
 
@@ -91,3 +96,5 @@ delete from public.businesses where is_demo;
 - A customer cannot set a booking's price, duration, tenant or status: a BEFORE
   trigger derives them from the service.
 - OAuth tokens live in the `private` schema, which no client role can reach.
+- The AI assistant runs server-side and receives aggregate metrics only — never
+  client names, emails, phone numbers or notes.

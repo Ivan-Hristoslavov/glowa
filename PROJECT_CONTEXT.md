@@ -19,16 +19,22 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | --- | --- | --- |
 | Prompt 1 | Foundation, design system, Supabase, auth, i18n | **Done** |
 | Prompt 2 | Customer experience: discovery, booking, profile, calendar | **Done** |
-| Prompt 3 | Business app: dashboard, calendar, staff, services, CRM, marketing | Not started |
+| Prompt 3 | Business app: dashboard, calendar, staff, services, CRM, marketing | **Done** |
 | Prompt 4 | Integrations, AI, growth layer | Not started |
 | Prompt 5 | Production polish, QA, Vercel | Not started |
 
-Verified at the end of Prompt 2: `npm run lint`, `npm run typecheck` and
-`npm run build` pass. Booking was exercised end to end in the browser (search →
-business → service → specialist → slot → confirm → detail → reschedule) and
-over the REST API (double-book rejected, tampered insert normalised, cancel and
-status history correct). The Supabase security advisor reports no unintended
-findings — see §9.
+Verified at the end of Prompt 3: `npm run lint`, `npm run typecheck` and
+`npm run build` pass (68 static entries, 28 routes). The business app was
+exercised in the browser as a real owner: dashboard metrics, calendar with live
+updates confirmed subscribed, a walk-in created from the front desk, a
+deliberate double-book refused with the localized overlap message, the CRM
+record appearing on its own, team and analytics rendering. Prompt 2's customer
+flow was re-verified end to end earlier. The Supabase security advisor reports
+no unintended findings — see §9.
+
+Two schema bugs were found *by* that browser pass and fixed (§6, migrations
+0013 and 0014): a walk-in entered by name alone failed a check constraint, and
+the CRM trigger skipped it for the same reason.
 
 ---
 
@@ -82,27 +88,40 @@ src/
       (auth)/               signed-out surface
         actions.ts          signIn / signUp / signOut
         login/  signup/
-      (customer)/           signed-in surface
+      (customer)/           signed-in customer surface
         profile/            dashboard: counts, next appointment
         bookings/           list (+ loading.tsx) and [id]/ detail
-        favorites/  reviews/  settings/
+        favorites/  reviews/  settings/  onboarding/
+      (business)/           signed-in business surface
+        layout.tsx          sidebar shell; redirects to /onboarding with no membership
+        dashboard/          metrics + today's schedule
+          calendar/  clients/[clientId]/  services/  staff/
+          reviews/  payments/  marketing/  analytics/  assistant/  settings/
     api/appointments/[id]/ics/   .ics download (RLS-protected)
     auth/confirm/  auth/signout/
     not-found.tsx  globals.css
   components/
+    admin/         nav, switcher, editors, metric card
+      calendar/    board, appointment dialog, block-time dialog
+      charts/      shell, bar, horizontal bar
     auth/ booking/ brand/ common/ customer/ discovery/ layout/ ui/
   i18n/            routing · request · navigation
   lib/
-    actions/       booking · favorites · reviews · settings  ("use server")
+    actions/       booking · favorites · reviews · settings · business ·
+                   catalog · crm · admin-appointments · marketing · assistant
+                   ("use server" — every export is a callable endpoint)
+      guard.ts     requireMembership + Postgres error mapping (server-only)
+    ai/            assistant provider abstraction: types · openai · index
     calendar/      provider adapters: types · google · ics
-    queries/       server-only reads: discovery · appointments
+    queries/       server-only reads: discovery · appointments · business
     supabase/      client · server · proxy · admin
     business-categories.ts   shared client+server constants
     booking-errors.ts        RPC hint -> message key
+    timezone.ts    wall-clock <-> instant helpers for the admin calendar
     env.ts  format.ts  localized.ts  utils.ts
   types/database.ts
   proxy.ts
-messages/          bg.json · en.json · ro.json (316 keys each, verified equal)
+messages/          bg.json · en.json · ro.json (595 keys each, verified equal)
 supabase/          migrations/ · seed.sql
 ```
 
@@ -110,6 +129,14 @@ Domain boundary rule: a surface owns its chrome; shared logic goes to `src/lib`
 and shared visuals to `src/components`. Anything importing `server-only` must
 never be reachable from a client component — that is why the category constants
 live in `lib/business-categories.ts` rather than in `lib/queries/discovery.ts`.
+
+Two rules worth stating because breaking them is silent:
+
+- **Every export from a `"use server"` module is a public endpoint.** No helper
+  exports, no placeholders — if it does not need to be callable from a browser,
+  it does not belong in an actions file.
+- **`lib/actions/guard.ts` is `server-only`, not `"use server"`.** It is imported
+  *by* actions; it is not one.
 
 ---
 
@@ -290,13 +317,29 @@ business id the caller manages for business media, resolved through
 | `…130200_helper_execute_grants.sql` | EXECUTE on the helpers that CHECK constraints call |
 | `…140000_rpc_execute_lockdown.sql` | revoke RPC EXECUTE from PUBLIC |
 | `…140100_rpc_anon_revoke.sql` | revoke write RPCs from `anon` by name; close default privileges on functions |
+| `…090000_business_workspace.sql` | onboarding RPC, CRM sync trigger, dashboard metrics, campaign audience, realtime |
+| `…100000_walkin_identity.sql` | a walk-in appointment may be identified by name alone |
+| `…100100_crm_walkin_sync.sql` | same for `business_clients`; CRM trigger accepts a name; backfill |
 
-Two of these were written because a check failed, not from a plan:
-`130200` because a CHECK-constraint function's EXECUTE is verified as the writing
-role (unlike a trigger function's, which is checked at `CREATE TRIGGER`), so
-every insert failed with *permission denied for function is_localized_text*; and
-`140100` because Supabase's default privileges grant functions to `anon`
-explicitly, so revoking from `PUBLIC` alone left the write RPCs reachable.
+Four of these were written because something failed, not from a plan:
+
+- `130200` — a CHECK-constraint function's EXECUTE is verified as the *writing*
+  role (unlike a trigger function's, checked at `CREATE TRIGGER`), so every
+  insert failed with *permission denied for function is_localized_text*.
+- `140100` — Supabase's default privileges grant functions to `anon`
+  explicitly, so revoking from `PUBLIC` alone left the write RPCs reachable
+  while signed out.
+- `100000` and `100100` — `appointments_identified_customer` and
+  `business_clients_identified` both required a profile, an email or a phone.
+  That is right for self-service booking and wrong at the front desk: a salon
+  writing down "Иван, 14:00" has a name and nothing else. The insert failed a
+  check constraint the UI could only report as a generic error, and the CRM
+  trigger silently skipped the same rows. Both now accept a name, and the CRM
+  matches on it as the weakest of four branches. Found by using the calendar,
+  not by reading the schema.
+
+The `100100` backfill has to set `app.trusted_write`: a migration runs as the
+owner, which the customer guard trigger treats as "not a member" and refuses.
 
 Regenerate types after any change: `npm run db:types`.
 
@@ -329,6 +372,90 @@ Regenerate types after any change: `npm run db:types`.
   affordance instead of offering a dead end. Tokens will go to
   `private.calendar_credentials`; appointments map to provider event ids through
   `calendar_event_links`, never a Google column on `appointments`.
+
+---
+
+## 8a. Business app
+
+The admin lives under `/dashboard` behind `(business)/layout.tsx`, which
+requires an *active membership* — the proxy only requires a session. With no
+membership it redirects to `/onboarding`.
+
+**Which business.** `getActiveMembership()` lists the caller's real memberships
+and picks the one named by the `glowa_business` cookie, falling back to the
+first. The cookie only ever *selects from that list*, so a tampered value
+resolves to nothing rather than to someone else's salon.
+
+**Roles.** `owner` and `admin` administer; `manager` runs calendar, services and
+clients; `staff` reads the team calendar. `requireMembership(businessId, level)`
+in `lib/actions/guard.ts` gives each action a clear refusal code; RLS remains
+the enforcement.
+
+**Onboarding.** `public.create_business` is SECURITY INVOKER and does the whole
+setup in one transaction: business (as a draft), primary location, a
+Tuesday–Saturday default week, an owner membership (via the existing trigger)
+and a bookable staff profile for the owner. `app.next_free_slug` is DEFINER
+because draft slugs are not readable by the caller, so an invoker-side
+uniqueness check would hand out a slug already taken. Publishing refuses a
+business with no active service — a dead search result helps nobody.
+
+**Calendar.** Day and week views, staff columns, a 15-minute grid, closed time
+shaded so an empty column reads as *closed* rather than *free*. Drag-and-drop
+moves an appointment (duration preserved); the exclusion constraint refuses an
+overlap and it surfaces as a localized message rather than a stack trace.
+Blocked time is `staff_time_off`. Everything renders in the **salon's**
+timezone via `lib/timezone.ts`, whose `instantFromZoned` does a second offset
+pass so the hour around a DST change lands correctly.
+
+**Realtime.** `public.appointments` is in the `supabase_realtime` publication
+with `replica identity full`. The board subscribes per business and calls
+`router.refresh()`; RLS applies to the subscription, so a subscriber only
+receives rows their policies already allow. The status dot turns green only on
+`SUBSCRIBED`, so "live" is never claimed without evidence.
+
+**CRM.** `business_clients` rows are derived from appointments by
+`app.sync_business_client`, not typed twice. Only a transition *into*
+`completed` moves visits and spend, so replaying an update never double-counts.
+Matching is profile → email → phone → name, weakest last.
+
+**Dashboard and analytics.** `public.get_business_dashboard` is SECURITY
+INVOKER, so every underlying read stays behind RLS; the membership check only
+turns "silently all zeros" into a clear error. Utilisation is booked minutes
+over the staff working minutes in the range. Analytics aggregates a six-month
+window in TypeScript — fine at salon volume, an RPC when a chain outgrows it.
+
+**Charts.** Coral `#D96C61` (light) / `#DA6A62` (dark) with blue `#2A78D6` /
+`#3987E5`. The pair was run through the dataviz validator against GLOWA's own
+surfaces and passes the lightness band, chroma floor, CVD separation (worst
+adjacent protan ΔE 19.3), normal-vision floor and 3:1 contrast in both modes.
+**A green companion was tried first and failed**: coral and green sit on top of
+each other for protanopes (ΔE 3.8). Dark is re-stepped, not flipped — the light
+coral is above the dark lightness band. One y-scale, legend for two series,
+direct labels, a hover tooltip, and a visually hidden table per chart.
+
+**Payments, marketing and the assistant are honest about their state.** Payment
+records and the schema exist with no provider behind them; campaigns save as
+drafts and audiences can be previewed as a *count* (names stay on the server)
+but nothing sends; the assistant renders a "not configured" panel unless
+`OPENAI_API_KEY` is set. Each says so on screen rather than offering a control
+that does nothing.
+
+---
+
+## 8b. AI assistant
+
+`lib/ai/` defines an `AssistantProvider` interface with one OpenAI
+implementation. `getAssistantProvider()` returns `null` without a key, so "not
+configured" is a first-class state the UI explains rather than a request that
+fails at the end.
+
+What the model receives is fixed by `AssistantContext`: business name, currency,
+timezone, locale, the dashboard metrics for the current month, the active
+service list, and a count of bookable staff. **No client names, emails, phone
+numbers or notes** — the assistant answers operational questions and drafts
+copy, and neither needs personal data. The system prompt forbids inventing
+appointments, prices or availability, and states it cannot create, move or
+cancel bookings. The key is read server-side only.
 
 ---
 
@@ -368,7 +495,16 @@ set encrypted_password = extensions.crypt('<choose-one>', extensions.gen_salt('b
 where email = 'qa.customer@glowa.test';
 ```
 
-Remove it:
+It was also made an **owner of `demo-hair-lab-sofia`** so the business app has
+real appointments, staff and services to render. That membership is a fixture
+too, not part of `seed.sql`:
+
+```sql
+delete from public.business_members
+where profile_id = '22222222-2222-4222-8222-222222222201';
+```
+
+Remove the user itself:
 
 ```sql
 delete from auth.users where email = 'qa.customer@glowa.test';
@@ -386,22 +522,35 @@ traction claim may appear unless it is real.
 
 ## 11. Known TODOs for the next prompts
 
-1. **Prompt 3** — the business app: dashboard, calendar with drag/drop, staff,
-   services, client CRM, reviews moderation, payments, marketing, analytics.
-2. The marketing pages render dynamically because `SiteHeader` reads auth state.
-   Split the auth-dependent part into a client island or a `<Suspense>` boundary
-   so the landing page and search can be static.
-3. Password reset is not implemented; the "forgot password" link is a placeholder.
-4. `pricing` from the brief's route map does not exist yet.
-5. No tests. Prompt 5 asks for tests on critical booking logic; the exclusion
-   constraint, the guard trigger and `get_available_slots` are the first targets.
-6. Availability day-summary RPC (see the scaling note in §6).
-7. Notification channels other than email are shown as "soon" — there is no
-   provider behind them yet. Sending itself is Prompt 4.
-8. `payment_records` has no provider behind it; the booking flow never asks for
-   payment. Deposits are modelled but unused.
-9. Supabase CLI installed locally is **v2.26.9**; `supabase db query` needs 2.79+
-   and `supabase db advisors` needs 2.81.3+. Schema work goes through the
-   Supabase MCP server instead. `brew upgrade supabase` when convenient.
-10. OpenAI-generated visual assets (§4) — no OpenAI connection is configured in
-    the build environment yet, so nothing has been generated.
+1. **Prompt 4** — integrations, AI and growth: Google Calendar OAuth end to end,
+   the notification channel abstraction and actual sending (email first),
+   idempotency on send, review-request automation, referral and QR booking
+   links, and the OpenAI-generated visual asset set.
+2. **Prompt 5** — production polish, QA, tests, Vercel.
+3. The marketing pages render dynamically because `SiteHeader` reads auth state.
+   Split the auth-dependent part into a client island or a `<Suspense>`
+   boundary so the landing page and search can be static.
+4. No tests anywhere. The first targets are the exclusion constraint, the
+   customer guard trigger, `get_available_slots`, and the CRM sync trigger —
+   all four are where a regression would be both easy and expensive.
+5. Availability fetches a 21-day window in one call and analytics aggregates six
+   months in TypeScript. Both are fine at salon volume and both become RPCs
+   before a chain uses them.
+6. Password reset is not implemented; the "forgot password" link is a
+   placeholder.
+7. Notification channels other than email are shown as "soon"; there is no
+   provider behind any of them. Sending is Prompt 4.
+8. `payment_records` has no provider. Deposits are modelled but unused.
+9. Staff invitations create an `invited` membership row but send no email, and
+   nothing yet promotes that row to `active` when the invitee signs in — that
+   match-on-login step is still to write.
+10. Multi-location is modelled throughout but only lightly exercised: the
+    calendar filters by location on the booking side, and the admin calendar
+    shows all locations at once.
+11. Supabase CLI installed locally is **v2.26.9**; `supabase db query` needs
+    2.79+ and `supabase db advisors` needs 2.81.3+. Schema work goes through the
+    Supabase MCP server instead. `brew upgrade supabase` when convenient.
+12. **Leaked password protection is still disabled** in the Supabase dashboard
+    (see §9). Worth enabling before real users.
+13. No OpenAI connection is configured in the build environment, so no generated
+    visual assets exist (§4) and the AI assistant renders its unavailable state.

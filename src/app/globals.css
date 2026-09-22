@@ -129,6 +129,15 @@
   --sidebar-border: var(--glowa-line);
   --sidebar-ring: var(--glowa-coral);
 
+  /* Chart series. Validated with the dataviz validator against this surface:
+     lightness band, chroma floor, CVD separation (worst adjacent protan
+     dE 19.3), normal-vision floor and 3:1 contrast all pass. Coral is the
+     brand accent; blue is its CVD-safe partner - a green would read as the
+     same hue as coral for protanopes. */
+  --viz-series-1: #d96c61;
+  --viz-series-2: #2a78d6;
+  --viz-grid: color-mix(in oklab, var(--glowa-ink) 10%, transparent);
+
   /* 14px controls; cards pick up radius-xl (~20px) per the brand kit. */
   --radius: 0.875rem;
 }
@@ -184,6 +193,12 @@
   --sidebar-accent-foreground: var(--glowa-ink);
   --sidebar-border: var(--glowa-line);
   --sidebar-ring: var(--glowa-coral);
+
+  /* Re-stepped for the dark surface, not flipped: the light coral sits above
+     the dark lightness band. Re-validated against #121616. */
+  --viz-series-1: #da6a62;
+  --viz-series-2: #3987e5;
+  --viz-grid: color-mix(in oklab, var(--glowa-ink) 14%, transparent);
 }
 
 @layer base {
