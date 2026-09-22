@@ -567,6 +567,47 @@ cancel bookings. The key is read server-side only.
 
 ---
 
+## 8d. Tests
+
+`npm run check` is lint + typecheck + `vitest run`. Two layers, split by what
+each can honestly assert.
+
+**Unit (`src/**/*.test.ts`, vitest, node environment).** Pure modules only — no
+React renderer, no database, no network. What is covered and why:
+
+- `lib/timezone` — the DST arithmetic. Both EU transitions in 2026, in Sofia
+  and Bucharest, asserting that a wall-clock slot still reads the same on the
+  clock after the change. This is the bug that silently moves everyone's
+  appointments by an hour twice a year.
+- `lib/localized` — the jsonb fallback chain, including a whitespace-only
+  translation counting as missing.
+- `lib/notifications/channels/email-resend` — the idempotency header reaches
+  the provider, which failures are retryable, and the address builder.
+- `lib/notifications/channels` registry — and specifically that email resolves
+  to **nothing** in production without a key, rather than to the console
+  adapter. That is the whole point of the fallback design, so it is a test.
+
+`server-only` has no runtime outside Next's bundler, so vitest aliases it to
+`test/server-only-stub.ts` — the guard stays in the source instead of being
+deleted to make tests run.
+
+**Database (`supabase/tests/database/*.test.sql`, pgTAP, `npm run test:db`).**
+17 assertions across the four invariants that are enforced in Postgres
+*because* the application cannot be trusted to remember them: the exclusion
+constraint (overlap rejected, back-to-back allowed, a cancellation releasing
+the slot), the customer write guard being present and BEFORE, CRM sync
+including the name-only walk-in, and the notification outbox (unique key,
+confirmation queued, unreachable walk-in queued nothing, cancellation
+superseding the reminder).
+
+These need a local stack (`supabase start`), which needs Docker. Docker was not
+running when they were written, so the pgTAP harness itself has not been
+executed — every assertion in it was verified individually against the live
+schema inside a transaction that was then rolled back. Run `npm run test:db`
+once Docker is available to confirm the harness.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -638,9 +679,10 @@ traction claim may appear unless it is real.
 3. The marketing pages render dynamically because `SiteHeader` reads auth state.
    Split the auth-dependent part into a client island or a `<Suspense>`
    boundary so the landing page and search can be static.
-4. No tests anywhere. The first targets are the exclusion constraint, the
-   customer guard trigger, `get_available_slots`, and the CRM sync trigger —
-   all four are where a regression would be both easy and expensive.
+4. `get_available_slots` has no test of its own — the pgTAP suite covers the
+   constraint and the triggers around it, but not slot generation against
+   working hours, time off and existing bookings. That is the next one to
+   write, and it is the biggest remaining gap (§8d).
 5. Availability fetches a 21-day window in one call and analytics aggregates six
    months in TypeScript. Both are fine at salon volume and both become RPCs
    before a chain uses them.

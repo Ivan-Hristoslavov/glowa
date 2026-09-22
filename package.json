@@ -8,9 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:db": "supabase test db",
     "db:types": "supabase gen types typescript --project-id reaobqtmwmesmpgdkzwi > src/types/database.ts.tmp && mv src/types/database.ts.tmp src/types/database.ts || (rm -f src/types/database.ts.tmp && exit 1)",
     "db:diff": "supabase db diff",
-    "check": "npm run lint && npm run typecheck",
+    "check": "npm run lint && npm run typecheck && npm run test",
     "assets:build": "node scripts/build-brand-assets.mjs",
     "assets:social": "node scripts/build-social-card.mjs"
   },
@@ -36,13 +39,14 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "sharp": "^0.35.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.1"
   }
 }

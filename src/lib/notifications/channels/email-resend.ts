@@ -24,9 +24,7 @@ export const resendEmailChannel: ChannelAdapter = {
       return { ok: false, error: "no_email_address", retryable: false };
     }
 
-    const to = message.to.name
-      ? `${sanitizeDisplayName(message.to.name)} <${message.to.email}>`
-      : message.to.email;
+    const to = formatAddress(message.to.name, message.to.email);
 
     let response: Response;
     try {
@@ -77,7 +75,18 @@ export const resendEmailChannel: ChannelAdapter = {
   },
 };
 
-/** Keeps a display name from breaking out of the RFC 5322 address. */
-function sanitizeDisplayName(name: string) {
-  return name.replace(/["<>\\\r\n]/g, "").trim() || "GLOWA";
+/**
+ * Builds one RFC 5322 address that a display name cannot break out of.
+ *
+ * Stripping the obvious characters is not enough: a bare comma in an unquoted
+ * display name splits the field into two addresses, so `Eve, attacker` would
+ * become a second recipient. Quoting the name makes commas, angle brackets and
+ * the rest inert, and CR/LF still has to go first because no quoting protects
+ * against header injection.
+ */
+function formatAddress(name: string | null, email: string) {
+  const cleaned = (name ?? "").replace(/[\r\n]+/g, " ").trim();
+  if (!cleaned) return email;
+  const escaped = cleaned.replace(/([\\"])/g, "\\$1");
+  return `"${escaped}" <${email}>`;
 }
