@@ -304,6 +304,40 @@
     },
     "stepsLabel": "Steps"
   },
+  "waitlist": {
+    "cta": "Join the waitlist",
+    "title": "Waitlist",
+    "subtitle": "If someone cancels in the window you choose, we'll write to you.",
+    "from": "From",
+    "to": "Until",
+    "service": "Service",
+    "anyService": "Any service",
+    "staff": "Specialist",
+    "anyStaff": "Anyone",
+    "note": "Note",
+    "notePlaceholder": "e.g. afternoons only",
+    "fairness": "We tell up to three people at once. The slot goes to whoever books first — nobody is booked in automatically.",
+    "join": "Add me",
+    "joined": "You're on the waitlist.",
+    "leave": "Leave the list",
+    "left": "Left the waitlist.",
+    "empty": "Nobody is waiting right now.",
+    "listTitle": "Waitlist",
+    "waitingSince": "Waiting since {date}",
+    "statusLabel": {
+      "waiting": "Waiting",
+      "offered": "Notified",
+      "booked": "Booked",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "errors": {
+      "already_waiting": "You're already on this salon's waitlist.",
+      "unauthenticated": "Please sign in.",
+      "invalid": "Check the dates.",
+      "generic": "Something went wrong. Try again."
+    }
+  },
   "bookings": {
     "title": "My bookings",
     "upcoming": "Upcoming",
@@ -435,7 +469,8 @@
       "cancellation": "Cancellation",
       "reschedule": "Reschedule",
       "review_request": "Review request",
-      "marketing": "Offers and campaigns"
+      "marketing": "Offers and campaigns",
+      "waitlist_offer": "A freed slot from the waitlist"
     },
     "channelSoon": "Soon",
     "calendar": "Calendar",
@@ -902,6 +937,11 @@
       "heading": "How did it go?",
       "body": "Thanks for trusting {business}. A minute of your time helps the salon and the next person deciding."
     },
+    "waitlist_offer": {
+      "subject": "A slot opened up at {business}",
+      "heading": "A slot opened up",
+      "body": "{when} at {business} has just been freed. You're on the waitlist, so you're hearing first — the slot goes to whoever books it first."
+    },
     "marketing": {
       "subject": "News from {business}",
       "heading": "News from {business}",
@@ -918,7 +958,8 @@
       "manageBooking": "View your booking",
       "leaveReview": "Leave a review",
       "bookAgain": "Book again",
-      "viewSalon": "View the salon"
+      "viewSalon": "View the salon",
+      "bookSlot": "Book this slot"
     },
     "footer": {
       "signature": "The {business} team",

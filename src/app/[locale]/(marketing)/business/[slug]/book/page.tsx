@@ -85,6 +85,7 @@ export default async function BookPage({
       </div>
 
       <BookingFlow
+        businessId={business.id}
         slug={slug}
         businessName={business.name}
         timezone={business.timezone}

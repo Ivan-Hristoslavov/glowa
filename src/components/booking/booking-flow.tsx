@@ -6,6 +6,7 @@ import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { SlotPicker } from "@/components/booking/slot-picker";
+import { WaitlistDialog } from "@/components/booking/waitlist-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -37,6 +38,7 @@ export type BookingStaff = {
 };
 
 type BookingFlowProps = {
+  businessId: string;
   slug: string;
   businessName: string;
   timezone: string;
@@ -54,6 +56,7 @@ type StepId = "location" | "service" | "staff" | "time" | "confirm";
 const ANY_STAFF = "__any__";
 
 export function BookingFlow({
+  businessId,
   slug,
   businessName,
   timezone,
@@ -346,6 +349,21 @@ export function BookingFlow({
               locale={locale}
               value={slot}
               onChange={setSlot}
+              waitlist={
+                <WaitlistDialog
+                  businessId={businessId}
+                  services={services.map((entry) => ({
+                    id: entry.id,
+                    name: entry.name,
+                  }))}
+                  staff={staff.map((member) => ({
+                    id: member.id,
+                    displayName: member.displayName,
+                  }))}
+                  defaultServiceId={service.id}
+                  isSignedIn={isSignedIn}
+                />
+              }
             />
           </section>
         ) : null}

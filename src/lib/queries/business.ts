@@ -369,3 +369,24 @@ export async function listCampaignStats(businessId: string) {
   }
   return byCampaign;
 }
+
+export async function listWaitlist(businessId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("waitlist_entries")
+    .select(
+      `id, status, from_date, to_date, note, created_at, offered_at,
+       profiles ( full_name ),
+       services ( name ),
+       staff_profiles ( display_name )`,
+    )
+    .eq("business_id", businessId)
+    .in("status", ["waiting", "offered"])
+    .order("created_at")
+    .limit(100);
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export type WaitlistRow = Awaited<ReturnType<typeof listWaitlist>>[number];

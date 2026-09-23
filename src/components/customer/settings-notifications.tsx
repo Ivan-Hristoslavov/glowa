@@ -18,6 +18,7 @@ const EVENTS: EventType[] = [
   "cancellation",
   "reschedule",
   "review_request",
+  "waitlist_offer",
   "marketing",
 ];
 

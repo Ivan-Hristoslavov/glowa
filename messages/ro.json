@@ -304,6 +304,40 @@
     },
     "stepsLabel": "Pași"
   },
+  "waitlist": {
+    "cta": "Intră pe lista de așteptare",
+    "title": "Listă de așteptare",
+    "subtitle": "Dacă cineva anulează în perioada aleasă, îți scriem.",
+    "from": "De la",
+    "to": "Până la",
+    "service": "Serviciu",
+    "anyService": "Orice serviciu",
+    "staff": "Specialist",
+    "anyStaff": "Oricine",
+    "note": "Notă",
+    "notePlaceholder": "ex. doar după-amiaza",
+    "fairness": "Anunțăm până la trei persoane deodată. Locul revine celui care se programează primul — nimeni nu este programat automat.",
+    "join": "Adaugă-mă",
+    "joined": "Ești pe lista de așteptare.",
+    "leave": "Ieși de pe listă",
+    "left": "Ai ieșit de pe listă.",
+    "empty": "Nimeni nu așteaptă acum.",
+    "listTitle": "Listă de așteptare",
+    "waitingSince": "Așteaptă din {date}",
+    "statusLabel": {
+      "waiting": "Așteaptă",
+      "offered": "Anunțat",
+      "booked": "Programat",
+      "expired": "Expirat",
+      "cancelled": "Anulat"
+    },
+    "errors": {
+      "already_waiting": "Ești deja pe lista acestui salon.",
+      "unauthenticated": "Autentifică-te.",
+      "invalid": "Verifică datele.",
+      "generic": "Ceva n-a mers. Încearcă din nou."
+    }
+  },
   "bookings": {
     "title": "Programările mele",
     "upcoming": "Următoare",
@@ -435,7 +469,8 @@
       "cancellation": "Anulare",
       "reschedule": "Reprogramare",
       "review_request": "Invitație la recenzie",
-      "marketing": "Oferte și campanii"
+      "marketing": "Oferte și campanii",
+      "waitlist_offer": "Un loc eliberat din lista de așteptare"
     },
     "channelSoon": "În curând",
     "calendar": "Calendar",
@@ -902,6 +937,11 @@
       "heading": "Cum a fost?",
       "body": "Mulțumim că ai ales {business}. Un minut din timpul tău ajută salonul și pe următorul client."
     },
+    "waitlist_offer": {
+      "subject": "S-a eliberat un loc la {business}",
+      "heading": "S-a eliberat un loc",
+      "body": "Ora {when} la {business} tocmai s-a eliberat. Ești pe lista de așteptare, așa că afli primul — locul revine celui care se programează primul."
+    },
     "marketing": {
       "subject": "Noutăți de la {business}",
       "heading": "Noutăți de la {business}",
@@ -918,7 +958,8 @@
       "manageBooking": "Vezi programarea",
       "leaveReview": "Lasă o recenzie",
       "bookAgain": "Programează-te din nou",
-      "viewSalon": "Vezi salonul"
+      "viewSalon": "Vezi salonul",
+      "bookSlot": "Rezervă acest loc"
     },
     "footer": {
       "signature": "Echipa {business}",

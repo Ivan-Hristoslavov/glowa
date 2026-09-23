@@ -6,14 +6,31 @@ does. Anyone regenerating or extending the set should start here.
 ## Provenance
 
 All photographic and illustrative assets were generated for this project with
-**OpenAI image generation** (`gpt-image-2.5-sunburst`, 2026-09-22) from the
-prompts below, then converted to WebP with `sips`. Nothing is stock, nothing is
-scraped, no real person or real salon is depicted, and no third-party logo
-appears in any file.
+**OpenAI image generation**, then converted to WebP with `sharp`. Nothing is
+stock, nothing is scraped, no real person or real salon is depicted, and no
+third-party logo appears in any file.
+
+| Set | Model | Date |
+| --- | --- | --- |
+| Photographs (heroes, categories, covers, OG backdrop) | `gpt-image-2.5-flare` | 2026-09-23 |
+| Flat illustrations (`feature-*`, `empty-*`) | `gpt-image-2.5-sunburst` | 2026-09-22 |
+
+**Why two models.** The first photographic pass used `sunburst` and came out
+glossy and posed — retouched-stock, which is the one thing the brand is not.
+The same prompts were run through both 2.5 models side by side: `flare` gave
+warmer light, more honest skin, and crucially left the calm third of the frame
+the layout needs for text. The illustrations were left on `sunburst`; they are
+marks behind UI copy at 600px, and re-rolling them would only shuffle
+randomness.
+
+**The prompts did more work than the model swap.** Naming the camera, the lens
+and the light, asking for pores, stray hairs and fabric weave, and stating
+outright that this is a photograph and not a render is what moved the set from
+catalogue to documentary.
 
 The originating PNGs are not committed — they are ~1.5–2 MB each and the WebP
-derivatives are what the app serves. Re-run the generation script with the
-prompts here to reproduce them.
+derivatives are what the app serves. `scripts/generate-brand-assets.mjs` holds
+every prompt and reproduces the set.
 
 ## Art direction
 
@@ -110,7 +127,18 @@ which is why this is not optional polish.
 
 ## Regenerating
 
-The generation script is resumable: an asset whose PNG already exists is
-skipped, so a failed run can be repeated without paying for the same image
-twice. `OPENAI_API_KEY` must be set in the server environment; it is never
-committed and never reaches the browser.
+```
+OPENAI_API_KEY=… node scripts/generate-brand-assets.mjs --out .assets-src \
+  --model gpt-image-2.5-flare
+node scripts/build-brand-assets.mjs .assets-src
+npm run assets:social .assets-src/og-backdrop.png
+```
+
+The generation script lives in the repository now rather than in a scratch
+directory — the committed WebP files could not previously be reproduced by
+anyone else, which made the provenance above unverifiable.
+
+It is resumable: an asset whose PNG already exists is skipped, so a failed run
+can be repeated without paying for the same image twice. `--only <name>`
+regenerates one, `--force` overwrites. `OPENAI_API_KEY` must be in the server
+environment; it is never committed and never reaches the browser.

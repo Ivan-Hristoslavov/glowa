@@ -782,6 +782,37 @@ with the appointment left where it was.
 
 ---
 
+## 8j. The waitlist
+
+A cancelled slot is revenue that already existed and is about to evaporate.
+Until now it evaporated silently.
+
+- A customer joins from the point where booking dead-ends: the day they wanted
+  is full. One live entry per person per business, enforced by a partial unique
+  index rather than a check in the action.
+- `app.offer_freed_slot` fires when an appointment leaves the active statuses,
+  matches waiting entries on day, service, stylist and time window, and
+  enqueues a `waitlist_offer` through the same outbox as everything else.
+  Oldest entry first, capped at three, so one cancellation does not turn a long
+  list into a stampede.
+- **It notifies; it does not book.** Being put into a time you never confirmed
+  is worse than missing it, and the email says plainly that the slot goes to
+  whoever books first.
+- A BEFORE trigger owns `status`, `offered_at` and `offer_count`, and clamps a
+  start date in the past. A customer may only cancel their own entry; marking
+  one booked or expired is the salon's.
+- `sweep_waitlist` (service role) expires entries whose window has passed and
+  returns an unanswered offer to `waiting` after two days rather than leaving
+  it stuck.
+
+Verified live: a forged `status: offered` and `offer_count: 99` were both
+overwritten on insert, a past start date was clamped to today, a second join to
+the same salon was refused, another account's entry was invisible, and
+cancelling a future appointment flipped the entry to `offered` and queued the
+message.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all

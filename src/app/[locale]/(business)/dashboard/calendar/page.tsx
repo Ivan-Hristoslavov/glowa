@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { CalendarBoard } from "@/components/admin/calendar/calendar-board";
+import {
+  WaitlistPanel,
+  type WaitlistView,
+} from "@/components/admin/waitlist-panel";
 import type {
   CalendarAppointment,
   CalendarService,
@@ -14,6 +18,7 @@ import {
   getActiveMembership,
   getBusinessWorkspace,
   listAppointmentsInRange,
+  listWaitlist,
 } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -50,6 +55,7 @@ export default async function CalendarPage({
   const workspace = await getBusinessWorkspace(membership.businessId);
   const timezone = workspace.business?.timezone ?? "Europe/Sofia";
   const activeLocale = locale as Locale;
+  const waitlistT = await getTranslations("waitlist");
 
   const sp = await searchParams;
   const view = firstParam(sp.view) === "week" ? "week" : "day";
@@ -68,8 +74,9 @@ export default async function CalendarPage({
   const to = instantFromZoned(addDaysToKey(days[days.length - 1], 1), 0, timezone);
 
   const supabase = await createClient();
-  const [appointments, { data: timeOff }] = await Promise.all([
+  const [appointments, waitlistRows, { data: timeOff }] = await Promise.all([
     listAppointmentsInRange(membership.businessId, from, to),
+    listWaitlist(membership.businessId),
     supabase
       .from("staff_time_off")
       .select("id, staff_profile_id, starts_at, ends_at, reason")
@@ -121,8 +128,28 @@ export default async function CalendarPage({
     bufferAfterMinutes: appointment.services?.buffer_after_minutes ?? 0,
   }));
 
+  const waitlist: WaitlistView[] = (waitlistRows ?? []).map((row) => ({
+    id: row.id,
+    status: row.status,
+    // A waitlist entry always belongs to an account, so a missing name means
+    // the profile has none rather than that this is a walk-in.
+    customerName: row.profiles?.full_name ?? "—",
+    serviceName: row.services ? pickLocalized(row.services.name, activeLocale) : null,
+    staffName: row.staff_profiles?.display_name ?? null,
+    fromDate: row.from_date,
+    toDate: row.to_date,
+    note: row.note,
+    createdAt: row.created_at,
+  }));
+
+  const waitlistDateFormatter = new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+  });
+
   return (
-    <CalendarBoard
+    <div className="space-y-8">
+      <CalendarBoard
       businessId={membership.businessId}
       timezone={timezone}
       locale={activeLocale}
@@ -148,6 +175,17 @@ export default async function CalendarPage({
           endsAt: row.ends_at,
           reason: row.reason,
         }))}
-    />
+      />
+
+      <section className="space-y-3">
+        <h2 className="font-heading text-xl">{waitlistT("listTitle")}</h2>
+        <WaitlistPanel
+          businessId={membership.businessId}
+          entries={waitlist}
+          canManage={canManage(membership.role)}
+          dateFormatter={waitlistDateFormatter}
+        />
+      </section>
+    </div>
   );
 }

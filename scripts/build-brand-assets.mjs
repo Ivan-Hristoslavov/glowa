@@ -30,8 +30,14 @@ const RULES = [
 
 await mkdir(dest, { recursive: true });
 
+// `og-backdrop` is an input to the social card, not a file the app serves, so
+// it is deliberately not converted into `public/brand`.
 const files = (await readdir(source)).filter(
-  (name) => name.endsWith(".png") && !name.startsWith("_") && name !== "test.png",
+  (name) =>
+    name.endsWith(".png") &&
+    !name.startsWith("_") &&
+    name !== "test.png" &&
+    name !== "og-backdrop.png",
 );
 
 let total = 0;

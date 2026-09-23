@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 const WINDOW_DAYS = 21;
 
 type SlotPickerProps = {
+  /** Rendered next to the "no slots" state; the dead end is the whole point. */
+  waitlist?: React.ReactNode;
   serviceId: string;
   staffProfileId: string | null;
   locationId: string | null;
@@ -31,6 +33,7 @@ type SlotPickerProps = {
 };
 
 export function SlotPicker({
+  waitlist,
   serviceId,
   staffProfileId,
   locationId,
@@ -151,7 +154,14 @@ export function SlotPicker({
   }
 
   if (!activeDay) {
-    return <EmptyState icon={CalendarX2} title={t("noSlots")} body={t("noSlotsBody")} />;
+    return (
+      <EmptyState
+        icon={CalendarX2}
+        title={t("noSlots")}
+        body={t("noSlotsBody")}
+        action={waitlist}
+      />
+    );
   }
 
   const times = byDay.get(activeDay) ?? [];
@@ -206,7 +216,12 @@ export function SlotPicker({
       </ScrollArea>
 
       {times.length === 0 ? (
-        <EmptyState icon={CalendarX2} title={t("noSlots")} body={t("noSlotsBody")} />
+        <EmptyState
+          icon={CalendarX2}
+          title={t("noSlots")}
+          body={t("noSlotsBody")}
+          action={waitlist}
+        />
       ) : (
         <div
           className="grid grid-cols-3 gap-2 sm:grid-cols-4"

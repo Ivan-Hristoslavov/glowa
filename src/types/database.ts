@@ -1525,6 +1525,89 @@ export type Database = {
           },
         ]
       }
+      waitlist_entries: {
+        Row: {
+          business_id: string
+          created_at: string
+          earliest_minutes: number | null
+          from_date: string
+          id: string
+          latest_minutes: number | null
+          note: string | null
+          offer_count: number
+          offered_at: string | null
+          profile_id: string
+          service_id: string | null
+          staff_profile_id: string | null
+          status: string
+          to_date: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          earliest_minutes?: number | null
+          from_date: string
+          id?: string
+          latest_minutes?: number | null
+          note?: string | null
+          offer_count?: number
+          offered_at?: string | null
+          profile_id: string
+          service_id?: string | null
+          staff_profile_id?: string | null
+          status?: string
+          to_date: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          earliest_minutes?: number | null
+          from_date?: string
+          id?: string
+          latest_minutes?: number | null
+          note?: string | null
+          offer_count?: number
+          offered_at?: string | null
+          profile_id?: string
+          service_id?: string | null
+          staff_profile_id?: string | null
+          status?: string
+          to_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_entries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_entries_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_entries_staff_profile_id_fkey"
+            columns: ["staff_profile_id"]
+            isOneToOne: false
+            referencedRelation: "staff_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       business_rating_summary: {
@@ -1827,6 +1910,7 @@ export type Database = {
           slug: string
         }[]
       }
+      sweep_waitlist: { Args: never; Returns: number }
       unsubscribe_marketing: {
         Args: { p_token: string }
         Returns: {
@@ -1878,6 +1962,7 @@ export type Database = {
         | "reschedule"
         | "review_request"
         | "marketing"
+        | "waitlist_offer"
       payment_kind: "deposit" | "full" | "refund"
       payment_status:
         | "pending"
@@ -2070,6 +2155,7 @@ export const Constants = {
         "reschedule",
         "review_request",
         "marketing",
+        "waitlist_offer",
       ],
       payment_kind: ["deposit", "full", "refund"],
       payment_status: [

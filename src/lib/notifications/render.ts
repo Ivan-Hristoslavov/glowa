@@ -151,6 +151,14 @@ function primaryAction(
     return { label: t("action.leaveReview"), href };
   }
 
+  if (context.event === "waitlist_offer") {
+    // Straight into booking: the whole value of the message is being first.
+    return {
+      label: t("action.bookSlot"),
+      href: `${base}/business/${context.businessSlug}/book`,
+    };
+  }
+
   if (context.event === "cancellation") {
     return {
       label: t("action.bookAgain"),
