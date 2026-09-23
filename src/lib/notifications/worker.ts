@@ -247,6 +247,8 @@ async function deliverOne(
     text: rendered.text,
     html: rendered.html,
     idempotencyKey: delivery.idempotency_key,
+    profileId: delivery.profile_id,
+    url: `/${context.locale}/bookings`,
   });
 
   if (result.ok) {
@@ -336,6 +338,8 @@ async function deliverCampaign(
     text: rendered.text,
     html: rendered.html,
     idempotencyKey: delivery.idempotency_key,
+    profileId: delivery.profile_id,
+    url: `/${locale}/business/${campaign.businesses.slug}`,
   });
 
   if (result.ok) {

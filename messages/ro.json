@@ -485,6 +485,24 @@
       "720": "12 ore",
       "1440": "1 zi",
       "2880": "2 zile"
+    },
+    "push": {
+      "title": "Notificări pe acest dispozitiv",
+      "turnOn": "Activează notificările",
+      "turnOff": "Dezactivează notificările",
+      "enabled": "Notificările sunt active.",
+      "disabled": "Notificările sunt oprite.",
+      "onNote": "Acest browser va primi notificări chiar și când GLOWA e închisă.",
+      "offNote": "Îți cerem permisiunea o singură dată.",
+      "unsupported": "Acest browser nu suportă notificări. Pe iPhone, adaugă mai întâi GLOWA pe ecranul principal.",
+      "blocked": "Notificările sunt blocate pentru acest site. Permite-le din setările browserului.",
+      "errors": {
+        "unauthenticated": "Autentifică-te.",
+        "invalid": "Ceva n-a fost în regulă cu abonarea.",
+        "generic": "N-a mers. Încearcă din nou."
+      },
+      "retry": "Încearcă din nou",
+      "failed": "Nu am putut activa notificările în acest browser."
     }
   },
   "profile": {

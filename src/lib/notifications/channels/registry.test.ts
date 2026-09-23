@@ -41,9 +41,20 @@ describe("resolveChannel", () => {
 
   it("has no adapter for the channels GLOWA cannot actually send", () => {
     setNodeEnv("development");
-    for (const channel of ["sms", "whatsapp", "viber", "push"] as const) {
+    for (const channel of ["sms", "whatsapp", "viber"] as const) {
       expect(resolveChannel(channel)).toBeNull();
     }
+  });
+
+  it("resolves push only once VAPID keys are present", () => {
+    setNodeEnv("production");
+    // Web Push needs no vendor account, so the adapter is real - but it still
+    // must not pretend to work with no keys to sign with.
+    expect(resolveChannel("push")).toBeNull();
+
+    vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-public");
+    vi.stubEnv("VAPID_PRIVATE_KEY", "test-private");
+    expect(resolveChannel("push")?.provider).toBe("web-push");
   });
 });
 

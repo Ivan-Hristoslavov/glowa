@@ -49,6 +49,8 @@ const serverEnvSource = {
   RESEND_FROM: process.env.RESEND_FROM,
   RESEND_REPLY_TO: process.env.RESEND_REPLY_TO,
   CRON_SECRET: process.env.CRON_SECRET,
+  VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+  VAPID_SUBJECT: process.env.VAPID_SUBJECT,
 } satisfies Record<string, string | undefined>;
 
 export type ServerEnvKey = keyof typeof serverEnvSource;

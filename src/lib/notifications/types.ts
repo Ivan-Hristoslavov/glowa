@@ -27,6 +27,13 @@ export type OutgoingMessage = {
    * side too. Our own unique key only protects against re-enqueueing.
    */
   idempotencyKey: string;
+  /**
+   * Set when the recipient has a GLOWA account. Email does not need it; push
+   * does, because a subscription belongs to a person rather than an address.
+   */
+  profileId?: string | null;
+  /** Where tapping the notification should land. */
+  url?: string;
 };
 
 export type SendOutcome =

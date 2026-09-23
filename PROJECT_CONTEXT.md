@@ -813,6 +813,53 @@ message.
 
 ---
 
+## 8k. Installable, and push
+
+GLOWA installs to a home screen and can buzz a phone. That is most of what a
+native app buys, without an app store or a second codebase.
+
+**Manifest** (`src/app/manifest.ts`). `start_url` carries the default locale
+because every route is prefixed - an unprefixed start URL would bounce the
+installed app through a redirect on every launch. Shortcuts go straight to the
+calendar and to search.
+
+**Service worker** (`public/sw.js`) does exactly two things: receive pushes and
+serve `offline.html` when a navigation fails. It deliberately does **not**
+cache the app shell or API responses. A booking calendar quietly serving
+yesterday's data is worse than one that says it is offline - the entire product
+is about which minutes are free *right now*. The offline page is standalone
+HTML with inline styles, because when it is shown there is no network to fetch
+a stylesheet or a font from.
+
+**Push** (`lib/notifications/channels/push-web.ts`) is a real `ChannelAdapter`,
+so it goes through the same outbox, the same retry policy and the same
+idempotency key as email. It is the one push mechanism that needs no vendor:
+VAPID keys are self-issued, so nothing sits between a salon and its own phone.
+
+- A subscription is a capability - whoever holds the endpoint can push to that
+  device - so `push_subscriptions` is strictly own-row under RLS and is read
+  with the service role only inside the adapter.
+- `endpoint` is unique, so re-subscribing a browser updates rather than adding
+  a second row that would make every notification arrive twice.
+- A 404 or 410 from the push service means the browser threw the subscription
+  away; those rows are deleted rather than retried forever.
+- The toggle is a button, never a prompt on load. A permission dialog that
+  appears unasked is the fastest route to being permanently blocked, and a
+  blocked browser cannot be asked again.
+
+Verified by capturing a real signed request: `aes128gcm` encryption, a VAPID
+JWT whose `aud` is the push service origin and whose `sub` is our mailto, a
+12-hour expiry, our public key in the header, and a body that is ciphertext
+(186 bytes for 72 bytes of plaintext) - the push service relays the
+notification without being able to read it.
+
+**Not yet verified end to end**: subscribing from a real browser. The embedded
+browser used for testing refuses to fetch `/sw.js` and has notifications
+denied, so the browser half of the handshake is untested. Testing it needs
+HTTPS (`next dev --experimental-https`) or a deployment.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -916,6 +963,12 @@ traction claim may appear unless it is real.
 13. The generated visual set and the AI assistant are both live (§4, §8b). The
     key lives only in `.env.local`; Vercel needs `OPENAI_API_KEY` set as a
     server-side env var at deploy time (Prompt 5).
+18. Web push is implemented and its signing verified, but the browser half of
+    the handshake has never run (§8k). Test it on a real device before
+    telling anyone the feature exists.
+19. VAPID keys live in `.env.local` only. They must be set in the deployment
+    environment too - regenerating them silently invalidates every existing
+    subscription, so generate once and keep them.
 14. `SUPABASE_SECRET_KEY` is not in `.env.local`, so the notification worker
     cannot run locally — it is the only thing between the queue and a real
     send. Copy it from the Supabase dashboard (Settings → API → secret key).

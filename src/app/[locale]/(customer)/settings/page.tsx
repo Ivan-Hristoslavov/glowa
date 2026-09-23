@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 
+import { PushToggle } from "@/components/common/push-toggle";
 import { NotificationSettings } from "@/components/customer/settings-notifications";
 import { PreferencesForm } from "@/components/customer/settings-preferences-form";
 import { ProfileSettingsForm } from "@/components/customer/settings-profile-form";
@@ -113,8 +114,15 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/sett
             height={96}
             className="hidden size-24 shrink-0 rounded-xl object-cover sm:block"
           />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 space-y-6">
             <NotificationSettings initial={notificationState} />
+
+            <div className="border-border/70 space-y-2 border-t pt-5">
+              <h3 className="text-sm font-medium">{t("push.title")}</h3>
+              <PushToggle
+                vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null}
+              />
+            </div>
           </div>
         </div>
       </Section>

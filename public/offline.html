@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Няма връзка · GLOWA</title>
+    <style>
+      /* Standalone on purpose: this page is served when the network is gone,
+         so it cannot fetch a stylesheet or a font. Colours are the brand
+         tokens written out, and the system font stack is what is already on
+         the device. */
+      :root {
+        color-scheme: light dark;
+        --bg: #f8f3ee;
+        --ink: #0f1212;
+        --muted: #6b625b;
+        --coral: #d96c61;
+        --line: #ddd5ce;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0e0e;
+          --ink: #f7f2ed;
+          --muted: #a3ada7;
+          --coral: #ef8e83;
+          --line: #26302f;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        text-align: center;
+      }
+      main { max-width: 26rem; }
+      .mark {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--coral);
+        margin: 0 0 20px;
+      }
+      h1 { margin: 0 0 12px; font-size: 1.6rem; line-height: 1.25; }
+      p { margin: 0 0 24px; color: var(--muted); line-height: 1.6; }
+      button {
+        font: inherit;
+        font-weight: 600;
+        padding: 12px 22px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--coral);
+        color: #fffaf8;
+        cursor: pointer;
+      }
+      .note { font-size: 0.8rem; margin-top: 24px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="mark">GLOWA</p>
+      <h1>Няма връзка с интернет</h1>
+      <p>
+        Не можем да покажем свободните часове, без да ги проверим. Провери
+        връзката и опитай пак.
+      </p>
+      <button type="button" onclick="location.reload()">Опитай пак</button>
+      <p class="note">
+        No connection · Fără conexiune
+      </p>
+    </main>
+  </body>
+</html>

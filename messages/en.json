@@ -485,6 +485,24 @@
       "720": "12 hours",
       "1440": "1 day",
       "2880": "2 days"
+    },
+    "push": {
+      "title": "Notifications on this device",
+      "turnOn": "Turn on notifications",
+      "turnOff": "Turn off notifications",
+      "enabled": "Notifications are on.",
+      "disabled": "Notifications are off.",
+      "onNote": "This browser will get notifications even when GLOWA is closed.",
+      "offNote": "We'll ask for permission once.",
+      "unsupported": "This browser doesn't support notifications. On iPhone, add GLOWA to your home screen first.",
+      "blocked": "Notifications are blocked for this site. Allow them in your browser settings.",
+      "errors": {
+        "unauthenticated": "Please sign in.",
+        "invalid": "Something was wrong with the subscription.",
+        "generic": "That didn't work. Try again."
+      },
+      "retry": "Try again",
+      "failed": "We couldn't set up notifications in this browser."
     }
   },
   "profile": {

@@ -56,6 +56,14 @@ export async function generateMetadata({
     },
     description: t("subtitle"),
     applicationName: "glowa",
+    manifest: "/manifest.webmanifest",
+    // Installed on an iPhone this is how the app behaves: no browser chrome,
+    // and a status bar that blends into the dark header.
+    appleWebApp: {
+      capable: true,
+      title: "GLOWA",
+      statusBarStyle: "black-translucent",
+    },
     alternates: alternatesFor(`/${locale}`),
     openGraph: {
       type: "website",
