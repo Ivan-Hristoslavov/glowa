@@ -352,6 +352,17 @@
       "generic": "The review was not saved. Please try again."
     }
   },
+  "unsubscribe": {
+    "title": "Unsubscribe",
+    "doneTitle": "Done — you're unsubscribed",
+    "doneBody": "You won't receive marketing messages from {business} any more.",
+    "alreadyTitle": "Already unsubscribed",
+    "alreadyBody": "{business} no longer sends you marketing messages.",
+    "unknownTitle": "This link isn't valid",
+    "unknownBody": "It may have expired or already been used. If you're still receiving messages, contact the salon.",
+    "stillBooked": "Confirmations and reminders for your own appointments continue — those aren't marketing.",
+    "home": "Back to home"
+  },
   "favorites": {
     "title": "Favourite salons",
     "empty": "No favourites yet",
@@ -741,7 +752,27 @@
       "emptyBody": "Create your first one — a “we miss you” for clients last seen 60 days ago.",
       "sendingDisabled": "Sending is not live yet",
       "sendingDisabledBody": "Messaging channels are connected in the next step. Until then campaigns are saved as drafts and audiences can be checked.",
-      "consentNote": "Only clients who explicitly consented to marketing are shown."
+      "consentNote": "Only clients who explicitly consented to marketing are shown.",
+      "sendingReady": "Sending is switched on.",
+      "sendingReadyBody": "Campaigns only reach clients who have consented, and every message carries an unsubscribe link.",
+      "send": "Send",
+      "sendNow": "Send now",
+      "sendCancel": "Cancel",
+      "sendConfirmTitle": "Send this campaign?",
+      "sendConfirmBody": "Messages go to every client who matches the segment and has consented.",
+      "sendConfirmCount": "Messages go to {count} clients.",
+      "sendConsentNote": "A sent email cannot be recalled. Clients without consent are skipped automatically.",
+      "sendQueued": "{count} messages queued.",
+      "sendEmpty": "No client matches the segment — nothing was sent.",
+      "delivered": "{sent} of {total} sent",
+      "sendError": {
+        "already_sent": "This campaign has already been sent.",
+        "empty_template": "A subject and body are missing in every language.",
+        "unauthenticated": "Please sign in.",
+        "not_a_member": "You don't have access to this business.",
+        "forbidden": "Manager rights are required.",
+        "generic": "Something went wrong. Try again."
+      }
     },
     "growth": {
       "title": "Growth",
@@ -869,11 +900,13 @@
     "action": {
       "manageBooking": "View your booking",
       "leaveReview": "Leave a review",
-      "bookAgain": "Book again"
+      "bookAgain": "Book again",
+      "viewSalon": "View the salon"
     },
     "footer": {
       "signature": "The {business} team",
-      "sentBy": "Sent with GLOWA"
+      "sentBy": "Sent with GLOWA",
+      "unsubscribe": "Unsubscribe from marketing"
     }
   },
   "pricing": {

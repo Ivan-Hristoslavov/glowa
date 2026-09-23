@@ -40,7 +40,7 @@ export type CampaignDraft = {
   lastVisitBeforeDays: string;
   minVisits: string;
   subject: Record<Locale, string>;
-  body: string;
+  body: Record<Locale, string>;
 };
 
 export function emptyCampaignDraft(): CampaignDraft {
@@ -50,7 +50,7 @@ export function emptyCampaignDraft(): CampaignDraft {
     lastVisitBeforeDays: "60",
     minVisits: "1",
     subject: { bg: "", en: "", ro: "" },
-    body: "",
+    body: { bg: "", en: "", ro: "" },
   };
 }
 
@@ -212,35 +212,43 @@ export function CampaignEditor({
             </TabsList>
             {routing.locales.map((value) => (
               <TabsContent key={value} value={value} className="mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`campaign-subject-${value}`}>{t("subject")}</Label>
-                  <Input
-                    id={`campaign-subject-${value}`}
-                    value={draft.subject[value]}
-                    onChange={(event) =>
-                      setDraft((current) => ({
-                        ...current,
-                        subject: { ...current.subject, [value]: event.target.value },
-                      }))
-                    }
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`campaign-subject-${value}`}>{t("subject")}</Label>
+                    <Input
+                      id={`campaign-subject-${value}`}
+                      value={draft.subject[value]}
+                      onChange={(event) =>
+                        setDraft((current) => ({
+                          ...current,
+                          subject: { ...current.subject, [value]: event.target.value },
+                        }))
+                      }
+                    />
+                  </div>
+
+                  {/* Per language, like the subject: a client reading Romanian
+                      should not get a Bulgarian paragraph under a Romanian
+                      subject line. */}
+                  <div className="space-y-2">
+                    <Label htmlFor={`campaign-body-${value}`}>{t("body")}</Label>
+                    <Textarea
+                      id={`campaign-body-${value}`}
+                      rows={5}
+                      maxLength={4000}
+                      value={draft.body[value]}
+                      onChange={(event) =>
+                        setDraft((current) => ({
+                          ...current,
+                          body: { ...current.body, [value]: event.target.value },
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
               </TabsContent>
             ))}
           </Tabs>
-
-          <div className="space-y-2">
-            <Label htmlFor="campaign-body">{t("body")}</Label>
-            <Textarea
-              id="campaign-body"
-              rows={5}
-              maxLength={4000}
-              value={draft.body}
-              onChange={(event) =>
-                setDraft((current) => ({ ...current, body: event.target.value }))
-              }
-            />
-          </div>
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>

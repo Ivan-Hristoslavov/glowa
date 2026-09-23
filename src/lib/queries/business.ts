@@ -332,3 +332,40 @@ export async function listGrowthLinks(businessId: string) {
 }
 
 export type GrowthLinkRow = Awaited<ReturnType<typeof listGrowthLinks>>[number];
+
+export type CampaignStats = {
+  queued: number;
+  sent: number;
+  failed: number;
+  skipped: number;
+};
+
+/**
+ * Per-campaign delivery counts, read from the outbox rather than stored on the
+ * campaign. A stored counter drifts the moment a retry succeeds; this cannot.
+ */
+export async function listCampaignStats(businessId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notification_deliveries")
+    .select("campaign_id, status")
+    .eq("business_id", businessId)
+    .eq("event_type", "marketing")
+    .not("campaign_id", "is", null)
+    .limit(10_000);
+
+  if (error) throw error;
+
+  const byCampaign = new Map<string, CampaignStats>();
+  for (const row of data ?? []) {
+    if (!row.campaign_id) continue;
+    const stats =
+      byCampaign.get(row.campaign_id) ??
+      { queued: 0, sent: 0, failed: 0, skipped: 0 };
+    // `sending` is in flight, which reads as queued to anyone looking at it.
+    const bucket = row.status === "sending" ? "queued" : row.status;
+    if (bucket in stats) stats[bucket as keyof CampaignStats] += 1;
+    byCampaign.set(row.campaign_id, stats);
+  }
+  return byCampaign;
+}

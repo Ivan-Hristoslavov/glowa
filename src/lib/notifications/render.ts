@@ -32,6 +32,58 @@ export type NotificationContext = {
 
 export type RenderedMessage = { subject: string; text: string; html: string };
 
+/**
+ * A campaign message. Unlike an appointment notification the copy is the
+ * business's own, so nothing here is translated - it is rendered in whichever
+ * language the business wrote for this recipient's locale.
+ */
+export type CampaignContext = {
+  locale: Locale;
+  businessName: string;
+  businessSlug: string;
+  subject: string;
+  body: string;
+  /** Per-recipient, opaque, and required: marketing without a way out is spam. */
+  unsubscribeUrl: string;
+};
+
+export async function renderCampaign(
+  context: CampaignContext,
+): Promise<RenderedMessage> {
+  const t = await getTranslations({
+    locale: context.locale,
+    namespace: "notifications",
+  });
+
+  const base = `${publicEnv.NEXT_PUBLIC_SITE_URL}/${context.locale}`;
+  const primary = {
+    label: t("action.viewSalon"),
+    href: `${base}/business/${context.businessSlug}`,
+  };
+
+  const text = [
+    context.body,
+    "",
+    `${primary.label}: ${primary.href}`,
+    "",
+    t("footer.signature", { business: context.businessName }),
+    `${t("footer.unsubscribe")}: ${context.unsubscribeUrl}`,
+  ].join("\n");
+
+  const html = renderHtml({
+    heading: context.subject,
+    body: context.body,
+    details: [],
+    primary,
+    unsubscribe: {
+      label: t("footer.unsubscribe"),
+      href: context.unsubscribeUrl,
+    },
+  });
+
+  return { subject: context.subject, text, html };
+}
+
 export async function renderNotification(
   context: NotificationContext,
 ): Promise<RenderedMessage> {
@@ -158,6 +210,7 @@ function renderHtml(input: {
   body: string;
   details: DetailLine[];
   primary: Action;
+  unsubscribe?: { label: string; href: string };
 }) {
   const rows = input.details
     .map(
@@ -173,6 +226,12 @@ function renderHtml(input: {
     ? `<a href="${escapeHtml(input.primary.href)}" style="display:inline-block;background:#d96c61;color:#fffaf8;text-decoration:none;padding:12px 22px;border-radius:14px;font-size:15px;font-weight:600;">${escapeHtml(input.primary.label)}</a>`
     : "";
 
+  // Only marketing carries it, and when it does it is a plain visible link,
+  // not a grey one-pixel afterthought.
+  const footer = input.unsubscribe
+    ? `<p style="margin:28px 0 0;padding-top:16px;border-top:1px solid #ddd5ce;font-size:12px;color:#6b625b;"><a href="${escapeHtml(input.unsubscribe.href)}" style="color:#6b625b;">${escapeHtml(input.unsubscribe.label)}</a></p>`
+    : "";
+
   return `<!doctype html>
 <html>
   <body style="margin:0;padding:24px;background:#f8f3ee;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -181,9 +240,10 @@ function renderHtml(input: {
         <td style="padding:32px;">
           <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#d96c61;font-weight:700;">GLOWA</p>
           <h1 style="margin:0 0 12px;font-size:22px;line-height:1.3;color:#0f1212;">${escapeHtml(input.heading)}</h1>
-          <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#4a2e2a;">${escapeHtml(input.body)}</p>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #ddd5ce;border-bottom:1px solid #ddd5ce;margin-bottom:24px;">${rows}</table>
+          <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#4a2e2a;white-space:pre-line;">${escapeHtml(input.body)}</p>
+          ${rows ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #ddd5ce;border-bottom:1px solid #ddd5ce;margin-bottom:24px;">${rows}</table>` : ""}
           ${button}
+          ${footer}
         </td>
       </tr>
     </table>

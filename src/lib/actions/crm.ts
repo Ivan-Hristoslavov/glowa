@@ -130,7 +130,11 @@ const campaignSchema = z.object({
     en: z.string().trim().max(200).optional(),
     ro: z.string().trim().max(200).optional(),
   }),
-  body: z.string().trim().max(4000).optional(),
+  body: z.object({
+    bg: z.string().trim().max(4000).optional(),
+    en: z.string().trim().max(4000).optional(),
+    ro: z.string().trim().max(4000).optional(),
+  }),
 });
 
 export async function upsertCampaign(
@@ -145,18 +149,24 @@ export async function upsertCampaign(
   const subject = Object.fromEntries(
     Object.entries(parsed.data.subject).filter(([, value]) => value?.trim()),
   );
+  // The subject was already per-language while the body was one string, which
+  // would mail a Bulgarian paragraph under a Romanian subject line.
+  const body = Object.fromEntries(
+    Object.entries(parsed.data.body).filter(([, value]) => value?.trim()),
+  );
 
   const payload = {
     business_id: parsed.data.businessId,
     name: parsed.data.name,
     type: parsed.data.type,
     channel: "email" as const,
-    // Sending is not wired up yet, so a campaign can only ever be a draft.
+    // Editing always lands a draft; `queue_campaign` is the only thing that
+    // moves a campaign out of it, and it refuses anything already sent.
     status: "draft" as const,
     audience: parsed.data.audience,
     template: {
       ...(Object.keys(subject).length ? { subject } : {}),
-      ...(parsed.data.body ? { body: parsed.data.body } : {}),
+      ...(Object.keys(body).length ? { body } : {}),
     },
     created_by: guard.userId,
   };
@@ -173,4 +183,37 @@ export async function upsertCampaign(
 
   revalidatePath("/[locale]/dashboard/marketing", "page");
   return { ok: true };
+}
+
+export type SendCampaignResult =
+  | { ok: true; queued: number }
+  | { ok: false; code: string };
+
+/**
+ * Queues a campaign. The RPC does the authorization, the audience selection
+ * and the idempotency, because all three have to happen in one transaction
+ * against rows a browser cannot see.
+ *
+ * Nothing is sent here: the rows land in the notification outbox and the same
+ * worker that handles reminders drains them. One queue, one retry policy.
+ */
+export async function sendCampaign(
+  businessId: string,
+  campaignId: string,
+): Promise<SendCampaignResult> {
+  const guard = await requireMembership(businessId, "manager");
+  if (!guard.ok) return guard;
+
+  const { data, error } = await guard.supabase.rpc("queue_campaign", {
+    p_campaign_id: campaignId,
+  });
+
+  if (error) {
+    // The RPC puts a stable code in `hint`; anything else stays generic so a
+    // Postgres string never reaches the screen.
+    return { ok: false, code: error.hint ?? "generic" };
+  }
+
+  revalidatePath("/[locale]/dashboard/marketing", "page");
+  return { ok: true, queued: data ?? 0 };
 }

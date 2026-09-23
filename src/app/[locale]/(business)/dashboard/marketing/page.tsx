@@ -5,13 +5,20 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import Image from "next/image";
 
 import { CampaignEditor, type CampaignDraft } from "@/components/admin/campaign-editor";
+import { CampaignSendButton } from "@/components/admin/campaign-send-button";
 import { EmptyState } from "@/components/common/empty-state";
 import { emptyStateArt, featureArt } from "@/lib/brand-assets";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
 import { isLocalizedText } from "@/lib/localized";
-import { canManage, getActiveMembership, listCampaigns } from "@/lib/queries/business";
+import { availableChannels } from "@/lib/notifications/channels";
+import {
+  canManage,
+  getActiveMembership,
+  listCampaigns,
+  listCampaignStats,
+} from "@/lib/queries/business";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.marketing");
@@ -28,8 +35,13 @@ export default async function MarketingPage({
   const membership = await getActiveMembership();
   if (!membership) return null;
 
-  const campaigns = await listCampaigns(membership.businessId);
+  const [campaigns, stats] = await Promise.all([
+    listCampaigns(membership.businessId),
+    listCampaignStats(membership.businessId),
+  ]);
   const editable = canManage(membership.role);
+  // Whether this deployment can actually send, rather than a hard-coded claim.
+  const canSend = availableChannels().includes("email");
 
   return (
     <div className="space-y-6">
@@ -49,9 +61,11 @@ export default async function MarketingPage({
         <div>
           <p className="flex items-start gap-2 text-sm font-medium">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-            {t("sendingDisabled")}
+            {canSend ? t("sendingReady") : t("sendingDisabled")}
           </p>
-          <p className="text-muted-foreground mt-2 text-sm">{t("sendingDisabledBody")}</p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            {canSend ? t("sendingReadyBody") : t("sendingDisabledBody")}
+          </p>
         </div>
       </div>
 
@@ -78,6 +92,14 @@ export default async function MarketingPage({
                 ? (campaign.template as Record<string, unknown>)
                 : {};
             const subject = isLocalizedText(template.subject) ? template.subject : {};
+            // Campaigns written before the body was localized stored it as a
+            // plain string. Carry it into the default locale rather than
+            // dropping the copy someone wrote.
+            const body = isLocalizedText(template.body)
+              ? template.body
+              : typeof template.body === "string"
+                ? { [routing.defaultLocale]: template.body }
+                : {};
 
             const draft: CampaignDraft = {
               id: campaign.id,
@@ -88,8 +110,12 @@ export default async function MarketingPage({
               subject: Object.fromEntries(
                 routing.locales.map((value) => [value, subject[value] ?? ""]),
               ) as Record<Locale, string>,
-              body: typeof template.body === "string" ? template.body : "",
+              body: Object.fromEntries(
+                routing.locales.map((value) => [value, body[value] ?? ""]),
+              ) as Record<Locale, string>,
             };
+
+            const campaignStats = stats.get(campaign.id) ?? null;
 
             return (
               <li
@@ -105,19 +131,41 @@ export default async function MarketingPage({
                       : null}
                   </p>
                 </div>
+                {campaignStats ? (
+                  <p className="text-muted-foreground text-sm tabular-nums">
+                    {t("delivered", {
+                      sent: campaignStats.sent,
+                      total:
+                        campaignStats.sent +
+                        campaignStats.queued +
+                        campaignStats.failed,
+                    })}
+                  </p>
+                ) : null}
                 <Badge variant="outline" className="font-normal">
                   {t(`status.${campaign.status}`)}
                 </Badge>
                 {editable ? (
-                  <CampaignEditor
-                    businessId={membership.businessId}
-                    campaign={draft}
-                    trigger={
-                      <Button variant="outline" size="sm">
-                        {t("save")}
-                      </Button>
-                    }
-                  />
+                  <>
+                    <CampaignEditor
+                      businessId={membership.businessId}
+                      campaign={draft}
+                      trigger={
+                        <Button variant="outline" size="sm">
+                          {t("save")}
+                        </Button>
+                      }
+                    />
+                    {campaign.status === "draft" ||
+                    campaign.status === "scheduled" ? (
+                      <CampaignSendButton
+                        businessId={membership.businessId}
+                        campaignId={campaign.id}
+                        recipients={null}
+                        disabled={!canSend}
+                      />
+                    ) : null}
+                  </>
                 ) : null}
               </li>
             );

@@ -522,6 +522,28 @@ row. Claiming flips the row to `sending` *before* the provider call: a crash
 leaves evidence instead of a silent second send. Rows stuck in `sending` are
 reclaimed after 15 minutes and abandoned after five attempts.
 
+**Campaigns use the same queue.** `marketing_messages` was designed in Prompt 1
+as a second per-recipient outbox, before `notification_deliveries` existed.
+Keeping both would have meant two queues, two status machines and two workers
+for one job, so it was dropped (empty, never written to) and the outbox gained
+`campaign_id` and `business_client_id`.
+
+`queue_campaign` is SECURITY DEFINER - `authenticated` has no INSERT on the
+outbox at all - and does the membership check itself. It refuses a campaign
+that is not a draft, refuses one with no subject or body, and keys each row
+`campaign:<campaign>:<client>`, so pressing send twice conflicts and does
+nothing rather than mailing everyone again. A campaign is marked `sent` by
+`finalize_campaign` only once nothing is left in flight; storing it at queue
+time would be a claim we could not back up.
+
+**Unsubscribe is not optional.** Every `business_clients` row carries an opaque
+`unsubscribe_token` (not derived from the email, so it cannot be guessed or
+edited into someone else's), every campaign email carries a visible link, and
+`/[locale]/unsubscribe/[token]` works signed out, in one click, from a mail
+client. It flips consent *and* marks that client's already-queued marketing
+`skipped` - an unsubscribe that only takes effect next time is not an
+unsubscribe. Appointment notifications are unaffected, and the page says so.
+
 **Channels.** `lib/notifications/channels/` holds one adapter per transport
 behind a `ChannelAdapter` interface. Email resolves to Resend when
 `RESEND_API_KEY` and `RESEND_FROM` are set, otherwise to a console adapter that
@@ -782,9 +804,11 @@ traction claim may appear unless it is real.
 14. `SUPABASE_SECRET_KEY` is not in `.env.local`, so the notification worker
     cannot run locally — it is the only thing between the queue and a real
     send. Copy it from the Supabase dashboard (Settings → API → secret key).
-15. Marketing campaigns still only preview an audience. `marketing_messages`
-    has its own `idempotency_key` and is not yet wired to the outbox; the
-    campaign sender is the remaining half of Prompt 4's growth work.
+15. Campaign sending has no scheduling UI: `scheduled_at` is honoured by the
+    queue (a row with a future `scheduled_for` simply waits) but the editor
+    only offers send-now. Campaign audience selection also has no upper bound
+    on recipients, which is fine at salon volume and wants a cap before it
+    is not.
 17. Bulgaria is on the euro, so BGN is gone from the defaults and every
     existing amount was redenominated at the official fixed rate
     (1 EUR = 1.95583 BGN, rounded to the cent) in migration 0019. The seeded

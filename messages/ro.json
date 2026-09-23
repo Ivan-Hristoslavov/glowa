@@ -352,6 +352,17 @@
       "generic": "Recenzia nu a fost salvată. Încearcă din nou."
     }
   },
+  "unsubscribe": {
+    "title": "Dezabonare",
+    "doneTitle": "Gata — te-ai dezabonat",
+    "doneBody": "Nu vei mai primi mesaje de marketing de la {business}.",
+    "alreadyTitle": "Ești deja dezabonat",
+    "alreadyBody": "{business} nu îți mai trimite mesaje de marketing.",
+    "unknownTitle": "Linkul nu este valid",
+    "unknownBody": "Poate a expirat sau a fost deja folosit. Dacă încă primești mesaje, contactează salonul.",
+    "stillBooked": "Confirmările și memento-urile pentru propriile programări continuă — acelea nu sunt marketing.",
+    "home": "Înapoi acasă"
+  },
   "favorites": {
     "title": "Saloane favorite",
     "empty": "Încă niciun favorit",
@@ -741,7 +752,27 @@
       "emptyBody": "Creează prima — un „ne lipsești” pentru clienții văzuți ultima dată acum 60 de zile.",
       "sendingDisabled": "Trimiterea nu este activă încă",
       "sendingDisabledBody": "Canalele de mesagerie se conectează la pasul următor. Până atunci campaniile se salvează ca ciorne și audiențele pot fi verificate.",
-      "consentNote": "Se afișează doar clienții care și-au dat explicit consimțământul."
+      "consentNote": "Se afișează doar clienții care și-au dat explicit consimțământul.",
+      "sendingReady": "Trimiterea este activă.",
+      "sendingReadyBody": "Campaniile ajung doar la clienții care și-au dat acordul, iar fiecare mesaj conține un link de dezabonare.",
+      "send": "Trimite",
+      "sendNow": "Trimite acum",
+      "sendCancel": "Anulează",
+      "sendConfirmTitle": "Trimiți campania?",
+      "sendConfirmBody": "Mesajele ajung la toți clienții care se potrivesc segmentului și și-au dat acordul.",
+      "sendConfirmCount": "Mesajele ajung la {count} clienți.",
+      "sendConsentNote": "Un e-mail trimis nu poate fi retras. Clienții fără acord sunt săriți automat.",
+      "sendQueued": "{count} mesaje în coadă.",
+      "sendEmpty": "Niciun client nu se potrivește segmentului — nu s-a trimis nimic.",
+      "delivered": "{sent} din {total} trimise",
+      "sendError": {
+        "already_sent": "Această campanie a fost deja trimisă.",
+        "empty_template": "Lipsesc subiectul și textul în toate limbile.",
+        "unauthenticated": "Autentifică-te.",
+        "not_a_member": "Nu ai acces la această afacere.",
+        "forbidden": "Sunt necesare drepturi de manager.",
+        "generic": "Ceva n-a mers. Încearcă din nou."
+      }
     },
     "growth": {
       "title": "Creștere",
@@ -869,11 +900,13 @@
     "action": {
       "manageBooking": "Vezi programarea",
       "leaveReview": "Lasă o recenzie",
-      "bookAgain": "Programează-te din nou"
+      "bookAgain": "Programează-te din nou",
+      "viewSalon": "Vezi salonul"
     },
     "footer": {
       "signature": "Echipa {business}",
-      "sentBy": "Trimis prin GLOWA"
+      "sentBy": "Trimis prin GLOWA",
+      "unsubscribe": "Dezabonează-te de la marketing"
     }
   },
   "pricing": {

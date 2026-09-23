@@ -4,8 +4,15 @@ import type { Locale } from "@/i18n/routing";
 import { routing } from "@/i18n/routing";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+import { publicEnv } from "@/lib/env";
+import { pickLocalized } from "@/lib/localized";
+
 import { resolveChannel } from "./channels";
-import { renderNotification, type NotificationContext } from "./render";
+import {
+  renderCampaign,
+  renderNotification,
+  type NotificationContext,
+} from "./render";
 import type { NotificationDelivery } from "./types";
 
 export type WorkerReport = {
@@ -29,6 +36,13 @@ const APPOINTMENT_SELECT = `
   staff_profiles ( display_name ),
   locations ( name, address_line1, city )
 ` as const;
+
+const CAMPAIGN_SELECT = `
+  id, template,
+  businesses!marketing_campaigns_business_id_fkey ( name, slug )
+` as const;
+
+const CLIENT_SELECT = `id, full_name, email, phone, unsubscribe_token` as const;
 
 /**
  * Drains the outbox once.
@@ -62,17 +76,30 @@ export async function runNotificationWorker(
     ),
   ];
 
-  const { data: appointments } = await supabase
-    .from("appointments")
-    .select(APPOINTMENT_SELECT)
-    .in("id", appointmentIds);
+  const campaignIds = uniqueIds(deliveries.map((d) => d.campaign_id));
+  const clientIds = uniqueIds(deliveries.map((d) => d.business_client_id));
 
-  const byId = new Map(
-    (appointments ?? []).map((appointment) => [appointment.id, appointment]),
-  );
+  // Three lookups for the whole batch rather than three per message.
+  const [appointments, campaigns, clients] = await Promise.all([
+    appointmentIds.length
+      ? supabase.from("appointments").select(APPOINTMENT_SELECT).in("id", appointmentIds)
+      : { data: [] as unknown[] },
+    campaignIds.length
+      ? supabase.from("marketing_campaigns").select(CAMPAIGN_SELECT).in("id", campaignIds)
+      : { data: [] as unknown[] },
+    clientIds.length
+      ? supabase.from("business_clients").select(CLIENT_SELECT).in("id", clientIds)
+      : { data: [] as unknown[] },
+  ]);
+
+  const context: BatchContext = {
+    appointments: indexById(appointments.data),
+    campaigns: indexById(campaigns.data),
+    clients: indexById(clients.data),
+  };
 
   for (const delivery of deliveries) {
-    const outcome = await deliverOne(delivery, byId);
+    const outcome = await deliverOne(delivery, context);
     report[outcome.bucket] += 1;
 
     await supabase
@@ -81,8 +108,33 @@ export async function runNotificationWorker(
       .eq("id", delivery.id);
   }
 
+  // A campaign is "sent" when nothing is left in flight, not when the rows
+  // were queued. Storing it any earlier would be a claim we cannot back up.
+  for (const campaignId of campaignIds) {
+    await supabase.rpc("finalize_campaign", { p_campaign_id: campaignId });
+  }
+
   return report;
 }
+
+function uniqueIds(values: (string | null)[]) {
+  return [...new Set(values.filter((value): value is string => Boolean(value)))];
+}
+
+function indexById(rows: unknown) {
+  const list = Array.isArray(rows) ? rows : [];
+  return new Map(
+    list
+      .filter((row): row is { id: string } => Boolean((row as { id?: string })?.id))
+      .map((row) => [row.id, row as unknown]),
+  );
+}
+
+type BatchContext = {
+  appointments: Map<string, unknown>;
+  campaigns: Map<string, unknown>;
+  clients: Map<string, unknown>;
+};
 
 type AppointmentRow = {
   id: string;
@@ -108,9 +160,23 @@ type DeliveryOutcome = {
   patch: Partial<NotificationDelivery>;
 };
 
+type CampaignRow = {
+  id: string;
+  template: unknown;
+  businesses: { name: string; slug: string } | null;
+};
+
+type ClientRow = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  unsubscribe_token: string;
+};
+
 async function deliverOne(
   delivery: NotificationDelivery,
-  appointments: Map<string, unknown>,
+  batch: BatchContext,
 ): Promise<DeliveryOutcome> {
   const adapter = resolveChannel(delivery.channel);
   if (!adapter) {
@@ -126,8 +192,12 @@ async function deliverOne(
     };
   }
 
+  if (delivery.campaign_id) {
+    return deliverCampaign(delivery, batch, adapter);
+  }
+
   const appointment = delivery.appointment_id
-    ? (appointments.get(delivery.appointment_id) as AppointmentRow | undefined)
+    ? (batch.appointments.get(delivery.appointment_id) as AppointmentRow | undefined)
     : undefined;
 
   if (!appointment || !appointment.businesses) {
@@ -194,6 +264,93 @@ async function deliverOne(
 
   // A permanent rejection is settled now; a transient one goes back in the
   // queue and the attempt counter decides when to stop.
+  const exhausted = delivery.attempts >= 5;
+  return {
+    bucket: "failed",
+    patch: {
+      status: !result.retryable || exhausted ? "failed" : "queued",
+      provider: adapter.provider,
+      error: result.error.slice(0, 500),
+    },
+  };
+}
+
+/**
+ * A campaign message. The copy belongs to the business, so nothing here is
+ * translated - `pickLocalized` picks the language they wrote for this
+ * recipient and falls back rather than sending an empty email.
+ */
+async function deliverCampaign(
+  delivery: NotificationDelivery,
+  batch: BatchContext,
+  adapter: NonNullable<ReturnType<typeof resolveChannel>>,
+): Promise<DeliveryOutcome> {
+  const campaign = delivery.campaign_id
+    ? (batch.campaigns.get(delivery.campaign_id) as CampaignRow | undefined)
+    : undefined;
+  const client = delivery.business_client_id
+    ? (batch.clients.get(delivery.business_client_id) as ClientRow | undefined)
+    : undefined;
+
+  if (!campaign || !campaign.businesses || !client) {
+    return {
+      bucket: "skipped",
+      patch: { status: "skipped", error: "campaign_missing" },
+    };
+  }
+
+  if (!client.email) {
+    return { bucket: "skipped", patch: { status: "skipped", error: "no_contact" } };
+  }
+
+  const locale = asLocale(delivery.locale);
+  const template =
+    typeof campaign.template === "object" && campaign.template !== null
+      ? (campaign.template as Record<string, unknown>)
+      : {};
+
+  const subject = pickLocalized(template.subject, locale, "");
+  const body = pickLocalized(template.body, locale, "");
+
+  // An empty campaign is a bug upstream, not something to mail out blank.
+  if (!subject || !body) {
+    return {
+      bucket: "skipped",
+      patch: { status: "skipped", error: "empty_template" },
+    };
+  }
+
+  const rendered = await renderCampaign({
+    locale,
+    businessName: campaign.businesses.name,
+    businessSlug: campaign.businesses.slug,
+    subject,
+    body,
+    unsubscribeUrl: `${publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/${locale}/unsubscribe/${client.unsubscribe_token}`,
+  });
+
+  const result = await adapter.send({
+    to: { name: client.full_name, email: client.email, phone: client.phone },
+    locale,
+    subject: rendered.subject,
+    text: rendered.text,
+    html: rendered.html,
+    idempotencyKey: delivery.idempotency_key,
+  });
+
+  if (result.ok) {
+    return {
+      bucket: "sent",
+      patch: {
+        status: "sent",
+        sent_at: new Date().toISOString(),
+        provider: adapter.provider,
+        provider_message_id: result.providerMessageId,
+        error: null,
+      },
+    };
+  }
+
   const exhausted = delivery.attempts >= 5;
   return {
     bucket: "failed",

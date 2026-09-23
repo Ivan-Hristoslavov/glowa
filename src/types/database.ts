@@ -265,6 +265,7 @@ export type Database = {
           tags: string[]
           total_spend_cents: number
           total_visits: number
+          unsubscribe_token: string
           updated_at: string
         }
         Insert: {
@@ -284,6 +285,7 @@ export type Database = {
           tags?: string[]
           total_spend_cents?: number
           total_visits?: number
+          unsubscribe_token?: string
           updated_at?: string
         }
         Update: {
@@ -303,6 +305,7 @@ export type Database = {
           tags?: string[]
           total_spend_cents?: number
           total_visits?: number
+          unsubscribe_token?: string
           updated_at?: string
         }
         Relationships: [
@@ -864,75 +867,13 @@ export type Database = {
           },
         ]
       }
-      marketing_messages: {
-        Row: {
-          business_client_id: string | null
-          business_id: string
-          campaign_id: string | null
-          channel: Database["public"]["Enums"]["notification_channel"]
-          created_at: string
-          error: string | null
-          event_type: Database["public"]["Enums"]["notification_event"]
-          id: string
-          idempotency_key: string
-          sent_at: string | null
-          status: string
-        }
-        Insert: {
-          business_client_id?: string | null
-          business_id: string
-          campaign_id?: string | null
-          channel?: Database["public"]["Enums"]["notification_channel"]
-          created_at?: string
-          error?: string | null
-          event_type?: Database["public"]["Enums"]["notification_event"]
-          id?: string
-          idempotency_key: string
-          sent_at?: string | null
-          status?: string
-        }
-        Update: {
-          business_client_id?: string | null
-          business_id?: string
-          campaign_id?: string | null
-          channel?: Database["public"]["Enums"]["notification_channel"]
-          created_at?: string
-          error?: string | null
-          event_type?: Database["public"]["Enums"]["notification_event"]
-          id?: string
-          idempotency_key?: string
-          sent_at?: string | null
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "marketing_messages_business_client_id_fkey"
-            columns: ["business_client_id"]
-            isOneToOne: false
-            referencedRelation: "business_clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "marketing_messages_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "marketing_messages_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "marketing_campaigns"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       notification_deliveries: {
         Row: {
           appointment_id: string | null
           attempts: number
+          business_client_id: string | null
           business_id: string
+          campaign_id: string | null
           channel: Database["public"]["Enums"]["notification_channel"]
           created_at: string
           error: string | null
@@ -952,7 +893,9 @@ export type Database = {
         Insert: {
           appointment_id?: string | null
           attempts?: number
+          business_client_id?: string | null
           business_id: string
+          campaign_id?: string | null
           channel?: Database["public"]["Enums"]["notification_channel"]
           created_at?: string
           error?: string | null
@@ -972,7 +915,9 @@ export type Database = {
         Update: {
           appointment_id?: string | null
           attempts?: number
+          business_client_id?: string | null
           business_id?: string
+          campaign_id?: string | null
           channel?: Database["public"]["Enums"]["notification_channel"]
           created_at?: string
           error?: string | null
@@ -998,10 +943,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notification_deliveries_business_client_id_fkey"
+            columns: ["business_client_id"]
+            isOneToOne: false
+            referencedRelation: "business_clients"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "notification_deliveries_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_deliveries_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
             referencedColumns: ["id"]
           },
           {
@@ -1672,7 +1631,9 @@ export type Database = {
         Returns: {
           appointment_id: string | null
           attempts: number
+          business_client_id: string | null
           business_id: string
+          campaign_id: string | null
           channel: Database["public"]["Enums"]["notification_channel"]
           created_at: string
           error: string | null
@@ -1741,6 +1702,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      finalize_campaign: { Args: { p_campaign_id: string }; Returns: undefined }
       get_available_slots: {
         Args: {
           p_from: string
@@ -1786,6 +1748,7 @@ export type Database = {
           total_visits: number
         }[]
       }
+      queue_campaign: { Args: { p_campaign_id: string }; Returns: number }
       reschedule_appointment: {
         Args: {
           p_appointment_id: string
@@ -1859,6 +1822,13 @@ export type Database = {
           service_categories: Database["public"]["Enums"]["service_category"][]
           short_pitch: Json
           slug: string
+        }[]
+      }
+      unsubscribe_marketing: {
+        Args: { p_token: string }
+        Returns: {
+          already_unsubscribed: boolean
+          business_name: string
         }[]
       }
     }
