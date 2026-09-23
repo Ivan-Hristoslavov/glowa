@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { GlowaMark } from "@/components/brand/glowa-logo";
 import { FEATURE_ICONS, type FeatureIconKey } from "@/components/brand/feature-icons";
+import { JsonLd } from "@/components/common/json-ld";
 import { Section } from "@/components/common/section";
 import { BusinessCard } from "@/components/discovery/business-card";
 import { CategoryGrid } from "@/components/discovery/category-grid";
@@ -14,6 +15,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { brandAssets, featureArt } from "@/lib/brand-assets";
 import { listCities, searchBusinesses } from "@/lib/queries/discovery";
+import { organizationJsonLd } from "@/lib/seo/structured-data";
 
 const FEATURES: FeatureIconKey[] = [
   "booking",
@@ -24,6 +26,12 @@ const FEATURES: FeatureIconKey[] = [
   "analytics",
   "assistant",
 ];
+
+/**
+ * Revalidated hourly: the featured salons change when a business joins or
+ * goes live, and nothing on this page is per-visitor any more.
+ */
+export const revalidate = 3600;
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -44,6 +52,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   return (
     <main>
+      <JsonLd data={organizationJsonLd(locale as Locale)} />
+
       {/* ---------------------------------------------------------------- hero */}
       <section className="relative overflow-hidden">
         <div
@@ -253,8 +263,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </section>
       ) : null}
 
-      {/* An honest build-status panel. No invented traction numbers: the
-          product has none yet, and the brief forbids inventing them. */}
+      {/* What GLOWA commits to, stated plainly. Still no invented traction:
+          a promise is something we control, a customer count is not. */}
       <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
         <div className="glowa-card flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:gap-8 sm:p-8">
           <GlowaMark className="size-10 shrink-0" />

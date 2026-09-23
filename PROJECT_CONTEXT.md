@@ -632,6 +632,30 @@ once Docker is available to confirm the harness.
 
 ## 8e. Public surface and SEO
 
+**Structured data.** `lib/seo/structured-data.ts` emits schema.org for salon
+pages: the category-specific type (`HairSalon`, `NailSalon`, `DaySpa`, …),
+address, geo, opening hours, a price band, an offer catalogue and a
+`ReserveAction` so Google can surface a Book button. `aggregateRating` is
+omitted entirely when a salon has no reviews - a zeroed rating is both a
+Google policy violation and exactly the invented traction this product
+refuses. The category map is covered by a test, because the enum values were
+wrong once and every salon silently fell back to the generic type.
+
+**Canonicals and alternates go together.** `alternatesFor(path)` returns both,
+including `x-default`. A child route that set only `alternates.canonical`
+dropped the inherited `languages`, which is how `/search` ended up canonical to
+`/bg` and salon pages lost their `hreflang`. Building both from one function is
+what stops that recurring.
+
+**Everything public is cached.** The header no longer reads cookies - the
+signed-in slice is a client island (`HeaderAccount`), as is the salon page's
+save button - and discovery reads go through the cookie-less client. With
+`setRequestLocale` in the marketing layout as well as the pages, and
+`generateStaticParams` over live salon slugs, the landing page, `/pricing` and
+salon pages are prerendered. Measured locally: landing 98 ms → 3 ms, salon page
+280 ms → 3 ms. `/search` stays dynamic because it reads query parameters, which
+is correct.
+
 `src/app/sitemap.ts` and `src/app/robots.ts` sit at the app root, outside
 `[locale]`, so they are served at `/sitemap.xml` and `/robots.txt`. The proxy
 matcher already excludes anything with a file extension, so neither picks up a
@@ -694,6 +718,41 @@ belongs to the salon, a `referral` link to a named client.
   produces SVG: a poster, a card and a mirror sticker are different sizes and a
   PNG only looks right at one. Error correction is Q (25%) rather than the
   usual M, because a code in a salon collects steam and fingerprints.
+
+---
+
+## 8g. Discovery filters
+
+`search_businesses` takes price, day and sort on top of query, category and
+city.
+
+- **Price** compares against the cheapest active service. Four brackets in the
+  UI rather than a slider, which is miserable on a phone.
+- **"Open on"** is deliberately the weaker claim. It filters to salons whose
+  location has hours for that weekday and at least one bookable staff member
+  not away all day - not to salons with a confirmed free slot. Computing real
+  openings means expanding every service against every stylist's hours, time
+  off and bookings for each candidate, which belongs on one salon's page, not
+  a result list. Promising "free at 14:00" and then showing a full calendar is
+  worse than promising nothing, so the label says open, not free.
+- `staff_time_off` is not readable by `anon`, so the staff half runs through
+  `app.has_bookable_staff_on`, a SECURITY DEFINER helper that returns a boolean
+  and never a row.
+- **Sort** is rating (default), price or name. Under a price sort a salon with
+  no priced service sorts last, not first.
+
+## 8h. Accessibility
+
+- A skip link is the first tab stop on every page; each group layout carries
+  `#main-content`. Without it a keyboard user walked the whole header on every
+  navigation.
+- The booking flow's step list marks the active step with `aria-current`, so
+  the colour is not the only thing saying where you are. The service cards
+  already carried `aria-pressed`.
+- The salon map does not load until asked: an embedded map is an iframe to a
+  third party, and loading it on page view hands every visitor's IP to that
+  party before they wanted a map. OpenStreetMap, not Google Maps - no key, no
+  billing, no account required of the visitor.
 
 ---
 
@@ -772,10 +831,9 @@ traction claim may appear unless it is real.
    idempotency on send, review-request automation, referral and QR booking
    links, and the OpenAI-generated visual asset set.
 2. **Prompt 5** — production polish, QA, tests, Vercel.
-3. The marketing pages render dynamically because `SiteHeader` reads auth state.
-   Split the auth-dependent part into a client island or a `<Suspense>`
-   boundary so the landing page, search and `/pricing` can be static. The
-   sitemap and robots are already static.
+3. Payments remain the biggest product gap against Fresha and Booksy: no
+   deposits, no card-on-file, no no-show protection. That, not the calendar,
+   is what salons pay a booking platform for.
 4. `get_available_slots` has no test of its own — the pgTAP suite covers the
    constraint and the triggers around it, but not slot generation against
    working hours, time off and existing bookings. That is the next one to

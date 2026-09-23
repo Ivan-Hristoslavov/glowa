@@ -1,26 +1,38 @@
 import "server-only";
 
 import type { BusinessCategory } from "@/lib/business-categories";
+import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 
 export type SearchResult =
   Database["public"]["Functions"]["search_businesses"]["Returns"][number];
 
+/**
+ * Discovery is the same for everyone, so this uses the cookie-less client.
+ * Reading cookies here would make the landing page and search dynamic, and
+ * those are exactly the two pages that have to be cacheable.
+ */
 export async function searchBusinesses(params: {
   query?: string;
   category?: BusinessCategory;
   city?: string;
   limit?: number;
   offset?: number;
+  maxPriceCents?: number;
+  openOn?: string;
+  sort?: "rating" | "price" | "name";
 }) {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("search_businesses", {
     p_query: params.query?.trim() || undefined,
     p_category: params.category,
     p_city: params.city?.trim() || undefined,
     p_limit: params.limit ?? 24,
     p_offset: params.offset ?? 0,
+    p_max_price_cents: params.maxPriceCents,
+    p_open_on: params.openOn,
+    p_sort: params.sort ?? "rating",
   });
 
   if (error) throw error;
@@ -29,7 +41,7 @@ export async function searchBusinesses(params: {
 
 /** Every city that currently has an active business, for the filter menu. */
 export async function listCities() {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("locations")
     .select("city, businesses!inner(status)")
@@ -47,7 +59,7 @@ export async function listCities() {
 }
 
 export async function getBusinessBySlug(slug: string) {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("businesses")
@@ -134,4 +146,26 @@ export async function getAvailableSlots(params: {
 
   if (error) throw error;
   return data ?? [];
+}
+
+/**
+ * Slugs of every live, non-demo salon, for `generateStaticParams`.
+ *
+ * Capped: a build should not try to prerender fifty thousand pages. Anything
+ * past the cap is still served, just rendered on first request and cached
+ * from then on.
+ */
+export async function listBusinessSlugs(limit = 2000) {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("businesses")
+    .select("slug")
+    .eq("status", "active")
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+
+  // A build must not fail because the database was briefly unreachable; an
+  // empty list just means every page is rendered on demand.
+  if (error) return [];
+  return (data ?? []).map((row) => row.slug);
 }

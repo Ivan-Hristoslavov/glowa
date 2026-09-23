@@ -19,7 +19,10 @@ export default function AuthLayout({ children }: LayoutProps<"/[locale]">) {
           <ThemeToggle />
         </div>
       </header>
-      <main className="relative flex flex-1 items-center justify-center px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="relative flex flex-1 items-center justify-center px-4 py-10 sm:px-6"
+      >
         <div className="glowa-card w-full max-w-md p-6 sm:p-8">{children}</div>
       </main>
     </div>

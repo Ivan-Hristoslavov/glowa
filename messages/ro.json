@@ -27,7 +27,8 @@
     "view": "Vezi",
     "change": "Schimbă",
     "today": "Azi",
-    "tomorrow": "Mâine"
+    "tomorrow": "Mâine",
+    "skipToContent": "Sari la conținut"
   },
   "nav": {
     "product": "Produs",
@@ -104,9 +105,9 @@
       "all": "Vezi toate"
     },
     "foundation": {
-      "title": "Ce funcționează deja",
-      "body": "Experiența clientului este live: căutare, profiluri de saloane, programare în timp real, anulare și reprogramare, recenzii și sincronizare cu calendarul.",
-      "status": "Pasul 2 din 5 · Experiența clientului"
+      "status": "Promisiunea noastră",
+      "title": "Clienții tăi rămân ai tăi",
+      "body": "Fără comision pe programări. Fără taxă pentru un client care era deja al tău. Îți exporți datele oricând. Bulgară, engleză și română — iar fiecare client primește mesajele în limba lui."
     },
     "features": {
       "eyebrow": "TOT CE AI NEVOIE",
@@ -127,7 +128,7 @@
       },
       "payments": {
         "title": "Plăți",
-        "body": "Plăți online și avansuri, gata de activat."
+        "body": "Depozite și plăți online — modelate în sistem, integrarea cu procesatorul urmează."
       },
       "marketing": {
         "title": "Marketing",
@@ -217,7 +218,17 @@
     "noResultsBody": "Încearcă alt cuvânt, altă categorie sau alt oraș.",
     "priceFrom": "de la {price}",
     "noReviews": "Încă fără recenzii",
-    "demoBadge": "Conținut demo"
+    "demoBadge": "Conținut demo",
+    "maxPrice": "Preț",
+    "anyPrice": "Orice preț",
+    "upTo": "Până la {amount} €",
+    "openOn": "Deschis pe",
+    "sort": "Sortare",
+    "sortBy": {
+      "rating": "După rating",
+      "price": "După preț",
+      "name": "După nume"
+    }
   },
   "business": {
     "about": "Despre",
@@ -247,7 +258,12 @@
     "timezone": "Orele sunt afișate în {zone}.",
     "demoNotice": "Aceasta este o afacere demo creată pentru dezvoltare. Programările sunt reale în baza de test, dar salonul este inventat.",
     "callBusiness": "Sună",
-    "website": "Site web"
+    "website": "Site web",
+    "breadcrumbHome": "Acasă",
+    "breadcrumbSearch": "Saloane",
+    "showMap": "Arată harta",
+    "showMapNote": "Harta se încarcă de la OpenStreetMap doar când o ceri.",
+    "gallery": "Galerie"
   },
   "booking": {
     "title": "Fă o programare",
@@ -285,7 +301,8 @@
       "slot_unavailable": "Ora nu mai este liberă. Alege alta.",
       "slot_taken": "Cineva tocmai a rezervat ora. Alege alta.",
       "generic": "Programarea nu a reușit. Încearcă din nou."
-    }
+    },
+    "stepsLabel": "Pași"
   },
   "bookings": {
     "title": "Programările mele",

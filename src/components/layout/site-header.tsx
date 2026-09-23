@@ -2,31 +2,22 @@ import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { GlowaLogo } from "@/components/brand/glowa-logo";
-import { AccountMenu } from "@/components/layout/account-menu";
+import { HeaderAccount } from "@/components/layout/header-account";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Deliberately reads no cookies.
+ *
+ * It used to resolve the session here, which made every page that renders a
+ * header dynamic - including the landing page, search and every salon page.
+ * Those are the pages that have to be fast and cacheable, so the part that
+ * varies per visitor moved into `HeaderAccount`, a client island.
+ */
 export async function SiteHeader() {
   const t = await getTranslations("nav");
-
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  const claims = data?.claims ?? null;
-  const userId = typeof claims?.sub === "string" ? claims.sub : null;
-
-  let profile: { full_name: string | null; avatar_url: string | null } | null = null;
-  if (userId) {
-    const { data: row } = await supabase
-      .from("profiles")
-      .select("full_name, avatar_url")
-      .eq("id", userId)
-      .maybeSingle();
-    profile = row;
-  }
 
   return (
     <header className="border-border/70 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
@@ -55,23 +46,8 @@ export async function SiteHeader() {
         <div className="flex items-center gap-1 sm:gap-2">
           <LocaleSwitcher />
           <ThemeToggle />
-          {userId ? (
-            <AccountMenu
-              name={profile?.full_name ?? null}
-              email={typeof claims?.email === "string" ? claims.email : null}
-              avatarUrl={profile?.avatar_url ?? null}
-            />
-          ) : (
-            <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <Link href="/login">{t("login")}</Link>
-              </Button>
-              <Button asChild size="sm" className="hidden sm:inline-flex">
-                <Link href="/signup">{t("getStarted")}</Link>
-              </Button>
-            </>
-          )}
-          <MobileNav isSignedIn={Boolean(userId)} />
+          <HeaderAccount />
+          <MobileNav />
         </div>
       </div>
     </header>

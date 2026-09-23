@@ -11,7 +11,7 @@ import {
   User2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { GlowaLogo } from "@/components/brand/glowa-logo";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Link } from "@/i18n/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const PUBLIC_LINKS = [
   { href: "/search", key: "discover", icon: Search },
@@ -37,9 +38,34 @@ const ACCOUNT_LINKS = [
   { href: "/settings", key: "settings", icon: Settings },
 ] as const;
 
-export function MobileNav({ isSignedIn }: { isSignedIn: boolean }) {
+/**
+ * Resolves the session in the browser rather than taking it as a prop, so the
+ * header that renders it can stay free of cookies and the page can stay
+ * cacheable. Until it resolves, only the public links show - which is also
+ * what a signed-out visitor sees, so nothing flashes for them.
+ */
+export function MobileNav() {
   const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    let active = true;
+
+    supabase.auth.getClaims().then(({ data }) => {
+      if (active) setIsSignedIn(typeof data?.claims?.sub === "string");
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      (_event, session) => setIsSignedIn(Boolean(session?.user)),
+    );
+
+    return () => {
+      active = false;
+      subscription.subscription.unsubscribe();
+    };
+  }, []);
 
   const links = isSignedIn ? [...PUBLIC_LINKS, ...ACCOUNT_LINKS] : PUBLIC_LINKS;
 

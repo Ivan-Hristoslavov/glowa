@@ -14,20 +14,26 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/common/empty-state";
+import { JsonLd } from "@/components/common/json-ld";
 import { Rating } from "@/components/common/rating";
 import { Section } from "@/components/common/section";
+import { LocationMap } from "@/components/discovery/location-map";
 import { SaveBusinessButton } from "@/components/discovery/save-business-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/routing";
-import { fallbackBusinessImage } from "@/lib/brand-assets";
+import { routing, type Locale } from "@/i18n/routing";
+import { brandAssets, fallbackBusinessImage } from "@/lib/brand-assets";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { pickLocalized } from "@/lib/localized";
-import { getBusinessBySlug } from "@/lib/queries/discovery";
-import { createClient } from "@/lib/supabase/server";
+import { getBusinessBySlug, listBusinessSlugs } from "@/lib/queries/discovery";
+import {
+  alternatesFor,
+  breadcrumbJsonLd,
+  businessJsonLd,
+} from "@/lib/seo/structured-data";
 
 type BookingPolicy = {
   min_lead_minutes?: number;
@@ -40,6 +46,26 @@ function readPolicy(value: unknown): BookingPolicy {
   return typeof value === "object" && value !== null ? (value as BookingPolicy) : {};
 }
 
+/**
+ * A salon page is the same for everyone and is the page that has to rank,
+ * so it is cached rather than rendered per request. An hour is short enough
+ * that a price or an opening hour change lands the same afternoon.
+ */
+export const revalidate = 3600;
+
+/**
+ * Prerenders the salons that exist at build time and leaves the rest to be
+ * rendered on first request and then cached. Without this the segment has no
+ * known params and Next renders it per request, which is the opposite of what
+ * the page that has to rank needs.
+ */
+export async function generateStaticParams() {
+  const businesses = await listBusinessSlugs();
+  return routing.locales.flatMap((locale) =>
+    businesses.map((slug) => ({ locale, slug })),
+  );
+}
+
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/business/[slug]">): Promise<Metadata> {
@@ -48,15 +74,28 @@ export async function generateMetadata({
   if (!business) return {};
 
   const description = pickLocalized(business.short_pitch, locale as Locale);
+
+  // A salon link gets pasted into Viber, WhatsApp and Messenger far more often
+  // than it gets typed, so it always needs a preview image. The salon's own
+  // cover first, the category illustration when it has none, and the shared
+  // social card as the last resort - never nothing.
+  const image =
+    business.cover_image_url ??
+    fallbackBusinessImage(business.category, business.slug) ??
+    brandAssets.ogImage;
+
   return {
     title: business.name,
     description,
-    alternates: { canonical: `/${locale}/business/${slug}` },
+    alternates: alternatesFor(`/${locale}/business/${slug}`),
     openGraph: {
+      type: "website",
       title: business.name,
       description,
-      images: business.cover_image_url ? [business.cover_image_url] : undefined,
+      url: `/${locale}/business/${slug}`,
+      images: [image],
     },
+    twitter: { card: "summary_large_image", title: business.name, description, images: [image] },
   };
 }
 
@@ -75,27 +114,23 @@ export default async function BusinessPage({
   const weekdays = await getTranslations("weekdays");
   const common = await getTranslations("common");
 
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims?.sub;
-  const isSignedIn = typeof userId === "string";
-
-  let isSaved = false;
-  if (isSignedIn) {
-    const { data: saved } = await supabase
-      .from("saved_businesses")
-      .select("business_id")
-      .eq("business_id", business.id)
-      .maybeSingle();
-    isSaved = Boolean(saved);
-  }
-
   const activeLocale = locale as Locale;
   const policy = readPolicy(business.booking_policy);
   const primaryLocation = business.locations[0] ?? null;
   const isDemo = business.slug.startsWith("demo-");
   const description = pickLocalized(business.description, activeLocale);
   const staffById = new Map(business.staff_profiles.map((s) => [s.id, s]));
+
+  // `gallery` is jsonb, so it could hold anything. Only strings that look like
+  // a URL are rendered, and at most twelve of them.
+  const gallery = Array.isArray(business.gallery)
+    ? business.gallery
+        .filter(
+          (entry): entry is string =>
+            typeof entry === "string" && /^(https?:)?\//.test(entry),
+        )
+        .slice(0, 12)
+    : [];
 
   const heroImage =
     business.cover_image_url ?? fallbackBusinessImage(business.category, business.slug);
@@ -110,6 +145,15 @@ export default async function BusinessPage({
 
   return (
     <main className="pb-16">
+      <JsonLd data={businessJsonLd(business, activeLocale)} />
+      <JsonLd
+        data={breadcrumbJsonLd(activeLocale, [
+          { name: t("breadcrumbHome"), path: "" },
+          { name: t("breadcrumbSearch"), path: "/search" },
+          { name: business.name, path: `/business/${business.slug}` },
+        ])}
+      />
+
       {/* Hero */}
       <div className="bg-secondary relative h-44 w-full overflow-hidden sm:h-64">
         {heroImage ? (
@@ -146,11 +190,7 @@ export default async function BusinessPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2 pb-1">
-            <SaveBusinessButton
-              businessId={business.id}
-              initiallySaved={isSaved}
-              isSignedIn={isSignedIn}
-            />
+            <SaveBusinessButton businessId={business.id} />
             <Button asChild size="lg">
               <Link href={`/business/${slug}/book`}>
                 {t("bookNow")}
@@ -222,6 +262,28 @@ export default async function BusinessPage({
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                   {description}
                 </p>
+              </Section>
+            ) : null}
+
+            {gallery.length > 0 ? (
+              <Section title={t("gallery")}>
+                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {gallery.map((url, index) => (
+                    <li
+                      key={url}
+                      className="bg-secondary relative aspect-square overflow-hidden rounded-xl"
+                    >
+                      <Image
+                        src={url}
+                        alt=""
+                        fill
+                        sizes="(min-width: 640px) 20vw, 45vw"
+                        loading={index < 3 ? undefined : "lazy"}
+                        className="object-cover"
+                      />
+                    </li>
+                  ))}
+                </ul>
               </Section>
             ) : null}
 
@@ -398,6 +460,15 @@ export default async function BusinessPage({
                       <ExternalLink className="size-3.5" aria-hidden />
                     </a>
                   </Button>
+                ) : null}
+
+                {primaryLocation.latitude !== null &&
+                primaryLocation.longitude !== null ? (
+                  <LocationMap
+                    latitude={Number(primaryLocation.latitude)}
+                    longitude={Number(primaryLocation.longitude)}
+                    label={`${business.name} — ${t("location")}`}
+                  />
                 ) : null}
 
                 {primaryLocation.business_hours.length > 0 ? (

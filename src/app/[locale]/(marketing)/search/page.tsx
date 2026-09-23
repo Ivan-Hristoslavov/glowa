@@ -8,10 +8,30 @@ import { SearchForm } from "@/components/discovery/search-form";
 import type { Locale } from "@/i18n/routing";
 import { isBusinessCategory } from "@/lib/business-categories";
 import { listCities, searchBusinesses } from "@/lib/queries/discovery";
+import { alternatesFor } from "@/lib/seo/structured-data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("search");
-  return { title: t("title"), description: t("subtitle") };
+/**
+ * Results change as businesses join, not as visitors arrive. An hour keeps
+ * the common queries on the cache and still reflects a new salon the same
+ * afternoon.
+ */
+export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/search">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "search" });
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+    // Without its own canonical this inherited the layout's `/bg`, which told
+    // Google search was a duplicate of the home page.
+    alternates: alternatesFor(`/${locale}/search`),
+    // The filtered variants are the same page with a query string; indexing
+    // them fills the index with near-duplicates.
+    robots: { index: true, follow: true },
+  };
 }
 
 function firstParam(value: string | string[] | undefined) {
@@ -33,9 +53,22 @@ export default async function SearchPage({
   const category = isBusinessCategory(rawCategory) ? rawCategory : undefined;
   const city = firstParam(sp.city);
 
+  const rawMaxPrice = Number(firstParam(sp.maxPrice));
+  const maxPriceCents =
+    Number.isFinite(rawMaxPrice) && rawMaxPrice > 0 ? rawMaxPrice : undefined;
+
+  // Anything that is not a plain YYYY-MM-DD is dropped rather than passed on
+  // for Postgres to reject.
+  const rawOpenOn = firstParam(sp.openOn);
+  const openOn = rawOpenOn && /^\d{4}-\d{2}-\d{2}$/.test(rawOpenOn) ? rawOpenOn : undefined;
+
+  const rawSort = firstParam(sp.sort);
+  const sort =
+    rawSort === "price" || rawSort === "name" ? rawSort : ("rating" as const);
+
   const [cities, results] = await Promise.all([
     listCities(),
-    searchBusinesses({ query, category, city }),
+    searchBusinesses({ query, category, city, maxPriceCents, openOn, sort }),
   ]);
 
   return (
@@ -49,6 +82,9 @@ export default async function SearchPage({
         <SearchForm
           cities={cities}
           defaultQuery={query}
+          defaultMaxPrice={maxPriceCents ? String(maxPriceCents) : undefined}
+          defaultOpenOn={openOn}
+          defaultSort={sort}
           defaultCategory={category}
           defaultCity={city}
         />

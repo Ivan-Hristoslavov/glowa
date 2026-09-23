@@ -86,12 +86,7 @@ export default async function FavoritesPage({
                   </div>
                 </div>
 
-                <SaveBusinessButton
-                  businessId={item.id}
-                  initiallySaved
-                  isSignedIn
-                  variant="icon"
-                />
+                <SaveBusinessButton businessId={item.id} variant="icon" />
               </li>
             );
           })}

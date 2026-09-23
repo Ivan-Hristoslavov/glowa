@@ -164,10 +164,18 @@ export function BookingFlow({
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
       <div className="space-y-6">
-        {/* Progress */}
-        <ol className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+        {/* Progress. The colour alone does not say which step you are on, so
+            the current item is marked for assistive tech as well. */}
+        <ol
+          aria-label={t("stepsLabel")}
+          className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"
+        >
           {steps.map((step, index) => (
-            <li key={step} className="flex items-center gap-2">
+            <li
+              key={step}
+              aria-current={index === stepIndex ? "step" : undefined}
+              className="flex items-center gap-2"
+            >
               <span
                 className={cn(
                   "rounded-full px-2 py-0.5",

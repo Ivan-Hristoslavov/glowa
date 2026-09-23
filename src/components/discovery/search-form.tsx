@@ -23,15 +23,28 @@ type SearchFormProps = {
   defaultQuery?: string;
   defaultCategory?: string;
   defaultCity?: string;
+  defaultMaxPrice?: string;
+  defaultOpenOn?: string;
+  defaultSort?: string;
   /** Compact single-field variant used on the landing page. */
   variant?: "full" | "hero";
 };
+
+/**
+ * Price ceilings in euro. A slider looks clever and is miserable on a phone;
+ * four honest brackets are what people actually pick.
+ */
+const PRICE_STEPS = [2000, 4000, 6000, 10000] as const;
+const SORTS = ["rating", "price", "name"] as const;
 
 export function SearchForm({
   cities,
   defaultQuery = "",
   defaultCategory,
   defaultCity,
+  defaultMaxPrice,
+  defaultOpenOn,
+  defaultSort,
   variant = "full",
 }: SearchFormProps) {
   const t = useTranslations("search");
@@ -42,17 +55,32 @@ export function SearchForm({
   const [query, setQuery] = useState(defaultQuery);
   const [category, setCategory] = useState(defaultCategory ?? ANY);
   const [city, setCity] = useState(defaultCity ?? ANY);
+  const [maxPrice, setMaxPrice] = useState(defaultMaxPrice ?? ANY);
+  const [openOn, setOpenOn] = useState(defaultOpenOn ?? "");
+  const [sort, setSort] = useState(defaultSort ?? "rating");
 
-  const hasFilters = Boolean(query) || category !== ANY || city !== ANY;
+  const hasFilters =
+    Boolean(query) ||
+    category !== ANY ||
+    city !== ANY ||
+    maxPrice !== ANY ||
+    Boolean(openOn) ||
+    sort !== "rating";
 
-  function submit(next?: { category?: string; city?: string }) {
+  function submit(next?: Partial<Record<string, string>>) {
     const params = new URLSearchParams();
     const nextCategory = next?.category ?? category;
     const nextCity = next?.city ?? city;
+    const nextMaxPrice = next?.maxPrice ?? maxPrice;
+    const nextOpenOn = next?.openOn ?? openOn;
+    const nextSort = next?.sort ?? sort;
 
     if (query.trim()) params.set("q", query.trim());
     if (nextCategory !== ANY) params.set("category", nextCategory);
     if (nextCity !== ANY) params.set("city", nextCity);
+    if (nextMaxPrice !== ANY) params.set("maxPrice", nextMaxPrice);
+    if (nextOpenOn) params.set("openOn", nextOpenOn);
+    if (nextSort !== "rating") params.set("sort", nextSort);
 
     const search = params.toString();
     startTransition(() => {
@@ -64,8 +92,19 @@ export function SearchForm({
     setQuery("");
     setCategory(ANY);
     setCity(ANY);
+    setMaxPrice(ANY);
+    setOpenOn("");
+    setSort("rating");
     startTransition(() => router.push("/search"));
   }
+
+  // A salon cannot be booked in the past, and 90 days is the schema's own
+  // maximum lead time. Read once rather than on every render: a clock read
+  // during render is exactly what the compiler rules forbid.
+  const [[today, latest]] = useState(() => [
+    new Date().toISOString().slice(0, 10),
+    new Date(Date.now() + 90 * 86_400_000).toISOString().slice(0, 10),
+  ]);
 
   return (
     <form
@@ -128,6 +167,63 @@ export function SearchForm({
               {cities.map((value) => (
                 <SelectItem key={value} value={value}>
                   {value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={maxPrice}
+            onValueChange={(value) => {
+              setMaxPrice(value);
+              submit({ maxPrice: value });
+            }}
+          >
+            <SelectTrigger className="h-11 sm:w-44" aria-label={t("maxPrice")}>
+              <SelectValue placeholder={t("anyPrice")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ANY}>{t("anyPrice")}</SelectItem>
+              {PRICE_STEPS.map((value) => (
+                <SelectItem key={value} value={String(value)}>
+                  {t("upTo", { amount: value / 100 })}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Deliberately "open on", not "free at": the server filters by
+              opening hours and staff availability, and does not claim to have
+              found an empty slot. */}
+          <div className="flex flex-col gap-1">
+            <Input
+              type="date"
+              value={openOn}
+              min={today}
+              max={latest}
+              aria-label={t("openOn")}
+              className="h-11 sm:w-44"
+              onChange={(event) => {
+                setOpenOn(event.target.value);
+                submit({ openOn: event.target.value });
+              }}
+            />
+          </div>
+
+          <Select
+            value={sort}
+            onValueChange={(value) => {
+              setSort(value);
+              submit({ sort: value });
+            }}
+          >
+            <SelectTrigger className="h-11 sm:w-40" aria-label={t("sort")}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SORTS.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {t(`sortBy.${value}`)}
                 </SelectItem>
               ))}
             </SelectContent>

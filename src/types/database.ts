@@ -1804,8 +1804,11 @@ export type Database = {
           p_category?: Database["public"]["Enums"]["business_category"]
           p_city?: string
           p_limit?: number
+          p_max_price_cents?: number
           p_offset?: number
+          p_open_on?: string
           p_query?: string
+          p_sort?: string
         }
         Returns: {
           average_rating: number

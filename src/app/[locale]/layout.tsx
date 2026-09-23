@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { localeHrefLang, routing } from "@/i18n/routing";
 import { brandAssets } from "@/lib/brand-assets";
 import { publicEnv } from "@/lib/env";
+import { alternatesFor } from "@/lib/seo/structured-data";
 
 import "../globals.css";
 
@@ -55,12 +56,7 @@ export async function generateMetadata({
     },
     description: t("subtitle"),
     applicationName: "glowa",
-    alternates: {
-      canonical: `/${locale}`,
-      languages: Object.fromEntries(
-        routing.locales.map((value) => [localeHrefLang[value], `/${value}`]),
-      ),
-    },
+    alternates: alternatesFor(`/${locale}`),
     openGraph: {
       type: "website",
       siteName: "glowa",
@@ -96,6 +92,7 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "common" });
 
   return (
     <html
@@ -104,6 +101,15 @@ export default async function LocaleLayout({
       className={`${onest.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        {/* First tab stop on every page. Without it a keyboard user walks the
+            whole header - logo, nav, language, theme, account - before
+            reaching the content, on every navigation. */}
+        <a
+          href="#main-content"
+          className="bg-primary text-primary-foreground focus:ring-ring sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2 focus:ring-2 focus:outline-none"
+        >
+          {t("skipToContent")}
+        </a>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

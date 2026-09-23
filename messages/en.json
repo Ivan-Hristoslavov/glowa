@@ -27,7 +27,8 @@
     "view": "View",
     "change": "Change",
     "today": "Today",
-    "tomorrow": "Tomorrow"
+    "tomorrow": "Tomorrow",
+    "skipToContent": "Skip to content"
   },
   "nav": {
     "product": "Product",
@@ -104,9 +105,9 @@
       "all": "See all"
     },
     "foundation": {
-      "title": "What works today",
-      "body": "The customer experience is live: search, business profiles, real-time booking, cancel and reschedule, reviews and calendar sync.",
-      "status": "Step 2 of 5 · Customer experience"
+      "status": "Our promise",
+      "title": "Your clients stay yours",
+      "body": "No commission on bookings. No fee for a client who was already yours. Export your data whenever you want. Bulgarian, English and Romanian — and every client is messaged in their own language."
     },
     "features": {
       "eyebrow": "EVERYTHING YOU NEED",
@@ -127,7 +128,7 @@
       },
       "payments": {
         "title": "Payments",
-        "body": "Online payments and deposits, ready to switch on."
+        "body": "Deposits and online payments — modelled in the system, provider integration still to come."
       },
       "marketing": {
         "title": "Marketing",
@@ -217,7 +218,17 @@
     "noResultsBody": "Try a different word, category or city.",
     "priceFrom": "from {price}",
     "noReviews": "No reviews yet",
-    "demoBadge": "Demo content"
+    "demoBadge": "Demo content",
+    "maxPrice": "Price",
+    "anyPrice": "Any price",
+    "upTo": "Up to €{amount}",
+    "openOn": "Open on",
+    "sort": "Sort",
+    "sortBy": {
+      "rating": "By rating",
+      "price": "By price",
+      "name": "By name"
+    }
   },
   "business": {
     "about": "About",
@@ -247,7 +258,12 @@
     "timezone": "Times are shown in {zone}.",
     "demoNotice": "This is a demo business created for development. Bookings are real in the test database, but the salon is invented.",
     "callBusiness": "Call",
-    "website": "Website"
+    "website": "Website",
+    "breadcrumbHome": "Home",
+    "breadcrumbSearch": "Salons",
+    "showMap": "Show map",
+    "showMapNote": "The map loads from OpenStreetMap only when you ask for it.",
+    "gallery": "Gallery"
   },
   "booking": {
     "title": "Book an appointment",
@@ -285,7 +301,8 @@
       "slot_unavailable": "That time is no longer free. Pick another one.",
       "slot_taken": "Someone just took that time. Pick another one.",
       "generic": "The booking did not go through. Please try again."
-    }
+    },
+    "stepsLabel": "Steps"
   },
   "bookings": {
     "title": "My bookings",

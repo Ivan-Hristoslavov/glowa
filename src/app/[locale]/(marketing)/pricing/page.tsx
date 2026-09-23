@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { formatPlanPrice, PLANS, PRICING_IS_PUBLISHED } from "@/lib/pricing";
+import { alternatesFor } from "@/lib/seo/structured-data";
 import { cn } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -24,7 +25,7 @@ export async function generateMetadata({
   return {
     title: t("eyebrow"),
     description: t("subtitle"),
-    alternates: { canonical: `/${locale}/pricing` },
+    alternates: alternatesFor(`/${locale}/pricing`),
   };
 }
 
