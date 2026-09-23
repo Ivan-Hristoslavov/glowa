@@ -76,7 +76,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
     .maybeSingle();
 
   const timezone = business?.timezone ?? "Europe/Sofia";
-  const currency = business?.currency ?? "BGN";
+  const currency = business?.currency ?? "EUR";
   const activeLocale = locale as Locale;
 
   const { start, end } = dayBounds(timezone);

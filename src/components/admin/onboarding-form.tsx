@@ -21,7 +21,7 @@ import { createBusiness } from "@/lib/actions/business";
 import { BUSINESS_CATEGORIES, type BusinessCategory } from "@/lib/business-categories";
 import { resolveViewerTimeZone } from "@/lib/format";
 
-const CURRENCIES = ["BGN", "EUR", "RON"] as const;
+const CURRENCIES = ["EUR", "RON"] as const;
 const TIMEZONES = [
   "Europe/Sofia",
   "Europe/Bucharest",
@@ -46,7 +46,7 @@ export function OnboardingForm({ defaultLocale }: { defaultLocale: Locale }) {
   const [timezone, setTimezone] = useState(
     detected && TIMEZONES.includes(detected) ? detected : "Europe/Sofia",
   );
-  const [currency, setCurrency] = useState<string>("BGN");
+  const [currency, setCurrency] = useState<string>("EUR");
   const [locale, setLocale] = useState<Locale>(defaultLocale);
 
   const zones = [...new Set([...TIMEZONES, timezone])];

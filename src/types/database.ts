@@ -77,6 +77,7 @@ export type Database = {
           customer_phone: string | null
           customer_profile_id: string | null
           ends_at: string
+          growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
@@ -104,6 +105,7 @@ export type Database = {
           customer_phone?: string | null
           customer_profile_id?: string | null
           ends_at: string
+          growth_link_id?: string | null
           id?: string
           internal_notes?: string | null
           is_demo?: boolean
@@ -131,6 +133,7 @@ export type Database = {
           customer_phone?: string | null
           customer_profile_id?: string | null
           ends_at?: string
+          growth_link_id?: string | null
           id?: string
           internal_notes?: string | null
           is_demo?: boolean
@@ -164,6 +167,13 @@ export type Database = {
             columns: ["customer_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_growth_link_id_fkey"
+            columns: ["growth_link_id"]
+            isOneToOne: false
+            referencedRelation: "growth_links"
             referencedColumns: ["id"]
           },
           {
@@ -623,6 +633,96 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      growth_links: {
+        Row: {
+          booking_count: number
+          business_id: string
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          label: string
+          referrer_client_id: string | null
+          referrer_profile_id: string | null
+          service_id: string | null
+          target: string
+          updated_at: string
+          visit_count: number
+        }
+        Insert: {
+          booking_count?: number
+          business_id: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          label: string
+          referrer_client_id?: string | null
+          referrer_profile_id?: string | null
+          service_id?: string | null
+          target?: string
+          updated_at?: string
+          visit_count?: number
+        }
+        Update: {
+          booking_count?: number
+          business_id?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          label?: string
+          referrer_client_id?: string | null
+          referrer_profile_id?: string | null
+          service_id?: string | null
+          target?: string
+          updated_at?: string
+          visit_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "growth_links_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "growth_links_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "growth_links_referrer_client_id_fkey"
+            columns: ["referrer_client_id"]
+            isOneToOne: false
+            referencedRelation: "business_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "growth_links_referrer_profile_id_fkey"
+            columns: ["referrer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "growth_links_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
             referencedColumns: ["id"]
           },
         ]
@@ -1489,6 +1589,7 @@ export type Database = {
       book_appointment: {
         Args: {
           p_customer_notes?: string
+          p_growth_code?: string
           p_location_id?: string
           p_service_id: string
           p_staff_profile_id: string
@@ -1508,6 +1609,7 @@ export type Database = {
           customer_phone: string | null
           customer_profile_id: string | null
           ends_at: string
+          growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
@@ -1544,6 +1646,7 @@ export type Database = {
           customer_phone: string | null
           customer_profile_id: string | null
           ends_at: string
+          growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
@@ -1703,6 +1806,7 @@ export type Database = {
           customer_phone: string | null
           customer_profile_id: string | null
           ends_at: string
+          growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
@@ -1722,6 +1826,15 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      resolve_growth_link: {
+        Args: { p_code: string }
+        Returns: {
+          business_slug: string
+          link_id: string
+          service_id: string
+          target: string
+        }[]
       }
       search_businesses: {
         Args: {

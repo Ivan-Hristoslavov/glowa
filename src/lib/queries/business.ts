@@ -312,3 +312,23 @@ export async function previewAudience(businessId: string, audience: unknown) {
   if (error) throw error;
   return data ?? [];
 }
+
+export async function listGrowthLinks(businessId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("growth_links")
+    .select(
+      `id, code, kind, label, target, service_id, is_active,
+       visit_count, booking_count, created_at,
+       services ( name ),
+       business_clients ( full_name )`,
+    )
+    .eq("business_id", businessId)
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export type GrowthLinkRow = Awaited<ReturnType<typeof listGrowthLinks>>[number];

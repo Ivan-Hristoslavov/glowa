@@ -45,7 +45,7 @@ export default async function ClientDetailPage({
     .maybeSingle();
 
   const activeLocale = locale as Locale;
-  const currency = business?.currency ?? "BGN";
+  const currency = business?.currency ?? "EUR";
   const timezone = business?.timezone ?? "Europe/Sofia";
   const dateFormatter = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
     dateStyle: "medium",

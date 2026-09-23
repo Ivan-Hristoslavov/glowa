@@ -27,9 +27,12 @@ export const localeHrefLang: Record<Locale, string> = {
   ro: "ro-RO",
 };
 
-/** Default currency per market. Overridden per business once set up. */
+/**
+ * Default currency per market. Overridden per business once set up.
+ * Bulgaria is on the euro, so BGN is gone; Romania still prices in lei.
+ */
 export const localeCurrency: Record<Locale, string> = {
-  bg: "BGN",
+  bg: "EUR",
   en: "EUR",
   ro: "RON",
 };

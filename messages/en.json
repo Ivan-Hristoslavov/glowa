@@ -455,6 +455,7 @@
       "reviews": "Reviews",
       "payments": "Payments",
       "marketing": "Marketing",
+      "growth": "Growth",
       "analytics": "Analytics",
       "settings": "Settings",
       "assistant": "AI assistant",
@@ -741,6 +742,64 @@
       "sendingDisabled": "Sending is not live yet",
       "sendingDisabledBody": "Messaging channels are connected in the next step. Until then campaigns are saved as drafts and audiences can be checked.",
       "consentNote": "Only clients who explicitly consented to marketing are shown."
+    },
+    "growth": {
+      "title": "Growth",
+      "subtitle": "QR codes for the salon and referral links for your clients.",
+      "privacyNote": "We count visits and bookings, nothing else. No IP address, no device, no idea who scanned — a visit is a number going up.",
+      "create": "New link",
+      "creating": "Creating…",
+      "created": "Link ready",
+      "createHint": "The code is generated for you, short enough to type by hand.",
+      "labelPlaceholder": "e.g. Window, Chair 2, Business card",
+      "field": {
+        "kind": "Type",
+        "label": "Name",
+        "target": "Where it goes",
+        "service": "Service",
+        "referrer": "Who refers"
+      },
+      "kind": {
+        "qr": "QR code",
+        "referral": "Referral",
+        "campaign": "Campaign"
+      },
+      "kindHint": {
+        "qr": "For print — window, mirror, back of a card, receipt.",
+        "referral": "A client's personal link. Bookings through it are credited to them."
+      },
+      "target": {
+        "book": "Straight to booking",
+        "business": "To the salon profile"
+      },
+      "serviceAny": "All services",
+      "referrerNone": "No specific client",
+      "byReferrer": "Referred by {name}",
+      "forService": "Service: {service}",
+      "visits": "Visits",
+      "bookings": "Bookings",
+      "conversion": "Conversion",
+      "showQr": "Show QR",
+      "hideQr": "Hide QR",
+      "downloadQr": "Download QR (SVG)",
+      "copy": "Copy link",
+      "delete": "Delete",
+      "deleted": "Link deleted",
+      "deleteConfirm": "Delete this link? Printed codes will stop working.",
+      "toggleActive": "Active",
+      "inactive": "Paused",
+      "empty": {
+        "title": "No links yet",
+        "body": "Make a QR for the window, or a personal link for a client who recommends you."
+      },
+      "errors": {
+        "invalid": "Check the fields and try again.",
+        "unauthenticated": "Please sign in.",
+        "not_a_member": "You don't have access to this business.",
+        "forbidden": "Manager rights are required.",
+        "generic": "Something went wrong. Try again.",
+        "copy": "Couldn't copy."
+      }
     },
     "analytics": {
       "title": "Analytics",

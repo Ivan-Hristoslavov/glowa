@@ -455,6 +455,7 @@
       "reviews": "Recenzii",
       "payments": "Plăți",
       "marketing": "Marketing",
+      "growth": "Creștere",
       "analytics": "Analize",
       "settings": "Setări",
       "assistant": "Asistent AI",
@@ -741,6 +742,64 @@
       "sendingDisabled": "Trimiterea nu este activă încă",
       "sendingDisabledBody": "Canalele de mesagerie se conectează la pasul următor. Până atunci campaniile se salvează ca ciorne și audiențele pot fi verificate.",
       "consentNote": "Se afișează doar clienții care și-au dat explicit consimțământul."
+    },
+    "growth": {
+      "title": "Creștere",
+      "subtitle": "Coduri QR pentru salon și linkuri de recomandare pentru clienți.",
+      "privacyNote": "Numărăm doar vizitele și programările. Fără adresă IP, fără dispozitiv, fără să știm cine a scanat — o vizită e un număr care crește.",
+      "create": "Link nou",
+      "creating": "Se creează…",
+      "created": "Linkul e gata",
+      "createHint": "Codul se generează singur și e scurt, ca să poată fi tastat și manual.",
+      "labelPlaceholder": "ex. Vitrină, Scaun 2, Carte de vizită",
+      "field": {
+        "kind": "Tip",
+        "label": "Nume",
+        "target": "Unde duce",
+        "service": "Serviciu",
+        "referrer": "Cine recomandă"
+      },
+      "kind": {
+        "qr": "Cod QR",
+        "referral": "Recomandare",
+        "campaign": "Campanie"
+      },
+      "kindHint": {
+        "qr": "Pentru tipar — vitrină, oglindă, spatele unei cărți de vizită, bon.",
+        "referral": "Linkul personal al unui client. Programările prin el i se atribuie lui."
+      },
+      "target": {
+        "book": "Direct la programare",
+        "business": "La profilul salonului"
+      },
+      "serviceAny": "Toate serviciile",
+      "referrerNone": "Fără client anume",
+      "byReferrer": "Recomandat de {name}",
+      "forService": "Serviciu: {service}",
+      "visits": "Vizite",
+      "bookings": "Programări",
+      "conversion": "Conversie",
+      "showQr": "Arată QR",
+      "hideQr": "Ascunde QR",
+      "downloadQr": "Descarcă QR (SVG)",
+      "copy": "Copiază linkul",
+      "delete": "Șterge",
+      "deleted": "Link șters",
+      "deleteConfirm": "Ștergi linkul? Codurile tipărite nu vor mai funcționa.",
+      "toggleActive": "Activ",
+      "inactive": "Oprit",
+      "empty": {
+        "title": "Încă nu există linkuri",
+        "body": "Fă un QR pentru vitrină sau un link personal pentru un client care te recomandă."
+      },
+      "errors": {
+        "invalid": "Verifică câmpurile și încearcă din nou.",
+        "unauthenticated": "Autentifică-te.",
+        "not_a_member": "Nu ai acces la această afacere.",
+        "forbidden": "Sunt necesare drepturi de manager.",
+        "generic": "Ceva n-a mers. Încearcă din nou.",
+        "copy": "Nu s-a putut copia."
+      }
     },
     "analytics": {
       "title": "Analize",

@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
+import { GROWTH_COOKIE } from "@/app/[locale]/go/[code]/route";
 import { createClient } from "@/lib/supabase/server";
 
 export type Slot = {
@@ -60,12 +62,19 @@ export async function bookAppointment(input: {
     return { ok: false, code: "unauthenticated" };
   }
 
+  // Set when the customer arrived through a QR or referral link. The RPC
+  // resolves it against the business being booked, so a code from elsewhere
+  // is simply ignored rather than credited.
+  const jar = await cookies();
+  const growthCode = jar.get(GROWTH_COOKIE)?.value;
+
   const { data, error } = await supabase.rpc("book_appointment", {
     p_service_id: input.serviceId,
     p_starts_at: input.startsAt,
     p_staff_profile_id: input.staffProfileId,
     p_location_id: input.locationId ?? undefined,
     p_customer_notes: input.notes ?? undefined,
+    p_growth_code: growthCode || undefined,
   });
 
   if (error || !data) return { ok: false, code: errorCode(error) };

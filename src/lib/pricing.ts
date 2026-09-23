@@ -35,7 +35,7 @@ export const PLANS: Plan[] = [
     id: "solo",
     monthly: null,
     annualMonthly: null,
-    currency: "BGN",
+    currency: "EUR",
     seats: 1,
     featured: false,
     features: [
@@ -51,7 +51,7 @@ export const PLANS: Plan[] = [
     id: "studio",
     monthly: null,
     annualMonthly: null,
-    currency: "BGN",
+    currency: "EUR",
     seats: 5,
     featured: true,
     features: [
@@ -68,7 +68,7 @@ export const PLANS: Plan[] = [
     id: "salon",
     monthly: null,
     annualMonthly: null,
-    currency: "BGN",
+    currency: "EUR",
     seats: null,
     featured: false,
     features: [

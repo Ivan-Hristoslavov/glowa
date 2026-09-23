@@ -638,6 +638,43 @@ publish, fill in `monthly` and `annualMonthly` per plan - nothing else changes.
 
 ---
 
+## 8f. Growth links (QR and referrals)
+
+One short code, one destination, one honest counter. `growth_links` carries
+both kinds because the only real difference is who gets the credit: a `qr` link
+belongs to the salon, a `referral` link to a named client.
+
+- **The code is assigned by a trigger**, never by the caller, so nobody squats
+  on a short or misleading one and the client never retries a collision. The
+  alphabet omits `l`, `o`, `0` and `1`, because a code gets read aloud and
+  typed off a card.
+- **Counters are frozen** by `app.freeze_growth_link_counters`: a manager can
+  rename a link or pause it, but cannot touch `code`, `business_id`,
+  `visit_count` or `booking_count`. The two places that legitimately move a
+  counter set `app.counter_write` for one statement — deliberately *not*
+  `app.trusted_write`, which also disables the customer booking guard and would
+  be far too much authority for an increment.
+- **`/[locale]/go/[code]`** is a route handler, not a page: there is nothing to
+  render and someone in front of a poster should see the salon. An unknown,
+  disabled or suspended code redirects to search rather than 404ing, and says
+  nothing about whether the code ever existed.
+- **Attribution.** The route sets a 30-day `glowa_ref` cookie holding the code
+  and nothing else. `bookAppointment` passes it to `book_appointment`, which
+  resolves it *against the business being booked* — a code from another salon
+  is ignored, not credited. The customer guard nulls `growth_link_id` on any
+  insert where the link does not belong to that business, so a crafted REST
+  call cannot inflate someone else's numbers either. Both paths verified.
+- **What is not collected**: no IP address, no user agent, no visitor id,
+  nothing that identifies who scanned. A visit is a number going up, and the
+  dashboard says so rather than implying a precision the data lacks — two scans
+  of the same poster are two visits.
+- **QR rendering** is server-side (`lib/growth/qr.ts`, the `qrcode` package) and
+  produces SVG: a poster, a card and a mirror sticker are different sizes and a
+  PNG only looks right at one. Error correction is Q (25%) rather than the
+  usual M, because a code in a salon collects steam and fingerprints.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -646,6 +683,13 @@ publish, fill in `monthly` and `annualMonthly` per plan - nothing else changes.
   `authenticated` — intentional, explained in §6.
 - `reschedule_appointment` is SECURITY DEFINER and callable by `authenticated` —
   intentional, explained in §6. No longer callable by `anon`.
+- `claim_pending_invitations` is SECURITY DEFINER and callable by
+  `authenticated` — it has to read `auth.users` to match an invitation to an
+  email, and the whole match is pinned to `(select auth.uid())` (§8c).
+- `resolve_growth_link` is SECURITY DEFINER and callable by `anon` —
+  deliberately: somebody scanning a poster is signed out. `anon` has no read on
+  `growth_links` at all, so the only thing the function discloses is where one
+  code points, which is the entire purpose of a printed code (§8f).
 - **Leaked password protection is disabled.** This is a dashboard setting nobody
   has flipped: Authentication → Policies → enable HaveIBeenPwned checks. Worth
   doing before real users.
@@ -741,6 +785,12 @@ traction claim may appear unless it is real.
 15. Marketing campaigns still only preview an audience. `marketing_messages`
     has its own `idempotency_key` and is not yet wired to the outbox; the
     campaign sender is the remaining half of Prompt 4's growth work.
+17. Bulgaria is on the euro, so BGN is gone from the defaults and every
+    existing amount was redenominated at the official fixed rate
+    (1 EUR = 1.95583 BGN, rounded to the cent) in migration 0019. The seeded
+    demo salons were then re-rounded to whole euros, because 30.68 is what
+    arithmetic produces and not what a price list looks like. Romanian
+    businesses keep RON.
 16. `/pricing` shows "soon" instead of amounts until `lib/pricing.ts` gets real
     numbers, and the contact CTA points at `hello@glowa.bg`, which has to
     actually exist before launch.

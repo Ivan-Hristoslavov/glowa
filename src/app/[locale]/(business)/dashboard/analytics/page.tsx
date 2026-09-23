@@ -42,7 +42,7 @@ export default async function AnalyticsPage({
     .eq("id", membership.businessId)
     .maybeSingle();
 
-  const currency = business?.currency ?? "BGN";
+  const currency = business?.currency ?? "EUR";
   const timezone = business?.timezone ?? "Europe/Sofia";
   const activeLocale = locale as Locale;
 

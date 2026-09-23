@@ -65,7 +65,7 @@ export async function upsertService(
     buffer_before_minutes: parsed.data.bufferBeforeMinutes,
     buffer_after_minutes: parsed.data.bufferAfterMinutes,
     price_cents: parsed.data.priceCents,
-    currency: business?.currency ?? "BGN",
+    currency: business?.currency ?? "EUR",
     requires_deposit: parsed.data.requiresDeposit,
     deposit_cents: parsed.data.requiresDeposit
       ? Math.min(parsed.data.depositCents, parsed.data.priceCents)

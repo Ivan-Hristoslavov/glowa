@@ -49,7 +49,7 @@ export default async function ClientsPage({
   ]);
 
   const activeLocale = locale as Locale;
-  const currency = business?.currency ?? "BGN";
+  const currency = business?.currency ?? "EUR";
   const dateFormatter = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
     dateStyle: "medium",
   });
