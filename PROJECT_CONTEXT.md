@@ -608,6 +608,36 @@ once Docker is available to confirm the harness.
 
 ---
 
+## 8e. Public surface and SEO
+
+`src/app/sitemap.ts` and `src/app/robots.ts` sit at the app root, outside
+`[locale]`, so they are served at `/sitemap.xml` and `/robots.txt`. The proxy
+matcher already excludes anything with a file extension, so neither picks up a
+locale prefix.
+
+- Every sitemap URL carries the full `hreflang` alternate set. Without it a
+  Bulgarian salon page and its Romanian translation compete as duplicates
+  rather than reading as one page in three languages.
+- Businesses come from a cookie-less anon client (`lib/supabase/public.ts`),
+  because the request-scoped client would make the artefact vary by visitor.
+  `anon` RLS already limits the rows; the query only adds `is_demo = false`.
+  Revalidated hourly, and a failed query degrades to the static entries rather
+  than 500ing the whole sitemap.
+- `robots.ts` disallows everything when `VERCEL_ENV` is not `production`. A
+  preview deployment that gets indexed outranks the real site for its own
+  content. In production it allows crawling but excludes `/api`, `/auth` and
+  every signed-in path, so `?next=` variants of the login screen never enter
+  the index.
+
+**`/pricing`** is built and linked from the header and the mobile nav. The
+feature lists are real - every line maps to something that exists. The amounts
+are deliberately `null` in `lib/pricing.ts`: publishing a price is a commercial
+decision, and the brief's own rule is not to fabricate prices. While `monthly`
+is null the page says so and asks for contact instead of showing a figure. To
+publish, fill in `monthly` and `annualMonthly` per plan - nothing else changes.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -678,7 +708,8 @@ traction claim may appear unless it is real.
 2. **Prompt 5** — production polish, QA, tests, Vercel.
 3. The marketing pages render dynamically because `SiteHeader` reads auth state.
    Split the auth-dependent part into a client island or a `<Suspense>`
-   boundary so the landing page and search can be static.
+   boundary so the landing page, search and `/pricing` can be static. The
+   sitemap and robots are already static.
 4. `get_available_slots` has no test of its own — the pgTAP suite covers the
    constraint and the triggers around it, but not slot generation against
    working hours, time off and existing bookings. That is the next one to
@@ -710,3 +741,6 @@ traction claim may appear unless it is real.
 15. Marketing campaigns still only preview an audience. `marketing_messages`
     has its own `idempotency_key` and is not yet wired to the outbox; the
     campaign sender is the remaining half of Prompt 4's growth work.
+16. `/pricing` shows "soon" instead of amounts until `lib/pricing.ts` gets real
+    numbers, and the contact CTA points at `hello@glowa.bg`, which has to
+    actually exist before launch.

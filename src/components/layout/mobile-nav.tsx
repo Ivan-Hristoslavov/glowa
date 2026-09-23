@@ -1,6 +1,15 @@
 "use client";
 
-import { CalendarDays, Heart, Menu, Search, Settings, Star, User2 } from "lucide-react";
+import {
+  CalendarDays,
+  Heart,
+  Menu,
+  Search,
+  Settings,
+  Star,
+  Tag,
+  User2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -15,7 +24,10 @@ import {
 } from "@/components/ui/sheet";
 import { Link } from "@/i18n/navigation";
 
-const PUBLIC_LINKS = [{ href: "/search", key: "discover", icon: Search }] as const;
+const PUBLIC_LINKS = [
+  { href: "/search", key: "discover", icon: Search },
+  { href: "/pricing", key: "pricing", icon: Tag },
+] as const;
 
 const ACCOUNT_LINKS = [
   { href: "/profile", key: "profile", icon: User2 },

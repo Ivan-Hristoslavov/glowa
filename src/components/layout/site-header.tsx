@@ -35,13 +35,19 @@ export async function SiteHeader() {
           <Link href="/" className="glowa-focus rounded-md" aria-label="glowa">
             <GlowaLogo />
           </Link>
-          <nav className="hidden sm:block">
+          <nav className="hidden items-center gap-5 sm:flex">
             <Link
               href="/search"
               className="text-muted-foreground hover:text-foreground glowa-focus inline-flex items-center gap-1.5 rounded-md text-sm font-medium transition-colors"
             >
               <Search className="size-4" aria-hidden />
               {t("discover")}
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-muted-foreground hover:text-foreground glowa-focus rounded-md text-sm font-medium transition-colors"
+            >
+              {t("pricing")}
             </Link>
           </nav>
         </div>

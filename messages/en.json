@@ -816,5 +816,79 @@
       "signature": "The {business} team",
       "sentBy": "Sent with GLOWA"
     }
+  },
+  "pricing": {
+    "eyebrow": "PRICING",
+    "title": "One plan for every stage.",
+    "subtitle": "You pay for the team using Glowa, not per booking. Your clients never pay anything.",
+    "unpublished": {
+      "badge": "Soon",
+      "title": "Pricing is not published yet",
+      "body": "We're finalising the plans for the Bulgarian, Romanian and wider European markets. Write to us and you'll get them first, along with the terms for early businesses.",
+      "cta": "Get in touch"
+    },
+    "billing": {
+      "monthly": "Monthly",
+      "annual": "Yearly",
+      "annualNote": "Paying yearly works out cheaper per month.",
+      "perMonth": "/ month",
+      "vat": "Prices exclude VAT."
+    },
+    "plans": {
+      "solo": {
+        "name": "Solo",
+        "tagline": "For one professional working alone.",
+        "seats": "1 professional"
+      },
+      "studio": {
+        "name": "Studio",
+        "tagline": "For a small team and more than one location.",
+        "seats": "Up to 5 professionals"
+      },
+      "salon": {
+        "name": "Salon",
+        "tagline": "For a large salon that needs roles and accountability.",
+        "seats": "Unlimited team"
+      }
+    },
+    "features": {
+      "onlineBooking": "24/7 online booking",
+      "calendar": "Calendar and opening hours",
+      "clients": "Client records with history and notes",
+      "reminders": "Email reminders and confirmations",
+      "reviewRequests": "Automatic review invitations",
+      "publicProfile": "Public profile and booking page",
+      "everythingSolo": "Everything in Solo",
+      "teamCalendar": "Shared team calendar",
+      "staffHours": "Per-specialist hours and time off",
+      "campaigns": "Marketing campaigns to consenting clients",
+      "analytics": "Analytics: revenue, utilisation, retention",
+      "growthLinks": "QR and referral booking links",
+      "multiLocation": "Multiple locations",
+      "everythingStudio": "Everything in Studio",
+      "unlimitedStaff": "Unlimited specialists",
+      "assistant": "AI assistant over aggregate data",
+      "roles": "Roles and access control",
+      "auditLog": "Audit log",
+      "priority": "Priority support"
+    },
+    "cta": {
+      "start": "Start free",
+      "contact": "Get in touch",
+      "popular": "Most chosen"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "q1": "Do clients pay to book?",
+      "a1": "No. Booking through Glowa is free for the client. Only the business pays, for its team.",
+      "q2": "What happens to my data if I leave?",
+      "a2": "It stays yours. You can export your clients and bookings at any time, and closing the account does not mean we keep your content.",
+      "q3": "Do you take a percentage of revenue?",
+      "a3": "No. The subscription is flat. If you switch on online payments, the fee belongs to the payment provider, not to us.",
+      "q4": "What languages does the platform work in?",
+      "a4": "Bulgarian, English and Romanian, for both the business and the client. Each client is messaged in their own language.",
+      "q5": "Can I change plan?",
+      "a5": "Yes, at any time. The change applies from the next billing period."
+    }
   }
 }

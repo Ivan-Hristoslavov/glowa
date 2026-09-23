@@ -816,5 +816,79 @@
       "signature": "Echipa {business}",
       "sentBy": "Trimis prin GLOWA"
     }
+  },
+  "pricing": {
+    "eyebrow": "PREȚURI",
+    "title": "Un plan pentru fiecare etapă.",
+    "subtitle": "Plătești pentru echipa care folosește Glowa, nu per programare. Clienții tăi nu plătesc niciodată nimic.",
+    "unpublished": {
+      "badge": "În curând",
+      "title": "Prețurile nu sunt încă publicate",
+      "body": "Finalizăm planurile pentru piața din Bulgaria, România și restul Europei. Scrie-ne și le primești primul, împreună cu condițiile pentru afacerile care încep devreme.",
+      "cta": "Contactează-ne"
+    },
+    "billing": {
+      "monthly": "Lunar",
+      "annual": "Anual",
+      "annualNote": "Plata anuală iese mai ieftin pe lună.",
+      "perMonth": "/ lună",
+      "vat": "Prețurile nu includ TVA."
+    },
+    "plans": {
+      "solo": {
+        "name": "Solo",
+        "tagline": "Pentru un specialist care lucrează singur.",
+        "seats": "1 specialist"
+      },
+      "studio": {
+        "name": "Studio",
+        "tagline": "Pentru o echipă mică și mai mult de o locație.",
+        "seats": "Până la 5 specialiști"
+      },
+      "salon": {
+        "name": "Salon",
+        "tagline": "Pentru un salon mare, cu roluri și responsabilitate.",
+        "seats": "Echipă nelimitată"
+      }
+    },
+    "features": {
+      "onlineBooking": "Programări online 24/7",
+      "calendar": "Calendar și program de lucru",
+      "clients": "Fișe de client cu istoric și notițe",
+      "reminders": "Memento-uri și confirmări pe e-mail",
+      "reviewRequests": "Invitații automate la recenzie",
+      "publicProfile": "Profil public și pagină de programare",
+      "everythingSolo": "Tot ce include Solo",
+      "teamCalendar": "Calendar comun pentru echipă",
+      "staffHours": "Program și concedii per specialist",
+      "campaigns": "Campanii de marketing către clienții care au consimțit",
+      "analytics": "Analize: încasări, ocupare, retenție",
+      "growthLinks": "Linkuri QR și de recomandare",
+      "multiLocation": "Mai multe locații",
+      "everythingStudio": "Tot ce include Studio",
+      "unlimitedStaff": "Specialiști nelimitați",
+      "assistant": "Asistent AI pe date agregate",
+      "roles": "Roluri și drepturi de acces",
+      "auditLog": "Jurnal de acțiuni",
+      "priority": "Suport prioritar"
+    },
+    "cta": {
+      "start": "Începe gratuit",
+      "contact": "Contactează-ne",
+      "popular": "Cel mai ales"
+    },
+    "faq": {
+      "title": "Întrebări frecvente",
+      "q1": "Clienții plătesc ca să se programeze?",
+      "a1": "Nu. Programarea prin Glowa este gratuită pentru client. Plătește doar afacerea, pentru echipa ei.",
+      "q2": "Ce se întâmplă cu datele mele dacă renunț?",
+      "a2": "Rămân ale tale. Poți exporta clienții și programările oricând, iar închiderea contului nu înseamnă că păstrăm conținutul tău.",
+      "q3": "Luați un procent din încasări?",
+      "a3": "Nu. Abonamentul este fix. Dacă activezi plățile online, comisionul este al procesatorului de plăți, nu al nostru.",
+      "q4": "În ce limbi funcționează platforma?",
+      "a4": "Bulgară, engleză și română, atât pentru afacere, cât și pentru client. Fiecare client primește mesajele în limba lui.",
+      "q5": "Pot schimba planul?",
+      "a5": "Da, oricând. Schimbarea se aplică din următoarea perioadă de facturare."
+    }
   }
 }
