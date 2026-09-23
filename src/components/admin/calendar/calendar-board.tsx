@@ -9,11 +9,16 @@ import {
   Radio,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { NewAppointmentDialog } from "@/components/admin/calendar/appointment-dialog";
 import { BlockTimeDialog } from "@/components/admin/calendar/block-time-dialog";
+import {
+  useCalendarDrag,
+  type DragPreview,
+  type DragTarget,
+} from "@/components/admin/calendar/use-calendar-drag";
 import type {
   CalendarAppointment,
   CalendarBlock,
@@ -45,6 +50,7 @@ import { useRouter } from "@/i18n/navigation";
 import { localeHrefLang, type Locale } from "@/i18n/routing";
 import {
   moveAppointment,
+  resizeAppointment,
   setAppointmentNotes,
   setAppointmentStatus,
 } from "@/lib/actions/admin-appointments";
@@ -110,7 +116,6 @@ export function CalendarBoard({
   const [createOpen, setCreateOpen] = useState(false);
   const [blockOpen, setBlockOpen] = useState(false);
   const [live, setLive] = useState(false);
-  const dragged = useRef<CalendarAppointment | null>(null);
 
   const visibleStaff = useMemo(
     () => (staffFilter === "all" ? staff : staff.filter((s) => s.id === staffFilter)),
@@ -206,33 +211,60 @@ export function CalendarBoard({
     setCreateOpen(true);
   }
 
-  function onDrop(cellDateKey: string, minutes: number, staffProfileId: string) {
-    const appointment = dragged.current;
-    dragged.current = null;
-    if (!appointment || !canManage) return;
+  /**
+   * Called once, when the pointer is released. Moving and resizing are two
+   * different writes: a move keeps the duration and may change stylist or day,
+   * a resize only moves the end. Both can be refused by the exclusion
+   * constraint, which is what stops a stylist being double-booked by a drag.
+   */
+  const commitDrag = useCallback(
+    (next: DragPreview) => {
+      if (!canManage) return;
 
-    const startsAt = instantFromZoned(cellDateKey, minutes, timezone);
-    if (startsAt.toISOString() === appointment.startsAt &&
-        staffProfileId === appointment.staffProfileId) {
-      return;
-    }
+      startTransition(async () => {
+        const result =
+          next.mode === "resize"
+            ? await resizeAppointment({
+                businessId,
+                appointmentId: next.id,
+                durationMinutes: next.durationMinutes,
+              })
+            : await moveAppointment({
+                businessId,
+                appointmentId: next.id,
+                startsAt: instantFromZoned(
+                  next.dateKey,
+                  next.startMinutes,
+                  timezone,
+                ).toISOString(),
+                staffProfileId: next.staffProfileId ?? undefined,
+              });
 
-    startTransition(async () => {
-      const result = await moveAppointment({
-        businessId,
-        appointmentId: appointment.id,
-        startsAt: startsAt.toISOString(),
-        staffProfileId,
+        if (!result.ok) {
+          toast.error(
+            result.code === "overlap" ? t("errors.overlap") : t("errors.generic"),
+          );
+          // The optimistic preview is already gone; refresh puts the card back
+          // where the database still has it.
+          router.refresh();
+          return;
+        }
+
+        toast.success(t("updated"));
+        router.refresh();
       });
+    },
+    [businessId, canManage, router, t, timezone],
+  );
 
-      if (!result.ok) {
-        toast.error(result.code === "overlap" ? t("errors.overlap") : t("errors.generic"));
-        return;
-      }
-      toast.success(t("updated"));
-      router.refresh();
-    });
-  }
+  const { begin: beginDrag, preview: dragPreview, isDragging } = useCalendarDrag({
+    pxPerMinute: PX_PER_MINUTE,
+    snapMinutes: SLOT_MINUTES,
+    minMinutes: startMinutes,
+    maxMinutes: endMinutes,
+    enabled: canManage,
+    onCommit: commitDrag,
+  });
 
   function changeStatus(
     appointment: CalendarAppointment,
@@ -434,9 +466,11 @@ export function CalendarBoard({
                 <div
                   className="relative"
                   style={{ height: totalMinutes * PX_PER_MINUTE }}
-                  onDragOver={(event) => {
-                    if (canManage) event.preventDefault();
-                  }}
+                  // Read back by the drag hook from the pointer position, so
+                  // dropping onto another stylist or another day just works.
+                  data-calendar-column="1"
+                  data-calendar-date={column.dateKey}
+                  data-calendar-staff={column.staffProfileId}
                 >
                   {/* Closed time is shaded, so an empty column reads as "closed"
                       rather than "free". */}
@@ -473,11 +507,12 @@ export function CalendarBoard({
                         top: (minute - startMinutes) * PX_PER_MINUTE,
                         height: SLOT_MINUTES * PX_PER_MINUTE,
                       }}
-                      onClick={() => openCell(column.dateKey, minute, column.staffProfileId)}
-                      onDragOver={(event) => {
-                        if (canManage) event.preventDefault();
+                      onClick={() => {
+                        // A drag that ended over this cell must not also open
+                        // the "new appointment" dialog.
+                        if (isDragging) return;
+                        openCell(column.dateKey, minute, column.staffProfileId);
                       }}
-                      onDrop={() => onDrop(column.dateKey, minute, column.staffProfileId)}
                     />
                   ))}
 
@@ -498,47 +533,128 @@ export function CalendarBoard({
                   })}
 
                   {appointmentsFor(column).map((appointment) => {
-                    const top = (zonedMinutes(new Date(appointment.startsAt), timezone) - startMinutes) * PX_PER_MINUTE;
-                    const height =
-                      ((new Date(appointment.endsAt).getTime() - new Date(appointment.startsAt).getTime()) / 60000) *
-                      PX_PER_MINUTE;
+                    const originStart = zonedMinutes(
+                      new Date(appointment.startsAt),
+                      timezone,
+                    );
+                    const originDuration =
+                      (new Date(appointment.endsAt).getTime() -
+                        new Date(appointment.startsAt).getTime()) /
+                      60000;
+
+                    // While this card is being dragged it follows the pointer
+                    // rather than the database.
+                    const isGhost = dragPreview?.id === appointment.id;
+                    const shownStart = isGhost ? dragPreview.startMinutes : originStart;
+                    const shownDuration = isGhost
+                      ? dragPreview.durationMinutes
+                      : originDuration;
+
+                    // A move can carry the card into another column; it is
+                    // drawn there and hidden here.
+                    const movedAway =
+                      isGhost &&
+                      dragPreview.mode === "move" &&
+                      (dragPreview.dateKey !== column.dateKey ||
+                        dragPreview.staffProfileId !== column.staffProfileId);
+                    if (movedAway) return null;
+
+                    const top = (shownStart - startMinutes) * PX_PER_MINUTE;
+                    const height = shownDuration * PX_PER_MINUTE;
                     const member = staff.find((s) => s.id === appointment.staffProfileId);
                     const isCancelled =
                       appointment.status === "cancelled" || appointment.status === "no_show";
+                    const draggable = canManage && !isCancelled;
+
+                    const target: DragTarget = {
+                      id: appointment.id,
+                      startMinutes: originStart,
+                      durationMinutes: originDuration,
+                      dateKey: column.dateKey,
+                      staffProfileId: column.staffProfileId,
+                    };
 
                     return (
-                      <button
+                      <div
                         key={appointment.id}
-                        type="button"
-                        draggable={canManage && !isCancelled}
-                        onDragStart={() => {
-                          dragged.current = appointment;
-                        }}
-                        onClick={() => {
-                          setSelected(appointment);
-                          setNotesDraft(appointment.internalNotes ?? "");
-                        }}
                         className={cn(
-                          "glowa-focus absolute inset-x-1 overflow-hidden rounded-md border px-2 py-1 text-left text-[0.72rem] leading-tight shadow-sm transition-shadow hover:shadow-md",
-                          isCancelled && "opacity-50 line-through",
+                          "absolute inset-x-1 rounded-md border text-[0.72rem] leading-tight shadow-sm transition-shadow",
+                          isCancelled && "opacity-50",
+                          isGhost && "z-20 shadow-lg ring-2 ring-primary/60",
                         )}
                         style={{
                           top,
                           height: Math.max(height, 22),
                           backgroundColor: `${member?.color ?? "#D96C61"}22`,
                           borderColor: `${member?.color ?? "#D96C61"}66`,
+                          // Without this the browser scrolls the page instead
+                          // of letting the finger drag the card.
+                          touchAction: draggable ? "none" : undefined,
                         }}
                       >
-                        <span className="block truncate font-medium">
-                          {timeFormatter.format(new Date(appointment.startsAt))} ·{" "}
-                          {appointment.serviceName}
-                        </span>
-                        <span className="text-muted-foreground block truncate">
-                          {appointment.customerName ?? "—"}
-                        </span>
-                      </button>
+                        <button
+                          type="button"
+                          onPointerDown={(event) =>
+                            draggable && beginDrag(event, "move", target)
+                          }
+                          onClick={() => {
+                            if (isDragging) return;
+                            setSelected(appointment);
+                            setNotesDraft(appointment.internalNotes ?? "");
+                          }}
+                          className={cn(
+                            "glowa-focus block size-full overflow-hidden rounded-md px-2 py-1 text-left",
+                            draggable && "cursor-grab active:cursor-grabbing",
+                            isCancelled && "line-through",
+                          )}
+                        >
+                          <span className="block truncate font-medium">
+                            {timeFormatter.format(
+                              isGhost
+                                ? instantFromZoned(
+                                    dragPreview.dateKey,
+                                    shownStart,
+                                    timezone,
+                                  )
+                                : new Date(appointment.startsAt),
+                            )}{" "}
+                            · {appointment.serviceName}
+                          </span>
+                          <span className="text-muted-foreground block truncate">
+                            {appointment.customerName ?? "—"}
+                          </span>
+                        </button>
+
+                        {/* Bottom edge: drag to change how long it takes. */}
+                        {draggable ? (
+                          <span
+                            role="presentation"
+                            onPointerDown={(event) =>
+                              beginDrag(event, "resize", target)
+                            }
+                            className="hover:bg-primary/40 absolute inset-x-0 bottom-0 h-2 cursor-ns-resize rounded-b-md"
+                            style={{ touchAction: "none" }}
+                          />
+                        ) : null}
+                      </div>
                     );
                   })}
+
+                  {/* A card dragged in from another column is drawn here. */}
+                  {dragPreview &&
+                  dragPreview.mode === "move" &&
+                  dragPreview.dateKey === column.dateKey &&
+                  dragPreview.staffProfileId === column.staffProfileId &&
+                  !appointmentsFor(column).some((a) => a.id === dragPreview.id) ? (
+                    <div
+                      aria-hidden
+                      className="border-primary bg-primary/20 pointer-events-none absolute inset-x-1 z-20 rounded-md border-2 border-dashed"
+                      style={{
+                        top: (dragPreview.startMinutes - startMinutes) * PX_PER_MINUTE,
+                        height: Math.max(dragPreview.durationMinutes * PX_PER_MINUTE, 22),
+                      }}
+                    />
+                  ) : null}
                 </div>
               </div>
             );

@@ -756,6 +756,32 @@ city.
 
 ---
 
+## 8i. The calendar
+
+Moving and resizing run on **pointer events, not HTML5 drag-and-drop**.
+`draggable` never fires on touch, so on the tablet at the front desk - which is
+where a salon actually runs its day - appointments could not be moved at all.
+One pointer code path covers mouse, pen and finger.
+
+- Nothing is written until the pointer is released. While it is down the board
+  draws a preview, so a mis-drag costs nothing and there is no round-trip per
+  pixel.
+- A move keeps the duration and may cross to another stylist or another day;
+  the target column is found from the pointer position via `data-calendar-*`
+  attributes. A resize moves only the end - the start is when the client was
+  told to arrive, and changing that from a bottom edge would be a surprise.
+- Both land on the exclusion constraint, so a drag cannot double-book a
+  stylist; `23P01` surfaces as the localized "already has an appointment then".
+- `touch-action: none` on the card is what stops the browser scrolling the page
+  instead of dragging, and a 4px threshold keeps a tap from becoming a drag.
+
+Verified with synthetic **touch** pointer events on a production build: a card
+moved 10:00 → 12:00 across stylists keeping its hour, a resize grew 60 → 105
+minutes leaving the start alone, and a drag onto an occupied slot was refused
+with the appointment left where it was.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all

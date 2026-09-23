@@ -193,3 +193,51 @@ export async function setAppointmentNotes(
   revalidatePath("/[locale]/dashboard/calendar", "page");
   return { ok: true };
 }
+
+const resizeSchema = z.object({
+  businessId: z.uuid(),
+  appointmentId: z.uuid(),
+  // 5 minutes is the shortest thing anyone books; a day is the longest.
+  durationMinutes: z.number().int().min(5).max(1440),
+});
+
+/**
+ * Dragging an appointment's bottom edge.
+ *
+ * Only the end moves - the start is where the client was told to arrive, and
+ * changing it from a resize handle would be a surprise. The exclusion
+ * constraint decides whether the new length fits, so a stylist cannot be
+ * stretched over their next client.
+ */
+export async function resizeAppointment(
+  input: z.input<typeof resizeSchema>,
+): Promise<AdminAppointmentResult> {
+  const parsed = resizeSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, code: "invalid" };
+
+  const guard = await requireMembership(parsed.data.businessId, "manager");
+  if (!guard.ok) return guard;
+
+  const { data: existing } = await guard.supabase
+    .from("appointments")
+    .select("id, starts_at")
+    .eq("id", parsed.data.appointmentId)
+    .eq("business_id", parsed.data.businessId)
+    .maybeSingle();
+
+  if (!existing) return { ok: false, code: "invalid" };
+
+  const endsAt = new Date(
+    new Date(existing.starts_at).getTime() + parsed.data.durationMinutes * 60_000,
+  );
+
+  const { error } = await guard.supabase
+    .from("appointments")
+    .update({ ends_at: endsAt.toISOString() })
+    .eq("id", parsed.data.appointmentId);
+
+  if (error) return { ok: false, code: mapWriteError(error) };
+
+  revalidatePath("/[locale]/dashboard/calendar", "page");
+  return { ok: true };
+}
