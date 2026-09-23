@@ -22,18 +22,21 @@ export async function CategoryGrid() {
   const categories = await getTranslations("categories");
 
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    // Two up on a phone. At one per row these six 4:3 photographs ran to
+    // roughly two thousand pixels of scrolling before anything else on the
+    // page, which is a lot of travel to choose a filter.
+    <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3">
       {TILES.map((tile) => (
         <li key={tile.category}>
           <Link
             href={`/search?category=${tile.category}`}
-            className="glowa-focus group relative block aspect-[4/3] overflow-hidden rounded-xl"
+            className="glowa-focus group relative block aspect-square overflow-hidden rounded-xl sm:aspect-[4/3]"
           >
             <Image
               src={tile.image}
               alt=""
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
             {/* A scrim rather than a flat overlay: the label stays readable on a
@@ -42,7 +45,7 @@ export async function CategoryGrid() {
               aria-hidden
               className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/25 to-transparent"
             />
-            <span className="absolute inset-x-0 bottom-0 p-4 text-sm font-medium text-white">
+            <span className="absolute inset-x-0 bottom-0 p-3 text-xs font-medium text-white sm:p-4 sm:text-sm">
               {categories(tile.category)}
             </span>
           </Link>

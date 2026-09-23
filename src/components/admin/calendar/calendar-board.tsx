@@ -401,13 +401,22 @@ export function CalendarBoard({
           </SelectContent>
         </Select>
 
+        {/* The labels used to disappear below `sm`, leaving a bare plus and a
+            crossed-out calendar on the device a salon actually runs its day
+            on. Two icons with no words is a guessing game, so the buttons
+            keep their text and share the row instead. */}
         {canManage ? (
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setBlockOpen(true)}>
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onClick={() => setBlockOpen(true)}
+            >
               <CalendarOff className="size-4" aria-hidden />
-              <span className="hidden sm:inline">{t("blockTime")}</span>
+              {t("blockTime")}
             </Button>
             <Button
+              className="flex-1 sm:flex-none"
               onClick={() => {
                 setNewAppointment({
                   dateKey,
@@ -418,7 +427,7 @@ export function CalendarBoard({
               }}
             >
               <Plus className="size-4" aria-hidden />
-              <span className="hidden sm:inline">{t("newAppointment")}</span>
+              {t("newAppointment")}
             </Button>
           </div>
         ) : null}

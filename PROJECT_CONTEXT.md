@@ -938,6 +938,13 @@ traction claim may appear unless it is real.
 3. Payments remain the biggest product gap against Fresha and Booksy: no
    deposits, no card-on-file, no no-show protection. That, not the calendar,
    is what salons pay a booking platform for.
+20. Motion is now on one curve (`--ease-glowa`, applied in `globals.css` to
+    anything that already declares a transition), but there is still almost no
+    designed motion of its own - no page transitions, no list entrance. Worth a
+    pass once the feature set settles.
+21. City names are plain text, not localized: a Romanian visitor sees
+    "Пловдив" in Cyrillic, including in the page's structured data. Defensible
+    as the local spelling, awkward for the Romanian market.
 4. `get_available_slots` has no test of its own — the pgTAP suite covers the
    constraint and the triggers around it, but not slot generation against
    working hours, time off and existing bookings. That is the next one to

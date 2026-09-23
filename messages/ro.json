@@ -158,7 +158,8 @@
       "eyebrow": "DESCOPERĂ DUPĂ CATEGORIE",
       "title": "De la tuns la o zi de spa.",
       "subtitle": "Alege ce cauți și vezi saloanele care îl oferă."
-    }
+    },
+    "ownerPrompt": "Ai un salon?"
   },
   "auth": {
     "loginTitle": "Bine ai revenit",

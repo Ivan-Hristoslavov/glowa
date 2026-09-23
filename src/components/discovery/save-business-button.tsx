@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 type SaveBusinessButtonProps = {
   businessId: string;
   variant?: "default" | "icon";
+  className?: string;
 };
 
 /**
@@ -28,6 +29,7 @@ type SaveBusinessButtonProps = {
 export function SaveBusinessButton({
   businessId,
   variant = "default",
+  className,
 }: SaveBusinessButtonProps) {
   const t = useTranslations("business");
   const favorites = useTranslations("favorites");
@@ -87,6 +89,7 @@ export function SaveBusinessButton({
       type="button"
       variant={saved ? "secondary" : "outline"}
       size={variant === "icon" ? "icon" : "default"}
+      className={className}
       onClick={onClick}
       disabled={isPending}
       aria-pressed={saved}

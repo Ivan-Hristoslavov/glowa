@@ -94,14 +94,24 @@ export function BookingFlow({
     [service, staff],
   );
 
+  // The step list is fixed the moment the page loads. Deriving the staff step
+  // from the *chosen service* made the indicator grow from three steps to four
+  // as soon as someone picked one, which is disorienting: progress you are
+  // walking through should not get longer while you walk it. It depends on
+  // whether the salon has a team at all, which is known up front.
+  const bookableStaff = useMemo(
+    () => staff.filter((member) => member.id),
+    [staff],
+  );
+
   const steps = useMemo<StepId[]>(() => {
     const list: StepId[] = [];
     if (locations.length > 1) list.push("location");
     list.push("service");
-    if (eligibleStaff.length > 1) list.push("staff");
+    if (bookableStaff.length > 1) list.push("staff");
     list.push("time", "confirm");
     return list;
-  }, [eligibleStaff.length, locations.length]);
+  }, [bookableStaff.length, locations.length]);
 
   const current = steps[Math.min(stepIndex, steps.length - 1)];
 

@@ -158,7 +158,8 @@
       "eyebrow": "BROWSE BY CATEGORY",
       "title": "From a haircut to a spa day.",
       "subtitle": "Pick what you are after and see the places that offer it."
-    }
+    },
+    "ownerPrompt": "Run a salon?"
   },
   "auth": {
     "loginTitle": "Welcome back",

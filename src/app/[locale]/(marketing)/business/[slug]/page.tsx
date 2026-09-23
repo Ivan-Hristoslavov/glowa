@@ -189,13 +189,20 @@ export default async function BusinessPage({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 pb-1">
-            <SaveBusinessButton businessId={business.id} />
-            <Button asChild size="lg">
-              <Link href={`/business/${slug}/book`}>
-                {t("bookNow")}
-              </Link>
+          {/* Booking is why anyone is on this page. On a phone it was 97px
+              wide next to a 162px "save to favourites" - the secondary action
+              outweighing the primary. Now it takes the row and saving shrinks
+              to an icon. */}
+          <div className="flex items-center gap-2 pb-1">
+            <Button asChild size="lg" className="flex-1 sm:flex-none">
+              <Link href={`/business/${slug}/book`}>{t("bookNow")}</Link>
             </Button>
+            {/* Matches the booking button's height so the pair reads as one row. */}
+            <SaveBusinessButton
+              businessId={business.id}
+              variant="icon"
+              className="size-9 shrink-0"
+            />
           </div>
         </div>
 

@@ -84,14 +84,20 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               <SearchForm cities={cities} variant="hero" />
             </div>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg">
-                <Link href="/signup">{t("ctaPrimary")}</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/search">{t("ctaSecondary")}</Link>
-              </Button>
-            </div>
+            {/* The search box above is the customer's action, and "browse
+                salons" only repeated it. Two filled coral buttons under it
+                left the eye with nothing to grab. What remains is one line
+                for the other audience entirely: salon owners. */}
+            <p className="text-muted-foreground mt-6 text-sm">
+              {t("ownerPrompt")}{" "}
+              <Link
+                href="/signup"
+                className="text-primary glowa-focus rounded font-medium underline-offset-4 hover:underline"
+              >
+                {t("ctaPrimary")}
+                <ArrowRight className="ml-1 inline size-3.5 align-[-2px]" aria-hidden />
+              </Link>
+            </p>
 
             <ul className="text-muted-foreground mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm">
               {badges.map(({ key, icon: Icon }) => (

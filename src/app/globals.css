@@ -241,6 +241,40 @@
     color: var(--glowa-ink);
   }
 
+  /* One easing for the whole product.
+     `--ease-glowa` was defined with the rest of the design tokens and then
+     used exactly once, so every transition in the app fell back to the
+     browser default - a linear-ish curve that reads as cheap. This applies
+     the brand curve wherever a component already declares a transition,
+     without adding motion anywhere that had none.
+
+     The decelerating curve matters for the surfaces people touch most: a
+     panel that arrives fast and settles slowly feels physical, while the
+     same panel on a default ease feels like a slideshow. */
+  a,
+  button,
+  [role="button"],
+  [data-slot="button"],
+  input,
+  select,
+  textarea,
+  [data-state],
+  .glowa-card {
+    transition-timing-function: var(--ease-glowa);
+  }
+
+  /* Radix panels animate in and out; give them the same curve and a duration
+     long enough to be read as movement rather than a flicker. */
+  [data-slot="dialog-content"],
+  [data-slot="sheet-content"],
+  [data-slot="popover-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="select-content"],
+  [data-slot="tooltip-content"] {
+    animation-timing-function: var(--ease-glowa);
+    animation-duration: 200ms;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
