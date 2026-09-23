@@ -51,29 +51,35 @@ export function ChartShell({
 
       {children}
 
-      <table className="sr-only">
-        <caption>{title}</caption>
-        <thead>
-          <tr>
-            <th scope="col">—</th>
-            {series.map((item) => (
-              <th key={item.key} scope="col">
-                {item.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.label}>
-              <th scope="row">{row.label}</th>
-              {row.values.map((value, index) => (
-                <td key={index}>{value}</td>
+      {/* The `sr-only` utility clamps to 1px, but a <table> sizes itself from
+          its content regardless and pushed the page 34px wider than the
+          phone. Clamping the wrapper instead keeps the table readable to a
+          screen reader without it escaping the layout. */}
+      <div className="sr-only">
+        <table>
+          <caption>{title}</caption>
+          <thead>
+            <tr>
+              <th scope="col">—</th>
+              {series.map((item) => (
+                <th key={item.key} scope="col">
+                  {item.label}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.label}>
+                <th scope="row">{row.label}</th>
+                {row.values.map((value, index) => (
+                  <td key={index}>{value}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

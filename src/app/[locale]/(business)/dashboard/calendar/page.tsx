@@ -142,11 +142,6 @@ export default async function CalendarPage({
     createdAt: row.created_at,
   }));
 
-  const waitlistDateFormatter = new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "short",
-  });
-
   return (
     <div className="space-y-8">
       <CalendarBoard
@@ -183,7 +178,7 @@ export default async function CalendarPage({
           businessId={membership.businessId}
           entries={waitlist}
           canManage={canManage(membership.role)}
-          dateFormatter={waitlistDateFormatter}
+          locale={locale}
         />
       </section>
     </div>

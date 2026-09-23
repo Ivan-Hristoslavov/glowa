@@ -166,7 +166,10 @@ export function BookingFlow({
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
-      <div className="space-y-6">
+      {/* A grid item defaults to `min-width: auto`, so the horizontally
+          scrolling date strip stretched this column to the width of all 21
+          days - 1504px on a 375px phone - and pushed "next" off screen. */}
+      <div className="min-w-0 space-y-6">
         {/* Progress. The colour alone does not say which step you are on, so
             the current item is marked for assistive tech as well. */}
         <ol

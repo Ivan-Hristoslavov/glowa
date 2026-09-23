@@ -2,7 +2,7 @@
 
 import { BellRing, Check, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTransition } from "react";
+import { useMemo, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -30,14 +30,20 @@ export function WaitlistPanel({
   businessId,
   entries,
   canManage,
-  dateFormatter,
+  locale,
 }: {
   businessId: string;
   entries: WaitlistView[];
   canManage: boolean;
-  dateFormatter: Intl.DateTimeFormat;
+  /** The locale, not a formatter: an Intl instance cannot cross the
+      server/client boundary - only plain objects can. */
+  locale: string;
 }) {
   const t = useTranslations("waitlist");
+  const dateFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" }),
+    [locale],
+  );
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 

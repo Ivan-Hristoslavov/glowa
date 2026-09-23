@@ -99,6 +99,15 @@ describe("businessJsonLd", () => {
     expect(businessJsonLd(salon(), "bg").priceRange).toBe("30–45 EUR");
   });
 
+  it("does not advertise a one-price salon as a range", () => {
+    const one = salon({
+      services: [
+        { name: { bg: "Маникюр" }, description: null, price_cents: 3000, currency: "EUR" },
+      ],
+    } as never);
+    expect(businessJsonLd(one, "bg").priceRange).toBe("30 EUR");
+  });
+
   it("emits opening hours as schema.org weekdays", () => {
     const hours = businessJsonLd(salon(), "bg")
       .openingHoursSpecification as Record<string, string>[];

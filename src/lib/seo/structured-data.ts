@@ -121,8 +121,14 @@ export function businessJsonLd(
   if (openingHours.length) data.openingHoursSpecification = openingHours;
 
   if (prices.length) {
-    // A band, not a single number: the cheapest service is what people compare.
-    data.priceRange = `${Math.min(...prices) / 100}–${Math.max(...prices) / 100} ${business.currency}`;
+    // A band, because the cheapest service is what people compare - but a
+    // salon with one price should not be advertised as "30–30".
+    const low = Math.min(...prices) / 100;
+    const high = Math.max(...prices) / 100;
+    data.priceRange =
+      low === high
+        ? `${low} ${business.currency}`
+        : `${low}–${high} ${business.currency}`;
   }
 
   // Only when there is something real to report. An invented or zeroed rating
