@@ -32,7 +32,42 @@ The originating PNGs are not committed — they are ~1.5–2 MB each and the Web
 derivatives are what the app serves. `scripts/generate-brand-assets.mjs` holds
 every prompt and reproduces the set.
 
-## Art direction
+## Second direction (2026-09-24) — pending regeneration
+
+The first photographic set was judged by the product owner to *look generated*,
+and they were right: every frame shared one honey-coloured light, one
+cream/coral/sage palette, linen, candles and a plant placed for composition.
+Real salon photographs do not coordinate. They are taken on a phone by someone
+who works there, under the room's own mixed light, in a room that is in use.
+
+`scripts/generate-brand-assets.mjs` now carries a new photographic direction and
+new per-asset prompts written from that observation:
+
+- **Named imperfection** — smartphone capture, daylight mixed with overhead LED
+  panels (uneven white balance), handheld framing, motion in hands, sensor
+  noise, ungraded colour.
+- **A room in use** — bottles with labels turned away, a hairdryer cable, clips,
+  a coffee cup and a phone on the counter, cut hair on the floor, worn chairs.
+- **People who are not models** — Eastern European, varied ages and builds,
+  pores and flyaways, nobody posing or smiling at the lens.
+- **Forbidden props** — candles, dried flowers, linen styling, plants placed for
+  composition, colour-coordinated anything.
+- **The brand palette is removed from the prompt.** Asking for "muted coral and
+  sage accents" is what made every picture match the UI, and matching the UI is
+  what made them look made-up.
+- **Local, specific situations** — a ground-floor salon in a Sofia apartment
+  block on a Saturday morning, a barber doing a skin fade while the client
+  scrolls his phone, a nail desk with a UV lamp and a dust extractor.
+
+The set has **not been regenerated yet**: the session that wrote the prompts had
+no image-model access (no `OPENAI_API_KEY` in its environment, and the Higgsfield
+account had no credits). The committed WebP files are still the first set.
+Regenerate with the commands under *Regenerating* below; the script's default
+model is now `gpt-image-2.5-flare`. The flat illustrations are unchanged and
+were made with `sunburst` — pass `--model gpt-image-2.5-sunburst --only feature`
+(or `--only empty`) if they ever need re-rolling.
+
+## Art direction (first set, 2026-09-22/23)
 
 One paragraph is appended to every photographic prompt, which is what makes the
 set read as one family rather than a pile of images:
