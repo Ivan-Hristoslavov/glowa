@@ -13,11 +13,27 @@ const APPOINTMENT_SELECT = `
   reviews ( id, rating, comment, created_at )
 ` as const;
 
-export async function listMyAppointments() {
+/**
+ * The signed-in person's id. The appointments policy also lets a business
+ * member read every booking of their salon, so "mine" has to be asked for
+ * explicitly - without it a salon owner's own bookings page listed the whole
+ * salon's diary as if they were the customer.
+ */
+async function currentProfileId() {
   const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const sub = data?.claims?.sub;
+  return { supabase, profileId: typeof sub === "string" ? sub : null };
+}
+
+export async function listMyAppointments() {
+  const { supabase, profileId } = await currentProfileId();
+  if (!profileId) return { upcoming: [], past: [] };
+
   const { data, error } = await supabase
     .from("appointments")
     .select(APPOINTMENT_SELECT)
+    .eq("customer_profile_id", profileId)
     .order("starts_at", { ascending: false })
     .limit(100);
 
@@ -48,11 +64,14 @@ export async function listMyAppointments() {
 }
 
 export async function getMyAppointment(id: string) {
-  const supabase = await createClient();
+  const { supabase, profileId } = await currentProfileId();
+  if (!profileId) return null;
+
   const { data, error } = await supabase
     .from("appointments")
     .select(APPOINTMENT_SELECT)
     .eq("id", id)
+    .eq("customer_profile_id", profileId)
     .maybeSingle();
 
   if (error) throw error;

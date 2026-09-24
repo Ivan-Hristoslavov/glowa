@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { AccountMenu } from "@/components/layout/account-menu";
+import { NextVisitPill } from "@/components/layout/next-visit-pill";
 import { useAccount } from "@/components/layout/use-account";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -30,12 +31,15 @@ export function HeaderAccount() {
 
   if (account) {
     return (
-      <AccountMenu
-        name={account.name}
-        email={account.email}
-        avatarUrl={account.avatarUrl}
-        hasBusiness={account.hasBusiness}
-      />
+      <>
+        {account.nextVisit ? <NextVisitPill visit={account.nextVisit} /> : null}
+        <AccountMenu
+          name={account.name}
+          email={account.email}
+          avatarUrl={account.avatarUrl}
+          hasBusiness={account.hasBusiness}
+        />
+      </>
     );
   }
 

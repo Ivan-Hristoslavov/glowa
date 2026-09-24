@@ -13,6 +13,15 @@ export type Account = {
   avatarUrl: string | null;
   /** An active membership in at least one business. */
   hasBusiness: boolean;
+  /** The next live booking this person made as a customer, if any. */
+  nextVisit: NextVisit | null;
+};
+
+export type NextVisit = {
+  id: string;
+  startsAt: string;
+  businessName: string;
+  timezone: string;
 };
 
 /**
@@ -40,7 +49,7 @@ export function useAccount() {
         return;
       }
 
-      const [{ data: profile }, { count }] = await Promise.all([
+      const [{ data: profile }, { count }, { data: next }] = await Promise.all([
         supabase
           .from("profiles")
           .select("full_name, avatar_url")
@@ -51,6 +60,17 @@ export function useAccount() {
           .select("id", { count: "exact", head: true })
           .eq("profile_id", userId)
           .eq("status", "active"),
+        // Filtered by the customer column: the policy also shows a salon
+        // member their salon's bookings, which are not their own visits.
+        supabase
+          .from("appointments")
+          .select("id, starts_at, businesses ( name, timezone )")
+          .eq("customer_profile_id", userId)
+          .in("status", ["pending", "confirmed"])
+          .gt("starts_at", new Date().toISOString())
+          .order("starts_at", { ascending: true })
+          .limit(1)
+          .maybeSingle(),
       ]);
 
       if (!active) return;
@@ -59,6 +79,15 @@ export function useAccount() {
         email,
         avatarUrl: profile?.avatar_url ?? null,
         hasBusiness: (count ?? 0) > 0,
+        nextVisit:
+          next && next.businesses
+            ? {
+                id: next.id,
+                startsAt: next.starts_at,
+                businessName: next.businesses.name,
+                timezone: next.businesses.timezone,
+              }
+            : null,
       });
       setResolved(true);
     }

@@ -19,6 +19,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { JsonLd } from "@/components/common/json-ld";
 import { Rating } from "@/components/common/rating";
 import { Section } from "@/components/common/section";
+import { GalleryLightbox } from "@/components/discovery/gallery-lightbox";
 import { LocationMap } from "@/components/discovery/location-map";
 import { SaveBusinessButton } from "@/components/discovery/save-business-button";
 import { StickyBookBar } from "@/components/discovery/sticky-book-bar";
@@ -351,23 +352,7 @@ export default async function BusinessPage({
 
             {gallery.length > 0 ? (
               <Section title={t("gallery")}>
-                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {gallery.map((url, index) => (
-                    <li
-                      key={url}
-                      className="bg-secondary relative aspect-square overflow-hidden rounded-xl"
-                    >
-                      <Image
-                        src={url}
-                        alt=""
-                        fill
-                        sizes="(min-width: 640px) 20vw, 45vw"
-                        loading={index < 3 ? undefined : "lazy"}
-                        className="object-cover"
-                      />
-                    </li>
-                  ))}
-                </ul>
+                <GalleryLightbox urls={gallery} businessName={business.name} />
               </Section>
             ) : null}
 

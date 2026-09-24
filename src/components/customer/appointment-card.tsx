@@ -1,4 +1,4 @@
-import { Clock, MapPin } from "lucide-react";
+import { Clock, MapPin, RotateCcw } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
@@ -13,9 +13,12 @@ import type { AppointmentRow } from "@/lib/queries/appointments";
 export async function AppointmentCard({
   appointment,
   locale,
+  past = false,
 }: {
   appointment: AppointmentRow;
   locale: Locale;
+  /** A past visit offers "book again" with the same service preselected. */
+  past?: boolean;
 }) {
   const t = await getTranslations("bookings");
 
@@ -26,7 +29,7 @@ export async function AppointmentCard({
     pickLocalized(appointment.service_name_snapshot, locale);
 
   return (
-    <li className="glowa-card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-6">
+    <li className="glowa-card glowa-lift flex flex-col gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:gap-6">
       <div className="bg-secondary text-secondary-foreground flex w-full shrink-0 flex-row items-center justify-between rounded-lg px-4 py-3 sm:w-24 sm:flex-col sm:justify-center sm:gap-0.5 sm:px-3">
         <span className="text-xs tracking-wide uppercase">
           {formatDate(appointment.starts_at, zoned)}
@@ -76,11 +79,24 @@ export async function AppointmentCard({
             </AvatarFallback>
           </Avatar>
         ) : null}
-        <Button asChild variant="outline" size="sm">
-          <Link href={`/bookings/${appointment.id}`}>
-            {t("details")}
-          </Link>
-        </Button>
+        <div className="flex gap-2 sm:flex-col sm:items-end">
+          {past && appointment.businesses?.slug ? (
+            // The most common next booking is the last one again.
+            <Button asChild size="sm">
+              <Link
+                href={`/business/${appointment.businesses.slug}/book${
+                  appointment.service_id ? `?service=${appointment.service_id}` : ""
+                }`}
+              >
+                <RotateCcw className="size-3.5" aria-hidden />
+                {t("bookAgain")}
+              </Link>
+            </Button>
+          ) : null}
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/bookings/${appointment.id}`}>{t("details")}</Link>
+          </Button>
+        </div>
       </div>
     </li>
   );

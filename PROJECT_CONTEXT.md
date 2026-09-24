@@ -23,6 +23,7 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | Prompt 4 | Integrations, AI, growth layer | Not started |
 | Prompt 5 | Production polish, QA, Vercel | Not started |
 | 09-24 pass | Walkthrough as guest/customer/owner, fixes, landing redesign, motion | **Done** (PR #2, stacked on #1) |
+| 09-24 second pass | Next-up strip, Ctrl+K, salon closures, photo/logo uploads, published prices, flyer studio, email templates, customer conveniences | **Done** (PR #2) |
 
 **09-24 pass.** The database was built from the repository with `supabase
 start` (images pulled via `mirror.gcr.io`, because Docker Hub rate-limits and
@@ -34,6 +35,15 @@ no path from sign-up to onboarding, random slugs for Cyrillic names, an open
 redirect in `?next=`, the salon hero cutting its badge in half, and Playfair's
 old-style numerals in dashboard figures. `npm run check` (lint, typecheck, 46
 unit tests) and `npm run build` pass; 27 routes crawled with no errors.
+
+**09-24 second pass.** Built on request after the walkthrough: what the owner
+asked for (next appointments visible on every admin page, closures that work
+across timezones, a printable flyer with a QR code, uploads for logo and photos,
+three published plans, better email) and what using the product suggested
+(Ctrl+K, "book again", a next-visit reminder, a full-screen gallery). One bug
+came out of it: "My bookings" listed a salon owner's whole diary as their own
+visits (§8l). Each piece was used in Chromium against the local stack;
+`npm run check` and `npm run build` pass.
 
 Verified at the end of Prompt 3: `npm run lint`, `npm run typecheck` and
 `npm run build` pass (68 static entries, 28 routes). The business app was
@@ -408,6 +418,7 @@ business id the caller manages for business media, resolved through
 | `…091000_onboarding_audit_write.sql` | the onboarding audit entry moves into the owner trigger |
 | `…130500_search_open_on_helper.sql` | the "open on" helper, applied live on 09-23 but never committed |
 | `…120000_slug_transliteration.sql` | `app.transliterate_slug`; Cyrillic/Romanian names get readable slugs |
+| `20260924130000_business_closures.sql` | `business_closures`, `upcoming_business_closures()`, closures in `get_available_slots` and "open on" |
 
 Four of these were written because something failed, not from a plan:
 
@@ -467,11 +478,28 @@ Four of these were written because something failed, not from a plan:
   `salon-`, because `demo-` means invented content everywhere. Existing slugs
   are untouched — they are printed URLs.
 
+- `20260924130000` (09-24) — **closures**. `staff_time_off` is per person, so
+  "closed 24–26 December" needed a row per stylist and missed anyone hired
+  later. A closure belongs to the business, optionally one location, and is
+  stored as `timestamptz`: the admin picks dates and times on the salon's clock
+  and `lib/timezone.ts` converts them, so the same row means the same hours in
+  Sofia or Bucharest. `get_available_slots` now carries the location a
+  candidate was generated for (with `distinct`, since a stylist at two
+  locations produced duplicates) and drops candidates inside a closure; because
+  `book_appointment` asks it, every customer path honours closures. The front
+  desk can still write someone in by hand. `app.has_bookable_staff_on` takes
+  the day on the salon's clock rather than UTC midnight, and a whole-day,
+  every-location closure takes the salon out of "open on" search.
+  `upcoming_business_closures()` is the public view: *when*, never *why*, the
+  next 120 days, active salons only. Tested locally: a closed week goes from
+  322 slots to 0, and grants on the recreated functions survive.
+
 **Live project drift, as of 09-24.** The live database has three migrations
 that are not in the repository — `deposits`, `deposit_refund_reference` and
 `search_near` — applied while this work was going on in a parallel session.
-`130500` and `120000` above are in the repository but `120000` is **not yet
-applied live**. Reconcile before the next `db push`.
+`130500`, `120000` and `20260924130000` above are in the repository, but
+`120000` and `20260924130000` are **not yet applied live**, and
+`src/types/database.ts` has the closures types added by hand to match. Reconcile before the next `db push`.
 
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
@@ -600,6 +628,49 @@ each other for protanopes (ΔE 3.8). Dark is re-stepped, not flipped — the lig
 coral is above the dark lightness band. One y-scale, legend for two series,
 direct labels, a hover tooltip, and a visually hidden table per chart.
 
+**Next up, on every page.** `UpcomingStrip` sits under the admin header in the
+same sticky block: one ring per appointment in the stylist's colour, dashed
+while pending, pulsing while in progress, a divider before tomorrow. A tap
+opens the customer's name, service, notes, a call button and "open in
+calendar". It subscribes to the same realtime feed as the board, so an online
+booking appears while the owner is on another page. `now` is set after mount,
+because a relative time rendered on the server never matches the browser's.
+
+**Ctrl+K.** `CommandMenu` (cmdk) jumps to any admin page, searches the active
+salon's clients by name, phone or email (filtered by business, not only by RLS,
+§8l), and runs the common actions: new appointment, copy the
+booking link, make a flyer, open the public page, switch theme.
+
+**Closures ("time off" for the salon).** `/dashboard/time-off`: a range
+calendar on the salon's timezone (react-day-picker's `timeZone` with `TZDate`,
+which is also what keeps it from mismatching on hydration), presets for today,
+tomorrow and a week, all-day or from/to times, one location or all, and an
+internal reason. Adding one reports how many live appointments already sit
+inside it: a closure never cancels anyone by itself, the owner is told to call
+them. The calendar shades closures in every column, split per day, and the
+salon page tells customers "closed 24–26 Dec" before they try to book.
+
+**Photos and logo.** Settings → media uploads the cover, the logo and up to 12
+gallery photos straight to `business-media/{businessId}/…`, drag-and-drop or
+picker. `lib/media/prepare-image.ts` re-encodes on a canvas to WebP (which also
+strips EXIF location) and caps the size. `updateBusinessMedia` accepts only
+URLs under that business's own folder of the public bucket, so the column can
+never point at someone else's file or an arbitrary host.
+`next.config.ts` derives `images.remotePatterns` from the Supabase URL.
+
+**Flyer studio.** `/dashboard/growth/flyer`: three templates, five accents, the
+salon's logo, an editable headline, line and offer, contacts on or off, A5 or
+A4, and a QR code to either the salon page or a tracked growth link (created
+from the studio in one click, so scans are counted, §8f). It prints through
+the browser: `@page` is injected for the chosen size, print CSS hides
+everything but `#glowa-flyer`, and the flyer is laid out in container-query
+units so the preview and the paper are the same design. Verified: one A5 page
+in the PDF, and the QR redirects to the salon and counts the visit.
+
+**Plan card.** Settings shows the three plans with the one that fits the
+bookable team size marked, and says plainly that early access is free: billing
+is not connected (§11).
+
 **Payments, marketing and the assistant are honest about their state.** Payment
 records and the schema exist with no provider behind them; campaigns save as
 drafts and audiences can be previewed as a *count* (names stay on the server)
@@ -643,6 +714,17 @@ and claims with `for update skip locked`, so two instances never take the same
 row. Claiming flips the row to `sending` *before* the provider call: a crash
 leaves evidence instead of a silent second send. Rows stuck in `sending` are
 reclaimed after 15 minutes and abandoned after five attempts.
+
+**Templates (09-24).** `renderHtml` in `lib/notifications/render.ts` is
+table-based with inline styles and `color-scheme: light`, because that is what
+survives Gmail, Outlook and dark-mode clients. A preheader, the salon's logo
+and name, its cover (or a coral bar without one), a status pill, and for
+appointment events a "ticket": the date block, the time range, service,
+stylist and price. Then one primary button and secondary links for
+Google Calendar, directions and calling the salon. Images must be absolute
+public URLs; `absoluteImage` resolves relative ones against the site URL.
+`/api/dev/email-preview?event=&locale=` renders every event with sample data
+in development and 404s in production.
 
 **Campaigns use the same queue.** `marketing_messages` was designed in Prompt 1
 as a second per-recipient outbox, before `notification_deliveries` existed.
@@ -798,11 +880,13 @@ locale prefix.
   the index.
 
 **`/pricing`** is built and linked from the header and the mobile nav. The
-feature lists are real - every line maps to something that exists. The amounts
-are deliberately `null` in `lib/pricing.ts`: publishing a price is a commercial
-decision, and the brief's own rule is not to fabricate prices. While `monthly`
-is null the page says so and asks for contact instead of showing a figure. To
-publish, fill in `monthly` and `annualMonthly` per plan - nothing else changes.
+feature lists are real - every line maps to something that exists. Prices were
+published on 09-24 at the owner's request, three plans for a small, a medium
+and a large business: Solo 9 €/month (7.50 € billed yearly), Studio 24 €
+(20 €), Salon 48 € (40 €), without VAT. A monthly/annual switch defaults to
+annual; the landing page's business section quotes the cheapest yearly figure
+from the same `lib/pricing.ts`. Setting `monthly` back to null hides the
+figures everywhere and the page asks for contact instead.
 
 ---
 
@@ -988,6 +1072,26 @@ HTTPS (`next dev --experimental-https`) or a deployment.
 
 ---
 
+## 8l. Customer conveniences (09-24)
+
+- **Book again.** Past visits on "My bookings" link straight into the funnel
+  with the same service preselected, which skips the service step.
+- **Next visit in the header.** `useAccount()` also fetches the next live
+  booking the person made *as a customer*; `NextVisitPill` shows "Today · 15:00"
+  (full salon name from `lg`), icon-only on phones, and opens the booking. Times
+  are on the salon's clock.
+- **Gallery.** Salon photos open full screen (`GalleryLightbox`): arrows, the
+  keyboard, swipe, thumbnails, a live counter for screen readers.
+- **Fixed with it: "My bookings" showed the salon's diary.** The appointments
+  SELECT policy is "own *or* a member of the business", so
+  `listMyAppointments()` without a filter returned every appointment of an
+  owner's salon as if they were the customer. `listMyAppointments` and
+  `getMyAppointment` now filter on `customer_profile_id` from `getClaims()`,
+  and so does the header query. Any future "mine" query on appointments needs
+  the same filter; RLS alone answers "may see", not "is mine".
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -1067,8 +1171,8 @@ traction claim may appear unless it is real.
    deposits, no card-on-file, no no-show protection. That, not the calendar,
    is what salons pay a booking platform for.
 20. Motion: done on 09-24 for the marketing pages, the booking funnel, the
-    salon page and search (§4). The business app has had no motion pass yet —
-    the calendar and dashboard are still static apart from Radix panels.
+    salon page and search (§4). In the business app only the next-up strip
+    moves; the calendar and dashboard are still static apart from Radix panels.
 21. City names are plain text, not localized: a Romanian visitor sees
     "Пловдив" in Cyrillic, including in the page's structured data. Defensible
     as the local spelling, awkward for the Romanian market.
@@ -1121,11 +1225,18 @@ traction claim may appear unless it is real.
     `docs/visual-assets.md`). Needs `OPENAI_API_KEY` or image-model credits.
 23. **Reconcile the live database** with the repository (§6 → live project
     drift): commit the `deposits` / `search_near` migrations from the parallel
-    session, apply `120000_slug_transliteration` live.
+    session, apply `120000_slug_transliteration` and
+    `20260924130000_business_closures` live, then regenerate the types.
 24. The funnel's inline sign-up in production depends on the email-confirmation
     setting: with confirmations on, the guest gets "check your email" and the
     link returns them to the funnel with the service preselected, but the time
     they picked is not restored. Encoding the slot in `next` would close that.
-16. `/pricing` shows "soon" instead of amounts until `lib/pricing.ts` gets real
-    numbers, and the contact CTA points at `hello@glowa.bg`, which has to
-    actually exist before launch.
+16. Prices are published (§8e) but **billing is not connected**: no Stripe, no
+    trial clock, no plan limits enforced. The admin card says early access is
+    free, which is true until billing exists. The contact CTA points at
+    `hello@glowa.bg`, which has to actually exist before launch.
+25. A closure never notifies anyone: the owner is told how many live bookings
+    fall inside it and has to call them. A "closure → notify and offer
+    rebooking" path through the outbox would close that.
+26. The flyer prints through the browser's print dialog. That is a real PDF,
+    but a "download PNG for Instagram" export would need a canvas renderer.

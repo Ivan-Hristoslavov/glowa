@@ -53,7 +53,10 @@
     "myAccount": "My account",
     "businessDashboard": "Business dashboard",
     "registerBusiness": "Register your salon",
-    "forBusiness": "For business"
+    "forBusiness": "For business",
+    "nextVisit": "Next visit: {when} at {business}",
+    "today": "Today",
+    "tomorrow": "Tomorrow"
   },
   "categories": {
     "hair_salon": "Hair salon",
@@ -219,7 +222,8 @@
       "appt5": "Consultation",
       "staff1": "Nikki",
       "staff2": "Maria",
-      "staff3": "George"
+      "staff3": "George",
+      "fromPrice": "Plans start at {price} a month, billed yearly. Your clients never pay a thing."
     },
     "final": {
       "title": "Less hassle starts with one appointment.",
@@ -356,7 +360,15 @@
     "showMapNote": "The map loads from OpenStreetMap only when you ask for it.",
     "gallery": "Gallery",
     "closedNotice": "Not taking bookings",
-    "closedRange": "{range}"
+    "closedRange": "{range}",
+    "galleryOpen": "Open photo {n} of {total}",
+    "galleryTitle": "Photos from {business}",
+    "galleryHint": "Use the arrow keys or swipe to browse the photos.",
+    "galleryCounter": "{n} / {total}",
+    "galleryClose": "Close",
+    "galleryPrev": "Previous photo",
+    "galleryNext": "Next photo",
+    "galleryPhotoAlt": "{business}, photo {n}"
   },
   "booking": {
     "title": "Book an appointment",
@@ -480,7 +492,8 @@
       "slot_unavailable": "That time is not available. Pick another one.",
       "slot_taken": "Someone just took that time. Pick another one.",
       "generic": "That did not work. Please try again."
-    }
+    },
+    "bookAgain": "Book again"
   },
   "review": {
     "title": "How was your visit?",
@@ -1033,7 +1046,8 @@
         "forbidden": "Manager rights are required.",
         "generic": "Something went wrong. Try again.",
         "copy": "Couldn't copy."
-      }
+      },
+      "makeFlyer": "Make a flyer"
     },
     "analytics": {
       "title": "Analytics",
@@ -1151,6 +1165,46 @@
         "range": "The end has to be after the start.",
         "generic": "We could not save that. Please try again."
       }
+    },
+    "flyer": {
+      "title": "Flyer with a QR code",
+      "subtitle": "Put it at the front desk, on a mirror or in the window. A client scans the code and lands on your page, ready to book.",
+      "print": "Download PDF / Print",
+      "printHint": "In the print dialog choose \"Save as PDF\" for a file to send to a print shop.",
+      "template": "Template",
+      "templates": {
+        "editorial": "Photo",
+        "bold": "Bold",
+        "minimal": "Minimal"
+      },
+      "accent": "Colour",
+      "accents": {
+        "coral": "Coral",
+        "ink": "Black",
+        "sage": "Sage",
+        "plum": "Plum",
+        "gold": "Gold"
+      },
+      "headline": "Headline",
+      "subline": "Text",
+      "offer": "Offer (optional)",
+      "offerPlaceholder": "E.g. −10% on your first visit",
+      "showContacts": "Show address and phone",
+      "link": "Where the QR code leads",
+      "tracked": "with statistics",
+      "direct": "The salon page",
+      "trackedHint": "Scans are counted on the Growth page.",
+      "directHint": "Goes straight to the salon, without scan statistics.",
+      "createTracked": "Create a QR link with statistics",
+      "trackedLabel": "Flyer",
+      "linkCreated": "QR link created",
+      "linkFailed": "We could not create the link.",
+      "size": "Size",
+      "scan": "Scan to book",
+      "defaults": {
+        "headline": "Book in seconds",
+        "subline": "Point your phone camera at the code — see free times and book online, 24/7."
+      }
     }
   },
   "notifications": {
@@ -1201,12 +1255,24 @@
       "leaveReview": "Leave a review",
       "bookAgain": "Book again",
       "viewSalon": "View the salon",
-      "bookSlot": "Book this slot"
+      "bookSlot": "Book this slot",
+      "addToCalendar": "Add to calendar",
+      "directions": "Directions",
+      "call": "Call"
     },
     "footer": {
       "signature": "The {business} team",
       "sentBy": "Sent with GLOWA",
       "unsubscribe": "Unsubscribe from marketing"
+    },
+    "badge": {
+      "booking_confirmation": "Confirmed",
+      "reminder": "Reminder",
+      "reschedule": "New time",
+      "cancellation": "Cancelled",
+      "review_request": "Thank you",
+      "waitlist_offer": "A place opened up",
+      "marketing": "News"
     }
   },
   "pricing": {

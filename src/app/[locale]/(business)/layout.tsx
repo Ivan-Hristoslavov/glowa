@@ -107,7 +107,7 @@ export default async function BusinessLayout({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <CommandMenu slug={active.slug} />
+            <CommandMenu businessId={active.businessId} slug={active.slug} />
             <Button asChild variant="ghost" size="sm" className="hidden xl:inline-flex">
               <Link href="/">{t("backToSite")}</Link>
             </Button>

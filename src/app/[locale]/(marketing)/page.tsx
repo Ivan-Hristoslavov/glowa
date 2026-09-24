@@ -25,6 +25,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { brandAssets } from "@/lib/brand-assets";
+import { formatPrice } from "@/lib/format";
+import { PLANS } from "@/lib/pricing";
 import { listCities, searchBusinesses } from "@/lib/queries/discovery";
 import { organizationJsonLd } from "@/lib/seo/structured-data";
 
@@ -66,6 +68,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   ] as const;
 
   const ownerHref = `/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`;
+  // The cheapest published plan, billed yearly - the same figure the pricing
+  // page leads with. Unpublished pricing (null) hides the line.
+  const cheapest = PLANS.filter((plan) => plan.annualMonthly != null).sort(
+    (a, b) => (a.annualMonthly ?? 0) - (b.annualMonthly ?? 0),
+  )[0];
+  const fromPrice = cheapest
+    ? formatPrice(cheapest.annualMonthly, cheapest.currency, locale as Locale)
+    : null;
   const examples = [t("typing.p1"), t("typing.p2"), t("typing.p3"), t("typing.p4")];
 
   const steps = [
@@ -359,6 +369,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 <Link href="/pricing">{t("business.secondary")}</Link>
               </Button>
             </div>
+            {fromPrice ? (
+              <p className="mt-4 text-sm opacity-70">
+                {t("business.fromPrice", { price: fromPrice })}
+              </p>
+            ) : null}
           </div>
 
           <div className="glowa-reveal relative">

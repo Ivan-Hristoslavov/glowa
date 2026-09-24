@@ -53,7 +53,10 @@
     "myAccount": "Contul meu",
     "businessDashboard": "Panou business",
     "registerBusiness": "Înregistrează-ți salonul",
-    "forBusiness": "Pentru business"
+    "forBusiness": "Pentru business",
+    "nextVisit": "Următoarea vizită: {when} la {business}",
+    "today": "Azi",
+    "tomorrow": "Mâine"
   },
   "categories": {
     "hair_salon": "Salon de coafură",
@@ -219,7 +222,8 @@
       "appt5": "Consultație",
       "staff1": "Ana",
       "staff2": "Maria",
-      "staff3": "Andrei"
+      "staff3": "Andrei",
+      "fromPrice": "Planurile pornesc de la {price} pe lună, cu plată anuală. Clienții tăi nu plătesc nimic."
     },
     "final": {
       "title": "Mai puține griji încep cu o programare.",
@@ -356,7 +360,15 @@
     "showMapNote": "Harta se încarcă de la OpenStreetMap doar când o ceri.",
     "gallery": "Galerie",
     "closedNotice": "Nu primește programări",
-    "closedRange": "{range}"
+    "closedRange": "{range}",
+    "galleryOpen": "Deschide fotografia {n} din {total}",
+    "galleryTitle": "Fotografii de la {business}",
+    "galleryHint": "Folosește săgețile sau glisează pentru a răsfoi fotografiile.",
+    "galleryCounter": "{n} / {total}",
+    "galleryClose": "Închide",
+    "galleryPrev": "Fotografia anterioară",
+    "galleryNext": "Fotografia următoare",
+    "galleryPhotoAlt": "{business}, fotografia {n}"
   },
   "booking": {
     "title": "Fă o programare",
@@ -480,7 +492,8 @@
       "slot_unavailable": "Ora nu este disponibilă. Alege alta.",
       "slot_taken": "Cineva tocmai a rezervat ora. Alege alta.",
       "generic": "Nu a funcționat. Încearcă din nou."
-    }
+    },
+    "bookAgain": "Rezervă din nou"
   },
   "review": {
     "title": "Cum a fost vizita?",
@@ -1033,7 +1046,8 @@
         "forbidden": "Sunt necesare drepturi de manager.",
         "generic": "Ceva n-a mers. Încearcă din nou.",
         "copy": "Nu s-a putut copia."
-      }
+      },
+      "makeFlyer": "Creează un flyer"
     },
     "analytics": {
       "title": "Analize",
@@ -1151,6 +1165,46 @@
         "range": "Sfârșitul trebuie să fie după început.",
         "generic": "Nu am putut salva. Încearcă din nou."
       }
+    },
+    "flyer": {
+      "title": "Flyer cu cod QR",
+      "subtitle": "Pune-l la recepție, pe oglindă sau în vitrină. Clientul scanează codul și ajunge direct pe pagina ta, gata să se programeze.",
+      "print": "Descarcă PDF / Tipărește",
+      "printHint": "În fereastra de tipărire alege „Salvează ca PDF” pentru un fișier pentru tipografie.",
+      "template": "Șablon",
+      "templates": {
+        "editorial": "Fotografie",
+        "bold": "Îndrăzneț",
+        "minimal": "Minimal"
+      },
+      "accent": "Culoare",
+      "accents": {
+        "coral": "Coral",
+        "ink": "Negru",
+        "sage": "Salvie",
+        "plum": "Prună",
+        "gold": "Auriu"
+      },
+      "headline": "Titlu",
+      "subline": "Text",
+      "offer": "Ofertă (opțional)",
+      "offerPlaceholder": "De ex. −10% la prima vizită",
+      "showContacts": "Arată adresa și telefonul",
+      "link": "Unde duce codul QR",
+      "tracked": "cu statistici",
+      "direct": "Pagina salonului",
+      "trackedHint": "Scanările sunt numărate pe pagina Creștere.",
+      "directHint": "Duce direct la salon, fără statistici de scanare.",
+      "createTracked": "Creează un link QR cu statistici",
+      "trackedLabel": "Flyer",
+      "linkCreated": "Linkul QR a fost creat",
+      "linkFailed": "Nu am putut crea linkul.",
+      "size": "Dimensiune",
+      "scan": "Scanează și programează-te",
+      "defaults": {
+        "headline": "Programează-te în câteva secunde",
+        "subline": "Îndreaptă camera telefonului spre cod — vezi orele libere și programează-te online, 24/7."
+      }
     }
   },
   "notifications": {
@@ -1201,12 +1255,24 @@
       "leaveReview": "Lasă o recenzie",
       "bookAgain": "Programează-te din nou",
       "viewSalon": "Vezi salonul",
-      "bookSlot": "Rezervă acest loc"
+      "bookSlot": "Rezervă acest loc",
+      "addToCalendar": "Adaugă în calendar",
+      "directions": "Indicații",
+      "call": "Sună"
     },
     "footer": {
       "signature": "Echipa {business}",
       "sentBy": "Trimis prin GLOWA",
       "unsubscribe": "Dezabonează-te de la marketing"
+    },
+    "badge": {
+      "booking_confirmation": "Confirmat",
+      "reminder": "Memento",
+      "reschedule": "Oră nouă",
+      "cancellation": "Anulat",
+      "review_request": "Vă mulțumim",
+      "waitlist_offer": "S-a eliberat un loc",
+      "marketing": "Noutăți"
     }
   },
   "pricing": {

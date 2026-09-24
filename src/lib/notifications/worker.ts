@@ -25,13 +25,16 @@ export type WorkerReport = {
 const APPOINTMENT_SELECT = `
   id,
   starts_at,
+  ends_at,
   status,
+  price_cents,
+  currency,
   customer_name,
   customer_email,
   customer_phone,
   service_name_snapshot,
   businesses!appointments_business_id_fkey (
-    name, slug, timezone, phone, google_review_url
+    name, slug, timezone, phone, google_review_url, logo_url, cover_image_url
   ),
   staff_profiles ( display_name ),
   locations ( name, address_line1, city )
@@ -39,7 +42,7 @@ const APPOINTMENT_SELECT = `
 
 const CAMPAIGN_SELECT = `
   id, template,
-  businesses!marketing_campaigns_business_id_fkey ( name, slug )
+  businesses!marketing_campaigns_business_id_fkey ( name, slug, logo_url, cover_image_url )
 ` as const;
 
 const CLIENT_SELECT = `id, full_name, email, phone, unsubscribe_token` as const;
@@ -139,7 +142,10 @@ type BatchContext = {
 type AppointmentRow = {
   id: string;
   starts_at: string;
+  ends_at: string;
   status: string;
+  price_cents: number;
+  currency: string;
   customer_name: string | null;
   customer_email: string | null;
   customer_phone: string | null;
@@ -150,6 +156,8 @@ type AppointmentRow = {
     timezone: string;
     phone: string | null;
     google_review_url: string | null;
+    logo_url: string | null;
+    cover_image_url: string | null;
   } | null;
   staff_profiles: { display_name: string } | null;
   locations: { name: string; address_line1: string | null; city: string | null } | null;
@@ -163,7 +171,12 @@ type DeliveryOutcome = {
 type CampaignRow = {
   id: string;
   template: unknown;
-  businesses: { name: string; slug: string } | null;
+  businesses: {
+    name: string;
+    slug: string;
+    logo_url: string | null;
+    cover_image_url: string | null;
+  } | null;
 };
 
 type ClientRow = {
@@ -232,6 +245,11 @@ async function deliverOne(
         .filter(Boolean)
         .join(", ") || null,
     appointmentId: appointment.id,
+    endsAt: appointment.ends_at,
+    priceCents: appointment.price_cents,
+    currency: appointment.currency,
+    businessLogoUrl: appointment.businesses.logo_url,
+    businessCoverUrl: appointment.businesses.cover_image_url,
   };
 
   const rendered = await renderNotification(context);
@@ -326,6 +344,8 @@ async function deliverCampaign(
     locale,
     businessName: campaign.businesses.name,
     businessSlug: campaign.businesses.slug,
+    businessLogoUrl: campaign.businesses.logo_url,
+    businessCoverUrl: campaign.businesses.cover_image_url,
     subject,
     body,
     unsubscribeUrl: `${publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/${locale}/unsubscribe/${client.unsubscribe_token}`,

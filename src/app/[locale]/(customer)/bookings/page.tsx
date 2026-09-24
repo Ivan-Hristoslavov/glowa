@@ -81,6 +81,7 @@ export default async function BookingsPage({ params }: PageProps<"/[locale]/book
                   key={appointment.id}
                   appointment={appointment}
                   locale={activeLocale}
+                  past
                 />
               ))}
             </ul>

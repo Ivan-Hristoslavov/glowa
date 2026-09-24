@@ -466,3 +466,33 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Printing a flyer (/dashboard/growth/flyer). Everything but the flyer is
+   hidden, and the flyer fills the page the print dialog was opened at (the
+   page size is set by the flyer studio itself). Backgrounds are kept: a flyer
+   without its colour is not the flyer.
+--------------------------------------------------------------------------- */
+@media print {
+  body:has(#glowa-flyer) * {
+    visibility: hidden !important;
+  }
+  /* Same `:has()` prefix as the hiding rule above: `:has(#id)` carries the
+     id's specificity, so a bare `#glowa-flyer` would lose to it. */
+  body:has(#glowa-flyer) #glowa-flyer,
+  body:has(#glowa-flyer) #glowa-flyer * {
+    visibility: visible !important;
+  }
+  #glowa-flyer {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    aspect-ratio: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

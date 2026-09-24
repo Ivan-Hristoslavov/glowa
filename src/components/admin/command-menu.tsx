@@ -28,10 +28,12 @@ type ClientHit = { id: string; full_name: string | null; phone: string | null; e
  * phone, or do the handful of things people do most - add an appointment,
  * copy the booking link to paste into Instagram, make a flyer.
  *
- * Client search runs in the browser against `business_clients`, so RLS keeps
- * it to the salons this person belongs to.
+ * Client search runs in the browser against `business_clients`. RLS keeps it
+ * to the salons this person belongs to; the business filter keeps it to the
+ * one they are working in, or a member of two salons would find the other
+ * salon's clients and open them in the wrong workspace.
  */
-export function CommandMenu({ slug }: { slug: string }) {
+export function CommandMenu({ businessId, slug }: { businessId: string; slug: string }) {
   const t = useTranslations("admin.command");
   const nav = useTranslations("admin.nav");
   const locale = useLocale();
@@ -62,6 +64,7 @@ export function CommandMenu({ slug }: { slug: string }) {
       const { data } = await supabase
         .from("business_clients")
         .select("id, full_name, phone, email")
+        .eq("business_id", businessId)
         .or(`full_name.ilike.${like},phone.ilike.${like},email.ilike.${like}`)
         .order("last_visit_at", { ascending: false, nullsFirst: false })
         .limit(6);
@@ -71,7 +74,7 @@ export function CommandMenu({ slug }: { slug: string }) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [query]);
+  }, [query, businessId]);
 
   function run(action: () => void) {
     setOpen(false);
