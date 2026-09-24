@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeader } from "@/components/admin/page-header";
 import { AssistantPanel } from "@/components/admin/assistant-panel";
 import type { Locale } from "@/i18n/routing";
 import { isAssistantConfigured } from "@/lib/ai";
@@ -23,10 +24,7 @@ export default async function AssistantPage({
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <div className="space-y-1">
-        <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm">{t("subtitle")}</p>
-      </div>
+      <PageHeader title={t("title")} description={t("subtitle")} />
 
       <AssistantPanel
         businessId={membership.businessId}

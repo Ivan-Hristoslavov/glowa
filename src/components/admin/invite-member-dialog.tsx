@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -68,8 +69,10 @@ export function InviteMemberDialog({ businessId }: { businessId: string }) {
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
+
+          <RequiredNote />
           <div className="space-y-2">
-            <Label htmlFor="invite-email">{t("inviteEmail")}</Label>
+            <Label htmlFor="invite-email" required>{t("inviteEmail")}</Label>
             <Input
               id="invite-email"
               type="email"

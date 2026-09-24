@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,9 +62,10 @@ export function BusinessSettingsForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
+      <RequiredNote />
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="settings-name">{t("name")}</Label>
+          <Label htmlFor="settings-name" required>{t("name")}</Label>
           <Input
             id="settings-name"
             value={draft.name}
@@ -81,7 +83,7 @@ export function BusinessSettingsForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="settings-email">Email</Label>
+          <Label htmlFor="settings-email">{t("email")}</Label>
           <Input
             id="settings-email"
             type="email"

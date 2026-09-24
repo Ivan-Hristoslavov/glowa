@@ -32,6 +32,14 @@ The originating PNGs are not committed — they are ~1.5–2 MB each and the Web
 derivatives are what the app serves. `scripts/generate-brand-assets.mjs` holds
 every prompt and reproduces the set.
 
+**Showcase salon (2026-09-24, `gpt-image-2.5-flare`).** Eleven more photographs for
+the furnished demo salon (`scripts/seed-showcase.sql`): `showcase-cover`, six
+`showcase-gallery-*` (balayage, a bob, the colour trolley, curls, the basin, a bridal
+bun) and four `showcase-staff-*` environmental portraits. Same house style, same
+script (`--only showcase`), served from `public/brand/showcase/`; portraits are
+480px (they are only ever avatars and team cards), the cover 1536px, the gallery
+1000px. The people are generated and depict nobody real.
+
 ## Art direction
 
 One paragraph is appended to every photographic prompt, which is what makes the

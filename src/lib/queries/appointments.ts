@@ -2,10 +2,25 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * The signed-in person, from verified claims.
+ *
+ * Every "my ..." query below filters by this explicitly. RLS alone is not
+ * enough: it also lets a salon's staff read the salon's appointments and
+ * reviews, so without the filter a salon owner's "My bookings" listed every
+ * client of their salon as if the bookings were their own.
+ */
+async function currentUser() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  return { supabase, userId };
+}
+
 const APPOINTMENT_SELECT = `
   id, starts_at, ends_at, status, price_cents, currency, customer_notes,
   cancellation_reason, service_name_snapshot, business_id, service_id,
-  staff_profile_id, location_id,
+  staff_profile_id, location_id, deposit_status, deposit_cents, payment_due_at,
   businesses ( id, slug, name, timezone, logo_url, google_review_url, booking_policy, phone ),
   services ( id, name, duration_minutes ),
   staff_profiles ( id, display_name, avatar_url ),
@@ -14,10 +29,12 @@ const APPOINTMENT_SELECT = `
 ` as const;
 
 export async function listMyAppointments() {
-  const supabase = await createClient();
+  const { supabase, userId } = await currentUser();
+  if (!userId) return { upcoming: [], past: [] };
   const { data, error } = await supabase
     .from("appointments")
     .select(APPOINTMENT_SELECT)
+    .eq("customer_profile_id", userId)
     .order("starts_at", { ascending: false })
     .limit(100);
 
@@ -48,11 +65,13 @@ export async function listMyAppointments() {
 }
 
 export async function getMyAppointment(id: string) {
-  const supabase = await createClient();
+  const { supabase, userId } = await currentUser();
+  if (!userId) return null;
   const { data, error } = await supabase
     .from("appointments")
     .select(APPOINTMENT_SELECT)
     .eq("id", id)
+    .eq("customer_profile_id", userId)
     .maybeSingle();
 
   if (error) throw error;
@@ -64,7 +83,8 @@ export type AppointmentRow = NonNullable<
 >;
 
 export async function listSavedBusinesses() {
-  const supabase = await createClient();
+  const { supabase, userId } = await currentUser();
+  if (!userId) return [];
   const { data, error } = await supabase
     .from("saved_businesses")
     .select(
@@ -76,6 +96,7 @@ export async function listSavedBusinesses() {
       )
     `,
     )
+    .eq("profile_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
@@ -83,7 +104,8 @@ export async function listSavedBusinesses() {
 }
 
 export async function listMyReviews() {
-  const supabase = await createClient();
+  const { supabase, userId } = await currentUser();
+  if (!userId) return [];
   const { data, error } = await supabase
     .from("reviews")
     .select(
@@ -93,6 +115,7 @@ export async function listMyReviews() {
       appointments ( id, starts_at, service_name_snapshot )
     `,
     )
+    .eq("author_profile_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) throw error;

@@ -76,12 +76,15 @@ export type Database = {
           customer_notes: string | null
           customer_phone: string | null
           customer_profile_id: string | null
+          deposit_cents: number
+          deposit_status: Database["public"]["Enums"]["deposit_status"]
           ends_at: string
           growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
           location_id: string | null
+          payment_due_at: string | null
           price_cents: number
           service_id: string | null
           service_name_snapshot: Json | null
@@ -104,12 +107,15 @@ export type Database = {
           customer_notes?: string | null
           customer_phone?: string | null
           customer_profile_id?: string | null
+          deposit_cents?: number
+          deposit_status?: Database["public"]["Enums"]["deposit_status"]
           ends_at: string
           growth_link_id?: string | null
           id?: string
           internal_notes?: string | null
           is_demo?: boolean
           location_id?: string | null
+          payment_due_at?: string | null
           price_cents?: number
           service_id?: string | null
           service_name_snapshot?: Json | null
@@ -132,12 +138,15 @@ export type Database = {
           customer_notes?: string | null
           customer_phone?: string | null
           customer_profile_id?: string | null
+          deposit_cents?: number
+          deposit_status?: Database["public"]["Enums"]["deposit_status"]
           ends_at?: string
           growth_link_id?: string | null
           id?: string
           internal_notes?: string | null
           is_demo?: boolean
           location_id?: string | null
+          payment_due_at?: string | null
           price_cents?: number
           service_id?: string | null
           service_name_snapshot?: Json | null
@@ -408,6 +417,47 @@ export type Database = {
           },
         ]
       }
+      business_payment_accounts: {
+        Row: {
+          account_id: string
+          business_id: string
+          charges_enabled: boolean
+          created_at: string
+          details_submitted: boolean
+          payouts_enabled: boolean
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          business_id: string
+          charges_enabled?: boolean
+          created_at?: string
+          details_submitted?: boolean
+          payouts_enabled?: boolean
+          provider?: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          business_id?: string
+          charges_enabled?: boolean
+          created_at?: string
+          details_submitted?: boolean
+          payouts_enabled?: boolean
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_payment_accounts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           booking_policy: Json
@@ -417,6 +467,7 @@ export type Database = {
           created_by: string | null
           currency: string
           default_locale: string
+          deposits_enabled: boolean
           description: Json | null
           email: string | null
           gallery: Json
@@ -443,6 +494,7 @@ export type Database = {
           created_by?: string | null
           currency?: string
           default_locale?: string
+          deposits_enabled?: boolean
           description?: Json | null
           email?: string | null
           gallery?: Json
@@ -469,6 +521,7 @@ export type Database = {
           created_by?: string | null
           currency?: string
           default_locale?: string
+          deposits_enabled?: boolean
           description?: Json | null
           email?: string | null
           gallery?: Json
@@ -1033,7 +1086,9 @@ export type Database = {
           kind: Database["public"]["Enums"]["payment_kind"]
           profile_id: string | null
           provider: string | null
+          provider_payment_reference: string | null
           provider_reference: string | null
+          related_payment_id: string | null
           status: Database["public"]["Enums"]["payment_status"]
           updated_at: string
         }
@@ -1049,7 +1104,9 @@ export type Database = {
           kind?: Database["public"]["Enums"]["payment_kind"]
           profile_id?: string | null
           provider?: string | null
+          provider_payment_reference?: string | null
           provider_reference?: string | null
+          related_payment_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           updated_at?: string
         }
@@ -1065,7 +1122,9 @@ export type Database = {
           kind?: Database["public"]["Enums"]["payment_kind"]
           profile_id?: string | null
           provider?: string | null
+          provider_payment_reference?: string | null
           provider_reference?: string | null
+          related_payment_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           updated_at?: string
         }
@@ -1089,6 +1148,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_records_related_payment_id_fkey"
+            columns: ["related_payment_id"]
+            isOneToOne: false
+            referencedRelation: "payment_records"
             referencedColumns: ["id"]
           },
         ]
@@ -1697,12 +1763,15 @@ export type Database = {
           customer_notes: string | null
           customer_phone: string | null
           customer_profile_id: string | null
+          deposit_cents: number
+          deposit_status: Database["public"]["Enums"]["deposit_status"]
           ends_at: string
           growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
           location_id: string | null
+          payment_due_at: string | null
           price_cents: number
           service_id: string | null
           service_name_snapshot: Json | null
@@ -1734,12 +1803,15 @@ export type Database = {
           customer_notes: string | null
           customer_phone: string | null
           customer_profile_id: string | null
+          deposit_cents: number
+          deposit_status: Database["public"]["Enums"]["deposit_status"]
           ends_at: string
           growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
           location_id: string | null
+          payment_due_at: string | null
           price_cents: number
           service_id: string | null
           service_name_snapshot: Json | null
@@ -1788,6 +1860,15 @@ export type Database = {
         }
       }
       claim_pending_invitations: { Args: never; Returns: number }
+      complete_deposit_refund: {
+        Args: {
+          p_error?: string
+          p_provider_reference: string
+          p_refund_id: string
+          p_succeeded: boolean
+        }
+        Returns: undefined
+      }
       create_business: {
         Args: {
           p_address?: string
@@ -1807,6 +1888,7 @@ export type Database = {
           created_by: string | null
           currency: string
           default_locale: string
+          deposits_enabled: boolean
           description: Json | null
           email: string | null
           gallery: Json
@@ -1832,6 +1914,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      expire_unpaid_deposits: { Args: never; Returns: number }
       finalize_campaign: { Args: { p_campaign_id: string }; Returns: undefined }
       get_available_slots: {
         Args: {
@@ -1865,6 +1948,21 @@ export type Database = {
           unanswered_reviews: number
         }[]
       }
+      link_payment_account: {
+        Args: { p_account_id: string; p_business_id: string }
+        Returns: undefined
+      }
+      pending_deposit_refunds: {
+        Args: { p_limit?: number }
+        Returns: {
+          account_id: string
+          amount_cents: number
+          appointment_id: string
+          currency: string
+          payment_reference: string
+          refund_id: string
+        }[]
+      }
       preview_campaign_audience: {
         Args: { p_audience?: Json; p_business_id: string; p_limit?: number }
         Returns: {
@@ -1879,6 +1977,10 @@ export type Database = {
         }[]
       }
       queue_campaign: { Args: { p_campaign_id: string }; Returns: number }
+      release_unpaid_deposit: {
+        Args: { p_appointment_id: string; p_reason?: string }
+        Returns: boolean
+      }
       reschedule_appointment: {
         Args: {
           p_appointment_id: string
@@ -1898,12 +2000,15 @@ export type Database = {
           customer_notes: string | null
           customer_phone: string | null
           customer_profile_id: string | null
+          deposit_cents: number
+          deposit_status: Database["public"]["Enums"]["deposit_status"]
           ends_at: string
           growth_link_id: string | null
           id: string
           internal_notes: string | null
           is_demo: boolean
           location_id: string | null
+          payment_due_at: string | null
           price_cents: number
           service_id: string | null
           service_name_snapshot: Json | null
@@ -1935,6 +2040,8 @@ export type Database = {
           p_city?: string
           p_limit?: number
           p_max_price_cents?: number
+          p_near_lat?: number
+          p_near_lng?: number
           p_offset?: number
           p_open_on?: string
           p_query?: string
@@ -1947,6 +2054,7 @@ export type Database = {
           country_code: string
           cover_image_url: string
           currency: string
+          distance_km: number
           id: string
           logo_url: string
           min_price_cents: number
@@ -1957,7 +2065,26 @@ export type Database = {
           slug: string
         }[]
       }
+      settle_deposit: {
+        Args: {
+          p_amount_cents: number
+          p_appointment_id: string
+          p_currency: string
+          p_payment_reference: string
+          p_session_id: string
+        }
+        Returns: string
+      }
       sweep_waitlist: { Args: never; Returns: number }
+      sync_payment_account: {
+        Args: {
+          p_account_id: string
+          p_charges_enabled: boolean
+          p_details_submitted: boolean
+          p_payouts_enabled: boolean
+        }
+        Returns: string
+      }
       unsubscribe_marketing: {
         Args: { p_token: string }
         Returns: {
@@ -2000,6 +2127,16 @@ export type Database = {
         | "anniversary"
         | "custom"
       connection_status: "active" | "revoked" | "error"
+      deposit_status:
+        | "none"
+        | "awaiting"
+        | "paid"
+        | "waived"
+        | "void"
+        | "refund_pending"
+        | "refunded"
+        | "retained"
+        | "applied"
       member_status: "invited" | "active" | "disabled"
       notification_channel: "email" | "sms" | "whatsapp" | "viber" | "push"
       notification_event:
@@ -2193,6 +2330,17 @@ export const Constants = {
         "custom",
       ],
       connection_status: ["active", "revoked", "error"],
+      deposit_status: [
+        "none",
+        "awaiting",
+        "paid",
+        "waived",
+        "void",
+        "refund_pending",
+        "refunded",
+        "retained",
+        "applied",
+      ],
       member_status: ["invited", "active", "disabled"],
       notification_channel: ["email", "sms", "whatsapp", "viber", "push"],
       notification_event: [

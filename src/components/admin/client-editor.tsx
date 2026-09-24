@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, X } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -76,23 +76,36 @@ export function ClientEditor({
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-2">
+        <Label htmlFor="client-name">{t("name")}</Label>
+        <Input
+          id="client-name"
+          autoComplete="off"
+          value={draft.fullName}
+          onChange={(event) => patch({ fullName: event.target.value })}
+          disabled={!canEdit}
+        />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
         <div className="space-y-2">
-          <Label htmlFor="client-name">{t("title")}</Label>
+          <Label htmlFor="client-phone">{t("phone")}</Label>
           <Input
-            id="client-name"
-            value={draft.fullName}
-            onChange={(event) => patch({ fullName: event.target.value })}
+            id="client-phone"
+            type="tel"
+            autoComplete="off"
+            value={draft.phone}
+            onChange={(event) => patch({ phone: event.target.value })}
             disabled={!canEdit}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="client-phone">{t("search")}</Label>
+          <Label htmlFor="client-email">{t("email")}</Label>
           <Input
-            id="client-phone"
-            type="tel"
-            value={draft.phone}
-            onChange={(event) => patch({ phone: event.target.value })}
+            id="client-email"
+            type="email"
+            autoComplete="off"
+            value={draft.email}
+            onChange={(event) => patch({ email: event.target.value })}
             disabled={!canEdit}
           />
         </div>
@@ -144,24 +157,25 @@ export function ClientEditor({
                 }
               }}
             />
-            <Button type="button" variant="outline" onClick={addTag}>
-              {common("save")}
+            <Button type="button" variant="outline" onClick={addTag} disabled={!tagInput.trim()}>
+              <Plus className="size-4" aria-hidden />
+              {t("addTag")}
             </Button>
           </div>
         ) : null}
       </div>
 
-      <label className="flex items-center gap-2 text-sm">
+      <label className="bg-muted/60 flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm">
+        {t("consent")}
         <Switch
           checked={draft.consentMarketing}
           onCheckedChange={(value) => patch({ consentMarketing: value })}
           disabled={!canEdit}
         />
-        {t("consent")}
       </label>
 
       {canEdit ? (
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} className="w-full rounded-full">
           {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           {common("save")}
         </Button>

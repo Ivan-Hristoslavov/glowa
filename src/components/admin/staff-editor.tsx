@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -139,9 +140,11 @@ export function StaffEditor({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-5">
+
+          <RequiredNote />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="staff-name">{t("displayName")}</Label>
+              <Label htmlFor="staff-name" required>{t("displayName")}</Label>
               <Input
                 id="staff-name"
                 value={draft.displayName}

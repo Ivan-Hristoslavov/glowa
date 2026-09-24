@@ -96,10 +96,14 @@ export function HeaderAccount() {
 
   return (
     <>
-      <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+      <Button asChild variant="ghost" size="sm" className="hidden rounded-full sm:inline-flex">
         <Link href="/login">{t("login")}</Link>
       </Button>
-      <Button asChild size="sm" className="hidden sm:inline-flex">
+      <Button
+        asChild
+        size="sm"
+        className="hidden rounded-full px-4 shadow-[0_8px_24px_-10px_var(--primary)] transition-transform hover:-translate-y-px sm:inline-flex"
+      >
         <Link href="/signup">{t("getStarted")}</Link>
       </Button>
     </>

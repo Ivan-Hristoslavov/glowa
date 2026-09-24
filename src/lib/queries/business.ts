@@ -34,9 +34,18 @@ export async function claimPendingInvitations(): Promise<number> {
 
 export async function listMemberships(): Promise<Membership[]> {
   const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (typeof userId !== "string") return [];
+
+  // Filtered to the caller explicitly. RLS lets an owner or admin read every
+  // membership of their business - which is right for the team page and
+  // wrong here: without this, an admin of a two-person salon saw it twice in
+  // the switcher, the second time with the *owner's* role.
   const { data, error } = await supabase
     .from("business_members")
     .select("business_id, role, businesses ( id, name, slug, status, logo_url )")
+    .eq("profile_id", userId)
     .eq("status", "active")
     .order("created_at");
 
@@ -160,7 +169,8 @@ const ADMIN_APPOINTMENT_SELECT = `
   id, starts_at, ends_at, status, price_cents, currency, customer_name,
   customer_email, customer_phone, customer_notes, internal_notes,
   cancellation_reason, service_name_snapshot, service_id, staff_profile_id,
-  location_id, customer_profile_id, source,
+  location_id, customer_profile_id, source, deposit_status, deposit_cents,
+  payment_due_at,
   services ( id, name, duration_minutes, buffer_before_minutes, buffer_after_minutes ),
   staff_profiles ( id, display_name, color, avatar_url ),
   locations ( id, name )
@@ -266,6 +276,50 @@ export async function listBusinessReviews(businessId: string) {
 
   if (error) throw error;
   return data ?? [];
+}
+
+/**
+ * Everything the payments page needs to say where deposits stand. The account
+ * row is only readable by the salon's admins, so for anyone else `account` is
+ * null - which is also the truth for them: they cannot act on it.
+ */
+export async function getDepositOverview(businessId: string) {
+  const supabase = await createClient();
+
+  const [{ data: account }, { data: business }, { count: depositServices }, { data: kept }] =
+    await Promise.all([
+      supabase
+        .from("business_payment_accounts")
+        .select("account_id, charges_enabled, payouts_enabled, details_submitted")
+        .eq("business_id", businessId)
+        .maybeSingle(),
+      supabase
+        .from("businesses")
+        .select("deposits_enabled, currency")
+        .eq("id", businessId)
+        .maybeSingle(),
+      supabase
+        .from("services")
+        .select("id", { count: "exact", head: true })
+        .eq("business_id", businessId)
+        .eq("is_active", true)
+        .eq("requires_deposit", true)
+        .gt("deposit_cents", 0),
+      supabase
+        .from("appointments")
+        .select("deposit_cents")
+        .eq("business_id", businessId)
+        .eq("deposit_status", "retained")
+        .limit(1000),
+    ]);
+
+  return {
+    account,
+    depositsEnabled: business?.deposits_enabled ?? false,
+    currency: business?.currency ?? "EUR",
+    depositServices: depositServices ?? 0,
+    retainedCents: (kept ?? []).reduce((sum, row) => sum + row.deposit_cents, 0),
+  };
 }
 
 export async function listPaymentRecords(businessId: string) {

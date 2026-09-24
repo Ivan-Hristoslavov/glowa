@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -132,9 +133,11 @@ export function CampaignEditor({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-5">
+
+          <RequiredNote />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="campaign-name">{t("name")}</Label>
+              <Label htmlFor="campaign-name" required>{t("name")}</Label>
               <Input
                 id="campaign-name"
                 value={draft.name}

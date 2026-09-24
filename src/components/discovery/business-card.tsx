@@ -1,14 +1,16 @@
-import { MapPin, Sparkles } from "lucide-react";
+import { MapPin, Sparkles, Star } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
+import { ViewTransition } from "react";
 
-import { Rating } from "@/components/common/rating";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/routing";
+import { localeHrefLang, type Locale } from "@/i18n/routing";
 import { fallbackBusinessImage } from "@/lib/brand-assets";
 import { formatPrice } from "@/lib/format";
 import { pickLocalized } from "@/lib/localized";
+import { formatDistance } from "@/lib/places";
+import { salonCoverTransition } from "@/lib/transitions";
 import type { SearchResult } from "@/lib/queries/discovery";
 
 type BusinessCardProps = {
@@ -23,6 +25,7 @@ export async function BusinessCard({ business, locale }: BusinessCardProps) {
   const price = formatPrice(business.min_price_cents, business.currency, locale);
   const pitch = pickLocalized(business.short_pitch, locale);
   const isDemo = business.slug.startsWith("demo-");
+  const distance = formatDistance(business.distance_km, localeHrefLang[locale]);
 
   // A business's own cover wins; otherwise generated art for its category, and
   // only then the brand gradient. Never a stock photo of the wrong trade.
@@ -32,68 +35,70 @@ export async function BusinessCard({ business, locale }: BusinessCardProps) {
   return (
     <Link
       href={`/business/${business.slug}`}
-      className="glowa-focus group glowa-card hover:shadow-lift focus-visible:ring-ring/60 flex flex-col overflow-hidden transition-shadow duration-300 focus-visible:ring-2 focus-visible:outline-none"
+      className="glowa-focus group flex flex-col gap-3 rounded-2xl focus-visible:outline-none"
     >
-      <div className="bg-secondary relative aspect-[16/10] overflow-hidden">
+      {/* The same photo leads the salon page; named the same there, the card
+          grows into the page's cover instead of being swapped for it. */}
+      <ViewTransition name={salonCoverTransition(business.slug)} share="salon-cover" default="none">
+      <div
+        data-glow
+        className="glowa-glow bg-secondary relative aspect-[4/3] overflow-hidden rounded-2xl"
+      >
         {image ? (
           <Image
             src={image}
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
           />
         ) : (
-          <div className="from-brand-soft/70 via-secondary to-brand-sage/40 flex h-full items-center justify-center bg-gradient-to-br">
+          <div className="from-brand-soft/70 via-secondary to-brand-peach flex h-full items-center justify-center bg-gradient-to-br">
             <Sparkles className="text-primary/70 size-7" aria-hidden />
           </div>
         )}
+        {business.review_count > 0 ? (
+          <span className="bg-card/95 absolute right-3 bottom-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-[var(--shadow-card)] backdrop-blur">
+            {Number(business.average_rating).toFixed(1)}
+            <Star className="fill-foreground size-3" aria-hidden />
+            <span className="text-muted-foreground font-normal">({business.review_count})</span>
+          </span>
+        ) : null}
         {isDemo ? (
-          <Badge
-            variant="secondary"
-            className="absolute top-3 left-3 backdrop-blur-sm"
-          >
+          <Badge variant="secondary" className="absolute top-3 left-3 backdrop-blur-sm">
             {t("demoBadge")}
           </Badge>
         ) : null}
       </div>
+      </ViewTransition>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-heading text-base leading-snug">{business.name}</h3>
-          {price ? (
-            <span className="text-muted-foreground shrink-0 text-xs">
-              {t("priceFrom", { price })}
-            </span>
-          ) : null}
-        </div>
-
-        {pitch ? (
-          <p className="text-muted-foreground line-clamp-2 text-sm">{pitch}</p>
-        ) : null}
-
-        <div className="text-muted-foreground mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-xs">
-          <Badge variant="outline" className="font-normal">
-            {categories(business.category)}
-          </Badge>
+      <div className="space-y-1 px-0.5">
+        <h3 className="text-[1.05rem] leading-snug font-semibold tracking-[-0.01em]">
+          {business.name}
+        </h3>
+        <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-sm">
           {business.city ? (
             <span className="inline-flex items-center gap-1">
               <MapPin className="size-3.5" aria-hidden />
               {business.city}
+              {distance ? (
+                <span className="text-foreground font-medium">· {distance}</span>
+              ) : null}
             </span>
           ) : null}
-          {business.review_count > 0 ? (
-            <span className="inline-flex items-center gap-1.5">
-              <Rating value={Number(business.average_rating)} />
-              <span className="text-foreground font-medium">
-                {Number(business.average_rating).toFixed(1)}
-              </span>
-              <span>({business.review_count})</span>
-            </span>
-          ) : (
-            <span>{t("noReviews")}</span>
-          )}
-        </div>
+          {business.city ? <span aria-hidden>·</span> : null}
+          <span>{categories(business.category)}</span>
+          {business.review_count === 0 ? (
+            <>
+              <span aria-hidden>·</span>
+              <span>{t("noReviews")}</span>
+            </>
+          ) : null}
+        </p>
+        {pitch ? <p className="text-muted-foreground line-clamp-1 text-sm">{pitch}</p> : null}
+        {price ? (
+          <p className="pt-0.5 text-sm font-medium">{t("priceFrom", { price })}</p>
+        ) : null}
       </div>
     </Link>
   );

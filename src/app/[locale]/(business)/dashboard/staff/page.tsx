@@ -2,6 +2,7 @@ import { Info, Pencil, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeader } from "@/components/admin/page-header";
 import { InviteMemberDialog } from "@/components/admin/invite-member-dialog";
 import {
   AddStaffButton,
@@ -15,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
 import { isLocalizedText, pickLocalized } from "@/lib/localized";
+import { cn } from "@/lib/utils";
 import {
   canAdminister,
   canManage,
@@ -49,23 +51,26 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/dashboa
   const editable = canManage(membership.role);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>
-        {editable ? (
-          <div className="flex gap-2">
-            {canAdminister(membership.role) ? (
-              <InviteMemberDialog businessId={membership.businessId} />
-            ) : null}
-            <AddStaffButton businessId={membership.businessId} />
-          </div>
-        ) : null}
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={
+          editable ? (
+            <>
+              {canAdminister(membership.role) ? (
+                <InviteMemberDialog businessId={membership.businessId} />
+              ) : null}
+              <AddStaffButton businessId={membership.businessId} />
+            </>
+          ) : null
+        }
+      />
 
       {workspace.staff.length === 0 ? (
         <EmptyState icon={Sparkles} title={t("empty")} body={t("emptyBody")} />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {workspace.staff.map((member) => {
             const hours = (member.staff_working_hours ?? [])
               .slice()
@@ -86,22 +91,30 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/dashboa
             };
 
             return (
-              <li key={member.id} className="glowa-card space-y-3 p-4">
-                <div className="flex items-start gap-3">
-                  <Avatar className="size-11">
-                    {member.avatar_url ? <AvatarImage src={member.avatar_url} alt="" /> : null}
-                    <AvatarFallback
-                      style={{ backgroundColor: `${member.color}22`, color: member.color }}
-                    >
-                      {member.display_name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+              <li
+                key={member.id}
+                className="glowa-card hover:shadow-lift flex flex-col gap-4 rounded-2xl p-5 transition-shadow duration-300"
+              >
+                <div className="flex items-start gap-4">
+                  <span className="rounded-2xl p-0.5" style={{ boxShadow: `0 0 0 2px ${member.color}` }}>
+                    <Avatar className="size-16 rounded-[0.9rem]">
+                      {member.avatar_url ? (
+                        <AvatarImage src={member.avatar_url} alt="" className="object-cover" />
+                      ) : null}
+                      <AvatarFallback
+                        className="font-heading rounded-[0.9rem] text-2xl"
+                        style={{ backgroundColor: `${member.color}22`, color: member.color }}
+                      >
+                        {member.display_name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{member.display_name}</p>
+                    <p className="font-heading truncate text-lg">{member.display_name}</p>
                     <p className="text-muted-foreground truncate text-sm">
                       {pickLocalized(member.title, activeLocale) || "—"}
                     </p>
-                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    <div className="mt-2 flex flex-wrap gap-1.5">
                       {member.business_members ? (
                         <Badge variant="outline" className="font-normal">
                           {t(`role.${member.business_members.role}`)}
@@ -117,7 +130,7 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/dashboa
                       businessId={membership.businessId}
                       member={draft}
                       trigger={
-                        <Button variant="ghost" size="icon" aria-label={t("save")}>
+                        <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("save")}>
                           <Pencil className="size-4" />
                         </Button>
                       }
@@ -125,20 +138,37 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/dashboa
                   ) : null}
                 </div>
 
-                <dl className="text-muted-foreground space-y-0.5 text-xs">
-                  {hours.length === 0 ? (
-                    <p>—</p>
-                  ) : (
-                    hours.map((row) => (
-                      <div key={row.id} className="flex justify-between gap-3">
-                        <dt>{weekdays(String(row.day_of_week))}</dt>
-                        <dd>
-                          {row.starts_at.slice(0, 5)}–{row.ends_at.slice(0, 5)}
-                        </dd>
+                {/* The week at a glance: which days, and when. */}
+                <div className="grid grid-cols-7 gap-1 border-t pt-4">
+                  {[1, 2, 3, 4, 5, 6, 0].map((day) => {
+                    const row = hours.find((entry) => entry.day_of_week === day);
+                    return (
+                      <div
+                        key={day}
+                        className={cn(
+                          "flex flex-col items-center gap-0.5 rounded-lg px-0.5 py-1.5 text-center",
+                          row ? "bg-muted/60" : "opacity-40",
+                        )}
+                        title={row ? `${row.starts_at.slice(0, 5)}–${row.ends_at.slice(0, 5)}` : undefined}
+                      >
+                        <span className="text-[0.65rem] font-medium uppercase">
+                          {weekdays(String(day)).slice(0, 2)}
+                        </span>
+                        <span className="text-muted-foreground text-[0.6rem] leading-tight tabular-nums">
+                          {row ? (
+                            <>
+                              {row.starts_at.slice(0, 5)}
+                              <br />
+                              {row.ends_at.slice(0, 5)}
+                            </>
+                          ) : (
+                            "—"
+                          )}
+                        </span>
                       </div>
-                    ))
-                  )}
-                </dl>
+                    );
+                  })}
+                </div>
               </li>
             );
           })}

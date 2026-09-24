@@ -36,10 +36,16 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/profi
     await Promise.all([
       supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
       listMyAppointments(),
+      // Filtered by the caller explicitly: RLS also shows a salon's staff
+      // the salon's reviews, which are not theirs to count here.
       supabase
         .from("saved_businesses")
-        .select("business_id", { count: "exact", head: true }),
-      supabase.from("reviews").select("id", { count: "exact", head: true }),
+        .select("business_id", { count: "exact", head: true })
+        .eq("profile_id", userId),
+      supabase
+        .from("reviews")
+        .select("id", { count: "exact", head: true })
+        .eq("author_profile_id", userId),
     ]);
 
   const activeLocale = locale as Locale;

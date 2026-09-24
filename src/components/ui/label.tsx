@@ -6,8 +6,17 @@ import { Label as LabelPrimitive } from "radix-ui"
 
 function Label({
   className,
+  required = false,
+  children,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & {
+  /**
+   * Marks the field as required with an asterisk. Visual only: the control
+   * itself carries `required`, which is what assistive tech announces, so the
+   * mark is hidden from screen readers rather than read out twice.
+   */
+  required?: boolean
+}) {
   return (
     <LabelPrimitive.Root
       data-slot="label"
@@ -16,7 +25,14 @@ function Label({
         className
       )}
       {...props}
-    />
+    >
+      {children}
+      {required ? (
+        <span aria-hidden className="text-primary -ml-1.5 font-semibold">
+          *
+        </span>
+      ) : null}
+    </LabelPrimitive.Root>
   )
 }
 

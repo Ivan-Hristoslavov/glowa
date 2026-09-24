@@ -37,7 +37,7 @@ export function LocaleSwitcher() {
           size="sm"
           disabled={isPending}
           aria-label={t("language")}
-          className="gap-1.5"
+          className="gap-1.5 rounded-full"
         >
           <Globe className="size-4" />
           <span className="text-xs font-medium uppercase">{locale}</span>

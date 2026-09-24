@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -79,8 +80,9 @@ export function OnboardingForm({ defaultLocale }: { defaultLocale: Locale }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
+      <RequiredNote />
       <div className="space-y-2">
-        <Label htmlFor="business-name">{t("name")}</Label>
+        <Label htmlFor="business-name" required>{t("name")}</Label>
         <Input
           id="business-name"
           value={name}

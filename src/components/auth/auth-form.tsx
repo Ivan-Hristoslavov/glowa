@@ -6,6 +6,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import type { AuthFormState } from "@/app/[locale]/(auth)/actions";
+import { RequiredNote } from "@/components/common/required-note";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,7 @@ export function AuthForm({ mode, action, nextPath }: AuthFormProps) {
 
   return (
     <form action={formAction} className="space-y-5" noValidate>
+      <RequiredNote />
       {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
       {state.status === "error" && state.message ? (
@@ -58,7 +60,7 @@ export function AuthForm({ mode, action, nextPath }: AuthFormProps) {
 
       {isSignUp ? (
         <div className="space-y-2">
-          <Label htmlFor="fullName">{t("fullName")}</Label>
+          <Label htmlFor="fullName" required>{t("fullName")}</Label>
           <Input
             id="fullName"
             name="fullName"
@@ -70,7 +72,7 @@ export function AuthForm({ mode, action, nextPath }: AuthFormProps) {
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="email">{t("email")}</Label>
+        <Label htmlFor="email" required>{t("email")}</Label>
         <Input
           id="email"
           name="email"
@@ -83,7 +85,7 @@ export function AuthForm({ mode, action, nextPath }: AuthFormProps) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">{t("password")}</Label>
+          <Label htmlFor="password" required>{t("password")}</Label>
           {!isSignUp ? (
             <Link
               href="/forgot-password"

@@ -183,6 +183,88 @@ const ASSETS = [
       "The interior of a small nail studio with nobody in frame: a pale table, a curved lamp, a wall of polish bottles in muted tones, dried flowers in a vase.",
   },
 
+  // --- showcase salon ----------------------------------------------------
+  // A fully furnished demo business, so the product can be judged with a
+  // real-looking salon in it: its cover, a portfolio, and its team. The
+  // people are generated and depict nobody real.
+  {
+    name: "showcase-cover",
+    size: "landscape",
+    style: PHOTO,
+    prompt:
+      "The interior of an airy hair and beauty atelier in a Sofia apartment building with nobody in frame: tall windows, herringbone parquet, three styling chairs facing arched mirrors, cream plaster walls, olive trees in pots, warm morning light. The left third of the frame stays calm for text.",
+  },
+  {
+    name: "showcase-gallery-1",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "The back of a woman's head showing freshly finished soft balayage waves, honey and caramel tones, loose and glossy, salon mirror softly out of focus. Only hair and shoulders in frame.",
+  },
+  {
+    name: "showcase-gallery-2",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Side profile of a precise chin-length bob just after the cut, blunt line catching the window light, the stylist's hand with scissors just leaving the frame.",
+  },
+  {
+    name: "showcase-gallery-3",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Overhead frame of a colourist's trolley: two mixing bowls with colour, tint brushes, foils folded neatly, a small digital scale, warm light. Objects only.",
+  },
+  {
+    name: "showcase-gallery-4",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Defined natural curls being styled with a diffuser, the client's face turned away, curls springy and shiny, warm window light.",
+  },
+  {
+    name: "showcase-gallery-5",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "A calm washing station: a reclined basin chair, folded warm towels, amber bottles on a wooden shelf, a linen curtain. Nobody in frame.",
+  },
+  {
+    name: "showcase-gallery-6",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Close detail of a soft bridal low bun with delicate loose strands and a small sprig of dried flowers pinned in, seen from behind.",
+  },
+  {
+    name: "showcase-staff-1",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Environmental portrait of a hairstylist in her early thirties standing in her salon, linen apron, dark hair tied back, relaxed half-smile, looking just past the camera. Head and shoulders, background softly blurred.",
+  },
+  {
+    name: "showcase-staff-2",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Environmental portrait of a colourist in his forties with a short grey-flecked beard, black shirt with rolled sleeves, arms loosely crossed, calm expression. Head and shoulders, warm salon background softly blurred.",
+  },
+  {
+    name: "showcase-staff-3",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Environmental portrait of a young stylist in her mid-twenties with curly auburn hair, cream knit top, laughing slightly mid-conversation off camera. Head and shoulders, bright salon background softly blurred.",
+  },
+  {
+    name: "showcase-staff-4",
+    size: "square",
+    style: PHOTO,
+    prompt:
+      "Environmental portrait of a brow and lash artist in her forties with a sleek low ponytail and small gold earrings, sage green tunic, composed and warm. Head and shoulders, treatment room softly blurred behind.",
+  },
+
   // --- social backdrop ----------------------------------------------------
   {
     name: "og-backdrop",

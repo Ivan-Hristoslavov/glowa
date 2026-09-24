@@ -2,6 +2,7 @@ import { QrCode } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeader } from "@/components/admin/page-header";
 import { GrowthLinkCard, type GrowthLinkView } from "@/components/admin/growth-link-card";
 import { GrowthLinkCreator } from "@/components/admin/growth-link-creator";
 import { EmptyState } from "@/components/common/empty-state";
@@ -79,20 +80,20 @@ export default async function GrowthPage({
     .map((client) => ({ id: client.id, label: client.full_name as string }));
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>
-          <p className="text-muted-foreground mt-1 text-sm">{t("subtitle")}</p>
-        </div>
-        {editable ? (
-          <GrowthLinkCreator
-            businessId={membership.businessId}
-            services={services}
-            clients={clientOptions}
-          />
-        ) : null}
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={
+          editable ? (
+            <GrowthLinkCreator
+              businessId={membership.businessId}
+              services={services}
+              clients={clientOptions}
+            />
+          ) : null
+        }
+      />
 
       <p className="text-muted-foreground border-border/70 bg-secondary/40 rounded-xl border p-4 text-sm">
         {t("privacyNote")}

@@ -1,9 +1,11 @@
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
-import { Onest, Playfair_Display } from "next/font/google";
+import { Wix_Madefor_Display, Wix_Madefor_Text } from "next/font/google";
 import { notFound } from "next/navigation";
 
+import { GlowPointer } from "@/components/motion/glow-pointer";
+import { MotionProvider } from "@/components/motion/motion-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { localeHrefLang, routing } from "@/i18n/routing";
@@ -16,23 +18,25 @@ import "../globals.css";
 // Cyrillic and latin-ext coverage is a hard requirement: the same face has to
 // carry Bulgarian, English and Romanian without falling back.
 //
-// Onest over Inter for the UI: it was drawn Cyrillic-first, so Bulgarian body
-// copy reads warmer and less like a system font.
-const onest = Onest({
+// Wix Madefor, as a pair: Display for headings and Text for everything else,
+// one design drawn at two optical sizes. Chosen by rendering real Bulgarian
+// screens (the calendar, a salon card, the pitch) in twelve Cyrillic families
+// against the reference the brand asked for - Fresha's Roobert, which is not
+// licensable here. Madefor was the closest in feel (geometric but warm, round
+// terminals) and, like Roobert, ships Bulgarian localised forms: with
+// `lang="bg"` the browser switches в, д, л, ж to the Bulgarian shapes, which
+// is what makes Bulgarian copy read native instead of Russian. The Text cut
+// is spaced and weighted for 13-15px, where the calendar and forms live.
+const madeforText = Wix_Madefor_Text({
   variable: "--font-sans",
-  subsets: ["latin", "latin-ext", "cyrillic"],
+  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
   display: "swap",
 });
 
-// Playfair over Noto Serif Display for headings: its Cyrillic is properly
-// drawn rather than a Latin face with Cyrillic bolted on, and the high stroke
-// contrast is the editorial register the brand asks for. Weights are limited
-// to what the design actually uses.
-const playfairDisplay = Playfair_Display({
+const madeforDisplay = Wix_Madefor_Display({
   variable: "--font-heading",
-  subsets: ["latin", "latin-ext", "cyrillic"],
+  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
 });
 
 export function generateStaticParams() {
@@ -106,7 +110,7 @@ export default async function LocaleLayout({
     <html
       lang={localeHrefLang[locale]}
       suppressHydrationWarning
-      className={`${onest.variable} ${playfairDisplay.variable} h-full antialiased`}
+      className={`${madeforText.variable} ${madeforDisplay.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {/* First tab stop on every page. Without it a keyboard user walks the
@@ -118,14 +122,12 @@ export default async function LocaleLayout({
         >
           {t("skipToContent")}
         </a>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        {/* No disableTransitionOnChange: ThemeToggle freezes transitions
+            itself, everywhere except its own icon, so the icon can animate. */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextIntlClientProvider>
-            {children}
+            <MotionProvider>{children}</MotionProvider>
+            <GlowPointer />
             <Toaster position="top-center" />
           </NextIntlClientProvider>
         </ThemeProvider>

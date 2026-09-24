@@ -28,7 +28,8 @@
     "change": "Schimbă",
     "today": "Azi",
     "tomorrow": "Mâine",
-    "skipToContent": "Sari la conținut"
+    "skipToContent": "Sari la conținut",
+    "requiredHint": "Câmpurile marcate cu asterisc sunt obligatorii."
   },
   "nav": {
     "product": "Produs",
@@ -50,7 +51,12 @@
     "reviews": "Recenziile mele",
     "settings": "Setări",
     "menu": "Meniu",
-    "myAccount": "Contul meu"
+    "myAccount": "Contul meu",
+    "forBusiness": "Pentru saloane",
+    "toggleTheme": "Comută tema deschisă / închisă",
+    "mainNav": "Navigare principală",
+    "explore": "Explorează",
+    "preferences": "Limbă și temă"
   },
   "categories": {
     "hair_salon": "Salon de coafură",
@@ -127,8 +133,8 @@
         "body": "Istoric, note și preferințe pentru fiecare client, într-un singur loc."
       },
       "payments": {
-        "title": "Plăți",
-        "body": "Depozite și plăți online — modelate în sistem, integrarea cu procesatorul urmează."
+        "title": "Avansuri",
+        "body": "Un mic avans la programarea online, prin Stripe. Banii ajung direct la tine și se returnează automat la o anulare la timp."
       },
       "marketing": {
         "title": "Marketing",
@@ -159,7 +165,61 @@
       "title": "De la tuns la o zi de spa.",
       "subtitle": "Alege ce cauți și vezi saloanele care îl oferă."
     },
-    "ownerPrompt": "Ai un salon?"
+    "ownerPrompt": "Ai un salon?",
+    "pill": "Programare la salon într-un minut, fără telefon",
+    "ownerLink": "Vezi GLOWA pentru saloane",
+    "search": {
+      "what": "Manichiură, tuns, salon…",
+      "where": "Oraș sau lângă mine",
+      "anyTime": "Oricând",
+      "today": "Azi",
+      "tomorrow": "Mâine",
+      "whatLabel": "Serviciu",
+      "whereLabel": "Unde",
+      "whenLabel": "Când",
+      "submit": "Caută",
+      "quick": "Rapid:"
+    },
+    "business": {
+      "eyebrow": "Pentru saloane și studiouri",
+      "title": "Calendarul care umple scaunul.",
+      "body": "Programări online, calendar de echipă, avansuri împotriva neprezentărilor și o pagină frumoasă pentru salonul tău.",
+      "point1": "Clienții se programează singuri, non-stop",
+      "point2": "Un avans care te protejează de scaune goale",
+      "point3": "O pagină care nu arată concurenți",
+      "more": "Află mai multe"
+    },
+    "promises": {
+      "noCommission": {
+        "title": "Fără comision pentru clienții tăi",
+        "body": "Nu luăm niciun procent din programare și nicio taxă pentru un client adus de tine."
+      },
+      "noCompetitors": {
+        "title": "Fără concurenți pe pagina ta",
+        "body": "Când un client îți deschide salonul, te vede doar pe tine. Fără „saloane similare în apropiere”."
+      },
+      "dataYours": {
+        "title": "Clienții sunt ai tăi",
+        "body": "Exportă oricând întreaga listă de clienți în CSV, dintr-un clic."
+      },
+      "directPayouts": {
+        "title": "Banii ajung direct la tine",
+        "body": "Avansurile intră în contul tău Stripe. Nu reținem și nu întârziem banii tăi."
+      }
+    },
+    "allCategories": "Toate",
+    "chips": {
+      "instant": "Confirmare imediată",
+      "refund": "Anulezi la timp? Avansul se returnează."
+    },
+    "openings": {
+      "live": "Live",
+      "title": "Liber azi și mâine",
+      "subtitle": "Ore libere reale în saloane reale. Alege una — restul e o singură confirmare.",
+      "today": "Azi",
+      "tomorrow": "Mâine",
+      "ticketLabel": "{day} la {time}: {service} la {salon}"
+    }
   },
   "auth": {
     "loginTitle": "Bine ai revenit",
@@ -228,8 +288,15 @@
     "sortBy": {
       "rating": "După rating",
       "price": "După preț",
-      "name": "După nume"
-    }
+      "name": "După nume",
+      "distance": "Cele mai apropiate"
+    },
+    "titleNear": "Saloane lângă {place}",
+    "sortedFrom": "ordonate după distanța față de {place}",
+    "nearestInstead": "Cele mai apropiate saloane",
+    "popularInstead": "S-ar putea să-ți placă",
+    "titleNearYou": "Saloane lângă tine",
+    "sortedFromYou": "cele mai apropiate primele"
   },
   "business": {
     "about": "Despre",
@@ -264,7 +331,34 @@
     "breadcrumbSearch": "Saloane",
     "showMap": "Arată harta",
     "showMapNote": "Harta se încarcă de la OpenStreetMap doar când o ceri.",
-    "gallery": "Galerie"
+    "gallery": "Galerie",
+    "sectionsLabel": "Secțiuni",
+    "serviceCount": "{count, plural, one {# serviciu} few {# servicii} other {# de servicii}}",
+    "bookWith": "Programează-te la {name}",
+    "verifiedVisit": "Vizită prin GLOWA",
+    "salonReply": "Răspuns de la {name}",
+    "depositPolicy": "Unele servicii cer un mic avans la programarea online. Se returnează integral dacă anulezi cu cel puțin {hours} ore înainte.",
+    "directions": "Indicații",
+    "priceFrom": "de la",
+    "perkInstant": "Disponibilitate live, confirmare imediată.",
+    "perkDeposit": "Avansul se scade din preț.",
+    "openNow": "Deschis",
+    "closesAt": "până la {time}",
+    "closesSoon": "se închide la {time}",
+    "closedNow": "Închis",
+    "opensToday": "deschide azi la {time}",
+    "opensTomorrow": "deschide mâine la {time}",
+    "opensOn": "deschide {day} la {time}",
+    "showAllPhotos": "Toate fotografiile ({count})",
+    "openPhoto": "Deschide fotografia {number}",
+    "closePhotos": "Închide",
+    "previousPhoto": "Fotografia anterioară",
+    "nextPhoto": "Fotografia următoare",
+    "metaTitle": "{name} — {category}",
+    "metaTitleCity": "{name} — {category} în {city}",
+    "metaDescription": "Prețuri, ore libere și recenzii pentru {name}. Programează-te online într-un minut.",
+    "metaDescriptionCity": "{name}, {city}: prețuri, ore libere și recenzii. Programează-te online într-un minut.",
+    "photoOf": "{name} — fotografia {number}"
   },
   "booking": {
     "title": "Fă o programare",
@@ -301,9 +395,24 @@
     "errors": {
       "slot_unavailable": "Ora nu mai este liberă. Alege alta.",
       "slot_taken": "Cineva tocmai a rezervat ora. Alege alta.",
-      "generic": "Programarea nu a reușit. Încearcă din nou."
+      "generic": "Programarea nu a reușit. Încearcă din nou.",
+      "payment_unavailable": "Plata avansului nu a putut porni, așa că ora nu a fost rezervată. Încearcă din nou peste puțin timp."
     },
-    "stepsLabel": "Pași"
+    "stepsLabel": "Pași",
+    "depositChip": "Avans {amount}",
+    "depositTitle": "Avans de {amount} acum",
+    "depositBody": "Restul de {rest} se plătește la salon. Avansul îți este returnat integral dacă anulezi cu cel puțin {hours} ore înainte.",
+    "depositHold": "Îți păstrăm ora 30 de minute cât timp plătești. Plata se face prin Stripe; datele cardului tău nu trec prin GLOWA.",
+    "depositLabel": "Avans",
+    "depositSummary": "{amount} acum · {rest} la salon",
+    "payDeposit": "Plătește avansul de {amount}",
+    "openingPayment": "Deschidem plata…",
+    "morning": "Dimineața",
+    "afternoon": "După-amiaza",
+    "evening": "Seara",
+    "firstFree": "Primul liber: {when}",
+    "slotsCount": "{count, plural, =0 {nicio oră liberă} one {# oră liberă} few {# ore libere} other {# de ore libere}}",
+    "preselected": "Ora e aleasă pentru tine. Verifică și confirmă."
   },
   "waitlist": {
     "cta": "Intră pe lista de așteptare",
@@ -383,6 +492,25 @@
       "slot_unavailable": "Ora nu este disponibilă. Alege alta.",
       "slot_taken": "Cineva tocmai a rezervat ora. Alege alta.",
       "generic": "Nu a funcționat. Încearcă din nou."
+    },
+    "depositPaidTitle": "Avans plătit",
+    "depositPaidBody": "Ai plătit {amount} și programarea ta este garantată. Ți-am trimis o confirmare.",
+    "depositAwaitingTitle": "Mai ai de plătit avansul",
+    "depositAwaitingBody": "Păstrăm ora până la {time}. Dacă avansul nu este plătit până atunci, ora se eliberează.",
+    "payDeposit": "Plătește {amount}",
+    "depositExpired": "Timpul de plată a expirat și ora a fost eliberată.",
+    "depositVoidTitle": "Ora a fost eliberată",
+    "depositVoidBody": "Avansul nu a fost plătit la timp, așa că ora este din nou liberă. Poți face o nouă programare.",
+    "depositStatus": {
+      "none": "Fără avans",
+      "awaiting": "Așteaptă plata",
+      "paid": "Plătit",
+      "waived": "Nu este necesar",
+      "void": "Neplătit",
+      "refund_pending": "Se returnează",
+      "refunded": "Returnat",
+      "retained": "Reținut de salon",
+      "applied": "Scăzut din preț"
     }
   },
   "review": {
@@ -544,7 +672,14 @@
       "backToSite": "Înapoi la site",
       "switchBusiness": "Schimbă afacerea",
       "viewPublicPage": "Vezi pagina publică",
-      "menu": "Meniu"
+      "menu": "Meniu",
+      "groups": {
+        "daily": "Zilnic",
+        "salon": "Salonul",
+        "growth": "Creștere",
+        "account": "Cont"
+      },
+      "settingsSubtitle": "Cum arată afacerea ta și regulile de programare."
     },
     "status": {
       "draft": "Ciornă",
@@ -572,7 +707,8 @@
       "errors": {
         "name_required": "Introdu numele afacerii.",
         "generic": "Nu a funcționat. Încearcă din nou."
-      }
+      },
+      "email": "E-mail"
     },
     "dashboard": {
       "title": "Prezentare",
@@ -604,7 +740,21 @@
       "draftBody": "Ciornele nu apar în căutare și nu primesc programări. Publică după ce ai setat serviciile și programul.",
       "publish": "Publică afacerea",
       "published": "Afacerea a fost publicată",
-      "noMetrics": "Încă nu există date pentru această perioadă."
+      "noMetrics": "Încă nu există date pentru această perioadă.",
+      "greetingMorning": "Bună dimineața, {name}",
+      "greetingDay": "Bună ziua, {name}",
+      "greetingEvening": "Bună seara, {name}",
+      "thisMonth": "Luna aceasta",
+      "todaySummary": "{count, plural, =0 {Nicio programare} one {# programare} few {# programări} other {# de programări}} · {revenue}",
+      "depositSecured": "Avans plătit",
+      "nextUp": "Urmează",
+      "nextUpEmpty": "Nimic altceva programat azi. Un moment bun pentru o postare nouă sau un mesaj către un client.",
+      "quickActions": "Acțiuni rapide",
+      "qaService": "Adaugă un serviciu",
+      "qaInvite": "Invită un coleg",
+      "qaQr": "Cod QR pentru salon",
+      "qaDeposits": "Activează avansurile",
+      "moreToday": "Încă {count} în calendar"
     },
     "calendar": {
       "title": "Calendar",
@@ -648,7 +798,43 @@
       "errors": {
         "overlap": "Specialistul are deja o programare în acest interval.",
         "generic": "Nu a funcționat. Încearcă din nou."
-      }
+      },
+      "location": "Locație",
+      "customerNotes": "Notă de la client",
+      "deposit": "Avans",
+      "depositSecured": "Avans plătit",
+      "depositAwaiting": "Așteaptă avansul",
+      "depositStatus": {
+        "none": "Fără avans",
+        "awaiting": "Așteaptă plata",
+        "paid": "Plătit",
+        "waived": "Renunțat",
+        "void": "Neplătit",
+        "refund_pending": "Se returnează",
+        "refunded": "Returnat",
+        "retained": "Reținut",
+        "applied": "Scăzut din preț"
+      },
+      "summaryVisits": "{count, plural, one {programare} few {programări} other {de programări}}",
+      "summarySecured": "{count} cu avans",
+      "refundQueued": "Programare anulată. Avansul se returnează clientului.",
+      "noShowKeepsDeposit": "La neprezentare, avansul rămâne la salon.",
+      "cancelConfirmTitle": "Anulăm această programare?",
+      "cancelDepositChoice": "Clientul a plătit un avans de {amount}. Returnează-l dacă anulezi tu sau clientul a anunțat la timp. Păstrează-l la o anulare târzie.",
+      "cancelAndRefund": "Anulează și returnează avansul",
+      "cancelAndRetain": "Anulează și păstrează avansul",
+      "cancelConfirm": "Da, anulează",
+      "pickDate": "Alege data",
+      "viewLabel": "Vizualizare",
+      "live": "Live",
+      "price": "Preț",
+      "columnCount": "{count, plural, =0 {Liber} one {# programare} few {# programări} other {# de programări}}",
+      "customerHint": "Completează cel puțin unul: nume, e-mail sau telefon.",
+      "hasNotes": "Are o notă",
+      "showCancelled": "Anulate ({count})",
+      "weekHint": "Săptămâna se citește cel mai ușor pentru un singur stilist: alege-l mai sus. Treci cu mouse-ul sau atinge o programare pentru detalii.",
+      "hoverHint": "Apasă pentru acțiuni",
+      "durationMinutes": "{minutes} min"
     },
     "services": {
       "title": "Servicii",
@@ -675,7 +861,11 @@
       "emptyBody": "Adaugă primul serviciu ca să primești programări.",
       "noStaffAssigned": "Niciun specialist alocat",
       "localeHint": "Descrierile se introduc în toate cele trei limbi.",
-      "inactive": "Inactiv"
+      "inactive": "Inactiv",
+      "requiresDepositHint": "Se încasează la rezervările online după ce plățile sunt conectate. Se returnează automat la o anulare la timp.",
+      "subtitle": "Meniul pe care clienții îl văd și îl rezervă. Prețuri, durate, avansuri și cine execută fiecare serviciu.",
+      "staffCount": "{count, plural, =0 {nimeni alocat} one {# stilist} few {# stiliști} other {# de stiliști}}",
+      "inactiveSection": "Inactive"
     },
     "staff": {
       "title": "Echipă",
@@ -716,7 +906,8 @@
       "permissions": "Permisiuni",
       "permissionsBody": "Proprietarul și administratorul gestionează tot. Managerul se ocupă de calendar, servicii și clienți. Specialistul vede calendarul echipei.",
       "invited": "Invitație salvată",
-      "inviteHint": "Primește acces imediat ce se autentifică cu acest e-mail."
+      "inviteHint": "Primește acces imediat ce se autentifică cu acest e-mail.",
+      "subtitle": "Oamenii din spatele scaunului, rolurile și zilele lor de lucru."
     },
     "clients": {
       "title": "Clienți",
@@ -740,7 +931,23 @@
       "noHistory": "Nicio programare",
       "saved": "Modificări salvate",
       "guest": "Fără cont",
-      "privacyNote": "Aceste informații sunt vizibile doar echipei tale."
+      "privacyNote": "Aceste informații sunt vizibile doar echipei tale.",
+      "subtitle": "Toți cei care te-au vizitat, cu istoric, cheltuieli și notițe. Agenda se completează singură din programări.",
+      "countTotal": "clienți",
+      "countReturning": "revin",
+      "countConsent": "cu acord",
+      "client": "Client",
+      "consentShort": "Marketing",
+      "export": "Export CSV",
+      "name": "Nume",
+      "phone": "Telefon",
+      "email": "E-mail",
+      "addTag": "Adaugă",
+      "clientSince": "Client din {date}",
+      "call": "Sună",
+      "averageTicket": "Bon mediu",
+      "upcoming": "Programări viitoare",
+      "profileCard": "Fișa clientului"
     },
     "reviewsAdmin": {
       "title": "Recenzii și reputație",
@@ -762,7 +969,20 @@
       "googleLabel": "Link recenzii Google",
       "googleSaved": "Link salvat",
       "invitations": "Invitații la recenzie",
-      "invitationsBody": "Urmărim cine a fost invitat și când, fără să presupunem ce s-a întâmplat pe Google."
+      "invitationsBody": "Urmărim cine a fost invitat și când, fără să presupunem ce s-a întâmplat pe Google.",
+      "subtitle": "Ce spun clienții. Răspunsul tău apare public sub recenzie.",
+      "error": "Nu am putut salva. Încearcă din nou.",
+      "yourResponse": "Răspunsul tău",
+      "summaryLabel": "Rezumatul recenziilor",
+      "reviewCount": "{count, plural, =0 {Nicio recenzie publicată} one {# recenzie publicată} few {# recenzii publicate} other {# de recenzii publicate}}",
+      "distributionLabel": "Distribuția notelor",
+      "answeredShare": "Cu răspuns",
+      "filterLabel": "Arată",
+      "filterEmpty": "Nimic aici. Totul e la zi.",
+      "anonymous": "Client",
+      "hiddenBadge": "Ascunsă",
+      "ratingLabel": "{rating} din 5 stele",
+      "noComment": "Doar notă, fără comentariu."
     },
     "payments": {
       "title": "Plăți",
@@ -785,8 +1005,40 @@
       "reference": "Referință",
       "provider": "Furnizor",
       "providerTitle": "Furnizor de plăți",
-      "providerBody": "Niciun furnizor conectat încă. Schema și înregistrările sunt pregătite; execuția va rula complet pe server, fără chei în browser.",
-      "notConfigured": "Neconfigurat"
+      "providerBody": "Avansurile nu sunt încă activate pe platformă. Când vor fi, îți vei conecta contul aici în câteva clicuri.",
+      "notConfigured": "Neconfigurat",
+      "subtitle": "Avansuri la programările online. Gata cu scaunele goale.",
+      "pitchEyebrow": "Protecție la neprezentare",
+      "pitchTitle": "Un scaun gol înseamnă venit pierdut. Avansul îl protejează.",
+      "pitchBody": "Clienții plătesc un mic avans când rezervă online. Dacă nu vin, rămâne la tine. Dacă anulează la timp, îl returnăm automat, fără telefoane și fără discuții incomode.",
+      "pitchPoint1": "Banii ajung direct în contul tău Stripe",
+      "pitchPoint2": "Returnare automată la anulare la timp",
+      "pitchPoint3": "Tu decizi pentru ce servicii și cât",
+      "connect": "Conectează Stripe",
+      "adminOnly": "Doar un proprietar sau administrator poate conecta plățile.",
+      "stripeNote": "Configurarea se face pe Stripe și durează circa 10 minute. GLOWA nu vede datele tale bancare.",
+      "reviewing": "În verificare",
+      "unfinished": "Neterminat",
+      "pendingTitle": "Contul tău Stripe nu este încă activ",
+      "reviewingBody": "Stripe îți verifică datele. De obicei durează de la câteva minute la o zi. Avansurile se activează automat după aceea.",
+      "unfinishedBody": "Mai ai câțiva pași pe Stripe înainte să poți primi avansuri.",
+      "linkExpired": "Linkul de configurare a expirat. Continuă de unde ai rămas.",
+      "continueSetup": "Continuă configurarea",
+      "refresh": "Actualizează starea",
+      "refreshFailed": "Nu am putut actualiza starea. Încearcă din nou.",
+      "connectFailed": "Conectarea a eșuat. Încearcă din nou peste puțin timp.",
+      "activeBadge": "Avansurile sunt active",
+      "activeTitle": "Primești avansuri",
+      "activeBody": "{count, plural, one {# serviciu cere} few {# servicii cer} other {# de servicii cer}} avans la rezervarea online.",
+      "activeNoServices": "Niciun serviciu nu cere încă avans. Activează-l pentru serviciile la care o neprezentare te costă cel mai mult.",
+      "payoutsPending": "Plățile către contul tău bancar pornesc după ce Stripe încheie verificarea.",
+      "configureServices": "Avans pe servicii",
+      "openStripe": "Deschide Stripe",
+      "collected": "Avansuri încasate",
+      "protected": "Salvate de la neprezentări",
+      "protectedHint": "Avansuri reținute la neprezentare sau anulare târzie",
+      "refunded": "Returnate",
+      "history": "Istoric"
     },
     "marketing": {
       "title": "Marketing",
@@ -843,7 +1095,10 @@
         "not_a_member": "Nu ai acces la această afacere.",
         "forbidden": "Sunt necesare drepturi de manager.",
         "generic": "Ceva n-a mers. Încearcă din nou."
-      }
+      },
+      "subtitle": "Campanii prin e-mail către clienții care au acceptat să primească vești.",
+      "audienceLapsed": "Nu au mai venit de {days}+ zile",
+      "audienceMinVisits": "{count, plural, one {#+ vizită} few {#+ vizite} other {#+ de vizite}}"
     },
     "growth": {
       "title": "Creștere",
@@ -916,7 +1171,8 @@
       "emptyBody": "Cifrele apar odată ce încep programările.",
       "new": "Noi",
       "returning": "Fideli",
-      "hours": "ore"
+      "hours": "ore",
+      "subtitle": "Venituri, programări și grad de ocupare în ultimele șase luni."
     },
     "assistant": {
       "title": "Asistent AI",
@@ -928,6 +1184,54 @@
       "unavailableBody": "Adaugă OPENAI_API_KEY pe server pentru a-l activa. Asistentul rulează doar pe server și primește cifre agregate, nu date personale ale clienților.",
       "disclaimer": "Asistentul poate greși. Verifică cifrele importante în calendar și analize.",
       "dataNote": "Trimitem doar indicatori agregați pentru perioada selectată — fără nume, e-mailuri sau telefoane."
+    },
+    "media": {
+      "title": "Fotografii",
+      "subtitle": "Primul lucru pe care îl vede clientul. Coperta apare în căutare și în partea de sus a paginii tale.",
+      "cover": "Copertă",
+      "coverAlt": "Coperta salonului",
+      "addCover": "Adaugă o copertă",
+      "coverHint": "O fotografie orizontală, de cel puțin 1600 px lățime",
+      "replaceCover": "Schimbă",
+      "remove": "Elimină",
+      "gallery": "Galerie",
+      "addPhotos": "Adaugă fotografii",
+      "makeCover": "Copertă",
+      "photoAlt": "Fotografia {number}",
+      "uploading": "{count, plural, one {Se încarcă # fotografie…} few {Se încarcă # fotografii…} other {Se încarcă # de fotografii…}}",
+      "saved": "Fotografiile au fost salvate",
+      "error": "Nu am putut salva. Încearcă din nou.",
+      "uploadFailed": "Una dintre fotografii nu s-a încărcat.",
+      "rejected": "Acceptăm JPG, PNG, WebP și AVIF de până la 10 MB.",
+      "limit": "Galeria are loc pentru cel mult {max} fotografii.",
+      "tipsTitle": "Fotografii care vând",
+      "tipLight": "Lumină naturală, fără bliț.",
+      "tipWork": "Arată rezultatul — părul, unghiile, tenul.",
+      "tipSpace": "Una-două fotografii cu salonul: clientul vrea să știe unde vine.",
+      "tipFormat": "Fără text sau logo peste fotografie."
+    },
+    "location": {
+      "title": "Adresă și hartă",
+      "subtitle": "Unde să vină clientul — și dacă „lângă mine” te găsește.",
+      "address": "Adresă",
+      "addressPlaceholder": "Str. Victoriei 12",
+      "city": "Oraș",
+      "postalCode": "Cod poștal",
+      "noPoint": "Salonul nu este pe hartă",
+      "noPointHint": "Clienții din apropiere nu te vor vedea la „lângă mine”. Apasă butonul când ești în salon.",
+      "noPointTownHint": "Folosim centrul orașului {town} până când plasezi punctul exact.",
+      "approximatePoint": "Aproximativ — centrul orașului",
+      "approximateHint": "Distanțele până la tine pot fi inexacte. Apasă butonul când ești în salon.",
+      "exactPoint": "Salonul este pe hartă",
+      "exactHint": "Clienții din apropiere te văd ordonat după distanță.",
+      "checkOnMap": "Verifică pe Google Maps",
+      "useMyLocation": "Sunt aici — plasează punctul",
+      "located": "Punctul a fost plasat. Salvează ca să rămână.",
+      "locateFailed": "Nu am putut obține locația. Permite accesul în browser.",
+      "save": "Salvează adresa",
+      "saved": "Adresa a fost salvată",
+      "error": "Nu am putut salva adresa.",
+      "missing": "Această afacere nu are încă o locație."
     }
   },
   "notifications": {
@@ -988,35 +1292,33 @@
   },
   "pricing": {
     "eyebrow": "PREȚURI",
-    "title": "Un plan pentru fiecare etapă.",
-    "subtitle": "Plătești pentru echipa care folosește Glowa, nu per programare. Clienții tăi nu plătesc niciodată nimic.",
-    "unpublished": {
-      "badge": "În curând",
-      "title": "Prețurile nu sunt încă publicate",
-      "body": "Finalizăm planurile pentru piața din Bulgaria, România și restul Europei. Scrie-ne și le primești primul, împreună cu condițiile pentru afacerile care încep devreme.",
-      "cta": "Contactează-ne"
-    },
+    "title": "Preț corect. Fără procent din clienții tăi.",
+    "subtitle": "Mic și fix. Nu luăm niciodată comision — nici pentru un client nou, nici pentru un avans. Clienții tăi nu plătesc nimic.",
     "billing": {
       "monthly": "Lunar",
       "annual": "Anual",
-      "annualNote": "Plata anuală iese mai ieftin pe lună.",
+      "annualNote": "La plata anuală, 2 luni sunt gratuite.",
       "perMonth": "/ lună",
-      "vat": "Prețurile nu includ TVA."
+      "vat": "Prețurile nu includ TVA.",
+      "label": "Perioada de plată",
+      "annualSave": "2 luni cadou",
+      "forever": "pentru totdeauna",
+      "billedYearly": "plată o dată pe an"
     },
     "plans": {
       "solo": {
         "name": "Solo",
-        "tagline": "Pentru un specialist care lucrează singur.",
+        "tagline": "Pentru un singur specialist. Gratuit — nu de probă, pentru totdeauna.",
         "seats": "1 specialist"
       },
       "studio": {
         "name": "Studio",
-        "tagline": "Pentru o echipă mică și mai mult de o locație.",
+        "tagline": "Pentru o echipă mică. Mai puțin decât costă un loc în altă parte.",
         "seats": "Până la 5 specialiști"
       },
       "salon": {
         "name": "Salon",
-        "tagline": "Pentru un salon mare, cu roluri și responsabilitate.",
+        "tagline": "Pentru un salon mare, cu roluri, jurnal și asistență prioritară.",
         "seats": "Echipă nelimitată"
       }
     },
@@ -1039,25 +1341,206 @@
       "assistant": "Asistent AI pe date agregate",
       "roles": "Roluri și drepturi de acces",
       "auditLog": "Jurnal de acțiuni",
-      "priority": "Suport prioritar"
+      "priority": "Suport prioritar",
+      "deposits": "Avansuri împotriva neprezentării — fără taxă de la noi"
     },
     "cta": {
-      "start": "Începe gratuit",
-      "contact": "Contactează-ne",
-      "popular": "Cel mai ales"
+      "start": "Începe",
+      "popular": "Cel mai ales",
+      "startFree": "Începe gratuit"
     },
     "faq": {
       "title": "Întrebări frecvente",
-      "q1": "Clienții plătesc ca să se programeze?",
-      "a1": "Nu. Programarea prin Glowa este gratuită pentru client. Plătește doar afacerea, pentru echipa ei.",
-      "q2": "Ce se întâmplă cu datele mele dacă renunț?",
-      "a2": "Rămân ale tale. Poți exporta clienții și programările oricând, iar închiderea contului nu înseamnă că păstrăm conținutul tău.",
-      "q3": "Luați un procent din încasări?",
-      "a3": "Nu. Abonamentul este fix. Dacă activezi plățile online, comisionul este al procesatorului de plăți, nu al nostru.",
-      "q4": "În ce limbi funcționează platforma?",
-      "a4": "Bulgară, engleză și română, atât pentru afacere, cât și pentru client. Fiecare client primește mesajele în limba lui.",
-      "q5": "Pot schimba planul?",
-      "a5": "Da, oricând. Schimbarea se aplică din următoarea perioadă de facturare."
+      "q1": "Solo e chiar gratuit pentru totdeauna?",
+      "a1": "Da. Un specialist are calendarul, programările online, fișele clienților și pagina pe glowa fără abonament. Plătești doar dacă devii o echipă.",
+      "q2": "Ce plătesc în perioada de acces timpuriu?",
+      "a2": "Nimic. Toate planurile sunt gratuite până pe {date}. Înainte de orice facturare te anunțăm cu cel puțin 30 de zile și îți alegi singur planul.",
+      "q3": "Luați un procent din încasări sau din clienții noi?",
+      "a3": "Nu. Abonamentul e fix. Un client care te găsește prin glowa e al tău — fără comision, nici la prima vizită.",
+      "q4": "Și avansurile?",
+      "a4": "Avansul ajunge direct în contul tău Stripe. Glowa nu adaugă nicio taxă — plătești doar taxa standard Stripe pentru card.",
+      "q5": "Ce se întâmplă cu datele mele dacă renunț?",
+      "a5": "Rămân ale tale. Exporți clienții și programările oricând; închiderea contului nu îți reține conținutul.",
+      "q6": "Clienții plătesc ca să se programeze?",
+      "a6": "Nu. Programarea prin glowa e gratuită pentru clienți.",
+      "q7": "Pot schimba planul?",
+      "a7": "Da, oricând. Schimbarea se aplică din următoarea perioadă de facturare."
+    },
+    "earlyAccess": {
+      "title": "Acces timpuriu: totul e gratuit până pe {date}.",
+      "body": "Apoi, prețurile de mai jos, cu preaviz de 30 de zile. Fără card la înregistrare."
+    },
+    "zero": {
+      "title": "Zerourile care fac diferența",
+      "commission": {
+        "value": "0%",
+        "title": "Comision pentru client nou",
+        "body": "Alte platforme iau 20–35% din prima vizită. Noi nu luăm nimic, niciodată."
+      },
+      "deposits": {
+        "value": "0%",
+        "title": "Taxa noastră pe avans",
+        "body": "Plătești doar taxa Stripe. Banii ajung direct în contul tău."
+      },
+      "contract": {
+        "value": "0",
+        "title": "Contracte și obligații",
+        "body": "Te oprești când vrei. Fără penalități, fără termen."
+      },
+      "export": {
+        "value": "100%",
+        "title": "Datele rămân ale tale",
+        "body": "Exporți clienții în CSV oricând, cu un singur buton."
+      }
+    },
+    "calculator": {
+      "title": "Cât economisești?",
+      "subtitle": "Pune propriile cifre. Comparăm cu cele mai mici tarife publicate ale unei platforme mari cu marketplace.",
+      "seats": "Specialiști în salon",
+      "newClients": "Clienți noi de pe platformă pe lună",
+      "average": "Nota medie la prima vizită",
+      "theirs": "Platformă tipică",
+      "ours": "Glowa",
+      "perMonth": "pe lună",
+      "savedYear": "Economisești pe an",
+      "savedMonth": "Adică {amount} în fiecare lună.",
+      "assumptions": "Ipoteze: ~17 € pe lună pentru un specialist sau ~12 € pe loc în echipă și 20% comision din prima vizită a unui client nou (minimum ~5 €) — cele mai mici tarife publicate în septembrie 2026, rotunjite în favoarea concurentului. Fără TVA și fără taxe de plată, similare peste tot."
+    },
+    "metaTitle": "Prețuri — fără comision, Solo gratuit"
+  },
+  "forBusiness": {
+    "metaTitle": "GLOWA pentru saloane",
+    "metaDescription": "Programări online, calendar de echipă, avansuri împotriva neprezentărilor și o pagină frumoasă pentru salonul tău.",
+    "eyebrow": "Pentru saloane și studiouri",
+    "title": "Calendarul care umple scaunul.",
+    "titleAccent": "Avansul care îl protejează.",
+    "subtitle": "GLOWA aduce programările online, calendarul de echipă, avansurile și o pagină frumoasă pentru salon într-un singur loc. În bulgară, engleză și română din prima zi.",
+    "ctaPrimary": "Începe gratuit",
+    "ctaShowcase": "Vezi un salon exemplu",
+    "heroPoint1": "Fără card de credit",
+    "heroPoint2": "Gata în câteva minute",
+    "heroPoint3": "Suport local",
+    "heroAlt": "Un atelier de păr luminos, cu stiliști și clienți",
+    "mock": {
+      "nextUp": "Urmează",
+      "nextService": "Balayage · Maria",
+      "newBooking": "Programare online nouă",
+      "calendarDay": "Joi",
+      "dayView": "Zi",
+      "weekView": "Săptămână",
+      "services": {
+        "balayage": "Balayage",
+        "cut": "Tuns",
+        "styling": "Coafat",
+        "colour": "Culoare",
+        "keratin": "Keratină",
+        "brows": "Sprâncene"
+      },
+      "depositPaid": {
+        "title": "Avans plătit",
+        "body": "Programarea este confirmată și protejată."
+      },
+      "depositRefund": {
+        "title": "Anulare cu două zile înainte",
+        "body": "Avansul se returnează automat."
+      },
+      "depositKept": {
+        "title": "Neprezentare",
+        "body": "Avansul rămâne la salon."
+      }
+    },
+    "pillars": {
+      "calendar": {
+        "title": "Un calendar care muncește cât tine.",
+        "body": "Toată echipa pe un singur ecran, live. Muți o programare cu degetul, sistemul nu permite suprapuneri, iar clienții rezervă doar minute cu adevărat libere.",
+        "point1": "Vizualizare pe stilist și pe săptămână",
+        "point2": "Merge cu degetul pe tableta de la recepție",
+        "point3": "Timp blocat, pauze și listă de așteptare"
+      },
+      "deposits": {
+        "title": "Gata cu neprezentările.",
+        "body": "Cere un mic avans la programarea online. Dacă clientul vine, se scade din preț. Dacă anulează la timp, îl returnăm automat. Dacă nu vine, rămâne la tine.",
+        "point1": "Banii ajung direct în contul tău Stripe",
+        "point2": "Returnare automată la anulare la timp",
+        "point3": "Tu alegi serviciile și suma"
+      },
+      "showcase": {
+        "title": "O vitrină care vinde în locul tău.",
+        "body": "Fiecare salon primește o pagină frumoasă cu fotografii, servicii, echipă, recenzii și program. Se găsește pe Google și arată bine când o distribui pe Viber sau Instagram.",
+        "point1": "Fotografii pe tot ecranul și galerie",
+        "point2": "Recenzii doar din vizite reale",
+        "point3": "Cod QR pentru vitrină și cărți de vizită"
+      }
+    },
+    "included": {
+      "title": "Tot ce are nevoie un salon.",
+      "subtitle": "Fără aplicații în plus, fără tabele.",
+      "qr": {
+        "title": "Coduri QR",
+        "body": "Pentru vitrină, cartea de vizită și oglindă, cu evidența programărilor aduse de fiecare."
+      }
+    },
+    "steps": {
+      "title": "Începi în trei pași",
+      "one": {
+        "title": "Creează salonul",
+        "body": "Nume, adresă și program. Durează două minute."
+      },
+      "two": {
+        "title": "Adaugă servicii și echipa",
+        "body": "Prețuri, durate și cine ce face. Opțional, un avans."
+      },
+      "three": {
+        "title": "Distribuie linkul",
+        "body": "Pagina salonului și un cod QR pentru vitrină. Clienții se programează singuri."
+      }
+    },
+    "faq": {
+      "title": "Întrebări frecvente",
+      "price": {
+        "q": "Cât costă?",
+        "a": "Poți începe gratuit chiar azi. Planurile actuale sunt pe pagina de prețuri."
+      },
+      "stripe": {
+        "q": "Am nevoie de Stripe?",
+        "a": "Doar pentru avansuri. Calendarul, pagina salonului și memento-urile funcționează și fără. Contul Stripe este al tău, iar banii ajung direct la tine."
+      },
+      "phone": {
+        "q": "Merge pe telefon și tabletă?",
+        "a": "Da. GLOWA se instalează ca aplicație pe telefon, iar pe tableta de la recepție programările se mută cu degetul."
+      },
+      "clients": {
+        "q": "Ce văd clienții?",
+        "a": "Pagina salonului cu fotografii, servicii, prețuri, echipă și recenzii, plus programare într-un minut cu confirmare și memento pe e-mail."
+      }
+    },
+    "cta": {
+      "title": "Următorul tău loc liber s-ar putea umple chiar în seara asta.",
+      "body": "Creează-ți salonul în câteva minute. Fără contract și fără card de credit."
     }
+  },
+  "places": {
+    "searchPlaceholder": "Caută un oraș…",
+    "nearMe": "Lângă mine",
+    "locating": "Te găsim…",
+    "locateDenied": "Browserul nu a permis accesul la locație. Alege un oraș din listă.",
+    "locateFailed": "Nu te-am putut localiza. Alege un oraș din listă.",
+    "locateUnsupported": "Browserul nu suportă locația. Alege un oraș din listă.",
+    "anywhere": "Oriunde",
+    "noMatch": "Nu există acest oraș în listă.",
+    "bulgaria": "Bulgaria",
+    "romania": "România",
+    "nearYou": "Lângă tine"
+  },
+  "footer": {
+    "about": "Programări la saloane de înfrumusețare — prețuri clare, disponibilitate live și fără telefoane.",
+    "forClients": "Pentru clienți",
+    "forSalons": "Pentru saloane",
+    "cities": "Orașe",
+    "findSalon": "Găsește un salon",
+    "whyGlowa": "De ce glowa",
+    "registerSalon": "Înscrie-ți salonul",
+    "ctaTitle": "Ai un salon?",
+    "ctaBody": "Calendar, avansuri și programări online — fără comision."
   }
 }

@@ -26,13 +26,13 @@ export function AdminMobileNav() {
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-72 p-0">
+      <SheetContent side="left" className="bg-sidebar w-72 p-0">
         <SheetHeader className="border-b px-5 py-4">
           <SheetTitle className="text-left">
             <GlowaLogo markClassName="size-7" />
           </SheetTitle>
         </SheetHeader>
-        <div className="p-3">
+        <div className="overflow-y-auto p-3">
           <AdminNav onNavigate={() => setOpen(false)} />
         </div>
       </SheetContent>

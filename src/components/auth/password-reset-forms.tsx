@@ -55,7 +55,7 @@ export function ForgotPasswordForm({ action }: { action: Action }) {
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="reset-email">{t("email")}</Label>
+        <Label htmlFor="reset-email" required>{t("email")}</Label>
         <Input
           id="reset-email"
           name="email"
@@ -96,7 +96,7 @@ export function ResetPasswordForm({ action }: { action: Action }) {
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="new-password">{t("newPassword")}</Label>
+        <Label htmlFor="new-password" required>{t("newPassword")}</Label>
         <Input
           id="new-password"
           name="password"
@@ -109,7 +109,7 @@ export function ResetPasswordForm({ action }: { action: Action }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirm-password">{t("confirmPassword")}</Label>
+        <Label htmlFor="confirm-password" required>{t("confirmPassword")}</Label>
         <Input
           id="confirm-password"
           name="confirm"

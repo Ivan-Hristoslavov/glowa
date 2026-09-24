@@ -21,7 +21,9 @@ export async function searchBusinesses(params: {
   offset?: number;
   maxPriceCents?: number;
   openOn?: string;
-  sort?: "rating" | "price" | "name";
+  sort?: "rating" | "price" | "name" | "distance";
+  /** Rounded point to measure distance from; see `lib/places.ts`. */
+  near?: { lat: number; lng: number } | null;
 }) {
   const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("search_businesses", {
@@ -33,6 +35,8 @@ export async function searchBusinesses(params: {
     p_max_price_cents: params.maxPriceCents,
     p_open_on: params.openOn,
     p_sort: params.sort ?? "rating",
+    p_near_lat: params.near?.lat,
+    p_near_lng: params.near?.lng,
   });
 
   if (error) throw error;
@@ -67,7 +71,7 @@ export async function getBusinessBySlug(slug: string) {
       `
       id, slug, name, description, short_pitch, category, logo_url,
       cover_image_url, gallery, phone, email, website, currency, timezone,
-      booking_policy, google_review_url, status,
+      booking_policy, google_review_url, status, deposits_enabled,
       locations (
         id, name, address_line1, address_line2, city, region, postal_code,
         country_code, latitude, longitude, phone, is_primary, is_active,
@@ -96,7 +100,9 @@ export async function getBusinessBySlug(slug: string) {
       .maybeSingle(),
     supabase
       .from("reviews")
-      .select("id, rating, comment, created_at, business_response, responded_at, staff_profile_id")
+      .select(
+        "id, rating, comment, created_at, business_response, responded_at, staff_profile_id, appointment_id",
+      )
       .eq("business_id", data.id)
       .eq("status", "published")
       .order("created_at", { ascending: false })

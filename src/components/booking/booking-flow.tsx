@@ -1,7 +1,19 @@
 "use client";
 
-import { ArrowLeft, Check, Clock, Loader2, Sparkles, Tag } from "lucide-react";
+import {
+  CalendarCheck,
+  ArrowLeft,
+  Check,
+  Clock,
+  CreditCard,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+  Tag,
+} from "lucide-react";
+import { m } from "motion/react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -25,6 +37,8 @@ export type BookingService = {
   description: string;
   durationMinutes: number;
   priceCents: number;
+  /** Taken online at booking; 0 when the service needs none. */
+  depositCents: number;
   currency: string;
   staffIds: string[];
 };
@@ -49,6 +63,15 @@ type BookingFlowProps = {
   services: BookingService[];
   staff: BookingStaff[];
   initialServiceId?: string;
+  /** Arrived from "book with Maria" on the salon page. */
+  initialStaffId?: string;
+  /**
+   * Arrived from a "free today" card: the time is already chosen, so the flow
+   * opens on the confirm step. Booking still re-checks the slot.
+   */
+  initialStartsAt?: string;
+  /** Shown at the top of the summary, so the booking feels like this salon. */
+  coverUrl?: string | null;
 };
 
 type StepId = "location" | "service" | "staff" | "time" | "confirm";
@@ -67,6 +90,9 @@ export function BookingFlow({
   services,
   staff,
   initialServiceId,
+  initialStaffId,
+  initialStartsAt,
+  coverUrl,
 }: BookingFlowProps) {
   const t = useTranslations("booking");
   const business = useTranslations("business");
@@ -82,10 +108,44 @@ export function BookingFlow({
       ? initialServiceId
       : null,
   );
-  const [staffChoice, setStaffChoice] = useState<string>(ANY_STAFF);
-  const [slot, setSlot] = useState<Slot | null>(null);
+  const preferredStaff =
+    initialStaffId && staff.some((member) => member.id === initialStaffId)
+      ? initialStaffId
+      : null;
+
+  /** Keep the stylist someone came for, as long as they do the chosen service. */
+  function staffFor(item: BookingService) {
+    return preferredStaff && item.staffIds.includes(preferredStaff) ? preferredStaff : ANY_STAFF;
+  }
+
+  const [staffChoice, setStaffChoice] = useState<string>(() => {
+    const initial = services.find((item) => item.id === initialServiceId);
+    return initial ? staffFor(initial) : ANY_STAFF;
+  });
+  // A preselected time only stands when everything around it is settled: the
+  // service is known, and there is one location to be at.
+  const preselected = (() => {
+    const initial = services.find((item) => item.id === initialServiceId);
+    if (!initial || !initialStartsAt || locations.length > 1) return null;
+    const start = new Date(initialStartsAt);
+    if (Number.isNaN(start.getTime())) return null;
+    return {
+      starts_at: start.toISOString(),
+      ends_at: new Date(start.getTime() + initial.durationMinutes * 60_000).toISOString(),
+      staff_profile_id: preferredStaff,
+    } satisfies Slot;
+  })();
+
+  const [slot, setSlot] = useState<Slot | null>(preselected);
   const [notes, setNotes] = useState("");
-  const [stepIndex, setStepIndex] = useState(0);
+  // Location (only when several), service, staff (only with a team), time,
+  // confirm - the same list `steps` builds below, counted up front so a
+  // preselected time can open straight on "confirm".
+  const [stepIndex, setStepIndex] = useState(() =>
+    preselected
+      ? (locations.length > 1 ? 1 : 0) + 1 + (staff.filter((m) => m.id).length > 1 ? 1 : 0) + 1
+      : 0,
+  );
 
   const service = services.find((item) => item.id === serviceId) ?? null;
 
@@ -147,6 +207,7 @@ export function BookingFlow({
         staffProfileId,
         locationId,
         notes,
+        locale,
       });
 
       if (!result.ok) {
@@ -156,7 +217,9 @@ export function BookingFlow({
           return;
         }
         toast.error(
-          code === "slot_unavailable" || code === "slot_taken"
+          code === "slot_unavailable" ||
+            code === "slot_taken" ||
+            code === "payment_unavailable"
             ? t(`errors.${code}`)
             : t("errors.generic"),
         );
@@ -166,6 +229,12 @@ export function BookingFlow({
         return;
       }
 
+      // The slot is held; the deposit that secures it is paid on Stripe's
+      // page, which comes back to the booking with the outcome.
+      if (result.checkoutUrl) {
+        window.location.assign(result.checkoutUrl);
+        return;
+      }
       router.push(`/bookings/${result.appointmentId}?booked=1`);
     });
   }
@@ -173,6 +242,14 @@ export function BookingFlow({
   const summaryPrice = service
     ? formatPrice(service.priceCents, service.currency, locale)
     : null;
+  const deposit =
+    service && service.depositCents > 0
+      ? formatPrice(service.depositCents, service.currency, locale)
+      : null;
+  const remainder =
+    service && service.depositCents > 0
+      ? formatPrice(service.priceCents - service.depositCents, service.currency, locale)
+      : null;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
@@ -182,39 +259,67 @@ export function BookingFlow({
       <div className="min-w-0 space-y-6">
         {/* Progress. The colour alone does not say which step you are on, so
             the current item is marked for assistive tech as well. */}
-        <ol
-          aria-label={t("stepsLabel")}
-          className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"
-        >
-          {steps.map((step, index) => (
-            <li
-              key={step}
-              aria-current={index === stepIndex ? "step" : undefined}
-              className="flex items-center gap-2"
-            >
-              <span
-                className={cn(
-                  "rounded-full px-2 py-0.5",
-                  index === stepIndex && "bg-primary text-primary-foreground font-medium",
-                  index < stepIndex && "text-foreground",
-                )}
+        <ol aria-label={t("stepsLabel")} className="flex items-center gap-2">
+          {steps.map((step, index) => {
+            const active = index === stepIndex;
+            const done = index < stepIndex;
+            return (
+              <li
+                key={step}
+                aria-current={active ? "step" : undefined}
+                className="flex flex-1 items-center gap-2 last:flex-none"
               >
-                {t(
-                  step === "location"
-                    ? "stepLocation"
-                    : step === "service"
-                      ? "stepService"
-                      : step === "staff"
-                        ? "stepStaff"
-                        : step === "time"
-                          ? "stepTime"
-                          : "stepConfirm",
-                )}
-              </span>
-              {index < steps.length - 1 ? <span aria-hidden>·</span> : null}
-            </li>
-          ))}
+                <span
+                  className={cn(
+                    "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300",
+                    active
+                      ? "bg-primary text-primary-foreground ring-primary/20 ring-4"
+                      : done
+                        ? "bg-foreground text-background"
+                        : "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {done ? <Check className="size-3.5" aria-hidden /> : index + 1}
+                </span>
+                <span
+                  className={cn(
+                    "text-sm whitespace-nowrap",
+                    active ? "font-medium" : "text-muted-foreground hidden sm:inline",
+                  )}
+                >
+                  {t(
+                    step === "location"
+                      ? "stepLocation"
+                      : step === "service"
+                        ? "stepService"
+                        : step === "staff"
+                          ? "stepStaff"
+                          : step === "time"
+                            ? "stepTime"
+                            : "stepConfirm",
+                  )}
+                </span>
+                {index < steps.length - 1 ? (
+                  <span
+                    className={cn(
+                      "h-px min-w-4 flex-1 transition-colors duration-300",
+                      done ? "bg-foreground/40" : "bg-border",
+                    )}
+                    aria-hidden
+                  />
+                ) : null}
+              </li>
+            );
+          })}
         </ol>
+
+        <m.div
+          key={current}
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.35 }}
+          className="space-y-6"
+        >
 
         {current === "location" ? (
           <section className="space-y-3">
@@ -253,7 +358,7 @@ export function BookingFlow({
                   type="button"
                   onClick={() => {
                     setServiceId(item.id);
-                    setStaffChoice(ANY_STAFF);
+                    setStaffChoice(staffFor(item));
                     setSlot(null);
                   }}
                   aria-pressed={serviceId === item.id}
@@ -276,8 +381,27 @@ export function BookingFlow({
                       {formatDuration(item.durationMinutes, locale)}
                     </p>
                   </div>
-                  <span className="shrink-0 text-sm font-medium">
+                  <span className="flex shrink-0 flex-col items-end gap-1 text-sm font-medium">
+                    <span
+                      className={cn(
+                        "mb-1 flex size-5 items-center justify-center rounded-full border transition-colors",
+                        serviceId === item.id
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border",
+                      )}
+                      aria-hidden
+                    >
+                      {serviceId === item.id ? <Check className="size-3" /> : null}
+                    </span>
                     {formatPrice(item.priceCents, item.currency, locale)}
+                    {item.depositCents > 0 ? (
+                      <span className="text-muted-foreground inline-flex items-center gap-1 text-xs font-normal">
+                        <ShieldCheck className="size-3" aria-hidden />
+                        {t("depositChip", {
+                          amount: formatPrice(item.depositCents, item.currency, locale) ?? "",
+                        })}
+                      </span>
+                    ) : null}
                   </span>
                 </button>
               ))}
@@ -330,8 +454,10 @@ export function BookingFlow({
                       : "border-border hover:bg-accent/60",
                   )}
                 >
-                  <Avatar className="size-11">
-                    {member.avatarUrl ? <AvatarImage src={member.avatarUrl} alt="" /> : null}
+                  <Avatar className="size-12 rounded-xl">
+                    {member.avatarUrl ? (
+                      <AvatarImage src={member.avatarUrl} alt="" className="object-cover" />
+                    ) : null}
                     <AvatarFallback
                       style={{ backgroundColor: `${member.color}22`, color: member.color }}
                     >
@@ -385,6 +511,27 @@ export function BookingFlow({
           <section className="space-y-4">
             <h2 className="font-heading text-xl">{t("stepConfirm")}</h2>
 
+            {preselected && slot.starts_at === preselected.starts_at ? (
+              <div className="border-primary/25 bg-primary/5 flex items-center gap-3 rounded-2xl border p-4">
+                <CalendarCheck className="text-primary size-5 shrink-0" aria-hidden />
+                <div className="min-w-0 flex-1 text-sm">
+                  <p className="font-semibold first-letter:uppercase">
+                    {formatDate(slot.starts_at, { timeZone: timezone, locale })} ·{" "}
+                    {formatTime(slot.starts_at, { timeZone: timezone, locale })}
+                  </p>
+                  <p className="text-muted-foreground">{t("preselected")}</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setStepIndex(steps.indexOf("time"))}
+                >
+                  {common("change")}
+                </Button>
+              </div>
+            ) : null}
+
             <div className="space-y-2">
               <Label htmlFor="booking-notes">{t("notes")}</Label>
               <Textarea
@@ -396,6 +543,22 @@ export function BookingFlow({
                 maxLength={500}
               />
             </div>
+
+            {deposit ? (
+              <div className="border-primary/30 bg-primary/5 rounded-xl border p-4">
+                <p className="flex items-center gap-2 text-sm font-medium">
+                  <ShieldCheck className="text-primary size-4" aria-hidden />
+                  {t("depositTitle", { amount: deposit })}
+                </p>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  {t("depositBody", {
+                    rest: remainder ?? "",
+                    hours: cancellationWindowHours,
+                  })}
+                </p>
+                <p className="text-muted-foreground mt-2 text-xs">{t("depositHold")}</p>
+              </div>
+            ) : null}
 
             <div className="border-border/70 bg-secondary/40 rounded-xl border p-4">
               <p className="text-sm font-medium">{t("policy")}</p>
@@ -416,7 +579,11 @@ export function BookingFlow({
           </section>
         ) : null}
 
-        <div className="flex items-center gap-3 pt-2">
+        </m.div>
+
+        {/* Pinned to the bottom of the viewport, so a long service list never
+            hides the way forward. */}
+        <div className="bg-background/90 sticky bottom-0 z-10 -mx-4 flex items-center gap-3 border-t px-4 py-3 backdrop-blur-xl sm:mx-0 sm:rounded-2xl sm:border sm:px-3">
           {stepIndex > 0 ? (
             <Button type="button" variant="ghost" onClick={goBack} disabled={isPending}>
               <ArrowLeft className="size-4" aria-hidden />
@@ -441,10 +608,18 @@ export function BookingFlow({
             >
               {isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
+              ) : deposit ? (
+                <CreditCard className="size-4" aria-hidden />
               ) : (
                 <Check className="size-4" aria-hidden />
               )}
-              {isPending ? t("confirming") : t("confirm")}
+              {isPending
+                ? deposit
+                  ? t("openingPayment")
+                  : t("confirming")
+                : deposit
+                  ? t("payDeposit", { amount: deposit })
+                  : t("confirm")}
             </Button>
           ) : (
             <Button
@@ -461,7 +636,13 @@ export function BookingFlow({
       </div>
 
       {/* Summary */}
-      <aside className="glowa-card h-fit space-y-4 p-5 lg:sticky lg:top-24">
+      <aside className="glowa-card h-fit space-y-4 overflow-hidden rounded-2xl p-5 lg:sticky lg:top-24">
+        {coverUrl ? (
+          <div className="relative -mx-5 -mt-5 mb-1 h-32">
+            <Image src={coverUrl} alt="" fill sizes="20rem" className="object-cover" />
+            <div className="from-card absolute inset-0 bg-gradient-to-t to-transparent" />
+          </div>
+        ) : null}
         <div>
           <p className="text-muted-foreground text-xs tracking-wide uppercase">
             {t("summary")}
@@ -499,6 +680,15 @@ export function BookingFlow({
                   </dd>
                 </div>
               </div>
+              {deposit ? (
+                <div>
+                  <dt className="text-muted-foreground text-xs">{t("depositLabel")}</dt>
+                  <dd className="flex items-center gap-1.5">
+                    <ShieldCheck className="text-primary size-3.5" aria-hidden />
+                    {t("depositSummary", { amount: deposit, rest: remainder ?? "" })}
+                  </dd>
+                </div>
+              ) : null}
             </>
           ) : null}
 

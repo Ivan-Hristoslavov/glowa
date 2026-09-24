@@ -1,5 +1,6 @@
 import { after } from "next/server";
 
+import { refuseUnlessCron } from "@/lib/cron-auth";
 import { runNotificationWorker } from "@/lib/notifications/worker";
 
 export const dynamic = "force-dynamic";
@@ -16,15 +17,8 @@ export const runtime = "nodejs";
  * prefix.
  */
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) {
-    return Response.json({ error: "not_configured" }, { status: 503 });
-  }
-
-  const provided = request.headers.get("authorization");
-  if (!provided || !timingSafeEqual(provided, `Bearer ${secret}`)) {
-    return Response.json({ error: "unauthorized" }, { status: 401 });
-  }
+  const refused = refuseUnlessCron(request);
+  if (refused) return refused;
 
   try {
     const report = await runNotificationWorker(50);
@@ -48,14 +42,4 @@ export async function POST(request: Request) {
     });
   }
   return response;
-}
-
-/** Constant-time compare, so a wrong secret leaks nothing through timing. */
-function timingSafeEqual(a: string, b: string) {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i += 1) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return diff === 0;
 }

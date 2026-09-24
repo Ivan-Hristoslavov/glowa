@@ -28,7 +28,8 @@
     "change": "Change",
     "today": "Today",
     "tomorrow": "Tomorrow",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "requiredHint": "Fields marked with an asterisk are required."
   },
   "nav": {
     "product": "Product",
@@ -50,7 +51,12 @@
     "reviews": "My reviews",
     "settings": "Settings",
     "menu": "Menu",
-    "myAccount": "My account"
+    "myAccount": "My account",
+    "forBusiness": "For salons",
+    "toggleTheme": "Switch light / dark theme",
+    "mainNav": "Main navigation",
+    "explore": "Explore",
+    "preferences": "Language & theme"
   },
   "categories": {
     "hair_salon": "Hair salon",
@@ -127,8 +133,8 @@
         "body": "History, notes and preferences for every client, in one place."
       },
       "payments": {
-        "title": "Payments",
-        "body": "Deposits and online payments — modelled in the system, provider integration still to come."
+        "title": "Deposits",
+        "body": "A small deposit on online bookings, through Stripe. The money goes straight to you and is refunded automatically on an on-time cancellation."
       },
       "marketing": {
         "title": "Marketing",
@@ -159,7 +165,61 @@
       "title": "From a haircut to a spa day.",
       "subtitle": "Pick what you are after and see the places that offer it."
     },
-    "ownerPrompt": "Run a salon?"
+    "ownerPrompt": "Run a salon?",
+    "pill": "Book a salon in a minute, no phone call",
+    "ownerLink": "See GLOWA for salons",
+    "search": {
+      "what": "Manicure, haircut, salon…",
+      "where": "City or near me",
+      "anyTime": "Any time",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "whatLabel": "Service",
+      "whereLabel": "Where",
+      "whenLabel": "When",
+      "submit": "Search",
+      "quick": "Quick:"
+    },
+    "business": {
+      "eyebrow": "For salons and studios",
+      "title": "The calendar that fills the chair.",
+      "body": "Online booking, a team calendar, no-show deposits and a beautiful page for your salon.",
+      "point1": "Clients book themselves, around the clock",
+      "point2": "A deposit that protects you from empty chairs",
+      "point3": "A page that never shows competitors",
+      "more": "Learn more"
+    },
+    "promises": {
+      "noCommission": {
+        "title": "No commission on your clients",
+        "body": "We take no percentage of a booking and no fee for a client you brought yourself."
+      },
+      "noCompetitors": {
+        "title": "No competitors on your page",
+        "body": "When a client opens your salon they see only you. No \"similar salons nearby\"."
+      },
+      "dataYours": {
+        "title": "Your clients are yours",
+        "body": "Export your whole client list as CSV at any time, in one click."
+      },
+      "directPayouts": {
+        "title": "Money comes straight to you",
+        "body": "Deposits land in your own Stripe account. We never hold or delay your money."
+      }
+    },
+    "allCategories": "All",
+    "chips": {
+      "instant": "Confirmed instantly",
+      "refund": "Cancelled in time? Your deposit comes back."
+    },
+    "openings": {
+      "live": "Live",
+      "title": "Free today and tomorrow",
+      "subtitle": "Real open times at real salons. Pick one — the rest is a single confirmation.",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "ticketLabel": "{day} at {time}: {service} at {salon}"
+    }
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -228,8 +288,15 @@
     "sortBy": {
       "rating": "By rating",
       "price": "By price",
-      "name": "By name"
-    }
+      "name": "By name",
+      "distance": "Nearest"
+    },
+    "titleNear": "Salons near {place}",
+    "sortedFrom": "sorted by distance from {place}",
+    "nearestInstead": "The nearest salons",
+    "popularInstead": "You might like",
+    "titleNearYou": "Salons near you",
+    "sortedFromYou": "nearest first"
   },
   "business": {
     "about": "About",
@@ -264,7 +331,34 @@
     "breadcrumbSearch": "Salons",
     "showMap": "Show map",
     "showMapNote": "The map loads from OpenStreetMap only when you ask for it.",
-    "gallery": "Gallery"
+    "gallery": "Gallery",
+    "sectionsLabel": "Sections",
+    "serviceCount": "{count, plural, one {# service} other {# services}}",
+    "bookWith": "Book with {name}",
+    "verifiedVisit": "Visit booked on GLOWA",
+    "salonReply": "Reply from {name}",
+    "depositPolicy": "Some services take a small deposit when booked online. It is refunded in full if you cancel at least {hours} h before.",
+    "directions": "Directions",
+    "priceFrom": "from",
+    "perkInstant": "Live availability, instant confirmation.",
+    "perkDeposit": "The deposit is deducted from the price.",
+    "openNow": "Open",
+    "closesAt": "until {time}",
+    "closesSoon": "closes at {time}",
+    "closedNow": "Closed",
+    "opensToday": "opens today at {time}",
+    "opensTomorrow": "opens tomorrow at {time}",
+    "opensOn": "opens {day} at {time}",
+    "showAllPhotos": "All photos ({count})",
+    "openPhoto": "Open photo {number}",
+    "closePhotos": "Close",
+    "previousPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "metaTitle": "{name} — {category}",
+    "metaTitleCity": "{name} — {category} in {city}",
+    "metaDescription": "Prices, open times and reviews for {name}. Book online in a minute.",
+    "metaDescriptionCity": "{name}, {city}: prices, open times and reviews. Book online in a minute.",
+    "photoOf": "{name} — photo {number}"
   },
   "booking": {
     "title": "Book an appointment",
@@ -301,9 +395,24 @@
     "errors": {
       "slot_unavailable": "That time is no longer free. Pick another one.",
       "slot_taken": "Someone just took that time. Pick another one.",
-      "generic": "The booking did not go through. Please try again."
+      "generic": "The booking did not go through. Please try again.",
+      "payment_unavailable": "The deposit payment could not start, so the slot was not booked. Please try again in a moment."
     },
-    "stepsLabel": "Steps"
+    "stepsLabel": "Steps",
+    "depositChip": "Deposit {amount}",
+    "depositTitle": "{amount} deposit now",
+    "depositBody": "The remaining {rest} is paid at the salon. Your deposit is refunded in full if you cancel at least {hours} h before.",
+    "depositHold": "We hold the slot for you for 30 minutes while you pay. Payment is handled by Stripe; your card details never pass through GLOWA.",
+    "depositLabel": "Deposit",
+    "depositSummary": "{amount} now · {rest} at the salon",
+    "payDeposit": "Pay {amount} deposit",
+    "openingPayment": "Opening payment…",
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "firstFree": "First free: {when}",
+    "slotsCount": "{count, plural, =0 {no free times} one {# free time} other {# free times}}",
+    "preselected": "Your time is picked. Check it and confirm."
   },
   "waitlist": {
     "cta": "Join the waitlist",
@@ -383,6 +492,25 @@
       "slot_unavailable": "That time is not available. Pick another one.",
       "slot_taken": "Someone just took that time. Pick another one.",
       "generic": "That did not work. Please try again."
+    },
+    "depositPaidTitle": "Deposit paid",
+    "depositPaidBody": "{amount} is paid and your appointment is secured. We have sent you a confirmation.",
+    "depositAwaitingTitle": "Your deposit is still due",
+    "depositAwaitingBody": "We are holding the slot until {time}. If the deposit is not paid by then, the slot is released.",
+    "payDeposit": "Pay {amount}",
+    "depositExpired": "The time to pay ran out and the slot was released.",
+    "depositVoidTitle": "The slot was released",
+    "depositVoidBody": "The deposit was not paid in time, so the slot is free again. You can book a new one.",
+    "depositStatus": {
+      "none": "No deposit",
+      "awaiting": "Awaiting payment",
+      "paid": "Paid",
+      "waived": "Not required",
+      "void": "Unpaid",
+      "refund_pending": "Being refunded",
+      "refunded": "Refunded",
+      "retained": "Kept by the salon",
+      "applied": "Deducted from the price"
     }
   },
   "review": {
@@ -544,7 +672,14 @@
       "backToSite": "Back to site",
       "switchBusiness": "Switch business",
       "viewPublicPage": "View public page",
-      "menu": "Menu"
+      "menu": "Menu",
+      "groups": {
+        "daily": "Every day",
+        "salon": "The salon",
+        "growth": "Growth",
+        "account": "Account"
+      },
+      "settingsSubtitle": "How your business looks and the rules for booking it."
     },
     "status": {
       "draft": "Draft",
@@ -572,7 +707,8 @@
       "errors": {
         "name_required": "Enter a business name.",
         "generic": "That did not work. Please try again."
-      }
+      },
+      "email": "Email"
     },
     "dashboard": {
       "title": "Overview",
@@ -604,7 +740,21 @@
       "draftBody": "Drafts do not appear in search and cannot take bookings. Publish once your services and hours are set.",
       "publish": "Publish business",
       "published": "Business published",
-      "noMetrics": "No data for this period yet."
+      "noMetrics": "No data for this period yet.",
+      "greetingMorning": "Good morning, {name}",
+      "greetingDay": "Good afternoon, {name}",
+      "greetingEvening": "Good evening, {name}",
+      "thisMonth": "This month",
+      "todaySummary": "{count, plural, =0 {No appointments} one {# appointment} other {# appointments}} · {revenue}",
+      "depositSecured": "Deposit paid",
+      "nextUp": "Next up",
+      "nextUpEmpty": "Nothing else booked today. A good moment for a new post or a note to a client.",
+      "quickActions": "Quick actions",
+      "qaService": "Add a service",
+      "qaInvite": "Invite a colleague",
+      "qaQr": "QR code for the salon",
+      "qaDeposits": "Turn on deposits",
+      "moreToday": "{count} more in the calendar"
     },
     "calendar": {
       "title": "Calendar",
@@ -648,7 +798,43 @@
       "errors": {
         "overlap": "That specialist already has an appointment in this slot.",
         "generic": "That did not work. Please try again."
-      }
+      },
+      "location": "Location",
+      "customerNotes": "Note from the client",
+      "deposit": "Deposit",
+      "depositSecured": "Deposit paid",
+      "depositAwaiting": "Awaiting deposit",
+      "depositStatus": {
+        "none": "No deposit",
+        "awaiting": "Awaiting payment",
+        "paid": "Paid",
+        "waived": "Waived",
+        "void": "Unpaid",
+        "refund_pending": "Being refunded",
+        "refunded": "Refunded",
+        "retained": "Kept",
+        "applied": "Deducted from the price"
+      },
+      "summaryVisits": "{count, plural, one {visit} other {visits}}",
+      "summarySecured": "{count} with deposit",
+      "refundQueued": "Appointment cancelled. The deposit is being refunded to the client.",
+      "noShowKeepsDeposit": "On a no-show the deposit stays with the salon.",
+      "cancelConfirmTitle": "Cancel this appointment?",
+      "cancelDepositChoice": "The client paid a {amount} deposit. Refund it if you are cancelling or the client told you in time. Keep it for a late cancellation.",
+      "cancelAndRefund": "Cancel and refund deposit",
+      "cancelAndRetain": "Cancel and keep deposit",
+      "cancelConfirm": "Yes, cancel",
+      "pickDate": "Pick a date",
+      "viewLabel": "View",
+      "live": "Live",
+      "price": "Price",
+      "columnCount": "{count, plural, =0 {Free} one {# appointment} other {# appointments}}",
+      "customerHint": "Fill in at least one: name, email or phone.",
+      "hasNotes": "Has a note",
+      "showCancelled": "Cancelled ({count})",
+      "weekHint": "The week reads best for one stylist: pick them above. Hover or tap an appointment for details.",
+      "hoverHint": "Click for actions",
+      "durationMinutes": "{minutes} min"
     },
     "services": {
       "title": "Services",
@@ -675,7 +861,11 @@
       "emptyBody": "Add your first service so clients can book.",
       "noStaffAssigned": "No specialist assigned",
       "localeHint": "Descriptions are entered in all three languages.",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "requiresDepositHint": "Taken on online bookings once payments are connected. Refunded automatically on an on-time cancellation.",
+      "subtitle": "The menu clients see and book. Prices, durations, deposits and who performs each service.",
+      "staffCount": "{count, plural, =0 {no one assigned} one {# stylist} other {# stylists}}",
+      "inactiveSection": "Switched off"
     },
     "staff": {
       "title": "Team",
@@ -716,7 +906,8 @@
       "permissions": "Permissions",
       "permissionsBody": "Owner and admin manage everything. A manager runs the calendar, services and clients. A specialist sees the team calendar.",
       "invited": "Invitation saved",
-      "inviteHint": "They get access as soon as they sign in with this email."
+      "inviteHint": "They get access as soon as they sign in with this email.",
+      "subtitle": "The people behind the chair, their roles and working days."
     },
     "clients": {
       "title": "Clients",
@@ -740,7 +931,23 @@
       "noHistory": "No bookings yet",
       "saved": "Changes saved",
       "guest": "No account",
-      "privacyNote": "This information is visible only to your team."
+      "privacyNote": "This information is visible only to your team.",
+      "subtitle": "Everyone who has visited, with history, spend and notes. The book fills itself from bookings.",
+      "countTotal": "clients",
+      "countReturning": "returning",
+      "countConsent": "opted in",
+      "client": "Client",
+      "consentShort": "Marketing",
+      "export": "Export CSV",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "addTag": "Add",
+      "clientSince": "Client since {date}",
+      "call": "Call",
+      "averageTicket": "Average ticket",
+      "upcoming": "Upcoming",
+      "profileCard": "Client card"
     },
     "reviewsAdmin": {
       "title": "Reviews and reputation",
@@ -762,7 +969,20 @@
       "googleLabel": "Google review link",
       "googleSaved": "Link saved",
       "invitations": "Review invitations",
-      "invitationsBody": "We track who was invited and when, without assuming what happened on Google."
+      "invitationsBody": "We track who was invited and when, without assuming what happened on Google.",
+      "subtitle": "What clients say. Your reply shows publicly under the review.",
+      "error": "We couldn't save that. Please try again.",
+      "yourResponse": "Your reply",
+      "summaryLabel": "Review summary",
+      "reviewCount": "{count, plural, =0 {No published reviews} one {# published review} other {# published reviews}}",
+      "distributionLabel": "Ratings breakdown",
+      "answeredShare": "Replied to",
+      "filterLabel": "Show",
+      "filterEmpty": "Nothing here. All caught up.",
+      "anonymous": "Client",
+      "hiddenBadge": "Hidden",
+      "ratingLabel": "{rating} out of 5 stars",
+      "noComment": "Rating only, no comment."
     },
     "payments": {
       "title": "Payments",
@@ -785,8 +1005,40 @@
       "reference": "Reference",
       "provider": "Provider",
       "providerTitle": "Payment provider",
-      "providerBody": "No provider is connected yet. The schema and records are in place; execution will run entirely server-side, with no keys in the browser.",
-      "notConfigured": "Not configured"
+      "providerBody": "Deposits are not switched on for the platform yet. Once they are, you will connect your account here in a few clicks.",
+      "notConfigured": "Not configured",
+      "subtitle": "Deposits on online bookings. No more empty chairs.",
+      "pitchEyebrow": "No-show protection",
+      "pitchTitle": "An empty chair is lost income. A deposit protects it.",
+      "pitchBody": "Clients pay a small deposit when they book online. If they do not show up, it stays with you. If they cancel in time, it is refunded automatically, with no calls and no awkward conversations.",
+      "pitchPoint1": "Money goes straight into your own Stripe account",
+      "pitchPoint2": "Automatic refunds for on-time cancellations",
+      "pitchPoint3": "You decide which services, and how much",
+      "connect": "Connect Stripe",
+      "adminOnly": "Only an owner or admin can connect payments.",
+      "stripeNote": "Setup happens on Stripe and takes about 10 minutes. GLOWA never sees your bank details.",
+      "reviewing": "Under review",
+      "unfinished": "Unfinished",
+      "pendingTitle": "Your Stripe account is not active yet",
+      "reviewingBody": "Stripe is reviewing your details. This usually takes a few minutes to a day. Deposits switch on automatically afterwards.",
+      "unfinishedBody": "A few steps remain on Stripe before you can take deposits.",
+      "linkExpired": "The setup link expired. Continue where you left off.",
+      "continueSetup": "Continue setup",
+      "refresh": "Refresh status",
+      "refreshFailed": "We could not refresh the status. Please try again.",
+      "connectFailed": "Connecting failed. Please try again in a moment.",
+      "activeBadge": "Deposits are live",
+      "activeTitle": "You are taking deposits",
+      "activeBody": "{count, plural, one {# service requires} other {# services require}} a deposit when booked online.",
+      "activeNoServices": "No service requires a deposit yet. Switch it on for the services where a no-show costs you most.",
+      "payoutsPending": "Payouts to your bank account start once Stripe finishes its review.",
+      "configureServices": "Deposits per service",
+      "openStripe": "Open Stripe",
+      "collected": "Deposits collected",
+      "protected": "Saved from no-shows",
+      "protectedHint": "Deposits kept on a no-show or late cancellation",
+      "refunded": "Refunded",
+      "history": "History"
     },
     "marketing": {
       "title": "Marketing",
@@ -843,7 +1095,10 @@
         "not_a_member": "You don't have access to this business.",
         "forbidden": "Manager rights are required.",
         "generic": "Something went wrong. Try again."
-      }
+      },
+      "subtitle": "Email campaigns to clients who agreed to hear from you.",
+      "audienceLapsed": "Not seen for {days}+ days",
+      "audienceMinVisits": "{count, plural, one {#+ visit} other {#+ visits}}"
     },
     "growth": {
       "title": "Growth",
@@ -916,7 +1171,8 @@
       "emptyBody": "Numbers appear once bookings start coming in.",
       "new": "New",
       "returning": "Returning",
-      "hours": "hours"
+      "hours": "hours",
+      "subtitle": "Revenue, bookings and utilisation over the last six months."
     },
     "assistant": {
       "title": "AI assistant",
@@ -928,6 +1184,54 @@
       "unavailableBody": "Add OPENAI_API_KEY on the server to switch it on. The assistant runs server-side only and receives aggregate figures, not client personal data.",
       "disclaimer": "The assistant can be wrong. Check important numbers in the calendar and analytics.",
       "dataNote": "We send only aggregate metrics for the selected period — no names, emails or phone numbers."
+    },
+    "media": {
+      "title": "Photos",
+      "subtitle": "The first thing a client sees. The cover appears in search and at the top of your page.",
+      "cover": "Cover",
+      "coverAlt": "Salon cover photo",
+      "addCover": "Add a cover",
+      "coverHint": "A landscape photo, at least 1600 px wide",
+      "replaceCover": "Replace",
+      "remove": "Remove",
+      "gallery": "Gallery",
+      "addPhotos": "Add photos",
+      "makeCover": "Cover",
+      "photoAlt": "Photo {number}",
+      "uploading": "{count, plural, one {Uploading # photo…} other {Uploading # photos…}}",
+      "saved": "Photos saved",
+      "error": "We couldn't save that. Please try again.",
+      "uploadFailed": "One of the photos didn't upload.",
+      "rejected": "We accept JPG, PNG, WebP and AVIF up to 10 MB.",
+      "limit": "The gallery holds up to {max} photos.",
+      "tipsTitle": "Photos that sell",
+      "tipLight": "Daylight, no flash.",
+      "tipWork": "Show the result — the hair, the nails, the skin.",
+      "tipSpace": "One or two of the salon itself: clients want to know where they're going.",
+      "tipFormat": "No text or logos over the photo."
+    },
+    "location": {
+      "title": "Address & map",
+      "subtitle": "Where clients should come — and whether “near me” finds you.",
+      "address": "Address",
+      "addressPlaceholder": "12 Graf Ignatiev St",
+      "city": "City",
+      "postalCode": "Postcode",
+      "noPoint": "Your salon isn't on the map",
+      "noPointHint": "Clients nearby won't see you under “near me”. Press the button while you're at the salon.",
+      "noPointTownHint": "We'll use the centre of {town} until you place the exact point.",
+      "approximatePoint": "Approximate — the city centre",
+      "approximateHint": "Distances to you may be off. Press the button while you're at the salon.",
+      "exactPoint": "Your salon is on the map",
+      "exactHint": "Clients nearby see you sorted by distance.",
+      "checkOnMap": "Check on Google Maps",
+      "useMyLocation": "I'm here — place the point",
+      "located": "Point placed. Save to keep it.",
+      "locateFailed": "We couldn't get your location. Allow access in your browser.",
+      "save": "Save address",
+      "saved": "Address saved",
+      "error": "We couldn't save the address.",
+      "missing": "This business has no location yet."
     }
   },
   "notifications": {
@@ -988,35 +1292,33 @@
   },
   "pricing": {
     "eyebrow": "PRICING",
-    "title": "One plan for every stage.",
-    "subtitle": "You pay for the team using Glowa, not per booking. Your clients never pay anything.",
-    "unpublished": {
-      "badge": "Soon",
-      "title": "Pricing is not published yet",
-      "body": "We're finalising the plans for the Bulgarian, Romanian and wider European markets. Write to us and you'll get them first, along with the terms for early businesses.",
-      "cta": "Get in touch"
-    },
+    "title": "Honest pricing. No cut of your clients.",
+    "subtitle": "Small and fixed. We never take commission — not on a new client, not on a deposit. Your clients pay nothing.",
     "billing": {
       "monthly": "Monthly",
       "annual": "Yearly",
-      "annualNote": "Paying yearly works out cheaper per month.",
+      "annualNote": "Pay yearly and 2 months are free.",
       "perMonth": "/ month",
-      "vat": "Prices exclude VAT."
+      "vat": "Prices exclude VAT.",
+      "label": "Billing period",
+      "annualSave": "2 months free",
+      "forever": "forever",
+      "billedYearly": "billed once a year"
     },
     "plans": {
       "solo": {
         "name": "Solo",
-        "tagline": "For one professional working alone.",
+        "tagline": "For one professional. Free — not a trial, forever.",
         "seats": "1 professional"
       },
       "studio": {
         "name": "Studio",
-        "tagline": "For a small team and more than one location.",
+        "tagline": "For a small team. Less than one seat costs elsewhere.",
         "seats": "Up to 5 professionals"
       },
       "salon": {
         "name": "Salon",
-        "tagline": "For a large salon that needs roles and accountability.",
+        "tagline": "For a large salon with roles, audit and priority help.",
         "seats": "Unlimited team"
       }
     },
@@ -1039,25 +1341,206 @@
       "assistant": "AI assistant over aggregate data",
       "roles": "Roles and access control",
       "auditLog": "Audit log",
-      "priority": "Priority support"
+      "priority": "Priority support",
+      "deposits": "No-show deposits — no fee from us"
     },
     "cta": {
-      "start": "Start free",
-      "contact": "Get in touch",
-      "popular": "Most chosen"
+      "start": "Get started",
+      "popular": "Most chosen",
+      "startFree": "Start free"
     },
     "faq": {
       "title": "Frequently asked questions",
-      "q1": "Do clients pay to book?",
-      "a1": "No. Booking through Glowa is free for the client. Only the business pays, for its team.",
-      "q2": "What happens to my data if I leave?",
-      "a2": "It stays yours. You can export your clients and bookings at any time, and closing the account does not mean we keep your content.",
-      "q3": "Do you take a percentage of revenue?",
-      "a3": "No. The subscription is flat. If you switch on online payments, the fee belongs to the payment provider, not to us.",
-      "q4": "What languages does the platform work in?",
-      "a4": "Bulgarian, English and Romanian, for both the business and the client. Each client is messaged in their own language.",
-      "q5": "Can I change plan?",
-      "a5": "Yes, at any time. The change applies from the next billing period."
+      "q1": "Is Solo really free forever?",
+      "a1": "Yes. One professional gets the calendar, online booking, client records and a page on glowa with no subscription. You only pay if you grow into a team.",
+      "q2": "What do I pay during early access?",
+      "a2": "Nothing. Every plan is free until {date}. Before any billing starts we'll tell you at least 30 days ahead, and you choose your plan yourself.",
+      "q3": "Do you take a share of revenue or of new clients?",
+      "a3": "No. The subscription is fixed. A client who finds you through glowa is yours — no commission, not even on the first visit.",
+      "q4": "What about deposits?",
+      "a4": "A deposit goes straight to your Stripe account. Glowa adds no fee — you pay only Stripe's standard card fee.",
+      "q5": "What happens to my data if I leave?",
+      "a5": "It stays yours. Export your clients and bookings any time; closing your account doesn't hold your content back.",
+      "q6": "Do clients pay to book?",
+      "a6": "No. Booking through glowa is free for clients.",
+      "q7": "Can I change plan?",
+      "a7": "Yes, any time. The change applies from the next billing period."
+    },
+    "earlyAccess": {
+      "title": "Early access: everything is free until {date}.",
+      "body": "After that, the prices below, with 30 days' notice. No card to sign up."
+    },
+    "zero": {
+      "title": "The zeros that make the difference",
+      "commission": {
+        "value": "0%",
+        "title": "New-client commission",
+        "body": "Other platforms take 20–35% of a first visit. We take nothing, ever."
+      },
+      "deposits": {
+        "value": "0%",
+        "title": "Our fee on deposits",
+        "body": "You pay Stripe's fee only. The money goes straight to your account."
+      },
+      "contract": {
+        "value": "0",
+        "title": "Contracts and lock-in",
+        "body": "Stop whenever you like. No penalties, no term."
+      },
+      "export": {
+        "value": "100%",
+        "title": "Your data stays yours",
+        "body": "Export your clients to CSV any time, with one button."
+      }
+    },
+    "calculator": {
+      "title": "How much will you save?",
+      "subtitle": "Put in your own numbers. We compare with the lowest published rates of a large marketplace platform.",
+      "seats": "Professionals in the salon",
+      "newClients": "New clients from the platform per month",
+      "average": "Average first-visit bill",
+      "theirs": "Typical platform",
+      "ours": "Glowa",
+      "perMonth": "per month",
+      "savedYear": "You save per year",
+      "savedMonth": "That's {amount} every month.",
+      "assumptions": "Assumptions: ~€17 a month for one professional or ~€12 per team seat, and 20% commission on a new client's first visit (minimum ~€5) — the lowest published rates as of September 2026, rounded in the competitor's favour. Excludes VAT and payment fees, which are similar everywhere."
+    },
+    "metaTitle": "Pricing — no commission, Solo free"
+  },
+  "forBusiness": {
+    "metaTitle": "GLOWA for salons",
+    "metaDescription": "Online booking, a team calendar, no-show deposits and a beautiful page for your salon.",
+    "eyebrow": "For salons and studios",
+    "title": "The calendar that fills the chair.",
+    "titleAccent": "The deposit that protects it.",
+    "subtitle": "GLOWA brings online booking, a team calendar, deposits and a beautiful salon page together in one place. In Bulgarian, English and Romanian from day one.",
+    "ctaPrimary": "Start for free",
+    "ctaShowcase": "See a sample salon",
+    "heroPoint1": "No credit card",
+    "heroPoint2": "Ready in minutes",
+    "heroPoint3": "Local support",
+    "heroAlt": "A light-filled hair atelier with stylists and clients",
+    "mock": {
+      "nextUp": "Next up",
+      "nextService": "Balayage · Maria",
+      "newBooking": "New online booking",
+      "calendarDay": "Thursday",
+      "dayView": "Day",
+      "weekView": "Week",
+      "services": {
+        "balayage": "Balayage",
+        "cut": "Cut",
+        "styling": "Styling",
+        "colour": "Colour",
+        "keratin": "Keratin",
+        "brows": "Brows"
+      },
+      "depositPaid": {
+        "title": "Deposit paid",
+        "body": "The appointment is confirmed and secured."
+      },
+      "depositRefund": {
+        "title": "Cancelled two days ahead",
+        "body": "The deposit is refunded automatically."
+      },
+      "depositKept": {
+        "title": "No-show",
+        "body": "The deposit stays with the salon."
+      }
+    },
+    "pillars": {
+      "calendar": {
+        "title": "A calendar that works as hard as you do.",
+        "body": "The whole team on one screen, live. Move an appointment with a finger, the system refuses double-bookings, and clients only ever book minutes that are genuinely free.",
+        "point1": "By stylist and by week",
+        "point2": "Works by touch on the front-desk tablet",
+        "point3": "Blocked time, breaks and a waitlist"
+      },
+      "deposits": {
+        "title": "The end of no-shows.",
+        "body": "Take a small deposit on online bookings. If the client comes, it is deducted from the price. If they cancel in time, it is refunded automatically. If they do not come, it is yours.",
+        "point1": "Money goes straight into your own Stripe account",
+        "point2": "Automatic refunds for on-time cancellations",
+        "point3": "You choose which services, and how much"
+      },
+      "showcase": {
+        "title": "A shop window that sells for you.",
+        "body": "Every salon gets a beautiful page with photos, services, team, reviews and opening hours. It is found on Google and looks good when you share it on Viber or Instagram.",
+        "point1": "Full-width photos and a gallery",
+        "point2": "Reviews from real visits only",
+        "point3": "A QR code for the window and business cards"
+      }
+    },
+    "included": {
+      "title": "Everything a salon needs.",
+      "subtitle": "No extra apps, no spreadsheets.",
+      "qr": {
+        "title": "QR codes",
+        "body": "For the window, the business card and the mirror, with a count of the bookings each one brings."
+      }
+    },
+    "steps": {
+      "title": "Three steps to start",
+      "one": {
+        "title": "Create your salon",
+        "body": "Name, address and opening hours. It takes two minutes."
+      },
+      "two": {
+        "title": "Add services and team",
+        "body": "Prices, durations and who does what. A deposit if you want one."
+      },
+      "three": {
+        "title": "Share the link",
+        "body": "Your salon page and a QR code for the window. Clients book themselves."
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "price": {
+        "q": "How much does it cost?",
+        "a": "You can start for free today. Current plans are on the pricing page."
+      },
+      "stripe": {
+        "q": "Do I need Stripe?",
+        "a": "Only for deposits. The calendar, the salon page and reminders all work without it. The Stripe account is yours and the money goes straight to you."
+      },
+      "phone": {
+        "q": "Does it work on a phone and a tablet?",
+        "a": "Yes. GLOWA installs as an app on your phone, and on the front-desk tablet appointments move with a finger."
+      },
+      "clients": {
+        "q": "What do clients see?",
+        "a": "Your salon page with photos, services, prices, team and reviews, and booking in a minute with an email confirmation and reminder."
+      }
+    },
+    "cta": {
+      "title": "Your next empty slot could be filled tonight.",
+      "body": "Create your salon in minutes. No contract, no credit card."
     }
+  },
+  "places": {
+    "searchPlaceholder": "Search a city…",
+    "nearMe": "Near me",
+    "locating": "Finding you…",
+    "locateDenied": "The browser did not allow location access. Pick a city from the list.",
+    "locateFailed": "We could not find you. Pick a city from the list.",
+    "locateUnsupported": "This browser does not support location. Pick a city from the list.",
+    "anywhere": "Anywhere",
+    "noMatch": "No such city in the list.",
+    "bulgaria": "Bulgaria",
+    "romania": "Romania",
+    "nearYou": "Near you"
+  },
+  "footer": {
+    "about": "Booking for beauty salons — clear prices, live availability and no phone calls.",
+    "forClients": "For clients",
+    "forSalons": "For salons",
+    "cities": "Cities",
+    "findSalon": "Find a salon",
+    "whyGlowa": "Why glowa",
+    "registerSalon": "List your salon",
+    "ctaTitle": "Own a salon?",
+    "ctaBody": "Calendar, deposits and online booking — no commission."
   }
 }

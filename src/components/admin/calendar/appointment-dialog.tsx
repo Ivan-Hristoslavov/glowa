@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -134,9 +135,11 @@ export function NewAppointmentDialog({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
+
+          <RequiredNote />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="appt-staff">{t("staff")}</Label>
+              <Label htmlFor="appt-staff" required>{t("staff")}</Label>
               <Select value={staffId} onValueChange={setStaffId}>
                 <SelectTrigger id="appt-staff">
                   <SelectValue />
@@ -152,7 +155,7 @@ export function NewAppointmentDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="appt-service">{t("service")}</Label>
+              <Label htmlFor="appt-service" required>{t("service")}</Label>
               <Select value={serviceId} onValueChange={setServiceId}>
                 <SelectTrigger id="appt-service">
                   <SelectValue />
@@ -168,7 +171,7 @@ export function NewAppointmentDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="appt-date">{t("startsAt")}</Label>
+              <Label htmlFor="appt-date" required>{t("startsAt")}</Label>
               <Input
                 id="appt-date"
                 type="date"
@@ -179,7 +182,7 @@ export function NewAppointmentDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="appt-time" className="sr-only sm:not-sr-only">
+              <Label htmlFor="appt-time" required className="sr-only sm:not-sr-only">
                 {t("startsAt")}
               </Label>
               <Input
@@ -194,7 +197,7 @@ export function NewAppointmentDialog({
 
             {locations.length > 1 ? (
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="appt-location">{t("service")}</Label>
+                <Label htmlFor="appt-location">{t("location")}</Label>
                 <Select value={locationId} onValueChange={setLocationId}>
                   <SelectTrigger id="appt-location">
                     <SelectValue />
@@ -212,7 +215,12 @@ export function NewAppointmentDialog({
           </div>
 
           <fieldset className="grid gap-4 sm:grid-cols-3">
-            <legend className="mb-2 text-sm font-medium">{t("customer")}</legend>
+            <legend className="mb-2 text-sm font-medium">
+              {t("customer")}
+              <span className="text-muted-foreground mt-1 block text-xs font-normal">
+                {t("customerHint")}
+              </span>
+            </legend>
             <div className="space-y-2">
               <Label htmlFor="appt-name">{t("guestName")}</Label>
               <Input

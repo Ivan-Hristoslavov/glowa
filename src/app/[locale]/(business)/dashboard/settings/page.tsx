@@ -2,6 +2,9 @@ import { Lock } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeader } from "@/components/admin/page-header";
+import { BusinessLocationForm } from "@/components/admin/business-location-form";
+import { BusinessMediaManager } from "@/components/admin/business-media-manager";
 import { BusinessSettingsForm } from "@/components/admin/business-settings-form";
 import { EmptyState } from "@/components/common/empty-state";
 import { Section } from "@/components/common/section";
@@ -23,6 +26,8 @@ export default async function BusinessSettingsPage({
 
   const t = await getTranslations("admin.nav");
   const staff = await getTranslations("admin.staff");
+  const media = await getTranslations("admin.media");
+  const place = await getTranslations("admin.location");
 
   const membership = await getActiveMembership();
   if (!membership) return null;
@@ -38,11 +43,21 @@ export default async function BusinessSettingsPage({
   }
 
   const supabase = await createClient();
-  const { data: business } = await supabase
-    .from("businesses")
-    .select("name, phone, email, website, google_review_url, description, booking_policy")
-    .eq("id", membership.businessId)
-    .maybeSingle();
+  const [{ data: business }, { data: location }] = await Promise.all([
+    supabase
+      .from("businesses")
+      .select(
+        "name, phone, email, website, google_review_url, description, booking_policy, cover_image_url, gallery",
+      )
+      .eq("id", membership.businessId)
+      .maybeSingle(),
+    supabase
+      .from("locations")
+      .select("address_line1, city, postal_code, latitude, longitude")
+      .eq("business_id", membership.businessId)
+      .eq("is_primary", true)
+      .maybeSingle(),
+  ]);
 
   if (!business) return null;
 
@@ -53,10 +68,13 @@ export default async function BusinessSettingsPage({
       ? (business.booking_policy as Record<string, unknown>)
       : {};
   const description = isLocalizedText(business.description) ? business.description : {};
+  const gallery = Array.isArray(business.gallery)
+    ? business.gallery.filter((entry): entry is string => typeof entry === "string")
+    : [];
 
   return (
-    <div className="space-y-6">
-      <h1 className="font-heading text-2xl sm:text-3xl">{t("settings")}</h1>
+    <div className="space-y-8">
+      <PageHeader title={t("settings")} description={t("settingsSubtitle")} />
 
       <Section title={membership.name}>
         <BusinessSettingsForm
@@ -76,6 +94,31 @@ export default async function BusinessSettingsPage({
             allowCustomerReschedule: policy.allow_customer_reschedule !== false,
           }}
         />
+      </Section>
+
+      <Section id="photos" title={media("title")} description={media("subtitle")}>
+        <BusinessMediaManager
+          businessId={membership.businessId}
+          initialCover={business.cover_image_url}
+          initialGallery={gallery}
+        />
+      </Section>
+
+      <Section id="location" title={place("title")} description={place("subtitle")}>
+        {location ? (
+          <BusinessLocationForm
+            businessId={membership.businessId}
+            initial={{
+              addressLine1: location.address_line1 ?? "",
+              city: location.city ?? "",
+              postalCode: location.postal_code ?? "",
+              latitude: location.latitude,
+              longitude: location.longitude,
+            }}
+          />
+        ) : (
+          <p className="text-muted-foreground text-sm">{place("missing")}</p>
+        )}
       </Section>
     </div>
   );

@@ -7,6 +7,8 @@ import { z } from "zod";
 import { routing } from "@/i18n/routing";
 import { requireMembership } from "@/lib/actions/guard";
 import { BUSINESS_CATEGORIES } from "@/lib/business-categories";
+import { publicEnv } from "@/lib/env";
+import { matchPlace } from "@/lib/places";
 import { ACTIVE_BUSINESS_COOKIE } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,6 +46,18 @@ export async function createBusiness(
   });
 
   if (error || !data) return { ok: false, code: error?.hint ?? "generic" };
+
+  // A salon with no point on the map is invisible to "near me". When the city
+  // is a town we know, start from its centre; the owner can place it exactly
+  // from Settings.
+  const place = matchPlace(parsed.data.city);
+  if (place) {
+    await supabase
+      .from("locations")
+      .update({ latitude: place.lat, longitude: place.lng })
+      .eq("business_id", data.id)
+      .is("latitude", null);
+  }
 
   const jar = await cookies();
   jar.set(ACTIVE_BUSINESS_COOKIE, data.id, {
@@ -160,5 +174,107 @@ export async function updateBusinessSettings(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard", "layout");
+  return { ok: true };
+}
+
+/** Where this business's own uploads live: `business-media/<business id>/...`. */
+function mediaPrefix(businessId: string) {
+  return `${publicEnv.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/business-media/${businessId}/`;
+}
+
+const mediaSchema = z.object({
+  businessId: z.uuid(),
+  coverImageUrl: z.string().max(500).nullable(),
+  gallery: z.array(z.string().max(500)).max(12),
+});
+
+/**
+ * The salon's photographs. Only URLs in the salon's own storage folder are
+ * accepted - or the bundled `/brand/` images demo salons use - so this cannot
+ * be used to put someone else's picture, or a tracking pixel, on a page.
+ */
+export async function updateBusinessMedia(
+  input: z.input<typeof mediaSchema>,
+): Promise<BusinessActionResult> {
+  const parsed = mediaSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, code: "invalid" };
+
+  const guard = await requireMembership(parsed.data.businessId, "manager");
+  if (!guard.ok) return guard;
+
+  const prefix = mediaPrefix(parsed.data.businessId);
+  const allowed = (url: string) =>
+    (url.startsWith(prefix) && !url.slice(prefix.length).includes("..")) ||
+    /^\/brand\/[\w/-]+\.(webp|jpg|jpeg|png|avif)$/.test(url);
+
+  const cover = parsed.data.coverImageUrl;
+  const gallery = [...new Set(parsed.data.gallery)].filter((url) => url !== cover);
+  if ((cover && !allowed(cover)) || gallery.some((url) => !allowed(url))) {
+    return { ok: false, code: "invalid" };
+  }
+
+  const { data: business, error } = await guard.supabase
+    .from("businesses")
+    .update({ cover_image_url: cover, gallery })
+    .eq("id", parsed.data.businessId)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !business) return { ok: false, code: "generic" };
+
+  revalidatePath("/[locale]/dashboard/settings", "page");
+  revalidatePath("/[locale]/business/[slug]", "page");
+  revalidatePath("/[locale]/search", "page");
+  revalidatePath("/[locale]", "page");
+  return { ok: true };
+}
+
+const locationSchema = z.object({
+  businessId: z.uuid(),
+  addressLine1: z.string().trim().max(200),
+  city: z.string().trim().min(1).max(120),
+  postalCode: z.string().trim().max(16),
+  latitude: z.number().min(-90).max(90).nullable(),
+  longitude: z.number().min(-180).max(180).nullable(),
+});
+
+/**
+ * The salon's address and its point on the map. The point is what "near me"
+ * sorts by; without one given, a known town's centre stands in for it.
+ */
+export async function updateBusinessLocation(
+  input: z.input<typeof locationSchema>,
+): Promise<BusinessActionResult> {
+  const parsed = locationSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, code: "invalid" };
+
+  const guard = await requireMembership(parsed.data.businessId, "manager");
+  if (!guard.ok) return guard;
+
+  const place = matchPlace(parsed.data.city);
+  const hasPoint = parsed.data.latitude !== null && parsed.data.longitude !== null;
+  const latitude = hasPoint ? parsed.data.latitude : (place?.lat ?? null);
+  const longitude = hasPoint ? parsed.data.longitude : (place?.lng ?? null);
+
+  const { data: location, error } = await guard.supabase
+    .from("locations")
+    .update({
+      address_line1: parsed.data.addressLine1 || null,
+      city: parsed.data.city,
+      postal_code: parsed.data.postalCode || null,
+      latitude,
+      longitude,
+    })
+    .eq("business_id", parsed.data.businessId)
+    .eq("is_primary", true)
+    .select("id")
+    .maybeSingle();
+
+  if (error) return { ok: false, code: "generic" };
+  if (!location) return { ok: false, code: "no_location" };
+
+  revalidatePath("/[locale]/dashboard/settings", "page");
+  revalidatePath("/[locale]/business/[slug]", "page");
+  revalidatePath("/[locale]/search", "page");
   return { ok: true };
 }

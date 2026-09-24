@@ -8,6 +8,8 @@ import {
   type BookingStaff,
 } from "@/components/booking/booking-flow";
 import type { Locale } from "@/i18n/routing";
+import { fallbackBusinessImage } from "@/lib/brand-assets";
+import { effectiveDepositCents } from "@/lib/deposits";
 import { pickLocalized } from "@/lib/localized";
 import { getBusinessBySlug } from "@/lib/queries/discovery";
 import { createClient } from "@/lib/supabase/server";
@@ -58,6 +60,14 @@ export default async function BookPage({
     description: pickLocalized(service.description, activeLocale),
     durationMinutes: service.duration_minutes,
     priceCents: service.price_cents,
+    depositCents: effectiveDepositCents(
+      {
+        requiresDeposit: service.requires_deposit,
+        depositCents: service.deposit_cents,
+        priceCents: service.price_cents,
+      },
+      business.deposits_enabled,
+    ),
     currency: service.currency,
     staffIds: (service.service_staff ?? []).map((row) => row.staff_profile_id),
   }));
@@ -100,6 +110,9 @@ export default async function BookPage({
         services={services}
         staff={staff}
         initialServiceId={firstParam(sp.service)}
+        initialStaffId={firstParam(sp.staff)}
+        initialStartsAt={firstParam(sp.at)}
+        coverUrl={business.cover_image_url ?? fallbackBusinessImage(business.category, business.slug)}
       />
     </main>
   );

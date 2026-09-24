@@ -1,23 +1,26 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight, Globe } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminQuickCreate } from "@/components/admin/admin-quick-create";
+import { AdminTopbarTitle } from "@/components/admin/admin-topbar-title";
 import { BusinessSwitcher } from "@/components/admin/business-switcher";
 import { GlowaLogo } from "@/components/brand/glowa-logo";
 import { AccountMenu } from "@/components/layout/account-menu";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import {
+  canManage,
   claimPendingInvitations,
   getActiveMembership,
   listMemberships,
 } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
+import { cn } from "@/lib/utils";
 
 export default async function BusinessLayout({
   children,
@@ -26,6 +29,7 @@ export default async function BusinessLayout({
   const { locale } = await params;
   const t = await getTranslations("admin.nav");
   const statusLabels = await getTranslations("admin.status");
+  const calendar = await getTranslations("admin.calendar");
 
   let [memberships, active] = await Promise.all([
     listMemberships(),
@@ -60,47 +64,67 @@ export default async function BusinessLayout({
         .maybeSingle()
     : { data: null };
 
+  const isLive = active.status === "active";
+
   return (
-    <div className="flex min-h-dvh flex-col lg:flex-row">
-      <aside className="bg-sidebar border-sidebar-border hidden w-64 shrink-0 flex-col border-r lg:flex">
-        <div className="border-sidebar-border border-b px-4 py-4">
-          <Link href="/" className="glowa-focus mb-3 inline-block rounded-md">
+    <div className="bg-sidebar flex min-h-dvh flex-col lg:flex-row">
+      <aside className="bg-sidebar sticky top-0 hidden h-dvh w-[17rem] shrink-0 flex-col lg:flex">
+        <div className="px-4 pt-5 pb-4">
+          <Link href="/" className="glowa-focus mb-5 inline-block rounded-md px-1">
             <GlowaLogo markClassName="size-7" />
           </Link>
           <BusinessSwitcher businesses={memberships} activeId={active.businessId} />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 overflow-y-auto px-3 pb-4">
           <AdminNav />
         </div>
 
-        <div className="border-sidebar-border border-t p-3">
-          <Button asChild variant="ghost" size="sm" className="w-full justify-start">
-            <Link href={`/business/${active.slug}`}>
-              <ExternalLink className="size-4" aria-hidden />
-              {t("viewPublicPage")}
-            </Link>
-          </Button>
+        {/* The salon's shop window, one click away - with its state, so a
+            draft is never mistaken for a page customers can already see. */}
+        <div className="p-3">
+          <Link
+            href={`/business/${active.slug}`}
+            className="glowa-focus group bg-card hover:shadow-lift flex items-center gap-3 rounded-2xl border p-3 transition-shadow duration-300"
+          >
+            <span className="bg-secondary text-primary flex size-9 shrink-0 items-center justify-center rounded-xl">
+              <Globe className="size-4" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium">{t("viewPublicPage")}</span>
+              <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                <span
+                  className={cn(
+                    "size-1.5 rounded-full",
+                    isLive ? "bg-success" : "bg-warning",
+                  )}
+                  aria-hidden
+                />
+                {statusLabels(active.status)}
+              </span>
+            </span>
+            <ArrowUpRight
+              className="text-muted-foreground group-hover:text-foreground size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              aria-hidden
+            />
+          </Link>
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-border/70 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b px-4 backdrop-blur-md sm:px-6">
+      {/* The working surface is a raised sheet on the sidebar's tone, the
+          way modern tools separate "where" from "what". */}
+      <div className="bg-background flex min-w-0 flex-1 flex-col lg:my-2 lg:mr-2 lg:rounded-3xl lg:border lg:shadow-[var(--shadow-card)]">
+        <header className="bg-background/85 sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b px-4 backdrop-blur-xl sm:px-6 lg:rounded-t-3xl">
           <div className="flex min-w-0 items-center gap-2">
             <AdminMobileNav />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{active.name}</p>
-              <Badge
-                variant={active.status === "active" ? "secondary" : "outline"}
-                className="mt-0.5 h-5 px-1.5 text-[0.65rem] font-normal"
-              >
-                {statusLabels(active.status)}
-              </Badge>
-            </div>
+            <AdminTopbarTitle businessName={active.name} />
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2">
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            {canManage(active.role) ? (
+              <AdminQuickCreate label={calendar("newAppointment")} />
+            ) : null}
+            <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
               <Link href="/">{t("backToSite")}</Link>
             </Button>
             <LocaleSwitcher />
@@ -115,7 +139,9 @@ export default async function BusinessLayout({
 
         <main
           id="main-content"
-          className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6"
+          // A page can ask for the whole width (the calendar does) by carrying
+          // `data-fullwidth`; everything else keeps a readable measure.
+          className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-10 lg:py-10 has-[[data-fullwidth]]:max-w-none has-[[data-fullwidth]]:py-6 lg:has-[[data-fullwidth]]:px-6"
         >
           {children}
         </main>
