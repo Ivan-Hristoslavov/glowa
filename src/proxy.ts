@@ -71,6 +71,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except API routes, Next internals and files with an extension.
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  // Everything except API routes, the locale-free auth handlers, Next
+  // internals and files with an extension. `/auth/` was missing: the locale
+  // middleware redirected /auth/confirm, /auth/callback and /auth/signout to
+  // /bg/auth/..., which does not exist, so every emailed confirmation and
+  // password reset link ended on a 404.
+  matcher: "/((?!api|auth/|_next|_vercel|.*\\..*).*)",
 };

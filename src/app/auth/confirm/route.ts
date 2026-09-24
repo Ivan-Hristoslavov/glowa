@@ -6,8 +6,15 @@ import { safeRedirectPath } from "@/lib/safe-redirect";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Email confirmation and magic-link landing. Lives outside `[locale]` so the
- * link in an email never depends on the locale routing rules.
+ * Email confirmation, password reset and magic-link landing. Lives outside
+ * `[locale]` so the link in an email never depends on the locale routing.
+ *
+ * Two link shapes arrive here. A custom email template sends `token_hash` and
+ * `type`, verified with `verifyOtp` - this works in any browser. Supabase's
+ * default template sends the person through its own verify endpoint, which
+ * comes back with a PKCE `code`; that is exchanged here and works in the
+ * browser that asked for the email. Both used to be needed and only the first
+ * was handled, so a reset link with the default template did nothing.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -17,14 +24,19 @@ export async function GET(request: NextRequest) {
   const next =
     safeRedirectPath(searchParams.get("next")) ?? `/${routing.defaultLocale}/profile`;
 
-  if (!tokenHash || !type) {
+  const code = searchParams.get("code");
+
+  if ((!tokenHash || !type) && !code) {
     return NextResponse.redirect(
       new URL(`/${routing.defaultLocale}/login?error=invalid_link`, origin),
     );
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+  const { error } =
+    tokenHash && type
+      ? await supabase.auth.verifyOtp({ type, token_hash: tokenHash })
+      : await supabase.auth.exchangeCodeForSession(code ?? "");
 
   if (error) {
     return NextResponse.redirect(

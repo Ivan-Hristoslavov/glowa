@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useId, useRef, useState, useTransition } from "react";
 
 import type { AuthFormState } from "@/app/[locale]/(auth)/actions";
+import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,8 @@ type AuthFormProps = {
   inline?: {
     onSignedIn: () => void;
   };
+  /** Show "Continue with Google" (the provider is enabled in Supabase). */
+  google?: boolean;
 };
 
 type FieldErrors = Partial<Record<"fullName" | "email" | "password", string>>;
@@ -46,7 +49,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  * server still validates everything, because the browser is not a trust
  * boundary.
  */
-export function AuthForm({ mode: initialMode, action, nextPath, inline }: AuthFormProps) {
+export function AuthForm({ mode: initialMode, action, nextPath, inline, google }: AuthFormProps) {
   const t = useTranslations("auth");
   const legal = useTranslations("legal");
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -151,6 +154,13 @@ export function AuthForm({ mode: initialMode, action, nextPath, inline }: AuthFo
             </button>
           ))}
         </div>
+      ) : null}
+
+      {google ? (
+        <>
+          <GoogleButton nextPath={nextPath} />
+          <AuthDivider />
+        </>
       ) : null}
 
       {state.status === "error" && state.message ? (

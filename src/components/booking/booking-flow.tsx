@@ -53,6 +53,8 @@ type BookingFlowProps = {
   services: BookingService[];
   staff: BookingStaff[];
   initialServiceId?: string;
+  /** Offer "Continue with Google" at the sign-in step. */
+  googleSignIn?: boolean;
 };
 
 type StepId = "location" | "service" | "staff" | "time" | "confirm";
@@ -78,6 +80,7 @@ export function BookingFlow({
   services,
   staff,
   initialServiceId,
+  googleSignIn = false,
 }: BookingFlowProps) {
   const t = useTranslations("booking");
   const auth = useTranslations("auth");
@@ -545,6 +548,7 @@ export function BookingFlow({
                         mode="sign-up"
                         action={inlineAuthAction}
                         nextPath={bookingPath}
+                        google={googleSignIn}
                         inline={{
                           onSignedIn: () => router.refresh(),
                         }}

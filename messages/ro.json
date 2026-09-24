@@ -252,7 +252,9 @@
       "invalidCredentials": "E-mail sau parolă greșită.",
       "emailInUse": "Există deja un cont cu acest e-mail.",
       "weakPassword": "Parola trebuie să aibă cel puțin 8 caractere.",
-      "generic": "Ceva nu a mers. Încearcă din nou."
+      "generic": "Ceva nu a mers. Încearcă din nou.",
+      "oauth": "Autentificarea cu Google nu a reușit. Încearcă din nou sau folosește e-mailul.",
+      "invalidLink": "Linkul este invalid sau a expirat. Cere unul nou."
     },
     "forgotTitle": "Ai uitat parola",
     "forgotSubtitle": "Introdu e-mailul și îți trimitem un link pentru o parolă nouă.",
@@ -290,7 +292,9 @@
     "sideBody": "Programări în câteva secunde, mementouri la timp și saloanele preferate în buzunar.",
     "sidePoint1": "Locuri libere în timp real",
     "sidePoint2": "Memento înainte de fiecare vizită",
-    "sidePoint3": "Gratuit pentru clienți"
+    "sidePoint3": "Gratuit pentru clienți",
+    "continueWithGoogle": "Continuă cu Google",
+    "or": "sau"
   },
   "search": {
     "title": "Găsește-ți următoarea programare",

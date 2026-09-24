@@ -252,7 +252,9 @@
       "invalidCredentials": "Wrong email or password.",
       "emailInUse": "An account with this email already exists.",
       "weakPassword": "Password must be at least 8 characters.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "oauth": "Signing in with Google did not work. Try again or use your email.",
+      "invalidLink": "The link is invalid or has expired. Ask for a new one."
     },
     "forgotTitle": "Forgot your password",
     "forgotSubtitle": "Enter your email and we will send you a link to set a new one.",
@@ -290,7 +292,9 @@
     "sideBody": "Book in seconds, get reminded on time, and keep the salons you love in your pocket.",
     "sidePoint1": "Live free slots",
     "sidePoint2": "A reminder before every visit",
-    "sidePoint3": "Free for clients"
+    "sidePoint3": "Free for clients",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or"
   },
   "search": {
     "title": "Find your next appointment",
