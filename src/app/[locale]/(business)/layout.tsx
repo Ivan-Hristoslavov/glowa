@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { BusinessSwitcher } from "@/components/admin/business-switcher";
+import { CommandMenu } from "@/components/admin/command-menu";
+import { UpcomingStrip } from "@/components/admin/upcoming-strip";
 import { GlowaLogo } from "@/components/brand/glowa-logo";
 import { AccountMenu } from "@/components/layout/account-menu";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
@@ -12,10 +14,12 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import {
   claimPendingInvitations,
   getActiveMembership,
   listMemberships,
+  listUpcomingAppointments,
 } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
@@ -52,13 +56,13 @@ export default async function BusinessLayout({
   const { data: claims } = await supabase.auth.getClaims();
   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
 
-  const { data: profile } = userId
-    ? await supabase
-        .from("profiles")
-        .select("full_name, avatar_url")
-        .eq("id", userId)
-        .maybeSingle()
-    : { data: null };
+  const [{ data: profile }, { data: business }, upcoming] = await Promise.all([
+    userId
+      ? supabase.from("profiles").select("full_name, avatar_url").eq("id", userId).maybeSingle()
+      : Promise.resolve({ data: null }),
+    supabase.from("businesses").select("timezone").eq("id", active.businessId).maybeSingle(),
+    listUpcomingAppointments(active.businessId),
+  ]);
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
@@ -85,7 +89,10 @@ export default async function BusinessLayout({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-border/70 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b px-4 backdrop-blur-md sm:px-6">
+        {/* The header and the "next up" strip travel together, so who is
+            next is on screen whatever page the owner is on. */}
+        <div className="sticky top-0 z-30">
+        <header className="border-border/70 bg-background/80 flex h-16 items-center justify-between gap-3 border-b px-4 backdrop-blur-md sm:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <AdminMobileNav />
             <div className="min-w-0">
@@ -100,7 +107,8 @@ export default async function BusinessLayout({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+            <CommandMenu slug={active.slug} />
+            <Button asChild variant="ghost" size="sm" className="hidden xl:inline-flex">
               <Link href="/">{t("backToSite")}</Link>
             </Button>
             <LocaleSwitcher />
@@ -113,6 +121,13 @@ export default async function BusinessLayout({
             />
           </div>
         </header>
+        <UpcomingStrip
+          businessId={active.businessId}
+          timezone={business?.timezone ?? "Europe/Sofia"}
+          locale={locale as Locale}
+          appointments={upcoming}
+        />
+        </div>
 
         <main
           id="main-content"

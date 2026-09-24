@@ -6,13 +6,15 @@ import type { Locale } from "@/i18n/routing";
  * The feature lists are real - every line maps to something that exists in the
  * product, and nothing here promises a capability that has not been built.
  *
- * The amounts are deliberately `null`. Publishing a price is a commercial
- * decision, not an implementation detail, and inventing one would put a number
- * in front of customers that nobody chose. Until `monthly` is filled in the
- * page says so plainly and asks for contact instead of showing a figure.
+ * Amounts were published on 2026-09-24 at the owner's request: three plans
+ * for a small, a medium and a large business. Annual billing is ten months'
+ * price for twelve. Nothing else in the product reads these numbers - billing
+ * itself is not connected yet (see PROJECT_CONTEXT), and the dashboard says so
+ * rather than implying anyone is being charged.
  *
- * To publish: set `monthly` (minor units, e.g. 4900 = 49.00) and `annualMonthly`
- * for each plan. Nothing else needs to change.
+ * To change a price: edit `monthly` / `annualMonthly` (minor units, e.g.
+ * 2400 = 24.00). Setting every `monthly` back to null hides the figures and
+ * the page falls back to "contact us".
  */
 export type PlanId = "solo" | "studio" | "salon";
 
@@ -33,8 +35,8 @@ export type Plan = {
 export const PLANS: Plan[] = [
   {
     id: "solo",
-    monthly: null,
-    annualMonthly: null,
+    monthly: 900,
+    annualMonthly: 750,
     currency: "EUR",
     seats: 1,
     featured: false,
@@ -49,8 +51,8 @@ export const PLANS: Plan[] = [
   },
   {
     id: "studio",
-    monthly: null,
-    annualMonthly: null,
+    monthly: 2400,
+    annualMonthly: 2000,
     currency: "EUR",
     seats: 5,
     featured: true,
@@ -66,8 +68,8 @@ export const PLANS: Plan[] = [
   },
   {
     id: "salon",
-    monthly: null,
-    annualMonthly: null,
+    monthly: 4800,
+    annualMonthly: 4000,
     currency: "EUR",
     seats: null,
     featured: false,

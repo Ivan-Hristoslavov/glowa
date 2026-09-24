@@ -169,3 +169,17 @@ export async function listBusinessSlugs(limit = 2000) {
   if (error) return [];
   return (data ?? []).map((row) => row.slug);
 }
+
+/**
+ * When a salon is closed in the coming months - intervals only, never the
+ * reason (`upcoming_business_closures` is SECURITY DEFINER and returns no
+ * more). A failure degrades to "no notice", never to a broken salon page.
+ */
+export async function listUpcomingClosures(businessId: string) {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase.rpc("upcoming_business_closures", {
+    p_business_id: businessId,
+  });
+  if (error) return [];
+  return data ?? [];
+}

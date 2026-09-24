@@ -2,7 +2,9 @@ import { Lock } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { BusinessMediaForm } from "@/components/admin/business-media-form";
 import { BusinessSettingsForm } from "@/components/admin/business-settings-form";
+import { SubscriptionCard } from "@/components/admin/subscription-card";
 import { EmptyState } from "@/components/common/empty-state";
 import { Section } from "@/components/common/section";
 import { routing, type Locale } from "@/i18n/routing";
@@ -23,6 +25,7 @@ export default async function BusinessSettingsPage({
 
   const t = await getTranslations("admin.nav");
   const staff = await getTranslations("admin.staff");
+  const media = await getTranslations("admin.media");
 
   const membership = await getActiveMembership();
   if (!membership) return null;
@@ -38,9 +41,16 @@ export default async function BusinessSettingsPage({
   }
 
   const supabase = await createClient();
+  const { count: staffCount } = await supabase
+    .from("staff_profiles")
+    .select("id", { count: "exact", head: true })
+    .eq("business_id", membership.businessId)
+    .eq("is_bookable", true);
   const { data: business } = await supabase
     .from("businesses")
-    .select("name, phone, email, website, google_review_url, description, booking_policy")
+    .select(
+      "name, phone, email, website, google_review_url, description, booking_policy, logo_url, cover_image_url, gallery",
+    )
     .eq("id", membership.businessId)
     .maybeSingle();
 
@@ -57,6 +67,22 @@ export default async function BusinessSettingsPage({
   return (
     <div className="space-y-6">
       <h1 className="font-heading text-2xl sm:text-3xl">{t("settings")}</h1>
+
+      <Section title={media("title")} description={media("subtitle")}>
+        <div className="glowa-card rounded-3xl p-4 sm:p-6">
+          <BusinessMediaForm
+            businessId={membership.businessId}
+            businessName={business.name}
+            initial={{
+              logoUrl: business.logo_url,
+              coverUrl: business.cover_image_url,
+              gallery: Array.isArray(business.gallery)
+                ? business.gallery.filter((entry): entry is string => typeof entry === "string")
+                : [],
+            }}
+          />
+        </div>
+      </Section>
 
       <Section title={membership.name}>
         <BusinessSettingsForm
@@ -77,6 +103,8 @@ export default async function BusinessSettingsPage({
           }}
         />
       </Section>
+
+      <SubscriptionCard staffCount={staffCount ?? 1} />
     </div>
   );
 }

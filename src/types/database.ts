@@ -325,6 +325,61 @@ export type Database = {
           },
         ]
       }
+      business_closures: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          id: string
+          location_id: string | null
+          reason: string | null
+          starts_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+          starts_at: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+          starts_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_closures_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_closures_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_closures_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_hours: {
         Row: {
           closes_at: string
@@ -1963,6 +2018,14 @@ export type Database = {
         Returns: {
           already_unsubscribed: boolean
           business_name: string
+        }[]
+      }
+      upcoming_business_closures: {
+        Args: { p_business_id: string }
+        Returns: {
+          ends_at: string
+          location_id: string
+          starts_at: string
         }[]
       }
     }

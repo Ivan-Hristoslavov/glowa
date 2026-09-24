@@ -3,6 +3,7 @@
 import {
   BarChart3,
   CalendarDays,
+  CalendarOff,
   LayoutDashboard,
   Megaphone,
   MessageSquareText,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 export const ADMIN_LINKS = [
   { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
   { href: "/dashboard/calendar", key: "calendar", icon: CalendarDays },
+  { href: "/dashboard/time-off", key: "timeOff", icon: CalendarOff },
   { href: "/dashboard/clients", key: "clients", icon: Users },
   { href: "/dashboard/services", key: "services", icon: Scissors },
   { href: "/dashboard/staff", key: "staff", icon: Sparkles },

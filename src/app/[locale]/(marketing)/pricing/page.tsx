@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 
@@ -8,13 +8,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { PricingPlans } from "@/components/pricing/pricing-plans";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/routing";
-import { formatPlanPrice, PLANS, PRICING_IS_PUBLISHED } from "@/lib/pricing";
+import { PRICING_IS_PUBLISHED } from "@/lib/pricing";
 import { alternatesFor } from "@/lib/seo/structured-data";
-import { cn } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -75,83 +73,8 @@ export default async function PricingPage({
       )}
 
       {/* -------------------------------------------------------------- plans */}
-      <div className="mt-12 grid gap-5 lg:grid-cols-3">
-        {PLANS.map((plan) => {
-          const price = formatPlanPrice(
-            plan.monthly,
-            plan.currency,
-            locale as Locale,
-          );
-
-          return (
-            <div
-              key={plan.id}
-              className={cn(
-                "glowa-card relative flex flex-col p-6 sm:p-7",
-                plan.featured && "border-primary/50 ring-primary/15 ring-2",
-              )}
-            >
-              {plan.featured ? (
-                <Badge className="absolute -top-3 left-6">
-                  {t("cta.popular")}
-                </Badge>
-              ) : null}
-
-              <h2 className="font-heading text-2xl">
-                {t(`plans.${plan.id}.name`)}
-              </h2>
-              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                {t(`plans.${plan.id}.tagline`)}
-              </p>
-
-              <div className="mt-6 min-h-16">
-                {price ? (
-                  <p className="flex items-baseline gap-1.5">
-                    <span className="font-heading text-4xl">{price}</span>
-                    <span className="text-muted-foreground text-sm">
-                      {t("billing.perMonth")}
-                    </span>
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground font-heading text-2xl">
-                    {t("unpublished.badge")}
-                  </p>
-                )}
-                <p className="text-muted-foreground mt-1 text-xs">
-                  {t(`plans.${plan.id}.seats`)}
-                </p>
-              </div>
-
-              <Button
-                asChild
-                variant={plan.featured ? "default" : "outline"}
-                className="mt-6 w-full"
-              >
-                {PRICING_IS_PUBLISHED ? (
-                  <Link href={`/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`}>
-                    {t("cta.start")}
-                  </Link>
-                ) : (
-                  <a href="mailto:hello@glowa.bg">{t("cta.contact")}</a>
-                )}
-              </Button>
-
-              <ul className="mt-7 space-y-3 text-sm">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex gap-2.5">
-                    <Check
-                      aria-hidden
-                      className="text-primary mt-0.5 size-4 shrink-0"
-                    />
-                    <span className="text-pretty">
-                      {t(`features.${feature}`)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+      <div className="mt-12">
+        <PricingPlans />
       </div>
 
       {PRICING_IS_PUBLISHED ? (

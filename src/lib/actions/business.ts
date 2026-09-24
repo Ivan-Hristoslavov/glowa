@@ -160,5 +160,63 @@ export async function updateBusinessSettings(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard", "layout");
+  // The public page is cached for an hour; a new phone number or description
+  // should not wait that long to reach customers.
+  revalidatePath("/[locale]/business/[slug]", "page");
+  return { ok: true };
+}
+
+const mediaUrl = z.url().max(1024);
+
+const mediaSchema = z.object({
+  businessId: z.uuid(),
+  logoUrl: mediaUrl.nullable().optional(),
+  coverUrl: mediaUrl.nullable().optional(),
+  gallery: z.array(mediaUrl).max(12).optional(),
+});
+
+/**
+ * Only files in this business's own folder of the public `business-media`
+ * bucket are accepted. Anything else - a hotlinked image, a tracking pixel,
+ * another salon's photo - is refused rather than stored as a URL we would
+ * then render on a public page.
+ */
+function isOwnMedia(url: string, businessId: string) {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!base) return false;
+  const prefix = `${base.replace(/\/$/, "")}/storage/v1/object/public/business-media/${businessId}/`;
+  return url.startsWith(prefix) && !url.slice(prefix.length).includes("..");
+}
+
+export async function updateBusinessMedia(
+  input: z.input<typeof mediaSchema>,
+): Promise<BusinessActionResult> {
+  const parsed = mediaSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, code: "invalid" };
+
+  const { businessId, logoUrl, coverUrl, gallery } = parsed.data;
+  const urls = [logoUrl, coverUrl, ...(gallery ?? [])].filter(
+    (value): value is string => typeof value === "string",
+  );
+  if (urls.some((url) => !isOwnMedia(url, businessId))) {
+    return { ok: false, code: "invalid" };
+  }
+
+  const guard = await requireMembership(businessId, "admin");
+  if (!guard.ok) return guard;
+
+  const update: { logo_url?: string | null; cover_image_url?: string | null; gallery?: string[] } =
+    {};
+  if (logoUrl !== undefined) update.logo_url = logoUrl;
+  if (coverUrl !== undefined) update.cover_image_url = coverUrl;
+  if (gallery !== undefined) update.gallery = gallery;
+
+  const { error } = await guard.supabase.from("businesses").update(update).eq("id", businessId);
+  if (error) return { ok: false, code: "generic" };
+
+  revalidatePath("/[locale]/dashboard", "layout");
+  revalidatePath("/[locale]/business/[slug]", "page");
+  revalidatePath("/[locale]/search", "page");
+  revalidatePath("/[locale]", "page");
   return { ok: true };
 }

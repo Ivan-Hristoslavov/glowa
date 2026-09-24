@@ -354,7 +354,9 @@
     "breadcrumbSearch": "Saloane",
     "showMap": "Arată harta",
     "showMapNote": "Harta se încarcă de la OpenStreetMap doar când o ceri.",
-    "gallery": "Galerie"
+    "gallery": "Galerie",
+    "closedNotice": "Nu primește programări",
+    "closedRange": "{range}"
   },
   "booking": {
     "title": "Fă o programare",
@@ -643,7 +645,8 @@
       "backToSite": "Înapoi la site",
       "switchBusiness": "Schimbă afacerea",
       "viewPublicPage": "Vezi pagina publică",
-      "menu": "Meniu"
+      "menu": "Meniu",
+      "timeOff": "Zile libere"
     },
     "status": {
       "draft": "Ciornă",
@@ -776,7 +779,8 @@
       "errors": {
         "overlap": "Specialistul are deja o programare în acest interval.",
         "generic": "Nu a funcționat. Încearcă din nou."
-      }
+      },
+      "closedLabel": "Închis"
     },
     "services": {
       "title": "Servicii",
@@ -1056,6 +1060,97 @@
       "unavailableBody": "Adaugă OPENAI_API_KEY pe server pentru a-l activa. Asistentul rulează doar pe server și primește cifre agregate, nu date personale ale clienților.",
       "disclaimer": "Asistentul poate greși. Verifică cifrele importante în calendar și analize.",
       "dataNote": "Trimitem doar indicatori agregați pentru perioada selectată — fără nume, e-mailuri sau telefoane."
+    },
+    "subscription": {
+      "title": "Abonament",
+      "body": "Folosești Glowa gratuit acum — plata abonamentului nu este încă activă. Iată cât va costa și ce plan se potrivește echipei tale.",
+      "status": "Acces timpuriu · gratuit",
+      "recommended": "{count, plural, one {Pentru # specialist} other {Pentru # specialiști}}",
+      "compare": "Compară planurile"
+    },
+    "media": {
+      "title": "Logo și fotografii",
+      "subtitle": "Ce văd clienții pe pagina ta, în căutare și în emailuri.",
+      "cover": "Copertă",
+      "coverHint": "O fotografie lată a salonului, minim 1600 px",
+      "logo": "Logo",
+      "logoHint": "Pătrat, minim 400 px",
+      "removeCover": "Elimină coperta",
+      "removeLogo": "Elimină logoul",
+      "gallery": "Galerie",
+      "galleryHint": "{count} din {max} fotografii — spațiul, lucrările, echipa.",
+      "addPhotos": "Adaugă fotografii",
+      "addPhotosHint": "Trage-le aici sau alege",
+      "removePhoto": "Elimină fotografia",
+      "saved": "Salvat",
+      "failed": "Încărcarea a eșuat. Încearcă din nou.",
+      "wrongType": "Acceptăm JPG, PNG, WebP și AVIF.",
+      "tooLarge": "Fișierul este prea mare (până la 15 MB).",
+      "galleryFull": "Galeria are loc pentru cel mult {max} fotografii."
+    },
+    "upcoming": {
+      "title": "Urmează",
+      "add": "Adaugă o programare în calendar",
+      "addShort": "Nou",
+      "empty": "Nicio programare viitoare.",
+      "now": "Acum",
+      "inMinutes": "în {minutes} min",
+      "inHours": "în {hours} h",
+      "tomorrow": "Mâine",
+      "walkIn": "Client",
+      "call": "Sună",
+      "open": "În calendar",
+      "status": {
+        "pending": "În așteptare",
+        "confirmed": "Confirmată"
+      }
+    },
+    "command": {
+      "open": "Căutare rapidă și comenzi",
+      "placeholder": "Caută un client, o pagină sau o acțiune…",
+      "placeholderShort": "Caută…",
+      "empty": "Nu am găsit nimic.",
+      "clients": "Clienți",
+      "actions": "Acțiuni",
+      "pages": "Pagini",
+      "newAppointment": "Programare nouă în calendar",
+      "copyLink": "Copiază linkul de programare",
+      "copied": "Link copiat",
+      "flyer": "Creează un flyer cu cod QR",
+      "publicPage": "Vezi pagina publică",
+      "toggleTheme": "Schimbă tema luminoasă/întunecată",
+      "hint": "↑↓ pentru a alege · Enter pentru a deschide"
+    },
+    "timeOff": {
+      "title": "Zile libere și închideri",
+      "subtitle": "Închide salonul pentru sărbători, concediu sau câteva ore. În acest timp nimeni nu se poate programa online.",
+      "formTitle": "Închide pentru programări",
+      "formBody": "Alege prima și ultima zi. Opțional, doar anumite ore.",
+      "presetToday": "Azi",
+      "presetTomorrow": "Mâine",
+      "presetWeek": "Următoarele 7 zile",
+      "allDay": "Zile întregi",
+      "allDayHint": "Dezactivează pentru a închide doar câteva ore.",
+      "allDayShort": "toată ziua",
+      "fromTime": "De la (pe {date})",
+      "toTime": "Până la (pe {date})",
+      "location": "Locație",
+      "allLocations": "Toate locațiile",
+      "reason": "Motiv",
+      "reasonPlaceholder": "De ex. sărbătorile de Crăciun",
+      "reasonHint": "Îl vede doar echipa. Clienții văd doar că salonul e închis.",
+      "timezoneNote": "Orele sunt în fusul orar al salonului ({zone}).",
+      "submit": "Închide pentru programări",
+      "listTitle": "Închideri viitoare",
+      "listEmpty": "Nicio zi liberă planificată.",
+      "remove": "Elimină",
+      "added": "Închis pentru programări",
+      "removed": "Eliminat",
+      "overlapping": "{count, plural, one {Există deja # programare în această perioadă — nu a fost anulată. Contactează clientul.} few {Există deja # programări în această perioadă — nu au fost anulate. Contactează clienții.} other {Există deja # de programări în această perioadă — nu au fost anulate. Contactează clienții.}}",
+      "errors": {
+        "range": "Sfârșitul trebuie să fie după început.",
+        "generic": "Nu am putut salva. Încearcă din nou."
+      }
     }
   },
   "notifications": {
@@ -1129,23 +1224,31 @@
       "annual": "Anual",
       "annualNote": "Plata anuală iese mai ieftin pe lună.",
       "perMonth": "/ lună",
-      "vat": "Prețurile nu includ TVA."
+      "vat": "Prețurile nu includ TVA.",
+      "label": "Facturare",
+      "save": "2 luni gratuit",
+      "billedYearly": "{amount} pe an",
+      "billedMonthly": "Plată lunară",
+      "orYearly": "sau {amount} / lună la plata anuală"
     },
     "plans": {
       "solo": {
         "name": "Solo",
         "tagline": "Pentru un specialist care lucrează singur.",
-        "seats": "1 specialist"
+        "seats": "1 specialist",
+        "audience": "Afacere mică"
       },
       "studio": {
         "name": "Studio",
         "tagline": "Pentru o echipă mică și mai mult de o locație.",
-        "seats": "Până la 5 specialiști"
+        "seats": "Până la 5 specialiști",
+        "audience": "Afacere medie"
       },
       "salon": {
         "name": "Salon",
         "tagline": "Pentru un salon mare, cu roluri și responsabilitate.",
-        "seats": "Echipă nelimitată"
+        "seats": "Echipă nelimitată",
+        "audience": "Afacere mare"
       }
     },
     "features": {

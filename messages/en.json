@@ -354,7 +354,9 @@
     "breadcrumbSearch": "Salons",
     "showMap": "Show map",
     "showMapNote": "The map loads from OpenStreetMap only when you ask for it.",
-    "gallery": "Gallery"
+    "gallery": "Gallery",
+    "closedNotice": "Not taking bookings",
+    "closedRange": "{range}"
   },
   "booking": {
     "title": "Book an appointment",
@@ -643,7 +645,8 @@
       "backToSite": "Back to site",
       "switchBusiness": "Switch business",
       "viewPublicPage": "View public page",
-      "menu": "Menu"
+      "menu": "Menu",
+      "timeOff": "Days off"
     },
     "status": {
       "draft": "Draft",
@@ -776,7 +779,8 @@
       "errors": {
         "overlap": "That specialist already has an appointment in this slot.",
         "generic": "That did not work. Please try again."
-      }
+      },
+      "closedLabel": "Closed"
     },
     "services": {
       "title": "Services",
@@ -1056,6 +1060,97 @@
       "unavailableBody": "Add OPENAI_API_KEY on the server to switch it on. The assistant runs server-side only and receives aggregate figures, not client personal data.",
       "disclaimer": "The assistant can be wrong. Check important numbers in the calendar and analytics.",
       "dataNote": "We send only aggregate metrics for the selected period — no names, emails or phone numbers."
+    },
+    "subscription": {
+      "title": "Subscription",
+      "body": "You are using Glowa for free right now — subscription billing is not switched on yet. Here is what it will cost and which plan fits your team.",
+      "status": "Early access · free",
+      "recommended": "{count, plural, one {For # specialist} other {For # specialists}}",
+      "compare": "Compare plans"
+    },
+    "media": {
+      "title": "Logo and photos",
+      "subtitle": "What clients see on your page, in search and in emails.",
+      "cover": "Cover",
+      "coverHint": "A wide photo of the salon, at least 1600 px",
+      "logo": "Logo",
+      "logoHint": "Square, at least 400 px",
+      "removeCover": "Remove cover",
+      "removeLogo": "Remove logo",
+      "gallery": "Gallery",
+      "galleryHint": "{count} of {max} photos — the space, your work, the team.",
+      "addPhotos": "Add photos",
+      "addPhotosHint": "Drop them here or choose",
+      "removePhoto": "Remove photo",
+      "saved": "Saved",
+      "failed": "Upload failed. Please try again.",
+      "wrongType": "We accept JPG, PNG, WebP and AVIF.",
+      "tooLarge": "That file is too large (up to 15 MB).",
+      "galleryFull": "The gallery holds up to {max} photos."
+    },
+    "upcoming": {
+      "title": "Next up",
+      "add": "Add an appointment in the calendar",
+      "addShort": "New",
+      "empty": "No upcoming appointments.",
+      "now": "Now",
+      "inMinutes": "in {minutes} min",
+      "inHours": "in {hours} h",
+      "tomorrow": "Tomorrow",
+      "walkIn": "Client",
+      "call": "Call",
+      "open": "In calendar",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed"
+      }
+    },
+    "command": {
+      "open": "Quick search and commands",
+      "placeholder": "Search a client, a page or an action…",
+      "placeholderShort": "Search…",
+      "empty": "Nothing found.",
+      "clients": "Clients",
+      "actions": "Actions",
+      "pages": "Pages",
+      "newAppointment": "New appointment in the calendar",
+      "copyLink": "Copy the booking link",
+      "copied": "Link copied",
+      "flyer": "Make a flyer with a QR code",
+      "publicPage": "View the public page",
+      "toggleTheme": "Switch light/dark theme",
+      "hint": "↑↓ to choose · Enter to open"
+    },
+    "timeOff": {
+      "title": "Days off and closures",
+      "subtitle": "Close the salon for holidays, leave or a few hours. Nobody can book online during that time.",
+      "formTitle": "Close for bookings",
+      "formBody": "Choose the first and last date. Optionally, only certain hours.",
+      "presetToday": "Today",
+      "presetTomorrow": "Tomorrow",
+      "presetWeek": "Next 7 days",
+      "allDay": "Whole days",
+      "allDayHint": "Turn off to close only some hours.",
+      "allDayShort": "all day",
+      "fromTime": "From (on {date})",
+      "toTime": "Until (on {date})",
+      "location": "Location",
+      "allLocations": "All locations",
+      "reason": "Reason",
+      "reasonPlaceholder": "E.g. Christmas holidays",
+      "reasonHint": "Only your team sees it. Clients only see that you are closed.",
+      "timezoneNote": "Times are in the salon's timezone ({zone}).",
+      "submit": "Close for bookings",
+      "listTitle": "Upcoming closures",
+      "listEmpty": "No days off planned.",
+      "remove": "Remove",
+      "added": "Closed for bookings",
+      "removed": "Removed",
+      "overlapping": "{count, plural, one {There is already # booked appointment in this period — it was not cancelled. Contact the client.} other {There are already # booked appointments in this period — they were not cancelled. Contact the clients.}}",
+      "errors": {
+        "range": "The end has to be after the start.",
+        "generic": "We could not save that. Please try again."
+      }
     }
   },
   "notifications": {
@@ -1129,23 +1224,31 @@
       "annual": "Yearly",
       "annualNote": "Paying yearly works out cheaper per month.",
       "perMonth": "/ month",
-      "vat": "Prices exclude VAT."
+      "vat": "Prices exclude VAT.",
+      "label": "Billing",
+      "save": "2 months free",
+      "billedYearly": "{amount} per year",
+      "billedMonthly": "Billed every month",
+      "orYearly": "or {amount} / month billed yearly"
     },
     "plans": {
       "solo": {
         "name": "Solo",
         "tagline": "For one professional working alone.",
-        "seats": "1 professional"
+        "seats": "1 professional",
+        "audience": "Small business"
       },
       "studio": {
         "name": "Studio",
         "tagline": "For a small team and more than one location.",
-        "seats": "Up to 5 professionals"
+        "seats": "Up to 5 professionals",
+        "audience": "Medium business"
       },
       "salon": {
         "name": "Salon",
         "tagline": "For a large salon that needs roles and accountability.",
-        "seats": "Unlimited team"
+        "seats": "Unlimited team",
+        "audience": "Large business"
       }
     },
     "features": {
