@@ -793,7 +793,19 @@
         "overlap": "Specialistul are deja o programare în acest interval.",
         "generic": "Nu a funcționat. Încearcă din nou."
       },
-      "closedLabel": "Închis"
+      "closedLabel": "Închis",
+      "team": "Echipa",
+      "teamShown": "{shown}/{total}",
+      "onlyWorking": "Doar cei care lucrează în ziua respectivă",
+      "showAll": "Arată pe toți",
+      "zoomIn": "Ore mai înalte",
+      "zoomOut": "Ore mai scurte",
+      "dayOff": "Zi liberă",
+      "free": "Nicio programare",
+      "bookings": "{count, plural, one {# programare} few {# programări} other {# de programări}}",
+      "bookedHours": "{hours} h",
+      "loadLabel": "Ocupat {percent}%",
+      "customerNotes": "Nota clientului"
     },
     "services": {
       "title": "Servicii",

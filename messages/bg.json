@@ -793,7 +793,19 @@
         "overlap": "Специалистът вече има час в този интервал.",
         "generic": "Действието не успя. Опитай отново."
       },
-      "closedLabel": "Затворено"
+      "closedLabel": "Затворено",
+      "team": "Екип",
+      "teamShown": "{shown}/{total}",
+      "onlyWorking": "Само работещите този ден",
+      "showAll": "Покажи всички",
+      "zoomIn": "Уголеми часовете",
+      "zoomOut": "Смали часовете",
+      "dayOff": "Почива",
+      "free": "Свободен ден",
+      "bookings": "{count, plural, one {# запис} other {# записа}}",
+      "bookedHours": "{hours} ч",
+      "loadLabel": "Заетост {percent}%",
+      "customerNotes": "Бележка от клиента"
     },
     "services": {
       "title": "Услуги",

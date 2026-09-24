@@ -291,6 +291,17 @@
   }
 }
 
+/* Closed or blocked time in the calendar: hatched, so it never reads as a
+   free slot, and quiet enough that the bookings stay the loudest thing. */
+@utility glowa-closed {
+  background-color: color-mix(in oklab, var(--muted) 45%, transparent);
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--foreground) 7%, transparent) 0 1px,
+    transparent 1px 9px
+  );
+}
+
 @utility glowa-card {
   @apply bg-card text-card-foreground rounded-xl border;
   box-shadow: var(--shadow-card);

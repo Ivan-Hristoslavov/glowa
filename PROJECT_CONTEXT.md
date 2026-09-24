@@ -992,6 +992,35 @@ moved 10:00 → 12:00 across stylists keeping its hour, a resize grew 60 → 105
 minutes leaving the start alone, and a drag onto an occupied slot was refused
 with the appointment left where it was.
 
+**Layout for a big team (09-24).** The owner's screenshot of a ten-person
+salon showed the red "now" line running through the team's names, and ten
+columns squeezed to nothing. The board is now its own scroll box on both axes,
+so its parts can stick. The stacking order is fixed:
+- The time column is z-40.
+- The team row is z-30 and fully opaque. A translucent one let cards show
+  through it.
+- The now line is z-10 and sits under the team row, over the cards. It is
+  drawn only in today's columns, with the time in the gutter, and it updates
+  every minute after mount.
+
+The rest of the changes:
+- **Scrolling.** The board opens scrolled to "now" for today, or to the first
+  working hour on other days.
+- **Columns.** Each column keeps a minimum width, and the board scrolls
+  sideways with scroll-snap. Past six columns the header goes compact, with
+  names like "Мария П." (the full name if that would still clash).
+- **Team header.** It carries the avatar in the stylist's colour, the
+  bookings and hours, and a utilisation bar.
+- **Team picker.** It replaces the one-stylist select: tick who is shown, and
+  "only people working that day", on by default. The choices and a zoom level
+  (an hour is 60, 90 or 120px) are kept in `localStorage` per salon.
+- **Week view lanes.** In week view the whole team shares a day column, so
+  overlapping cards are laid out in lanes (`layoutLanes`). At three or more
+  lanes a card shows the stylist's initial and time, with the full summary as
+  the title and accessible name.
+- **Closed time.** It is hatched (`glowa-closed`) rather than grey, and a
+  closure appears once per stretch in week view instead of once per stylist.
+
 ---
 
 ## 8j. The waitlist

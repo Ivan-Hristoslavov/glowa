@@ -793,7 +793,19 @@
         "overlap": "That specialist already has an appointment in this slot.",
         "generic": "That did not work. Please try again."
       },
-      "closedLabel": "Closed"
+      "closedLabel": "Closed",
+      "team": "Team",
+      "teamShown": "{shown}/{total}",
+      "onlyWorking": "Only people working that day",
+      "showAll": "Show everyone",
+      "zoomIn": "Taller hours",
+      "zoomOut": "Shorter hours",
+      "dayOff": "Day off",
+      "free": "Nothing booked",
+      "bookings": "{count, plural, one {# booking} other {# bookings}}",
+      "bookedHours": "{hours} h",
+      "loadLabel": "{percent}% booked",
+      "customerNotes": "Note from the client"
     },
     "services": {
       "title": "Services",
