@@ -19,6 +19,7 @@ const EVENTS: EventType[] = [
   "reschedule",
   "review_request",
   "waitlist_offer",
+  "rebook_nudge",
   "marketing",
 ];
 

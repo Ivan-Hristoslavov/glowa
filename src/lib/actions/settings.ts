@@ -90,6 +90,7 @@ const notificationSchema = z.object({
     "reschedule",
     "review_request",
     "waitlist_offer",
+    "rebook_nudge",
     "marketing",
   ]),
   enabled: z.boolean(),

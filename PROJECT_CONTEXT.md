@@ -514,6 +514,9 @@ business id the caller manages for business media, resolved through
 | `…120000_slug_transliteration.sql` | `app.transliterate_slug`; Cyrillic/Romanian names get readable slugs |
 | `20260924130000_business_closures.sql` | `business_closures`, `upcoming_business_closures()`, closures in `get_available_slots` and "open on" |
 | `20260924140000_business_subscriptions.sql` | `business_subscriptions` (Stripe mirror, members read), `apply_stripe_subscription()` for the webhook only |
+| `20260924160000_rebook_event.sql` | `notification_event` gains `rebook_nudge` (own file: an enum value cannot be used in the transaction that adds it) |
+| `20260924160100_rebook_invitations.sql` | `services.rebook_after_days`, the invitation trigger, `rebook_invitation_context()` for the worker, `unsubscribe_marketing()` also stops invitations |
+| `20260924160200_business_value_summary.sql` | `business_value_summary()` - the dashboard's "what GLOWA brought you", SECURITY INVOKER |
 
 | `…100000_deposits.sql` | deposit lifecycle: `business_payment_accounts`, frozen `businesses.deposits_enabled`, appointment deposit columns + state trigger, refund queue trigger, confirmation held until paid, service-role payment RPCs |
 | `…100100_deposit_refund_reference.sql` | `complete_deposit_refund` treats `''` as "no reference" |
@@ -607,8 +610,17 @@ repository's previous versions and matched, so nothing made in the dashboard
 was overwritten.
 
 The live migration *versions* are the MCP's timestamps, not the file names;
-the names match. `src/types/database.ts` has the closures and subscription
-types added by hand; regenerate with `npm run db:types` when convenient.
+the names match.
+
+**09-24 evening: rebook invitations and the value summary** (`160000`-`160200`)
+were applied live through the MCP after passing locally. `unsubscribe_marketing`
+was compared with the repository's version first and matched. The seven
+functions they create or replace have identical `md5(pg_get_functiondef())`
+locally and live; comments sit outside function bodies so that stays true.
+`src/types/database.ts` is now regenerated from the live project (no hand
+edits); the one RPC argument the generator types as non-null but the function
+accepts as null (`apply_stripe_subscription.p_current_period_end`) is cast at
+the call site instead of editing the generated file.
 
 **Deploying.** Vercel project `glowa` (team "ivan-hristoslavov's projects",
 region `dub1`). A push to any branch builds a preview. Production is created
@@ -840,6 +852,7 @@ has its confirmation queued, and one that rolls back never does.
 | `reschedule` | `starts_at` changed while active | now |
 | `cancellation` | status → `cancelled` | now |
 | `review_request` | status → `completed` | `completed_at` + 3 h |
+| `rebook_nudge` | status → `completed`, service has `rebook_after_days` | visit `starts_at` + the interval (§8q) |
 
 A reminder whose time is no longer the appointment's is flipped to `skipped`
 with `error = 'superseded'` in the same statement that queues its replacement.
@@ -967,11 +980,12 @@ including the name-only walk-in, and the notification outbox (unique key,
 confirmation queued, unreachable walk-in queued nothing, cancellation
 superseding the reminder).
 
-These need a local stack (`supabase start`), which needs Docker. Docker was not
-running when they were written, so the pgTAP harness itself has not been
-executed — every assertion in it was verified individually against the live
-schema inside a transaction that was then rolled back. Run `npm run test:db`
-once Docker is available to confirm the harness.
+These need a local stack (`supabase start`), which needs Docker. **As of 09-24
+the harness runs: `supabase test db` passes 51/51** across
+`booking_invariants` (21), `deposits` (14) and `rebook_invitations` (16). Its
+first run found one broken assertion: `col_has_check` compares column arrays in
+order and the range check is stored as `{ends_at,starts_at}`; the test now
+names them in that order.
 
 ---
 
@@ -1467,12 +1481,80 @@ environment yet (§11).
   direct payouts) - each true of the product. Deliberately not Fresha's layout.
 - **Competitive notes**: `docs/competitive-fresha.md` - what salons and clients
   dislike about Fresha and what GLOWA does about each, with sources.
+  `docs/competitive-studio24.md` - the Bulgarian incumbent (free software,
+  paid new clients) and why a GLOWA subscription is worth paying (§8q).
 - **Client export**: `/api/business/clients/export` (managers+, active business,
   read through RLS, UTF-8 BOM, formula-injection safe).
 - **`/for-business`**: the pitch to salon owners - calendar, deposits and the salon
   page as three pillars with illustrative mocks (hidden from assistive tech, no
   numbers claimed), everything included, three steps, FAQ, CTA. Links to the showcase
   salon only when this environment has it. In the header, mobile nav and sitemap.
+
+## 8q. Rebook invitations and "what GLOWA brought you" (09-24)
+
+Why these exist: the biggest local competitor gives its salon software away
+and earns from commission on new clients and paid placement
+(`docs/competitive-studio24.md`). A paid GLOWA subscription has to be worth it
+next to "free", so these features fill the diary with *returning* clients and
+then show the salon, in its own numbers, what came of it.
+
+**Rebook invitations.** Per service, the salon picks "invite the client back
+after N weeks" (`services.rebook_after_days`, 7-365 days, null = off). The
+editor suggests a value per category (nails and lashes 3 weeks, barber, skin
+and massage 4, hair and spa 6, nothing for make-up and tattoo) and a new
+service follows its category until the owner picks; existing services stay
+off until someone turns them on. The service card shows a chip when it is on.
+
+- `app.queue_rebook_invitation` (AFTER INSERT/UPDATE OF status) queues one
+  `rebook_nudge` when a visit becomes `completed`, for the visit's `starts_at`
+  + the interval, keyed `rebook_nudge:<appointment>`. It never queues for demo
+  or imported rows, a visit whose date has already passed, a client who
+  already has a later pending/confirmed/completed visit (profile or
+  case-insensitive email), or one who said no.
+- "Said no" = `consent_marketing = false` **and** `consent_updated_at` set.
+  A client nobody ever asked may be invited, under the existing-customer
+  exception (ePrivacy art. 13(2)), with a one-click way out in every
+  invitation. `unsubscribe_marketing` now always stamps the withdrawal (even
+  when consent was never given) and skips queued invitations for that client.
+  The privacy policy lists this purpose and basis (§4 of the policy).
+- At send time the worker calls `rebook_invitation_context()` (service role
+  only): `due`, `returned`, `declined`, `switched_off` (interval removed,
+  service retired, salon not active) or `missing`; anything but `due` is
+  `skipped` with that reason.
+- Free times come from `get_available_slots` for the next 14 days, same
+  stylist and location first, anyone who does the service if they are full.
+  `pickInvitationSlots` (`lib/notifications/rebook.ts`, unit-tested) keeps one
+  slot per day - the one closest to the time of day of the previous visit -
+  drops anything under 2 hours away, and offers the first three days. Each
+  slot links to `book?service=&staff=&at=`, which opens on the confirm step.
+- Customers can switch the event off in their settings like every other.
+
+Verified locally end to end: a visit completed 20 days ago with a 3-week
+interval queued an invitation for the next day at the visit's hour; sent, it
+offered 17:00 / 16:00 / 17:00 on three days with the same stylist (the visit
+was 18:30, the salon closes at 18:00); the slot link opened on the confirm
+step with that time chosen; the unsubscribe link recorded the "no". pgTAP
+`rebook_invitations.test.sql` covers queueing, the send-time states, the
+grant, the way out and the summary's RLS (16 tests).
+
+**"What GLOWA brought you this month"** (dashboard, `ValuePanel`, hidden while
+the salon is a draft). `business_value_summary()` is SECURITY INVOKER, so a
+non-member gets zeros. It counts, from the salon's own rows: bookings clients
+made online and their value; bookings within 30 days of a *sent* invitation
+(the client matched by profile or email); bookings within 2 days of a sent
+waitlist offer; deposits retained on no-shows. Cancelled and no-show bookings
+have no value; demo rows never count. The attribution windows are printed
+under the panel. When no active service has invitations on, the panel links
+to Services to switch them on. A failure to load hides the panel, not the
+dashboard.
+
+**The pitch.** `WhyPay` (`components/marketing/why-pay.tsx`) on
+`/for-business` and `/pricing`: "when booking is free, you pay with your
+clients" - free platforms usually earn from commission on new clients and
+paid placement; GLOWA takes a flat fee, so it is built to bring clients back.
+Five points, each a feature that runs today (invitations, waitlist, deposits,
+0% commission and export, the value panel). No competitor is named and no
+number is claimed. Solo's plan card lists the invitations.
 
 ## 8p. Signature features (2026-09-24)
 
@@ -1768,12 +1850,19 @@ traction claim may appear unless it is real.
 25. A closure never notifies anyone: the owner is told how many live bookings
     fall inside it and has to call them. A "closure → notify and offer
     rebooking" path through the outbox would close that.
+29. **Rebook invitations** (§8q): have the lawyer confirm the
+    existing-customer basis for Bulgaria and Romania; send them over Viber once
+    a Viber provider exists (the channel adapter is the only missing piece);
+    a monthly "what GLOWA brought you" email to the owner would carry the value
+    panel to people who do not open the dashboard; the invitations only reach
+    clients with an email address.
 26. The flyer prints through the browser's print dialog. That is a real PDF,
     but a "download PNG for Instagram" export would need a canvas renderer.
 
 16. **Pricing is published** (2026-09-24, `docs/pricing.md`): Solo €6 (€5 yearly),
     Studio €12 (€10 yearly) up to 5, Salon €24 (€20 yearly) unlimited; 0%
-    commission, no fee on deposits. Nothing is billed during early access
+    commission, no fee on deposits. The case for paying next to free
+    platforms is §8q. Nothing is billed during early access
     (`EARLY_ACCESS_UNTIL` = 2027-02-28). Subscription billing is built (§8n:
     Checkout, portal, webhook) and off until the Stripe keys are set. Still to
     do before that date: seat limits counted from `staff_profiles`, and 30

@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { routing, type Locale } from "@/i18n/routing";
-import { renderCampaign, renderNotification } from "@/lib/notifications/render";
+import {
+  renderCampaign,
+  renderNotification,
+  renderRebookInvitation,
+} from "@/lib/notifications/render";
 import type { NotificationEvent } from "@/lib/notifications/types";
 
 const EVENTS: NotificationEvent[] = [
@@ -20,6 +24,7 @@ const EVENTS: NotificationEvent[] = [
  *
  *   /api/dev/email-preview?event=reminder&locale=en
  *   /api/dev/email-preview?event=marketing
+ *   /api/dev/email-preview?event=rebook_nudge&slots=0
  */
 export async function GET(request: NextRequest) {
   if (process.env.NODE_ENV === "production") {
@@ -35,6 +40,37 @@ export async function GET(request: NextRequest) {
   const startsAt = new Date(Date.now() + 26 * 3_600_000);
   startsAt.setMinutes(30, 0, 0);
   const endsAt = new Date(startsAt.getTime() + 75 * 60_000);
+
+  if (event === "rebook_nudge") {
+    const book = `${request.nextUrl.origin}/${locale}/business/demo-hair-lab-sofia/book?service=sample`;
+    const slots =
+      params.get("slots") === "0"
+        ? []
+        : [2, 3, 5].map((days) => {
+            const at = new Date(Date.now() + days * 86_400_000);
+            at.setUTCHours(14, 30, 0, 0); // an after-work time in Sofia
+            return { startsAt: at.toISOString(), href: `${book}&at=${at.toISOString()}` };
+          });
+    const invitation = await renderRebookInvitation({
+      locale,
+      businessName: "Hair Lab Sofia",
+      businessTimezone: "Europe/Sofia",
+      businessPhone: "+359 88 123 4567",
+      serviceName: { bg: "Гел лак", en: "Gel polish", ro: "Ojă semipermanentă" },
+      staffName: "Мария",
+      customerName: "Елена",
+      weeks: 3,
+      slots,
+      allTimesHref: book,
+      unsubscribeUrl: `${request.nextUrl.origin}/${locale}/unsubscribe/sample`,
+      locationName: "Hair Lab · Център",
+      locationAddress: "ул. Гурко 24, София",
+      businessCoverUrl: "/brand/cover-hair-lab.webp",
+    });
+    return new NextResponse(invitation.html, {
+      headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex" },
+    });
+  }
 
   const rendered =
     event === "marketing"

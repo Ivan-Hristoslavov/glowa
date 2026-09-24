@@ -640,9 +640,9 @@
   "unsubscribe": {
     "title": "Dezabonare",
     "doneTitle": "Gata — te-ai dezabonat",
-    "doneBody": "Nu vei mai primi mesaje de marketing de la {business}.",
+    "doneBody": "Nu vei mai primi mesaje de marketing sau invitații la o nouă programare de la {business}.",
     "alreadyTitle": "Ești deja dezabonat",
-    "alreadyBody": "{business} nu îți mai trimite mesaje de marketing.",
+    "alreadyBody": "{business} nu îți mai trimite mesaje de marketing sau invitații la o nouă programare.",
     "unknownTitle": "Linkul nu este valid",
     "unknownBody": "Poate a expirat sau a fost deja folosit. Dacă încă primești mesaje, contactează salonul.",
     "stillBooked": "Confirmările și memento-urile pentru propriile programări continuă — acelea nu sunt marketing.",
@@ -704,7 +704,8 @@
       "reschedule": "Reprogramare",
       "review_request": "Invitație la recenzie",
       "marketing": "Oferte și campanii",
-      "waitlist_offer": "Un loc eliberat din lista de așteptare"
+      "waitlist_offer": "Un loc eliberat din lista de așteptare",
+      "rebook_nudge": "O invitație pentru o nouă vizită, când serviciul trebuie reînnoit"
     },
     "channelSoon": "În curând",
     "calendar": "Calendar",
@@ -916,6 +917,21 @@
           "body": "Salonul apare în căutare și primește programări.",
           "cta": ""
         }
+      },
+      "value": {
+        "title": "Ce ți-a adus GLOWA luna aceasta",
+        "subtitle": "Doar programări reale din propriul calendar — nimic estimat.",
+        "online": "Programați online de clienți singuri",
+        "invited": "Reveniți după o invitație",
+        "invitationsSent": "{count, plural, =0 {încă nicio invitație trimisă} one {# invitație trimisă} few {# invitații trimise} other {# de invitații trimise}}",
+        "refilled": "Completate din lista de așteptare",
+        "refilledHint": "ore eliberate care nu au rămas goale",
+        "kept": "Avansuri reținute la neprezentare",
+        "keptHint": "banii rămân la tine — fără comision",
+        "worth": "în valoare de {amount}",
+        "footnote": "O revenire se numără dacă clientul se programează în 30 de zile de la invitație; un loc completat din lista de așteptare, în 2 zile de la ofertă. Programările anulate nu se numără.",
+        "rebookOff": "Invitațiile pentru o nouă vizită sunt oprite.",
+        "rebookOffCta": "Pornește-le"
       }
     },
     "calendar": {
@@ -1039,7 +1055,12 @@
       "requiresDepositHint": "Se încasează la rezervările online după ce plățile sunt conectate. Se returnează automat la o anulare la timp.",
       "subtitle": "Meniul pe care clienții îl văd și îl rezervă. Prețuri, durate, avansuri și cine execută fiecare serviciu.",
       "staffCount": "{count, plural, =0 {nimeni alocat} one {# stilist} few {# stiliști} other {# de stiliști}}",
-      "inactiveSection": "Inactive"
+      "inactiveSection": "Inactive",
+      "rebook": "Invită clientul din nou după",
+      "rebookOff": "Fără invitație",
+      "rebookWeeks": "{count, plural, one {# săptămână} few {# săptămâni} other {# de săptămâni}}",
+      "rebookHint": "Dacă clientul nu s-a programat până atunci, GLOWA îi scrie în numele salonului cu primele ore libere — la același specialist, în jurul orei la care vine de obicei. Nu scriem nimănui care are deja următoarea vizită sau s-a dezabonat.",
+      "rebookChip": "Invitație după {count, plural, one {# săptămână} few {# săptămâni} other {# de săptămâni}}"
     },
     "staff": {
       "title": "Echipă",
@@ -1618,12 +1639,14 @@
       "bookSlot": "Rezervă acest loc",
       "addToCalendar": "Adaugă în calendar",
       "directions": "Indicații",
-      "call": "Sună"
+      "call": "Sună",
+      "allTimes": "Toate orele libere"
     },
     "footer": {
       "signature": "Echipa {business}",
       "sentBy": "Trimis prin GLOWA",
-      "unsubscribe": "Dezabonează-te de la marketing"
+      "unsubscribe": "Dezabonează-te de la marketing",
+      "noInvitations": "Nu mai vreau invitații de la {business}"
     },
     "badge": {
       "booking_confirmation": "Confirmat",
@@ -1632,7 +1655,14 @@
       "cancellation": "Anulat",
       "review_request": "Vă mulțumim",
       "waitlist_offer": "S-a eliberat un loc",
-      "marketing": "Noutăți"
+      "marketing": "Noutăți",
+      "rebook_nudge": "Invitație"
+    },
+    "rebook_nudge": {
+      "subject": "E timpul pentru o nouă vizită la {business}",
+      "heading": "E timpul pentru o nouă vizită",
+      "body": "Au trecut {weeks, plural, one {# săptămână} few {# săptămâni} other {# de săptămâni}} de la ultima vizită pentru „{service}”. Iată primele ore libere{staff, select, none {} other { la {staff}}} — rezervați cu o singură atingere.",
+      "bodyNoSlots": "Au trecut {weeks, plural, one {# săptămână} few {# săptămâni} other {# de săptămâni}} de la ultima vizită pentru „{service}”. Programați următoarea vizită când vă convine."
     }
   },
   "pricing": {
@@ -1693,7 +1723,8 @@
       "roles": "Roluri și drepturi de acces",
       "auditLog": "Jurnal de acțiuni",
       "priority": "Suport prioritar",
-      "deposits": "Avansuri împotriva neprezentării — fără taxă de la noi"
+      "deposits": "Avansuri împotriva neprezentării — fără taxă de la noi",
+      "rebookInvites": "Invitații pentru o nouă vizită, cu orele libere incluse"
     },
     "cta": {
       "start": "Începe",
@@ -1933,5 +1964,31 @@
     "attributionBody": "Reține timp de 30 de zile de pe ce cod QR sau link ai venit, ca programarea să fie atribuită salonului sau prietenului corect.",
     "noTracking": "Nu folosim cookie-uri de publicitate sau de analiză și nu împărtășim date cu rețele de reclame.",
     "save": "Salvează alegerea"
+  },
+  "whyPay": {
+    "eyebrow": "De ce să plătești când altele sunt gratuite",
+    "title": "Când programarea e „gratuită”, plătești cu clienții tăi.",
+    "subtitle": "Platformele gratuite câștigă de obicei din comision pe clienții noi și din plasare plătită în căutare. GLOWA ia doar un abonament fix — de aceea totul în ea e făcut ca clienții tăi să revină la tine, nu la următorul salon din listă.",
+    "rebook": {
+      "title": "Clienții revin singuri",
+      "body": "Când manichiura sau tunsoarea trebuie refăcută, GLOWA invită clientul în numele salonului cu până la trei ore libere reale — la același specialist, în jurul orei la care vine de obicei. O atingere și e la pasul de confirmare. Nu scriem nimănui care are deja o programare sau s-a dezabonat."
+    },
+    "waitlist": {
+      "title": "O oră eliberată nu rămâne goală",
+      "body": "Când cineva anulează, oamenii din lista de așteptare pentru acea zi află imediat. Ora e a celui care rezervă primul — nimeni nu e programat fără să accepte."
+    },
+    "deposits": {
+      "title": "Avans în loc de telefoane",
+      "body": "Pentru serviciile unde o neprezentare doare, clientul plătește un avans cu cardul la programare. Se returnează automat la o anulare la timp, iar banii ajung direct în contul tău Stripe."
+    },
+    "yours": {
+      "title": "Clienții rămân ai tăi",
+      "body": "0% comision — nici pe clienți noi, nici pe avansuri. Fără clasament plătit, fără alte saloane pe pagina ta, iar toată lista de clienți se exportă cu un buton."
+    },
+    "proof": {
+      "title": "Vezi ce îți aduce",
+      "body": "În fiecare lună, panoul arată câte vizite au fost programate online, câți clienți au revenit după o invitație și câte avansuri ai reținut. Numărate din propriul calendar — nimic estimat."
+    },
+    "seePricing": "Vezi prețurile"
   }
 }

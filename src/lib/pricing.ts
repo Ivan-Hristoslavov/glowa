@@ -45,6 +45,7 @@ export const PLANS: Plan[] = [
       "clients",
       "deposits",
       "reminders",
+      "rebookInvites",
       "reviewRequests",
       "publicProfile",
     ],

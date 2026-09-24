@@ -127,7 +127,7 @@ export async function getBusinessWorkspace(businessId: string) {
         .select(
           `id, name, description, category, duration_minutes, buffer_before_minutes,
            buffer_after_minutes, price_cents, currency, requires_deposit, deposit_cents,
-           is_active, sort_order, service_staff ( staff_profile_id )`,
+           is_active, sort_order, rebook_after_days, service_staff ( staff_profile_id )`,
         )
         .eq("business_id", businessId)
         .order("sort_order"),
@@ -164,6 +164,35 @@ export async function getDashboardMetrics(
 export type DashboardMetrics = NonNullable<
   Awaited<ReturnType<typeof getDashboardMetrics>>
 >;
+
+/**
+ * What GLOWA brought the salon in a period, counted from its own diary
+ * (`business_value_summary`, read through RLS). Also whether any service has
+ * rebook invitations switched on, so the panel can say when they are off.
+ */
+export async function getValueSummary(businessId: string, from: Date, to: Date) {
+  const supabase = await createClient();
+  const [{ data, error }, { count }] = await Promise.all([
+    supabase
+      .rpc("business_value_summary", {
+        p_business_id: businessId,
+        p_from: from.toISOString(),
+        p_to: to.toISOString(),
+      })
+      .maybeSingle(),
+    supabase
+      .from("services")
+      .select("id", { count: "exact", head: true })
+      .eq("business_id", businessId)
+      .eq("is_active", true)
+      .not("rebook_after_days", "is", null),
+  ]);
+
+  if (error) throw error;
+  return data ? { ...data, rebookServices: count ?? 0 } : null;
+}
+
+export type ValueSummary = NonNullable<Awaited<ReturnType<typeof getValueSummary>>>;
 
 const ADMIN_APPOINTMENT_SELECT = `
   id, starts_at, ends_at, status, price_cents, currency, customer_name,

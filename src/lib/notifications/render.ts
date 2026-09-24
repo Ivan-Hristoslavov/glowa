@@ -105,6 +105,135 @@ export async function renderCampaign(
   return { subject: context.subject, text, html };
 }
 
+/**
+ * "Time for your next one": the salon inviting a client back when the service
+ * they had is due again. The message is built around real free times - the
+ * worker found them a moment ago with the same function the booking flow
+ * uses - so one tap lands on the confirm step with that time chosen.
+ */
+export type RebookContext = {
+  locale: Locale;
+  businessName: string;
+  businessTimezone: string;
+  businessPhone: string | null;
+  businessLogoUrl?: string | null;
+  businessCoverUrl?: string | null;
+  serviceName: unknown;
+  staffName: string | null;
+  customerName: string | null;
+  weeks: number;
+  slots: { startsAt: string; href: string }[];
+  allTimesHref: string;
+  /** The client's own opaque token; null only if the CRM row is missing. */
+  unsubscribeUrl: string | null;
+  locationName: string | null;
+  locationAddress: string | null;
+};
+
+export async function renderRebookInvitation(
+  context: RebookContext,
+): Promise<RenderedMessage> {
+  const t = await getTranslations({
+    locale: context.locale,
+    namespace: "notifications",
+  });
+
+  const service = pickLocalized(context.serviceName, context.locale, "");
+  const values = {
+    business: context.businessName,
+    service,
+    weeks: context.weeks,
+    name: context.customerName ?? "",
+    staff: context.staffName ?? "none",
+  };
+
+  const subject = t("rebook_nudge.subject", values);
+  const heading = t("rebook_nudge.heading", values);
+  const body = t(
+    context.slots.length > 0 ? "rebook_nudge.body" : "rebook_nudge.bodyNoSlots",
+    values,
+  );
+  const choices = context.slots.map((slot) => ({
+    label: formatSlot(slot.startsAt, context.locale, context.businessTimezone),
+    href: slot.href,
+  }));
+  const primary = { label: t("action.allTimes"), href: context.allTimesHref };
+  const unsubscribe = context.unsubscribeUrl
+    ? {
+        label: t("footer.noInvitations", { business: context.businessName }),
+        href: context.unsubscribeUrl,
+      }
+    : undefined;
+
+  const text = [
+    heading,
+    "",
+    body,
+    "",
+    ...choices.map((choice) => `• ${choice.label}: ${choice.href}`),
+    choices.length ? "" : null,
+    `${primary.label}: ${primary.href}`,
+    "",
+    t("footer.signature", { business: context.businessName }),
+    t("footer.sentBy"),
+    unsubscribe ? `${unsubscribe.label}: ${unsubscribe.href}` : null,
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n")
+    .trim();
+
+  const html = renderHtml({
+    locale: context.locale,
+    preheader: body.slice(0, 140),
+    brand: {
+      name: context.businessName,
+      logoUrl: absoluteImage(context.businessLogoUrl),
+      coverUrl: absoluteImage(context.businessCoverUrl),
+    },
+    badge: { label: t("badge.rebook_nudge"), tone: "coral" },
+    heading,
+    body,
+    ticket: null,
+    choices,
+    details: [],
+    primary,
+    secondary: context.businessPhone
+      ? [
+          {
+            label: t("action.call"),
+            href: `tel:${context.businessPhone.replace(/[^\d+]/g, "")}`,
+          },
+        ]
+      : [],
+    footerLines: [
+      t("footer.signature", { business: context.businessName }),
+      [context.locationName, context.locationAddress].filter(Boolean).join(" · "),
+      t("footer.sentBy"),
+    ].filter(Boolean),
+    unsubscribe,
+  });
+
+  return { subject, text, html };
+}
+
+/** "Thu, 16 October · 18:00" in the salon's own time zone. */
+function formatSlot(iso: string, locale: Locale, timeZone: string) {
+  const lang = localeHrefLang[locale];
+  const start = new Date(iso);
+  const day = new Intl.DateTimeFormat(lang, {
+    weekday: "short",
+    day: "numeric",
+    month: "long",
+    timeZone,
+  }).format(start);
+  const time = new Intl.DateTimeFormat(lang, {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone,
+  }).format(start);
+  return `${day} · ${time}`;
+}
+
 export async function renderNotification(
   context: NotificationContext,
 ): Promise<RenderedMessage> {
@@ -389,6 +518,8 @@ function renderHtml(input: {
   heading: string;
   body: string;
   ticket: Ticket | null;
+  /** Tappable options (free times), each its own full-width link. */
+  choices?: { label: string; href: string }[];
   details: DetailLine[];
   primary: Action;
   secondary: { label: string; href: string }[];
@@ -426,6 +557,21 @@ function renderHtml(input: {
                 ${input.ticket.subtitle ? `<div style="margin-top:2px;font-size:13px;color:#6b625b;">${escapeHtml(input.ticket.subtitle)}</div>` : ""}
               </td>
             </tr>
+          </table>`
+    : "";
+
+  const choices = input.choices?.length
+    ? `
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">${input.choices
+            .map(
+              (choice) => `
+            <tr>
+              <td style="padding:0 0 10px;">
+                <a href="${escapeHtml(choice.href)}" style="display:block;padding:14px 18px;border:1px solid #eadfd6;border-radius:14px;background:#fffaf7;color:#0f1212;text-decoration:none;font-size:15px;font-weight:600;"><span style="color:#d96c61;">&#9679;</span>&nbsp; ${escapeHtml(choice.label)} <span style="color:#d96c61;font-weight:700;">&rarr;</span></a>
+              </td>
+            </tr>`,
+            )
+            .join("")}
           </table>`
     : "";
 
@@ -493,6 +639,7 @@ function renderHtml(input: {
                 <h1 style="margin:0 0 10px;font-family:${serif};font-size:28px;line-height:1.2;font-weight:600;color:#0f1212;">${escapeHtml(input.heading)}</h1>
                 <p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#4a4541;white-space:pre-line;">${escapeHtml(input.body)}</p>
                 ${ticket}
+                ${choices}
                 ${rows ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">${rows}</table>` : ""}
                 ${button}
                 ${secondary}

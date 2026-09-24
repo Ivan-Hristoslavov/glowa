@@ -35,6 +35,8 @@ const serviceSchema = z.object({
   depositCents: z.number().int().min(0),
   isActive: z.boolean(),
   staffIds: z.array(z.uuid()).max(100),
+  /** Days after a visit at which the client is invited back; null = never. */
+  rebookAfterDays: z.number().int().min(7).max(365).nullable().optional(),
 });
 
 export async function upsertService(
@@ -71,6 +73,9 @@ export async function upsertService(
       ? Math.min(parsed.data.depositCents, parsed.data.priceCents)
       : 0,
     is_active: parsed.data.isActive,
+    ...(parsed.data.rebookAfterDays !== undefined
+      ? { rebook_after_days: parsed.data.rebookAfterDays }
+      : {}),
   };
 
   const { data, error } = parsed.data.serviceId

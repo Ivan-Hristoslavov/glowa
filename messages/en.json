@@ -640,9 +640,9 @@
   "unsubscribe": {
     "title": "Unsubscribe",
     "doneTitle": "Done — you're unsubscribed",
-    "doneBody": "You won't receive marketing messages from {business} any more.",
+    "doneBody": "You won't receive marketing messages or invitations to book again from {business} any more.",
     "alreadyTitle": "Already unsubscribed",
-    "alreadyBody": "{business} no longer sends you marketing messages.",
+    "alreadyBody": "{business} no longer sends you marketing messages or invitations to book again.",
     "unknownTitle": "This link isn't valid",
     "unknownBody": "It may have expired or already been used. If you're still receiving messages, contact the salon.",
     "stillBooked": "Confirmations and reminders for your own appointments continue — those aren't marketing.",
@@ -704,7 +704,8 @@
       "reschedule": "Reschedule",
       "review_request": "Review request",
       "marketing": "Offers and campaigns",
-      "waitlist_offer": "A freed slot from the waitlist"
+      "waitlist_offer": "A freed slot from the waitlist",
+      "rebook_nudge": "An invitation back when a service is due again"
     },
     "channelSoon": "Soon",
     "calendar": "Calendar",
@@ -916,6 +917,21 @@
           "body": "Your salon appears in search and starts taking bookings.",
           "cta": ""
         }
+      },
+      "value": {
+        "title": "What GLOWA brought you this month",
+        "subtitle": "Only real bookings from your own diary — nothing estimated.",
+        "online": "Booked online by clients themselves",
+        "invited": "Came back after an invitation",
+        "invitationsSent": "{count, plural, =0 {no invitations sent yet} one {# invitation sent} other {# invitations sent}}",
+        "refilled": "Refilled from the waitlist",
+        "refilledHint": "freed slots that didn't stay empty",
+        "kept": "Deposits kept on no-shows",
+        "keptHint": "the money stays with you — no commission",
+        "worth": "worth {amount}",
+        "footnote": "A return counts when the client books within 30 days of an invitation; a waitlist refill, within 2 days of the offer. Cancelled bookings don't count.",
+        "rebookOff": "Rebook invitations are off.",
+        "rebookOffCta": "Switch them on"
       }
     },
     "calendar": {
@@ -1039,7 +1055,12 @@
       "requiresDepositHint": "Taken on online bookings once payments are connected. Refunded automatically on an on-time cancellation.",
       "subtitle": "The menu clients see and book. Prices, durations, deposits and who performs each service.",
       "staffCount": "{count, plural, =0 {no one assigned} one {# stylist} other {# stylists}}",
-      "inactiveSection": "Switched off"
+      "inactiveSection": "Switched off",
+      "rebook": "Invite the client back after",
+      "rebookOff": "No invitation",
+      "rebookWeeks": "{count, plural, one {# week} other {# weeks}}",
+      "rebookHint": "If the client has not booked by then, GLOWA emails them in the salon's name with the first free times — with the same stylist, around the time they usually come. Nobody who already has a next visit, or who unsubscribed, is written to.",
+      "rebookChip": "Invite after {count, plural, one {# week} other {# weeks}}"
     },
     "staff": {
       "title": "Team",
@@ -1618,12 +1639,14 @@
       "bookSlot": "Book this slot",
       "addToCalendar": "Add to calendar",
       "directions": "Directions",
-      "call": "Call"
+      "call": "Call",
+      "allTimes": "All free times"
     },
     "footer": {
       "signature": "The {business} team",
       "sentBy": "Sent with GLOWA",
-      "unsubscribe": "Unsubscribe from marketing"
+      "unsubscribe": "Unsubscribe from marketing",
+      "noInvitations": "No more invitations from {business}"
     },
     "badge": {
       "booking_confirmation": "Confirmed",
@@ -1632,7 +1655,14 @@
       "cancellation": "Cancelled",
       "review_request": "Thank you",
       "waitlist_offer": "A place opened up",
-      "marketing": "News"
+      "marketing": "News",
+      "rebook_nudge": "Invitation"
+    },
+    "rebook_nudge": {
+      "subject": "Time for your next visit to {business}",
+      "heading": "Time for your next visit",
+      "body": "It has been {weeks, plural, one {# week} other {# weeks}} since your last visit for “{service}”. Here are the first free times{staff, select, none {} other { with {staff}}} — one tap to book.",
+      "bodyNoSlots": "It has been {weeks, plural, one {# week} other {# weeks}} since your last visit for “{service}”. Book your next one whenever it suits you."
     }
   },
   "pricing": {
@@ -1693,7 +1723,8 @@
       "roles": "Roles and access control",
       "auditLog": "Audit log",
       "priority": "Priority support",
-      "deposits": "No-show deposits — no fee from us"
+      "deposits": "No-show deposits — no fee from us",
+      "rebookInvites": "Rebook invitations with the free times inside"
     },
     "cta": {
       "start": "Get started",
@@ -1933,5 +1964,31 @@
     "attributionBody": "Remembers for 30 days which QR code or link you came from, so the booking is credited to the right salon or friend.",
     "noTracking": "We use no advertising or analytics cookies and share no data with ad networks.",
     "save": "Save my choice"
+  },
+  "whyPay": {
+    "eyebrow": "Why pay when others are free",
+    "title": "When booking is “free”, you pay with your clients.",
+    "subtitle": "Free platforms usually earn from a commission on new clients and from paid placement in search. GLOWA takes a flat subscription and nothing else — so everything in it is built to bring your clients back to you, not on to the next salon in the list.",
+    "rebook": {
+      "title": "Your clients come back on their own",
+      "body": "When a manicure or a cut is due again, GLOWA invites the client in the salon's name with up to three real free times — with the same stylist, around the hour they usually come. One tap and they are at the confirm step. Nobody who already has a visit, or who unsubscribed, is written to."
+    },
+    "waitlist": {
+      "title": "A freed slot doesn't stay empty",
+      "body": "When someone cancels, the people on the waitlist for that day hear about it at once. The slot goes to whoever books first — nobody is booked without saying yes."
+    },
+    "deposits": {
+      "title": "A deposit instead of chasing by phone",
+      "body": "For the services where a no-show hurts, the client pays a deposit by card when booking. It is refunded automatically on a timely cancellation, and the money goes straight to your own Stripe account."
+    },
+    "yours": {
+      "title": "Your clients stay yours",
+      "body": "0% commission — not on new clients, not on deposits. No paid ranking, no other salons on your page, and your whole client list exports with one button."
+    },
+    "proof": {
+      "title": "You see what it brings",
+      "body": "Every month the dashboard shows how many visits were booked online, how many clients came back after an invitation and how much in deposits you kept. Counted from your own diary — nothing estimated."
+    },
+    "seePricing": "See pricing"
   }
 }

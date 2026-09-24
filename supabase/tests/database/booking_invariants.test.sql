@@ -46,7 +46,7 @@ values (
 -- ---------------------------------------------------------------------------
 select has_table('public', 'appointments', 'appointments exists');
 
-select col_has_check('public', 'appointments', array['starts_at', 'ends_at'],
+select col_has_check('public', 'appointments', array['ends_at', 'starts_at'],
   'a range with ends_at <= starts_at is refused');
 
 insert into public.appointments (
