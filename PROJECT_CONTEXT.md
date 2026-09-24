@@ -22,6 +22,18 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | Prompt 3 | Business app: dashboard, calendar, staff, services, CRM, marketing | **Done** |
 | Prompt 4 | Integrations, AI, growth layer | Not started |
 | Prompt 5 | Production polish, QA, Vercel | Not started |
+| 09-24 pass | Walkthrough as guest/customer/owner, fixes, landing redesign, motion | **Done** (PR #2, stacked on #1) |
+
+**09-24 pass.** The database was built from the repository with `supabase
+start` (images pulled via `mirror.gcr.io`, because Docker Hub rate-limits and
+ghcr.io blob hosts are blocked from the cloud sandbox) and the site was used in
+Chromium at desktop and phone sizes as a guest, a customer and a salon owner.
+That found nine bugs, fixed in PR #2: anonymous search 500 on a fresh DB, seed
+still in BGN, auth forms wiping themselves, guest booking losing its selection,
+no path from sign-up to onboarding, random slugs for Cyrillic names, an open
+redirect in `?next=`, the salon hero cutting its badge in half, and Playfair's
+old-style numerals in dashboard figures. `npm run check` (lint, typecheck, 46
+unit tests) and `npm run build` pass; 27 routes crawled with no errors.
 
 Verified at the end of Prompt 3: `npm run lint`, `npm run typecheck` and
 `npm run build` pass (68 static entries, 28 routes). The business app was
@@ -48,6 +60,8 @@ the CRM trigger skipped it for the same reason.
 - **Supabase** — Postgres, Auth, RLS, Storage
 - `next-themes`, `sonner`, `zod` v4, `date-fns` + `@date-fns/tz`
 - `sharp` (dev only) for the brand-asset conversion script
+- `motion` (motion/react, via `LazyMotion` + `m.*`) for the interactive
+  surfaces only; `canvas-confetti`, loaded on demand, for the booking moment
 
 ### Next.js 16 specifics that differ from older training data
 
@@ -106,6 +120,8 @@ src/
       calendar/    board, appointment dialog, block-time dialog
       charts/      shell, bar, horizontal bar
     auth/ booking/ brand/ common/ customer/ discovery/ layout/ ui/
+    home/          landing-only visuals: hero showcase, business calendar preview
+    motion/        MotionProvider (LazyMotion + reduced-motion policy)
   i18n/            routing · request · navigation
   lib/
     actions/       booking · favorites · reviews · settings · business ·
@@ -122,7 +138,7 @@ src/
     env.ts  format.ts  localized.ts  utils.ts
   types/database.ts
   proxy.ts
-messages/          bg.json · en.json · ro.json (595 keys each, verified equal)
+messages/          bg.json · en.json · ro.json (969 keys each, verified equal)
 supabase/          migrations/ · seed.sql
 ```
 
@@ -172,6 +188,27 @@ inversion.
 - **Utilities** `glowa-card`, `glowa-focus`. Global `prefers-reduced-motion` guard.
 - **Logo**: `GlowaMark` / `GlowaLogo`, stroke-based, `monochrome` variant.
 
+**Motion** (2026-09-24). Two systems, split by what each surface needs:
+
+- **Marketing pages animate with CSS only** — utilities in `globals.css`:
+  `glowa-enter` (staggered entrance, `--delay` per item), `glowa-reveal`
+  (scroll-driven, `animation-timeline: view()`), `glowa-header` (header gains
+  depth on scroll), `glowa-float`, `glowa-marquee`, `glowa-shine`, `glowa-lift`
+  (hover lift for clickable cards). The HTML is complete without JavaScript; a
+  browser without scroll-driven animations simply shows the content. Every
+  scroll-driven rule sits inside `@supports` *and*
+  `prefers-reduced-motion: no-preference`; the global reduced-motion guard
+  covers the rest.
+- **Interactive surfaces use motion/react** through `MotionProvider`
+  (root layout): `LazyMotion` with `domAnimation`, `reducedMotion="user"`.
+  Use `m.*`, never `motion.*`. Do not put a motion entrance on the same
+  element as a CSS hover transform — motion writes an inline `transform`
+  that cancels it; wrap instead (see the service cards in the funnel).
+- **Page transitions**: React `<ViewTransition>` (no config in Next 16).
+  A salon's cover is named `cover-<slug>` on its search card and on its
+  page hero with `share="glowa-morph" default="none"`, so the photo travels
+  from card to page. Only one element per name may be on screen at once.
+
 **Imagery.** The visual set is generated and in place — see
 [`docs/visual-assets.md`](./docs/visual-assets.md) for provenance, the shared
 art direction and every prompt. In `public/brand/`: five heroes, six category
@@ -191,6 +228,14 @@ favicon are hand-authored SVG. A raster icon at 20px is mush and cannot inherit
 `currentColor`; the mark has to hold at 16px and in monochrome. Generated
 imagery is supporting material — the booking and admin surfaces stay crisp and
 typographic rather than becoming image collages.
+
+**The photographs are due for regeneration.** The owner judged the first set
+to look generated (one honey light, one coordinated palette, styled props), and
+the photographic direction and prompts in `scripts/generate-brand-assets.mjs`
+were rewritten for a candid, phone-shot, room-in-use look with the brand palette
+deliberately removed from the prompt. The session that did it had no image model
+(no `OPENAI_API_KEY`; Higgsfield at 0 credits), so the committed WebPs are still
+the first set. See `docs/visual-assets.md` → *Second direction*.
 
 The fallback rule lives in `fallbackBusinessImage()`: a business's own cover
 wins, then generated art for its category, then the brand gradient — never a
@@ -291,6 +336,14 @@ field (`slot_unavailable`, `slot_taken`, `window_closed`, `reschedule_disabled`,
 a union so an unexpected code degrades to a friendly sentence instead of leaking
 SQL.
 
+**The funnel** (`components/booking/booking-flow.tsx`) advances on its own
+260 ms after a choice, starts past the service step when `?service=` is given,
+lets you jump back to any finished step, groups times into morning / afternoon
+/ evening, pins a running total to the bottom of a phone screen, and ends on
+`BookingCelebration` (drawn tick; confetti unless reduced motion). A guest signs
+in or up inside the last step — being sent to /login used to throw the whole
+selection away.
+
 **Scaling note:** `SlotPicker` fetches a 21-day window in one call and groups it
 client-side, which makes day switching instant and lets the day strip grey out
 full days. For a salon with many bookable staff this response grows quickly; a
@@ -353,6 +406,8 @@ business id the caller manages for business media, resolved through
 | `…220000_book_appointment_self_derive.sql` | `book_appointment` writes a complete row instead of relying on the guard trigger |
 | `…090000_creator_can_read_own_business.sql` | a creator can read their own business, which is what makes `INSERT … RETURNING` work |
 | `…091000_onboarding_audit_write.sql` | the onboarding audit entry moves into the owner trigger |
+| `…130500_search_open_on_helper.sql` | the "open on" helper, applied live on 09-23 but never committed |
+| `…120000_slug_transliteration.sql` | `app.transliterate_slug`; Cyrillic/Romanian names get readable slugs |
 
 Four of these were written because something failed, not from a plan:
 
@@ -397,6 +452,27 @@ Four of these were written because something failed, not from a plan:
   It went unnoticed because the demo salons are seeded with their memberships
   in the same statement, so the real signup path had never been walked.
 
+- `130500` — **every anonymous search failed on a database built from the
+  repo.** The helper that keeps `staff_time_off` out of `search_businesses`
+  existed only in the live project. Postgres checks table privileges for every
+  relation in a plan at executor start, whether or not that branch runs, so the
+  inline read of `staff_time_off` made the landing page 500 for `anon`. The file
+  reproduces the live statements exactly. Found by `supabase start` and opening
+  the home page.
+
+- `120000` (09-24) — onboarding "Студио Петров" produced `salon-fa5cc3`:
+  `next_free_slug` kept only `[a-z0-9]`. Bulgarian is transliterated with the
+  Streamlined System and Romanian diacritics are folded, so it is now
+  `studio-petrov`. A real salon whose name slugs to `demo`/`demo-…` is prefixed
+  `salon-`, because `demo-` means invented content everywhere. Existing slugs
+  are untouched — they are printed URLs.
+
+**Live project drift, as of 09-24.** The live database has three migrations
+that are not in the repository — `deposits`, `deposit_refund_reference` and
+`search_near` — applied while this work was going on in a parallel session.
+`130500` and `120000` above are in the repository but `120000` is **not yet
+applied live**. Reconcile before the next `db push`.
+
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
 
@@ -417,6 +493,24 @@ Regenerate types after any change: `npm run db:types`.
   `/bookings`, `/favorites`, `/settings`. Pages re-check server-side.
 - `/auth/confirm` handles email OTP; both redirect targets reject anything that
   is not a same-origin relative path.
+- **Every `?next=` goes through `lib/safe-redirect.ts`.** The old rule ("starts
+  with `/`, not `//`") let `/\evil.example` through — browsers read `\` as `/`
+  — which made sign-in an open redirect. The helper resolves the value like a
+  browser and keeps it only if it stays on our origin. Tested.
+- `signUpAction` honours `next` too, and the proxy sends an already signed-in
+  visitor on `/login` or `/signup` to their `next` rather than to the profile.
+  "For business" everywhere links to `/signup?next=/<locale>/onboarding`.
+- **Auth forms submit through `onSubmit`, not `<form action>`.** React resets an
+  uncontrolled form after an action; a short password wiped name and email and
+  the retry went out empty. Fields are controlled and validated per field in
+  the browser (the server still validates everything).
+- **Inline auth in the booking funnel** — `inlineAuthAction` signs in or up
+  without redirecting (mode travels in the form data). Its `revalidatePath`
+  re-renders the page in the same commit that reports success, so the form
+  unmounts before its own effect runs; the funnel reacts to `isSignedIn`
+  flipping instead, and dispatches `glowa:auth-changed` so the header's browser
+  client re-reads the session (a server action sets the cookie without the
+  browser client hearing about it).
 
 ---
 
@@ -453,6 +547,16 @@ resolves to nothing rather than to someone else's salon.
 clients; `staff` reads the team calendar. `requireMembership(businessId, level)`
 in `lib/actions/guard.ts` gives each action a clear refusal code; RLS remains
 the enforcement.
+
+**The way in.** The header and mobile menu use `useAccount()` (browser-side,
+so marketing pages stay cacheable), which also reports `hasBusiness`. Signed-in
+people see "Business dashboard" or "Register your salon" in the account menu,
+the mobile menu and on the customer profile. Before this an owner who signed up
+from "start free" landed on the customer profile with no link to onboarding.
+
+**Setup checklist.** A draft business sees `SetupChecklist` on the dashboard:
+created → first service → hours → description/photo → publish, each step
+linking to where it is done, publish shown only once it can succeed.
 
 **Onboarding.** `public.create_business` is SECURITY INVOKER and does the whole
 setup in one transaction: business (as a draft), primary location, a
@@ -759,6 +863,12 @@ city.
 - **Sort** is rating (default), price or name. Under a price sort a salon with
   no priced service sorts last, not first.
 
+**Layout (09-24).** Categories are one-tap chips; "open on" is any day /
+today / tomorrow / a date. On a phone city, price, day and sort live in a bottom
+sheet with a count badge — five stacked selects used to push the first result
+below the fold. Salon pages get a `StickyBookBar` on phones once the page's own
+book button scrolls away.
+
 ## 8h. Accessibility
 
 - A skip link is the first tab stop on every page; each group layout carries
@@ -956,10 +1066,9 @@ traction claim may appear unless it is real.
 3. Payments remain the biggest product gap against Fresha and Booksy: no
    deposits, no card-on-file, no no-show protection. That, not the calendar,
    is what salons pay a booking platform for.
-20. Motion is now on one curve (`--ease-glowa`, applied in `globals.css` to
-    anything that already declares a transition), but there is still almost no
-    designed motion of its own - no page transitions, no list entrance. Worth a
-    pass once the feature set settles.
+20. Motion: done on 09-24 for the marketing pages, the booking funnel, the
+    salon page and search (§4). The business app has had no motion pass yet —
+    the calendar and dashboard are still static apart from Radix panels.
 21. City names are plain text, not localized: a Romanian visitor sees
     "Пловдив" in Cyrillic, including in the page's structured data. Defensible
     as the local spelling, awkward for the Romanian market.
@@ -1008,6 +1117,15 @@ traction claim may appear unless it is real.
     demo salons were then re-rounded to whole euros, because 30.68 is what
     arithmetic produces and not what a price list looks like. Romanian
     businesses keep RON.
+22. **Regenerate the photographs** with the new direction (§4,
+    `docs/visual-assets.md`). Needs `OPENAI_API_KEY` or image-model credits.
+23. **Reconcile the live database** with the repository (§6 → live project
+    drift): commit the `deposits` / `search_near` migrations from the parallel
+    session, apply `120000_slug_transliteration` live.
+24. The funnel's inline sign-up in production depends on the email-confirmation
+    setting: with confirmations on, the guest gets "check your email" and the
+    link returns them to the funnel with the service preselected, but the time
+    they picked is not restored. Encoding the slot in `next` would close that.
 16. `/pricing` shows "soon" instead of amounts until `lib/pricing.ts` gets real
     numbers, and the contact CTA points at `hello@glowa.bg`, which has to
     actually exist before launch.

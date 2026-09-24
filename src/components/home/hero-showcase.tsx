@@ -111,7 +111,7 @@ export async function HeroShowcase() {
       {/* Reminder */}
       <div
         aria-hidden
-        className="glowa-enter absolute bottom-6 -left-4 hidden w-60 sm:block sm:-left-8"
+        className="glowa-enter absolute bottom-6 -left-4 hidden w-64 sm:block sm:-left-8"
         style={{ "--delay": "1050ms" } as React.CSSProperties}
       >
         <div
@@ -125,7 +125,7 @@ export async function HeroShowcase() {
             <p className="text-[0.7rem] font-medium tracking-wide uppercase opacity-70">
               {t("mock.reminder")}
             </p>
-            <p className="truncate text-sm font-medium">{t("mock.reminderBody")}</p>
+            <p className="text-sm leading-snug font-medium">{t("mock.reminderBody")}</p>
           </div>
           <CalendarCheck2 className="ml-auto size-4 shrink-0 opacity-60" />
         </div>

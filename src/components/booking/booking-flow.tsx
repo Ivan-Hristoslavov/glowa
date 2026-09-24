@@ -136,6 +136,19 @@ export function BookingFlow({
     current === "staff" ||
     (current === "time" && Boolean(slot));
 
+  // The inline sign-in's server action revalidates the page in the same
+  // commit that reports success, so the form unmounts before it can say so.
+  // The flip of `isSignedIn` is the reliable signal: thank them, and tell the
+  // header (which reads the session in the browser) to look again.
+  const wasSignedIn = useRef(isSignedIn);
+  useEffect(() => {
+    if (isSignedIn && !wasSignedIn.current) {
+      toast.success(auth("signedIn"));
+      window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+    }
+    wasSignedIn.current = isSignedIn;
+  }, [isSignedIn, auth]);
+
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
@@ -533,11 +546,7 @@ export function BookingFlow({
                         action={inlineAuthAction}
                         nextPath={bookingPath}
                         inline={{
-                          onSignedIn: () => {
-                            toast.success(auth("signedIn"));
-                            window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
-                            router.refresh();
-                          },
+                          onSignedIn: () => router.refresh(),
                         }}
                       />
                     </div>

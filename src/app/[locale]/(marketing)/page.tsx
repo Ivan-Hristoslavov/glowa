@@ -247,18 +247,24 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             {steps.map(({ key, icon: Icon }, index) => (
               <li
                 key={key}
-                className="glowa-reveal glowa-card glowa-lift relative rounded-3xl p-6 text-center sm:p-7"
+                // Side by side on a phone: three centred cards stacked were a
+                // screen and a half of scrolling for three sentences.
+                className="glowa-reveal glowa-card glowa-lift relative flex items-start gap-4 rounded-3xl p-5 sm:p-7 md:block md:text-center"
               >
-                <span className="bg-primary text-primary-foreground relative mx-auto flex size-14 items-center justify-center rounded-2xl shadow-[var(--shadow-lift)]">
-                  <Icon className="size-6" aria-hidden />
+                <span className="bg-primary text-primary-foreground relative flex size-12 shrink-0 items-center justify-center rounded-2xl shadow-[var(--shadow-lift)] md:mx-auto md:size-14">
+                  <Icon className="size-5 md:size-6" aria-hidden />
                   <span className="bg-card text-foreground absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full border text-xs font-semibold">
                     {index + 1}
                   </span>
                 </span>
-                <h3 className="font-heading mt-5 text-xl">{t(`how.${key}.title`)}</h3>
-                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                  {t(`how.${key}.body`)}
-                </p>
+                <div>
+                  <h3 className="font-heading text-lg md:mt-5 md:text-xl">
+                    {t(`how.${key}.title`)}
+                  </h3>
+                  <p className="text-muted-foreground mt-1 text-sm leading-relaxed md:mt-2">
+                    {t(`how.${key}.body`)}
+                  </p>
+                </div>
               </li>
             ))}
           </ol>
