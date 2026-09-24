@@ -51,6 +51,8 @@ const serverEnvSource = {
   CRON_SECRET: process.env.CRON_SECRET,
   VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
   VAPID_SUBJECT: process.env.VAPID_SUBJECT,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
 } satisfies Record<string, string | undefined>;
 
 export type ServerEnvKey = keyof typeof serverEnvSource;

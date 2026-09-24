@@ -5,6 +5,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BusinessMediaForm } from "@/components/admin/business-media-form";
 import { BusinessSettingsForm } from "@/components/admin/business-settings-form";
 import { SubscriptionCard } from "@/components/admin/subscription-card";
+import { isLiveSubscription } from "@/lib/billing/plans";
+import type { PlanId } from "@/lib/pricing";
 import { EmptyState } from "@/components/common/empty-state";
 import { Section } from "@/components/common/section";
 import { routing, type Locale } from "@/i18n/routing";
@@ -41,6 +43,11 @@ export default async function BusinessSettingsPage({
   }
 
   const supabase = await createClient();
+  const { data: subscription } = await supabase
+    .from("business_subscriptions")
+    .select("plan, status")
+    .eq("business_id", membership.businessId)
+    .maybeSingle();
   const { count: staffCount } = await supabase
     .from("staff_profiles")
     .select("id", { count: "exact", head: true })
@@ -104,7 +111,10 @@ export default async function BusinessSettingsPage({
         />
       </Section>
 
-      <SubscriptionCard staffCount={staffCount ?? 1} />
+      <SubscriptionCard
+        staffCount={staffCount ?? 1}
+        activePlan={isLiveSubscription(subscription?.status) ? (subscription?.plan as PlanId) : null}
+      />
     </div>
   );
 }

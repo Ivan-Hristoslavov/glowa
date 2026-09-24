@@ -685,7 +685,8 @@
       "switchBusiness": "Switch business",
       "viewPublicPage": "View public page",
       "menu": "Menu",
-      "timeOff": "Days off"
+      "timeOff": "Days off",
+      "billing": "Subscription"
     },
     "status": {
       "draft": "Draft",
@@ -1115,10 +1116,13 @@
     },
     "subscription": {
       "title": "Subscription",
-      "body": "You are using Glowa for free right now — subscription billing is not switched on yet. Here is what it will cost and which plan fits your team.",
+      "body": "What Glowa costs and which plan fits your team. During early access you can use everything for free.",
       "status": "Early access · free",
       "recommended": "{count, plural, one {For # specialist} other {For # specialists}}",
-      "compare": "Compare plans"
+      "compare": "Compare plans",
+      "choosePlan": "Choose a plan and pay",
+      "activePlan": "{plan} plan",
+      "bodyActive": "Your subscription is active. Change plan, card and invoices under Subscription."
     },
     "media": {
       "title": "Logo and photos",
@@ -1242,6 +1246,38 @@
       "defaults": {
         "headline": "Book in seconds",
         "subline": "Point your phone camera at the code — see free times and book online, 24/7."
+      }
+    },
+    "billing": {
+      "title": "Subscription",
+      "subtitle": "Choose the plan that fits your team. Payment goes through Stripe; your card is never stored by Glowa.",
+      "success": "Thank you! Your subscription is active. If it does not show yet, refresh in a few seconds.",
+      "cancelled": "Payment was cancelled. Nothing was charged.",
+      "earlyAccess": "Early access · free",
+      "earlyAccessBody": "You can choose a plan now or keep using Glowa for free during early access.",
+      "notConfiguredBody": "Payments are not switched on yet. Everything is free; we will tell you before any charging starts.",
+      "currentPlan": "{plan} · {interval}",
+      "interval": {
+        "month": "monthly",
+        "year": "yearly"
+      },
+      "renewsOn": "Renews on {date}.",
+      "endsOn": "Your subscription ends on {date} and will not renew.",
+      "pastDue": "The last payment failed. Update your card so the subscription does not stop.",
+      "manage": "Manage payment",
+      "choose": "Choose plan",
+      "switch": "Switch to this plan",
+      "adminsOnly": "Only the owner or an admin of the business can change the subscription.",
+      "stripeNote": "Invoices and payments are handled by Stripe.",
+      "errors": {
+        "invalid": "Invalid request.",
+        "unauthenticated": "Please sign in again.",
+        "not_a_member": "You do not have access to this business.",
+        "forbidden": "Only the owner or an admin can change the subscription.",
+        "not_configured": "Payments are not switched on yet.",
+        "price_missing": "This plan's price is not set up in Stripe.",
+        "no_subscription": "There is no active subscription yet.",
+        "generic": "Something went wrong. Please try again."
       }
     }
   },
@@ -1379,7 +1415,9 @@
     "cta": {
       "start": "Start free",
       "contact": "Get in touch",
-      "popular": "Most chosen"
+      "popular": "Most chosen",
+      "current": "Current plan",
+      "recommended": "Recommended for your team"
     },
     "faq": {
       "title": "Frequently asked questions",

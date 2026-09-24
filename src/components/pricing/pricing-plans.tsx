@@ -3,12 +3,12 @@
 import { Check } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { formatPlanPrice, PLANS, PRICING_IS_PUBLISHED } from "@/lib/pricing";
+import { formatPlanPrice, PLANS, PRICING_IS_PUBLISHED, type PlanId } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
 type Billing = "monthly" | "annual";
@@ -18,7 +18,20 @@ type Billing = "monthly" | "annual";
  * yearly - it is the cheaper way to pay, and hiding the cheaper number behind
  * a toggle is a dark pattern in the other direction.
  */
-export function PricingPlans({ compact = false }: { compact?: boolean }) {
+export function PricingPlans({
+  compact = false,
+  action,
+  current,
+  recommended,
+}: {
+  compact?: boolean;
+  /** Replaces the sign-up button, e.g. with "choose" on the billing page. */
+  action?: (plan: PlanId, interval: "month" | "year") => ReactNode;
+  /** The plan the salon pays for, marked on its card. */
+  current?: PlanId | null;
+  /** The plan the salon's team size points at. */
+  recommended?: PlanId | null;
+}) {
   const t = useTranslations("pricing");
   const locale = useLocale() as Locale;
   const [billing, setBilling] = useState<Billing>("annual");
@@ -86,7 +99,15 @@ export function PricingPlans({ compact = false }: { compact?: boolean }) {
                   "border-primary/50 ring-primary/15 from-accent/60 to-card bg-gradient-to-b ring-2",
               )}
             >
-              {plan.featured ? (
+              {current === plan.id ? (
+                <span className="bg-success text-success-foreground absolute -top-3 left-6 rounded-full px-3 py-1 text-xs font-semibold shadow-md">
+                  {t("cta.current")}
+                </span>
+              ) : recommended === plan.id ? (
+                <span className="bg-primary text-primary-foreground absolute -top-3 left-6 rounded-full px-3 py-1 text-xs font-semibold shadow-md">
+                  {t("cta.recommended")}
+                </span>
+              ) : plan.featured && !recommended ? (
                 <span className="bg-primary text-primary-foreground absolute -top-3 left-6 rounded-full px-3 py-1 text-xs font-semibold shadow-md">
                   {t("cta.popular")}
                 </span>
@@ -135,18 +156,22 @@ export function PricingPlans({ compact = false }: { compact?: boolean }) {
                 )}
               </div>
 
-              <Button
-                asChild
-                size="lg"
-                variant={plan.featured ? "default" : "outline"}
-                className="mt-6 w-full rounded-full"
-              >
-                {PRICING_IS_PUBLISHED ? (
-                  <Link href={signupHref}>{t("cta.start")}</Link>
-                ) : (
-                  <a href="mailto:hello@glowa.bg">{t("cta.contact")}</a>
-                )}
-              </Button>
+              {action ? (
+                <div className="mt-6">{action(plan.id, billing === "annual" ? "year" : "month")}</div>
+              ) : (
+                <Button
+                  asChild
+                  size="lg"
+                  variant={plan.featured ? "default" : "outline"}
+                  className="mt-6 w-full rounded-full"
+                >
+                  {PRICING_IS_PUBLISHED ? (
+                    <Link href={signupHref}>{t("cta.start")}</Link>
+                  ) : (
+                    <a href="mailto:hello@glowa.bg">{t("cta.contact")}</a>
+                  )}
+                </Button>
+              )}
 
               {!compact ? (
                 <ul className="mt-7 space-y-3 text-sm">

@@ -685,7 +685,8 @@
       "switchBusiness": "Schimbă afacerea",
       "viewPublicPage": "Vezi pagina publică",
       "menu": "Meniu",
-      "timeOff": "Zile libere"
+      "timeOff": "Zile libere",
+      "billing": "Abonament"
     },
     "status": {
       "draft": "Ciornă",
@@ -1115,10 +1116,13 @@
     },
     "subscription": {
       "title": "Abonament",
-      "body": "Folosești Glowa gratuit acum — plata abonamentului nu este încă activă. Iată cât va costa și ce plan se potrivește echipei tale.",
+      "body": "Cât costă Glowa și ce plan se potrivește echipei tale. În perioada de acces anticipat poți folosi totul gratuit.",
       "status": "Acces timpuriu · gratuit",
       "recommended": "{count, plural, one {Pentru # specialist} other {Pentru # specialiști}}",
-      "compare": "Compară planurile"
+      "compare": "Compară planurile",
+      "choosePlan": "Alege planul și plata",
+      "activePlan": "Planul {plan}",
+      "bodyActive": "Abonamentul tău este activ. Schimbarea planului, cardul și facturile sunt la Abonament."
     },
     "media": {
       "title": "Logo și fotografii",
@@ -1242,6 +1246,38 @@
       "defaults": {
         "headline": "Programează-te în câteva secunde",
         "subline": "Îndreaptă camera telefonului spre cod — vezi orele libere și programează-te online, 24/7."
+      }
+    },
+    "billing": {
+      "title": "Abonament",
+      "subtitle": "Alege planul potrivit echipei tale. Plata se face prin Stripe; cardul tău nu este stocat de Glowa.",
+      "success": "Mulțumim! Abonamentul este activ. Dacă nu apare încă, reîmprospătează pagina în câteva secunde.",
+      "cancelled": "Plata a fost anulată. Nu s-a taxat nimic.",
+      "earlyAccess": "Acces anticipat · gratuit",
+      "earlyAccessBody": "Poți alege un plan acum sau poți folosi Glowa gratuit în perioada de acces anticipat.",
+      "notConfiguredBody": "Plățile nu sunt încă activate. Totul este gratuit; te anunțăm înainte de orice taxare.",
+      "currentPlan": "{plan} · {interval}",
+      "interval": {
+        "month": "lunar",
+        "year": "anual"
+      },
+      "renewsOn": "Se reînnoiește pe {date}.",
+      "endsOn": "Abonamentul se încheie pe {date} și nu va fi reînnoit.",
+      "pastDue": "Ultima plată nu a reușit. Actualizează cardul ca abonamentul să nu se oprească.",
+      "manage": "Gestionează plata",
+      "choose": "Alege planul",
+      "switch": "Treci la acest plan",
+      "adminsOnly": "Doar proprietarul sau un administrator al afacerii poate schimba abonamentul.",
+      "stripeNote": "Facturile și plățile sunt gestionate de Stripe.",
+      "errors": {
+        "invalid": "Cerere invalidă.",
+        "unauthenticated": "Te rugăm să te autentifici din nou.",
+        "not_a_member": "Nu ai acces la această afacere.",
+        "forbidden": "Doar proprietarul sau un administrator poate schimba abonamentul.",
+        "not_configured": "Plățile nu sunt încă activate.",
+        "price_missing": "Prețul acestui plan nu este configurat în Stripe.",
+        "no_subscription": "Nu există încă un abonament activ.",
+        "generic": "Ceva nu a mers. Încearcă din nou."
       }
     }
   },
@@ -1379,7 +1415,9 @@
     "cta": {
       "start": "Începe gratuit",
       "contact": "Contactează-ne",
-      "popular": "Cel mai ales"
+      "popular": "Cel mai ales",
+      "current": "Planul actual",
+      "recommended": "Recomandat pentru echipa ta"
     },
     "faq": {
       "title": "Întrebări frecvente",

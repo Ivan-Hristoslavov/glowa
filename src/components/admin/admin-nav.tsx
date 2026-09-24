@@ -4,6 +4,7 @@ import {
   BarChart3,
   CalendarDays,
   CalendarOff,
+  CreditCard,
   LayoutDashboard,
   Megaphone,
   MessageSquareText,
@@ -33,6 +34,7 @@ export const ADMIN_LINKS = [
   { href: "/dashboard/growth", key: "growth", icon: QrCode },
   { href: "/dashboard/analytics", key: "analytics", icon: BarChart3 },
   { href: "/dashboard/assistant", key: "assistant", icon: MessageSquareText },
+  { href: "/dashboard/billing", key: "billing", icon: CreditCard },
   { href: "/dashboard/settings", key: "settings", icon: Settings },
 ] as const;
 

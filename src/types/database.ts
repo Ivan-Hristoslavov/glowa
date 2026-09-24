@@ -380,6 +380,56 @@ export type Database = {
           },
         ]
       }
+      business_subscriptions: {
+        Row: {
+          billing_interval: string
+          business_id: string
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          last_event_at: string
+          plan: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+        }
+        Insert: {
+          billing_interval: string
+          business_id: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          last_event_at: string
+          plan: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+        }
+        Update: {
+          billing_interval?: string
+          business_id?: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          last_event_at?: string
+          plan?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_hours: {
         Row: {
           closes_at: string
@@ -1730,6 +1780,20 @@ export type Database = {
       }
     }
     Functions: {
+      apply_stripe_subscription: {
+        Args: {
+          p_business_id: string
+          p_cancel_at_period_end: boolean
+          p_current_period_end: string | null
+          p_customer_id: string
+          p_event_at: string
+          p_interval: string
+          p_plan: string
+          p_status: string
+          p_subscription_id: string
+        }
+        Returns: undefined
+      }
       book_appointment: {
         Args: {
           p_customer_notes?: string

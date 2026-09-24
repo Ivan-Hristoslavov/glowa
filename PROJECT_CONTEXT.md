@@ -419,6 +419,7 @@ business id the caller manages for business media, resolved through
 | `…130500_search_open_on_helper.sql` | the "open on" helper, applied live on 09-23 but never committed |
 | `…120000_slug_transliteration.sql` | `app.transliterate_slug`; Cyrillic/Romanian names get readable slugs |
 | `20260924130000_business_closures.sql` | `business_closures`, `upcoming_business_closures()`, closures in `get_available_slots` and "open on" |
+| `20260924140000_business_subscriptions.sql` | `business_subscriptions` (Stripe mirror, members read), `apply_stripe_subscription()` for the webhook only |
 
 Four of these were written because something failed, not from a plan:
 
@@ -497,8 +498,8 @@ Four of these were written because something failed, not from a plan:
 **Live project drift, as of 09-24.** The live database has three migrations
 that are not in the repository — `deposits`, `deposit_refund_reference` and
 `search_near` — applied while this work was going on in a parallel session.
-`130500`, `120000` and `20260924130000` above are in the repository, but
-`120000` and `20260924130000` are **not yet applied live**, and
+`130500`, `120000`, `20260924130000` and `20260924140000` above are in the
+repository, but the last three are **not yet applied live**, and
 `src/types/database.ts` has the closures types added by hand to match. Reconcile before the next `db push`.
 
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
@@ -1120,6 +1121,41 @@ HTTPS (`next dev --experimental-https`) or a deployment.
 
 ---
 
+## 8n. Billing: salons pay by Stripe (09-24)
+
+`/dashboard/billing` ("Абонамент" in the admin menu) shows the plan the salon
+pays for, when it renews, and the three plans. The cards are the public
+`PricingPlans` with an action slot. An owner or admin chooses a plan:
+- `startCheckout` creates a Stripe Checkout session and the browser goes
+  there. Stripe collects the card, the billing address and the VAT number,
+  so no card data ever touches Glowa.
+- A salon that already pays goes to the Stripe customer portal instead (plan
+  changes, card, invoices, cancellation), never to a second subscription.
+- Prices are found by lookup key (`glowa_<plan>_<month|year>`), so no price
+  IDs live in the environment. `scripts/stripe-setup.ts` creates the
+  products and prices from `lib/pricing.ts` in any account and is safe to
+  re-run. Run it with `node --experimental-strip-types`.
+
+**The webhook** (`/api/stripe/webhook`):
+- It verifies the signature on the raw body first.
+- It handles only `customer.subscription.*`; each event carries the whole
+  subscription, including the `business_id` put in its metadata at checkout.
+- It writes through `apply_stripe_subscription`, which only `service_role`
+  may execute and which ignores events older than the last one applied
+  (Stripe does not promise order).
+- Unknown prices, unrelated events and deleted salons get a 200 so Stripe
+  stops retrying. A failed write gets a 500 so it retries.
+- **Tested offline with signed test events against the local stack:**
+  - A bad signature was refused.
+  - A late, older "canceled" event did not overwrite "active".
+  - "Cancel at period end" was applied, and a foreign price was ignored.
+
+**Without keys** (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` unset) the page
+says plans are free during early access and the buttons are disabled.
+**Plan limits are not enforced**: a Solo salon can still add a second
+stylist. That is the next step, together with a trial and a grace period for
+`past_due` (§11).
+
 ## 8l. Customer conveniences (09-24)
 
 - **Book again.** Past visits on "My bookings" link straight into the funnel
@@ -1327,10 +1363,20 @@ traction claim may appear unless it is real.
     setting: with confirmations on, the guest gets "check your email" and the
     link returns them to the funnel with the service preselected, but the time
     they picked is not restored. Encoding the slot in `next` would close that.
-16. Prices are published (§8e) but **billing is not connected**: no Stripe, no
-    trial clock, no plan limits enforced. The admin card says early access is
-    free, which is true until billing exists. The contact CTA points at
-    `hello@glowa.bg`, which has to actually exist before launch.
+16. **Billing is built but not switched on** (§8n). To go live:
+    - create a Stripe account and run `scripts/stripe-setup.ts` with a test
+      key;
+    - add the webhook endpoint and set `STRIPE_SECRET_KEY` and
+      `STRIPE_WEBHOOK_SECRET` on the server;
+    - configure the customer portal, and apply `20260924140000` live.
+
+    Still missing:
+    - plan limits (seats per plan);
+    - a trial;
+    - what happens to a salon whose subscription lapses.
+
+    The contact CTA points at `hello@glowa.bg`, which has to actually exist
+    before launch.
 28. **Before launch, auth**:
     - In Supabase → Authentication → URL Configuration, set the site URL and
       add `https://<site>/**` to the redirect allow-list. Without it, email

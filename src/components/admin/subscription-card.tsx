@@ -7,13 +7,17 @@ import { formatPlanPrice, PLANS, type PlanId } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
 /**
- * What GLOWA will cost this salon, and which plan fits its team.
- *
- * Billing is not connected yet, so nobody is on a paid plan and this card
- * says so in as many words. What it can honestly do is show the prices and
- * point at the plan the salon's own team size puts it in.
+ * What GLOWA costs this salon, and which plan fits its team. The paying
+ * happens on /dashboard/billing (Stripe); this card is the summary in
+ * settings: the plan it pays for, or "early access" while it pays nothing.
  */
-export async function SubscriptionCard({ staffCount }: { staffCount: number }) {
+export async function SubscriptionCard({
+  staffCount,
+  activePlan = null,
+}: {
+  staffCount: number;
+  activePlan?: PlanId | null;
+}) {
   const t = await getTranslations("admin.subscription");
   const pricing = await getTranslations("pricing");
   const locale = (await getLocale()) as Locale;
@@ -25,11 +29,13 @@ export async function SubscriptionCard({ staffCount }: { staffCount: number }) {
       <div className="from-accent flex flex-wrap items-start justify-between gap-4 bg-gradient-to-r to-transparent p-5 sm:p-6">
         <div className="max-w-xl">
           <h2 className="font-heading text-xl">{t("title")}</h2>
-          <p className="text-muted-foreground mt-1 text-sm leading-relaxed">{t("body")}</p>
+          <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+            {activePlan ? t("bodyActive") : t("body")}
+          </p>
         </div>
         <span className="bg-success/15 text-success inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold">
           <Sparkles className="size-3.5" aria-hidden />
-          {t("status")}
+          {activePlan ? t("activePlan", { plan: pricing(`plans.${activePlan}.name`) }) : t("status")}
         </span>
       </div>
 
@@ -72,10 +78,10 @@ export async function SubscriptionCard({ staffCount }: { staffCount: number }) {
 
       <div className="border-t p-4 sm:px-6">
         <Link
-          href="/pricing"
+          href="/dashboard/billing"
           className="text-primary glowa-focus group inline-flex items-center gap-1 rounded text-sm font-medium"
         >
-          {t("compare")}
+          {t("choosePlan")}
           <ArrowRight
             className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
             aria-hidden
