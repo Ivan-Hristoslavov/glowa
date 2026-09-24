@@ -539,6 +539,25 @@ Regenerate types after any change: `npm run db:types`.
   flipping instead, and dispatches `glowa:auth-changed` so the header's browser
   client re-reads the session (a server action sets the cookie without the
   browser client hearing about it).
+- **Google (09-24).** "Continue with Google" on sign-in, sign-up and the
+  booking funnel's inline form. `GoogleButton` starts a PKCE flow in the
+  browser, and `/auth/callback` exchanges the code, then goes to a safe
+  `next`. The button appears only when the project's public
+  `/auth/v1/settings` reports Google as enabled (`lib/supabase/
+  auth-providers.ts`, cached for an hour), so there is no flag to keep in
+  sync and never a button that ends on an error page. Verified locally up to
+  Supabase's authorize endpoint, with the correct redirect and code
+  challenge. The sandbox cannot reach Google, so the last hop needs a real
+  client (§11).
+- **Two emailed-link bugs, fixed 09-24.**
+  - The proxy matcher did not exclude `/auth/`, so the locale middleware sent
+    `/auth/confirm`, `/auth/callback` and `/auth/signout` to `/bg/auth/...`,
+    a 404. Every confirmation and reset link was dead.
+  - With Supabase's default email template the link comes back with a PKCE
+    `code`, not `token_hash`, and `/auth/confirm` only handled the latter.
+    It now takes both.
+  - Password reset was then verified end to end through the local mail
+    catcher: email, link, new password, profile.
 
 ---
 
@@ -1312,6 +1331,17 @@ traction claim may appear unless it is real.
     trial clock, no plan limits enforced. The admin card says early access is
     free, which is true until billing exists. The contact CTA points at
     `hello@glowa.bg`, which has to actually exist before launch.
+28. **Before launch, auth**:
+    - In Supabase → Authentication → URL Configuration, set the site URL and
+      add `https://<site>/**` to the redirect allow-list. Without it, email
+      links and Google fall back to the bare site URL.
+    - To turn Google on, create a Google Cloud OAuth client (web). Its
+      redirect URI is `https://<project>.supabase.co/auth/v1/callback`; paste
+      the client ID and secret under Providers → Google. The button appears
+      within the hour.
+    - Optional: switch the email templates to the `token_hash` form
+      (`{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=...`), so
+      links also work in a different browser from the one that asked.
 27. **Before launch, legal**: fill in `lib/legal/entity.ts` (company, EIK,
     VAT, address), make `hello@glowa.bg` a real mailbox, have a lawyer read
     `messages/legal/*`, and sign DPAs with Supabase, Vercel, Resend and
