@@ -2,10 +2,12 @@
 
 Chosen 2026-09-24 with the owner. Strategy: **low, flat price for volume** —
 win salons on cost and on having no commission, not on margin per salon.
+Solo started at €0; the same day the owner asked for "at least €4–6", so it is
+€6 a month (€5 billed yearly, the same ten-months-for-twelve as the others).
 
 | Plan | Monthly | Yearly (per month) | Seats |
 | --- | --- | --- | --- |
-| Solo | €0, forever | €0 | 1 |
+| Solo | €6 | €5 | 1 |
 | Studio | €12 | €10 | up to 5 |
 | Salon | €24 | €20 | unlimited |
 

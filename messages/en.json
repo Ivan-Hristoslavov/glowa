@@ -1656,7 +1656,7 @@
     "plans": {
       "solo": {
         "name": "Solo",
-        "tagline": "For one professional. Free — not a trial, forever.",
+        "tagline": "For one professional working on their own.",
         "seats": "1 professional",
         "audience": "Small business"
       },
@@ -1704,8 +1704,8 @@
     },
     "faq": {
       "title": "Frequently asked questions",
-      "q1": "Is Solo really free forever?",
-      "a1": "Yes. One professional gets the calendar, online booking, client records and a page on glowa with no subscription. You only pay if you grow into a team.",
+      "q1": "What does Solo include?",
+      "a1": "Everything one professional needs: the calendar, online booking, client records, deposits, reminders and your page on glowa. No commission and no contract. If you grow into a team, move to Studio.",
       "q2": "What do I pay during early access?",
       "a2": "Nothing. Every plan is free until {date}. Before any billing starts we'll tell you at least 30 days ahead, and you choose your plan yourself.",
       "q3": "Do you take a share of revenue or of new clients?",
@@ -1759,7 +1759,7 @@
       "savedMonth": "That's {amount} every month.",
       "assumptions": "Assumptions: ~€17 a month for one professional or ~€12 per team seat, and 20% commission on a new client's first visit (minimum ~€5) — the lowest published rates as of September 2026, rounded in the competitor's favour. Excludes VAT and payment fees, which are similar everywhere."
     },
-    "metaTitle": "Pricing — no commission, Solo free"
+    "metaTitle": "Pricing — no commission, no contract"
   },
   "forBusiness": {
     "metaTitle": "GLOWA for salons",

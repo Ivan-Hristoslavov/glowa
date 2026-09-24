@@ -6,8 +6,9 @@ import type { Locale } from "@/i18n/routing";
  * The feature lists are real - every line maps to something that exists in the
  * product, and nothing here promises a capability that has not been built.
  *
- * Pricing (chosen 2026-09-24 with the owner): win on volume, not margin. Solo is
- * free for good, a team costs less a month than one stylist costs on the big
+ * Pricing (chosen 2026-09-24 with the owner): win on volume, not margin. Solo
+ * is a token €6 (€5 billed yearly) - the owner moved it off "free" the same
+ * day - a team costs less a month than one stylist costs on the big
  * platforms, and there is no commission anywhere - not on new clients, not on
  * deposits. See `docs/pricing.md` for the competitor figures behind this.
  *
@@ -33,8 +34,8 @@ export type Plan = {
 export const PLANS: Plan[] = [
   {
     id: "solo",
-    monthly: 0,
-    annualMonthly: 0,
+    monthly: 600,
+    annualMonthly: 500,
     currency: "EUR",
     seats: 1,
     featured: false,

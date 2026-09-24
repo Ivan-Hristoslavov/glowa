@@ -4,7 +4,7 @@ import { glowaMonthlyCents, typicalMonthlyCents } from "./pricing";
 
 describe("glowaMonthlyCents", () => {
   it("picks the smallest plan that fits the team", () => {
-    expect(glowaMonthlyCents(1)).toBe(0);
+    expect(glowaMonthlyCents(1)).toBe(600);
     expect(glowaMonthlyCents(2)).toBe(1200);
     expect(glowaMonthlyCents(5)).toBe(1200);
     expect(glowaMonthlyCents(6)).toBe(2400);
@@ -12,6 +12,7 @@ describe("glowaMonthlyCents", () => {
   });
 
   it("uses the yearly rate when asked", () => {
+    expect(glowaMonthlyCents(1, true)).toBe(500);
     expect(glowaMonthlyCents(3, true)).toBe(1000);
   });
 });
