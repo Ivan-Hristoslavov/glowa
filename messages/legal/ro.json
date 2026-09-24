@@ -1,0 +1,346 @@
+{
+  "meta": {
+    "updated": "În vigoare de la {date}",
+    "toc": "Cuprins",
+    "pending": "[urmează]",
+    "contactCta": "Întrebări? Scrie-ne la {email}.",
+    "otherDocs": "Alte documente",
+    "backToTop": "Înapoi sus"
+  },
+  "docs": {
+    "privacy": {
+      "title": "Politica de confidențialitate",
+      "description": "Ce date personale prelucrează Glowa, de ce, cât timp și ce drepturi ai.",
+      "intro": [
+        "Această politică explică modul în care Glowa prelucrează datele tale personale atunci când cauți un salon, faci o programare, îți creezi un cont sau administrezi o afacere pe platformă. Este scrisă pe înțelesul tuturor și reprezintă totodată informarea prevăzută la articolele 13 și 14 din Regulamentul general privind protecția datelor (GDPR)."
+      ],
+      "sections": [
+        {
+          "id": "controller",
+          "heading": "1. Cine răspunde de datele tale",
+          "body": [
+            "Operatorul este {company}, cod de identificare {companyId}, cu sediul în {address} („Glowa”, „noi”). Pentru orice întrebare despre datele personale, scrie-ne la {email}."
+          ]
+        },
+        {
+          "id": "roles",
+          "heading": "2. Două roluri diferite",
+          "body": [
+            "Glowa este operator pentru datele contului tău, pentru programările făcute prin platformă, pentru recenzii și pentru utilizarea site-ului.",
+            "Saloanele folosesc Glowa și ca agendă și listă de clienți. Pentru evidențele pe care un salon le ține despre clienții săi (istoricul vizitelor, note interne, liste de marketing), operatorul este salonul, iar Glowa este persoană împuternicită care acționează numai pe baza instrucțiunilor acestuia (art. 28 GDPR). Pentru aceste date te poți adresa direct salonului; dacă ne scrii nouă, îi vom transmite cererea."
+          ]
+        },
+        {
+          "id": "data",
+          "heading": "3. Ce date prelucrăm",
+          "body": [],
+          "list": [
+            "Cont: nume, e-mail, telefon (opțional), fotografie (opțional), limba și fusul orar preferate. Parola este păstrată doar sub formă de hash criptografic.",
+            "Programări: salonul, serviciul, specialistul, data și ora, prețul, statusul și nota pe care ai scris-o pentru salon.",
+            "Recenzii: nota, textul și numele sub care apar.",
+            "Preferințe: saloane salvate, setări pentru mementouri și notificări, cereri pe lista de așteptare.",
+            "Mesaje: ce e-mailuri și notificări ți-am trimis și dacă au fost livrate.",
+            "Date tehnice: adresa IP și jurnalele de găzduire necesare securității, precum și abonamentul push, dacă activezi notificările.",
+            "Date de recomandare: codul QR sau al linkului de pe care ai venit, doar dacă ți-ai dat acordul (vezi punctul 4)."
+          ]
+        },
+        {
+          "id": "health",
+          "heading": "Despre note",
+          "body": [
+            "Te rugăm să nu scrii informații despre sănătate în notele programării, decât dacă salonul are nevoie de ele pentru un serviciu sigur (de exemplu, o alergie). Dacă le scrii, ele ajung la salon, care răspunde de ele în calitate de operator."
+          ]
+        },
+        {
+          "id": "purposes",
+          "heading": "4. De ce și în ce temei",
+          "body": [],
+          "list": [
+            "Crearea și administrarea contului, programările, confirmările și mementourile: executarea unui contract (art. 6 alin. (1) lit. b) GDPR).",
+            "Transmiterea detaliilor programării către salonul ales: executarea unui contract; salonul are nevoie de ele pentru a te servi.",
+            "Publicarea unei recenzii după vizită: executarea unui contract și interesul legitim al celorlalți utilizatori de a avea informații de încredere.",
+            "Securitate, prevenirea abuzurilor și jurnale tehnice: interes legitim (art. 6 alin. (1) lit. f) GDPR).",
+            "Mesaje de marketing de la un salon: doar cu consimțământul tău explicit (art. 6 alin. (1) lit. a) GDPR), pe care îl poți retrage oricând din linkul din fiecare e-mail sau din setări.",
+            "Atribuirea recomandărilor și a codurilor QR printr-un cookie: doar cu consimțământ (art. 5 alin. (3) din Directiva ePrivacy).",
+            "Obligații contabile și fiscale pentru abonamentele firmelor: obligație legală (art. 6 alin. (1) lit. c) GDPR)."
+          ]
+        },
+        {
+          "id": "recipients",
+          "heading": "5. Cui transmitem date",
+          "body": [
+            "Salonului la care faci programarea: primește numele, datele de contact și detaliile programării. Salonul este operator independent pentru relația cu tine.",
+            "Furnizorilor care prelucrează date în numele nostru, pe bază de contract și doar în scopurile de mai jos:"
+          ],
+          "list": [
+            "Supabase Inc. – baza de date, autentificarea și stocarea fișierelor; datele sunt găzduite în UE (Irlanda).",
+            "Vercel Inc. – găzduirea și livrarea site-ului.",
+            "Resend (Plus Five Five, Inc.) – trimiterea e-mailurilor.",
+            "OpenAI – asistentul AI pentru saloane; primește doar indicatori agregați ai afacerii, niciodată date despre clienți.",
+            "Google – doar dacă îți conectezi Google Calendar sau te autentifici cu un cont Google.",
+            "OpenStreetMap Foundation – încarcă harta doar când apeși „Arată harta”.",
+            "Serviciul push al browserului tău (Google, Apple, Mozilla) – doar dacă activezi notificările."
+          ]
+        },
+        {
+          "id": "transfers",
+          "heading": "6. Transferuri în afara UE",
+          "body": [
+            "Unii furnizori se află în Statele Unite. Transferăm date acolo doar pe baza deciziei de adecvare privind Cadrul UE–SUA pentru protecția datelor sau a clauzelor contractuale standard ale Comisiei Europene, cu măsuri suplimentare acolo unde este cazul."
+          ]
+        },
+        {
+          "id": "retention",
+          "heading": "7. Cât timp păstrăm datele",
+          "body": [],
+          "list": [
+            "Cont: cât timp îl folosești. După ștergere, datele contului sunt eliminate în cel mult 30 de zile.",
+            "Programări: până la 3 ani de la vizită, pentru soluționarea eventualelor dispute. Salonul își poate păstra propria evidență mai mult timp, ca operator independent.",
+            "Recenzii: cât timp există contul; la ștergerea contului, recenzia rămâne fără numele tău și fără legătură cu tine.",
+            "Jurnalele de livrare a mesajelor: până la 12 luni.",
+            "Jurnalele tehnice: până la 30 de zile, cu excepția cazului în care sunt necesare pentru investigarea unui incident.",
+            "Alegerea ta privind cookie-urile: 6 luni, după care te întrebăm din nou.",
+            "Documentele contabile: 10 ani, conform legislației contabile bulgare."
+          ]
+        },
+        {
+          "id": "rights",
+          "heading": "8. Drepturile tale",
+          "body": [
+            "Ai dreptul de acces la date, la rectificare, la ștergere, la restricționarea prelucrării, la portabilitate și dreptul de a te opune prelucrării întemeiate pe interes legitim. Îți poți retrage consimțământul oricând, fără a afecta legalitatea prelucrării anterioare.",
+            "Din Setările contului poți descărca singur o copie a datelor tale și îți poți șterge contul. Pentru orice altceva scrie-ne la {email}; răspundem în cel mult o lună.",
+            "Poți depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (ANSPDCP), www.dataprotection.ro, sau la Comisia bulgară pentru protecția datelor personale, www.cpdp.bg."
+          ]
+        },
+        {
+          "id": "automated",
+          "heading": "9. Decizii automatizate",
+          "body": [
+            "Nu luăm decizii cu efecte juridice sau similare exclusiv prin mijloace automate și nu creăm profiluri ale utilizatorilor. Ordinea rezultatelor căutării este descrisă în Termeni."
+          ]
+        },
+        {
+          "id": "children",
+          "heading": "10. Copii",
+          "body": [
+            "Platforma nu este destinată persoanelor sub 16 ani. Dacă aflăm că am creat un cont pentru un copil fără acordul unui părinte, îl vom șterge."
+          ]
+        },
+        {
+          "id": "security",
+          "heading": "11. Securitate",
+          "body": [
+            "Conexiunile sunt criptate (TLS), parolele sunt păstrate ca hash, accesul la baza de date este limitat prin reguli la nivel de rând, astfel încât fiecare salon își vede doar propriile date, iar accesul echipei noastre este minim și înregistrat."
+          ]
+        },
+        {
+          "id": "changes",
+          "heading": "12. Modificări",
+          "body": [
+            "Dacă modificăm substanțial această politică, te vom anunța prin e-mail sau în platformă înainte ca modificarea să intre în vigoare."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Termeni și condiții",
+      "description": "Regulile de utilizare a Glowa pentru clienți și pentru firme.",
+      "intro": [
+        "Acești termeni reglementează utilizarea site-ului și a serviciilor Glowa. Prin crearea unui cont, efectuarea unei programări sau înregistrarea unei afaceri îi accepți. Datele noastre ca furnizor sunt pe pagina „Date despre furnizor”."
+      ],
+      "sections": [
+        {
+          "id": "service",
+          "heading": "1. Ce este Glowa",
+          "body": [
+            "Glowa este o platformă online prin care clienții găsesc saloane și specialiști în frumusețe și fac programări, iar firmele își administrează agenda, clienții și programările online.",
+            "Glowa este un intermediar. Contractul pentru serviciul propriu-zis (tuns, manichiură etc.) se încheie între tine și salon. Salonul răspunde de serviciu, de calitatea și prețul acestuia și de respectarea condițiilor afișate."
+          ]
+        },
+        {
+          "id": "account",
+          "heading": "2. Contul",
+          "body": [
+            "Oferă date corecte și păstrează-ți parola în siguranță. Contul este personal. Îl poți șterge oricând din Setări."
+          ]
+        },
+        {
+          "id": "booking",
+          "heading": "3. Programare, modificare și anulare",
+          "body": [],
+          "list": [
+            "Programarea este o cerere către salon. Unele saloane confirmă manual; statusul apare în „Programările mele” și în e-mailul tău.",
+            "Condițiile de anulare și modificare sunt stabilite de salon și afișate înainte de confirmare. Dacă nu te prezinți fără să anulezi, salonul poate înregistra neprezentarea.",
+            "Utilizarea Glowa este gratuită pentru clienți. Serviciul se plătește salonului, la prețurile acestuia, de obicei la fața locului."
+          ]
+        },
+        {
+          "id": "reviews",
+          "heading": "4. Recenzii",
+          "body": [
+            "O recenzie poate fi lăsată doar de contul care a făcut programarea și doar după ce salonul a marcat vizita ca finalizată. Astfel, fiecare recenzie din Glowa provine de la un client real, după o vizită reală.",
+            "Recenziile trebuie să fie sincere și să nu conțină insulte, date personale ale altor persoane sau reclamă. Putem elimina o recenzie care încalcă aceste reguli. Nu acceptăm plată pentru recenzii și nu ascundem recenziile negative la cererea unui salon."
+          ]
+        },
+        {
+          "id": "ranking",
+          "heading": "5. Ordinea rezultatelor căutării",
+          "body": [
+            "Saloanele sunt filtrate după criteriile introduse de tine (serviciu, categorie, oraș, preț, zi cu locuri libere) și ordonate implicit după nota medie din recenzii, apoi după nume. Poți ordona și după preț sau după nume. Nicio firmă nu plătește pentru o poziție mai bună."
+          ]
+        },
+        {
+          "id": "conduct",
+          "heading": "6. Ce nu este permis",
+          "body": [],
+          "list": [
+            "Programări, conturi sau recenzii false.",
+            "Încercări de a accesa datele altor persoane sau de a perturba platforma.",
+            "Trimiterea de mesaje comerciale nesolicitate prin platformă."
+          ]
+        },
+        {
+          "id": "business",
+          "heading": "7. Termeni pentru firme",
+          "body": [
+            "Firma răspunde de corectitudinea informațiilor despre servicii, prețuri, program și echipă și de existența unui temei legal pentru prelucrarea datelor clienților săi în Glowa.",
+            "Planurile și prețurile sunt publicate pe pagina „Prețuri”, fără TVA. În perioada de acces anticipat utilizarea este gratuită; înainte de începerea facturării vei primi o notificare și nu vei fi taxat fără acordul tău explicit.",
+            "Modificările acestor termeni care afectează firmele sunt anunțate cu cel puțin 15 zile înainte, conform Regulamentului (UE) 2019/1150. Poți renunța oricând și îți poți exporta datele."
+          ]
+        },
+        {
+          "id": "dpa",
+          "heading": "8. Prelucrarea datelor în numele firmei (art. 28 GDPR)",
+          "body": [
+            "Pentru datele clienților pe care firma le introduce sau le primește în Glowa, firma este operator, iar Glowa este persoană împuternicită. Prin acceptarea acestor termeni, părțile convin următoarele:"
+          ],
+          "list": [
+            "Obiect și durată: găzduirea și prelucrarea datelor despre clienți, programări și comunicări, pe durata utilizării serviciului.",
+            "Categorii de date: nume, date de contact, istoricul vizitelor, note, preferințe și consimțăminte de marketing ale clienților firmei.",
+            "Glowa prelucrează datele numai pe baza instrucțiunilor documentate ale firmei, inclusiv prin setările platformei.",
+            "Toate persoanele cu acces au obligația de confidențialitate.",
+            "Aplicăm măsuri tehnice și organizatorice adecvate, conform art. 32 GDPR.",
+            "Subîmputerniciții sunt enumerați în Politica de confidențialitate. Anunțăm în prealabil orice subîmputernicit nou, iar firma poate obiecta.",
+            "Sprijinim firma în soluționarea cererilor persoanelor vizate și în evaluările de impact.",
+            "Notificăm firma fără întârzieri nejustificate în cazul unei încălcări a securității datelor.",
+            "La încetare, firma își poate exporta datele; apoi le ștergem în cel mult 30 de zile, cu excepția cazului în care legea prevede altfel.",
+            "Punem la dispoziție informațiile necesare pentru demonstrarea conformității și permitem audituri cu o notificare rezonabilă."
+          ]
+        },
+        {
+          "id": "ip",
+          "heading": "9. Conținut și proprietate intelectuală",
+          "body": [
+            "Software-ul, designul și marca Glowa ne aparțin. Firmele își păstrează drepturile asupra fotografiilor și textelor încărcate și ne permit să le afișăm pe platformă cât timp profilul lor este activ."
+          ]
+        },
+        {
+          "id": "liability",
+          "heading": "10. Răspundere",
+          "body": [
+            "Ne străduim ca platforma să funcționeze fără întrerupere, dar nu putem garanta acest lucru. Nu răspundem pentru serviciul oferit de salon. Nimic din acești termeni nu îți limitează drepturile legale de consumator."
+          ]
+        },
+        {
+          "id": "termination",
+          "heading": "11. Încetare",
+          "body": [
+            "Poți înceta oricând să folosești Glowa. Putem suspenda un cont care încalcă acești termeni, anunțându-te și precizând motivul."
+          ]
+        },
+        {
+          "id": "law",
+          "heading": "12. Legea aplicabilă și litigii",
+          "body": [
+            "Se aplică legea bulgară, fără a aduce atingere protecțiilor obligatorii pentru consumatori din țara în care locuiești. Litigiile se soluționează pe cale amiabilă, iar în lipsa unui acord, de instanța bulgară competentă.",
+            "Ca consumator din România te poți adresa Autorității Naționale pentru Protecția Consumatorilor, anpc.ro, inclusiv pentru soluționarea alternativă a litigiilor."
+          ]
+        },
+        {
+          "id": "contact",
+          "heading": "13. Contact",
+          "body": [
+            "Scrie-ne la {email}."
+          ]
+        }
+      ]
+    },
+    "cookies": {
+      "title": "Politica privind cookie-urile",
+      "description": "Ce stocăm în browserul tău și cum îți poți schimba alegerea.",
+      "intro": [
+        "Cookie-urile sunt fișiere mici pe care un site le salvează în browserul tău. Glowa folosește minimul necesar: fără cookie-uri de publicitate, fără cookie-uri de analiză și fără urmărire de către terți."
+      ],
+      "sections": [
+        {
+          "id": "necessary",
+          "heading": "1. Strict necesare (mereu active)",
+          "body": [
+            "Fără ele site-ul nu poate funcționa sau nu îți poate reține alegerea. Nu necesită consimțământ (art. 5 alin. (3) din Directiva ePrivacy)."
+          ],
+          "list": [
+            "sb-…-auth-token – te menține autentificat; până la deconectare sau cel mult 400 de zile.",
+            "glowa_business – ce afacere ai deschisă în panoul de administrare; 1 an.",
+            "NEXT_LOCALE – limba aleasă; până la închiderea browserului.",
+            "glowa_consent – alegerea ta privind cookie-urile; 6 luni.",
+            "Stocare locală: theme (temă luminoasă sau întunecată) și glowa.calendar.* (vizualizarea calendarului în panoul de administrare)."
+          ]
+        },
+        {
+          "id": "optional",
+          "heading": "2. Opționale",
+          "body": [
+            "Se salvează doar dacă ești de acord."
+          ],
+          "list": [
+            "glowa_ref – codul QR sau al linkului de recomandare de pe care ai venit, pentru ca programarea să fie atribuită salonului sau clientului corect; 30 de zile. Nu conține nimic altceva și nu este folosit pentru urmărire."
+          ]
+        },
+        {
+          "id": "third",
+          "heading": "3. Terți",
+          "body": [
+            "Implicit, site-ul nu încarcă nimic care să seteze cookie-uri ale terților. Harta OpenStreetMap se încarcă doar când apeși „Arată harta”. Notificările push folosesc serviciul browserului tău doar dacă le activezi."
+          ]
+        },
+        {
+          "id": "manage",
+          "heading": "4. Cum îți schimbi alegerea",
+          "body": [
+            "Folosește „Setări cookie-uri” din partea de jos a oricărei pagini. Poți șterge cookie-urile și din setările browserului."
+          ]
+        }
+      ]
+    },
+    "imprint": {
+      "title": "Date despre furnizor",
+      "description": "Informații conform art. 4 din Legea bulgară privind comerțul electronic.",
+      "intro": [
+        "Informații despre furnizorul de servicii ale societății informaționale, publicate conform art. 4 din Legea bulgară privind comerțul electronic."
+      ],
+      "sections": [
+        {
+          "id": "provider",
+          "heading": "Furnizor",
+          "body": [],
+          "list": [
+            "Denumire: {company}",
+            "Cod de identificare (EIK): {companyId}",
+            "Cod de TVA: {vatId}",
+            "Sediu: {address}",
+            "E-mail: {email}"
+          ]
+        },
+        {
+          "id": "authorities",
+          "heading": "Autorități de supraveghere",
+          "body": [],
+          "list": [
+            "Comisia pentru protecția datelor personale (Bulgaria) – www.cpdp.bg",
+            "Comisia pentru protecția consumatorilor (Bulgaria) – www.kzp.bg"
+          ]
+        }
+      ]
+    }
+  }
+}

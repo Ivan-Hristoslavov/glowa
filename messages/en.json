@@ -614,6 +614,28 @@
       },
       "retry": "Try again",
       "failed": "We couldn't set up notifications in this browser."
+    },
+    "data": {
+      "title": "Your data",
+      "body": "Download a copy of everything we hold about you, or delete your account.",
+      "downloadTitle": "Download your data",
+      "downloadBody": "Profile, bookings, reviews, saved salons and settings as a JSON file.",
+      "download": "Download",
+      "deleteTitle": "Delete account",
+      "deleteBody": "Permanent. Bookings stay with the salons without a link to you, and your reviews become anonymous.",
+      "delete": "Delete account",
+      "dialogTitle": "Are you sure?",
+      "dialogBody": "Your account, saved salons, settings and notification subscriptions are deleted immediately. This cannot be undone.",
+      "confirmLabel": "To confirm, type your email ({email})",
+      "cancel": "Cancel",
+      "confirmDelete": "Delete for good",
+      "deleted": "Your account has been deleted.",
+      "errors": {
+        "unauthorized": "Please sign in again.",
+        "mismatch": "That email does not match this account.",
+        "owner": "You own a salon. Transfer it or write to us before deleting your account.",
+        "generic": "Deletion failed. Try again or write to us."
+      }
     }
   },
   "profile": {
@@ -1381,6 +1403,37 @@
     "dashboard": "Business dashboard",
     "contact": "Contact",
     "languages": "Български · English · Română",
-    "rights": "© {year} Glowa. All rights reserved."
+    "rights": "© {year} Glowa. All rights reserved.",
+    "favorites": "Favourites",
+    "cities": "Cities",
+    "legal": "Legal",
+    "ctaTitle": "Run a salon or work on your own?",
+    "ctaBody": "Online booking around the clock, a team calendar and reminders that cut no-shows. Set up in minutes.",
+    "ctaButton": "Register your salon",
+    "about": "Find a salon, see free times live and book without a phone call.",
+    "backHome": "Back to the home page"
+  },
+  "legal": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "imprint": "Provider details",
+    "signupNotice": "By creating an account you accept the <terms>Terms of use</terms> and confirm you have read the <privacy>Privacy policy</privacy>."
+  },
+  "consent": {
+    "title": "Cookies, only the ones we need",
+    "body": "We use cookies to keep you signed in and remember your language. With your consent we also remember which QR code or referral brought you, so the salon gets the credit. No ads, no tracking.",
+    "policyLink": "Learn more",
+    "accept": "Accept",
+    "reject": "Necessary only",
+    "settings": "Cookie settings",
+    "settingsTitle": "Cookie settings",
+    "settingsBody": "Choose what we remember. You can change it any time from the bottom of the page.",
+    "necessaryTitle": "Necessary",
+    "necessaryBody": "Sign-in, your language, the theme and this choice. The site does not work without them, so they are always on.",
+    "attributionTitle": "Referrals and QR codes",
+    "attributionBody": "Remembers for 30 days which QR code or link you came from, so the booking is credited to the right salon or friend.",
+    "noTracking": "We use no advertising or analytics cookies and share no data with ad networks.",
+    "save": "Save my choice"
   }
 }

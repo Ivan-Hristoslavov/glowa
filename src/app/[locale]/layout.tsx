@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 
 import { MotionProvider } from "@/components/motion/motion-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CookieConsent } from "@/components/legal/cookie-consent";
 import { Toaster } from "@/components/ui/sonner";
 import { localeHrefLang, routing } from "@/i18n/routing";
 import { brandAssets } from "@/lib/brand-assets";
@@ -129,6 +130,7 @@ export default async function LocaleLayout({
             <MotionProvider>
               {children}
               <Toaster position="top-center" />
+              <CookieConsent />
             </MotionProvider>
           </NextIntlClientProvider>
         </ThemeProvider>

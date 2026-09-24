@@ -1121,6 +1121,54 @@ HTTPS (`next dev --experimental-https`) or a deployment.
 
 ---
 
+## 8m. Legal and consent (09-24)
+
+**Documents.** `/legal/privacy`, `/legal/terms`, `/legal/cookies` and
+`/legal/imprint`, in all three languages. The texts are in
+`messages/legal/{bg,en,ro}.json`, not the UI message files: those are sent to
+the browser on every page, and four long documents have no place in every
+payload. The texts are loaded server-side by `lib/legal/content.ts`, and a
+test keeps the three languages identical in structure and placeholders. The
+terms include the GDPR art. 28 processing agreement for salons, the review
+verification rule (only the booking account, only after a completed visit),
+and the search ranking parameters (P2B Regulation 2019/1150; no paid
+placement). The texts were written against what the code does; a lawyer
+should still read them before launch.
+
+**The operator.** `lib/legal/entity.ts` has the company's name, EIK, VAT
+number and address set to `null`. The pages print "[предстои]" rather than
+invent them. **Fill them in before launch** (§11).
+
+**Cookies.** Only one optional cookie exists: `glowa_ref`, the referral
+attribution. There are no analytics or advertising cookies, and the banner
+does not invent categories for them.
+- **The choice.** It is stored in `glowa_consent` (`version.attribution.
+  timestamp`, 6 months) by `components/legal/cookie-consent.tsx`. "Accept"
+  and "necessary only" have equal weight, and nothing optional is stored
+  before a choice, so the banner does not block the page. "Cookie settings"
+  in the footer and on the legal pages reopens the choice.
+- **The /go route.** It sets the referral cookie only when consent is already
+  there. Otherwise it passes `?ref=`; the banner removes it from the address
+  bar and, on accept, `rememberReferral` sets the httpOnly cookie after
+  re-reading consent on the server. Withdrawing consent deletes the cookie.
+- **Verified end to end** in Chromium. The visit is still counted without
+  consent, because counting stores nothing on the device.
+
+**Rights, self-service.** Settings → "Your data":
+- **Download.** `/api/me/export` returns JSON of everything held about the
+  person as a customer, with every query filtered on the caller.
+- **Delete.** `deleteAccount` requires typing the account email, removes the
+  auth user with the service role, and lets the foreign keys finish the job:
+  personal tables cascade, appointments and reviews stay without the link.
+  It is refused for a salon owner.
+- **Verified**: the export downloaded, a throwaway account was deleted, and
+  the owner was refused.
+
+**At collection.** The sign-up form links the terms and the privacy policy
+(GDPR art. 13), opening in a new tab so the form survives.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -1264,6 +1312,11 @@ traction claim may appear unless it is real.
     trial clock, no plan limits enforced. The admin card says early access is
     free, which is true until billing exists. The contact CTA points at
     `hello@glowa.bg`, which has to actually exist before launch.
+27. **Before launch, legal**: fill in `lib/legal/entity.ts` (company, EIK,
+    VAT, address), make `hello@glowa.bg` a real mailbox, have a lawyer read
+    `messages/legal/*`, and sign DPAs with Supabase, Vercel, Resend and
+    OpenAI. The retention periods in the privacy policy (bookings 3 years,
+    delivery logs 12 months) are policy; no job enforces them yet.
 25. A closure never notifies anyone: the owner is told how many live bookings
     fall inside it and has to call them. A "closure → notify and offer
     rebooking" path through the outbox would close that.

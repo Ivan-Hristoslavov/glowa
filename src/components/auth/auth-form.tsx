@@ -48,6 +48,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  */
 export function AuthForm({ mode: initialMode, action, nextPath, inline }: AuthFormProps) {
   const t = useTranslations("auth");
+  const legal = useTranslations("legal");
   const [mode, setMode] = useState<Mode>(initialMode);
   const isSignUp = mode === "sign-up";
 
@@ -252,6 +253,25 @@ export function AuthForm({ mode: initialMode, action, nextPath, inline }: AuthFo
         {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
         {isSignUp ? t("signUp") : t("signIn")}
       </Button>
+
+      {/* GDPR art. 13: say what applies at the moment data is collected. New
+          tab, so reading the terms does not throw away the form. */}
+      {isSignUp ? (
+        <p className="text-muted-foreground text-center text-xs leading-relaxed text-pretty">
+          {legal.rich("signupNotice", {
+            terms: (chunks) => (
+              <Link href="/legal/terms" target="_blank" className="text-foreground underline underline-offset-2">
+                {chunks}
+              </Link>
+            ),
+            privacy: (chunks) => (
+              <Link href="/legal/privacy" target="_blank" className="text-foreground underline underline-offset-2">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      ) : null}
 
       {!inline ? (
         <p className="text-muted-foreground text-center text-sm">

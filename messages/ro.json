@@ -614,6 +614,28 @@
       },
       "retry": "Încearcă din nou",
       "failed": "Nu am putut activa notificările în acest browser."
+    },
+    "data": {
+      "title": "Datele tale",
+      "body": "Descarcă o copie a tot ce păstrăm despre tine sau șterge-ți contul.",
+      "downloadTitle": "Descarcă datele",
+      "downloadBody": "Profil, programări, recenzii, saloane salvate și setări într-un fișier JSON.",
+      "download": "Descarcă",
+      "deleteTitle": "Șterge contul",
+      "deleteBody": "Ireversibil. Programările rămân la saloane fără legătură cu tine, iar recenziile devin anonime.",
+      "delete": "Șterge contul",
+      "dialogTitle": "Ești sigur?",
+      "dialogBody": "Contul, saloanele salvate, setările și abonamentele la notificări se șterg imediat. Acțiunea nu poate fi anulată.",
+      "confirmLabel": "Pentru confirmare, scrie adresa de e-mail ({email})",
+      "cancel": "Renunță",
+      "confirmDelete": "Șterge definitiv",
+      "deleted": "Contul tău a fost șters.",
+      "errors": {
+        "unauthorized": "Te rugăm să te autentifici din nou.",
+        "mismatch": "E-mailul nu corespunde acestui cont.",
+        "owner": "Deții un salon. Transferă-l sau scrie-ne înainte de a șterge contul.",
+        "generic": "Ștergerea nu a reușit. Încearcă din nou sau scrie-ne."
+      }
     }
   },
   "profile": {
@@ -1381,6 +1403,37 @@
     "dashboard": "Panou business",
     "contact": "Contact",
     "languages": "Български · English · Română",
-    "rights": "© {year} Glowa. Toate drepturile rezervate."
+    "rights": "© {year} Glowa. Toate drepturile rezervate.",
+    "favorites": "Favorite",
+    "cities": "Orașe",
+    "legal": "Informații legale",
+    "ctaTitle": "Ai un salon sau lucrezi pe cont propriu?",
+    "ctaBody": "Programări online non-stop, calendar pentru echipă și mementouri care reduc neprezentările. Se configurează în câteva minute.",
+    "ctaButton": "Înregistrează-ți salonul",
+    "about": "Găsește un salon, vezi orele libere în timp real și programează-te fără telefon.",
+    "backHome": "Înapoi la pagina principală"
+  },
+  "legal": {
+    "privacy": "Confidențialitate",
+    "terms": "Termeni",
+    "cookies": "Cookie-uri",
+    "imprint": "Date despre furnizor",
+    "signupNotice": "Prin crearea contului accepți <terms>Termenii și condițiile</terms> și confirmi că ai citit <privacy>Politica de confidențialitate</privacy>."
+  },
+  "consent": {
+    "title": "Cookie-uri, doar cele necesare",
+    "body": "Folosim cookie-uri ca să rămâi autentificat și să îți reținem limba. Cu acordul tău reținem și de pe ce cod QR sau recomandare ai venit, ca salonul să primească meritul. Fără reclame, fără urmărire.",
+    "policyLink": "Află mai multe",
+    "accept": "Accept",
+    "reject": "Doar cele necesare",
+    "settings": "Setări cookie-uri",
+    "settingsTitle": "Setări cookie-uri",
+    "settingsBody": "Alege ce reținem. Poți schimba oricând din partea de jos a paginii.",
+    "necessaryTitle": "Necesare",
+    "necessaryBody": "Autentificarea, limba, tema și această alegere. Site-ul nu funcționează fără ele, așa că sunt mereu active.",
+    "attributionTitle": "Recomandări și coduri QR",
+    "attributionBody": "Reține timp de 30 de zile de pe ce cod QR sau link ai venit, ca programarea să fie atribuită salonului sau prietenului corect.",
+    "noTracking": "Nu folosim cookie-uri de publicitate sau de analiză și nu împărtășim date cu rețele de reclame.",
+    "save": "Salvează alegerea"
   }
 }

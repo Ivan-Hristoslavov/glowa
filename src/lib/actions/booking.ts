@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
-import { GROWTH_COOKIE } from "@/app/[locale]/go/[code]/route";
+import { GROWTH_COOKIE } from "@/lib/growth/cookie";
 import { createClient } from "@/lib/supabase/server";
 
 export type Slot = {
