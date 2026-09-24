@@ -13,7 +13,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(21);
 
 -- --- fixtures --------------------------------------------------------------
 -- A migration runs as the owner, which the customer guard treats as "not a
@@ -207,6 +207,42 @@ select isnt_empty(
       and d.event_type = 'cancellation'
       and d.status = 'queued'$$,
   'cancelling queues a cancellation notice'
+);
+
+
+-- ---------------------------------------------------------------------------
+-- 5. Onboarding
+--
+-- `create_business` was broken from the start and nobody noticed, because the
+-- demo salons are seeded with their memberships in the same statement and the
+-- real signup path had never been walked end to end. Two separate causes, one
+-- test each.
+-- ---------------------------------------------------------------------------
+select has_function('public', 'create_business',
+  'the onboarding RPC exists');
+
+-- The creator must be able to read the row the instant it exists, or
+-- `insert ... returning` inside the RPC fails: the business is created as
+-- `draft` and the owner membership is written by an AFTER trigger that has
+-- not fired yet.
+select policy_cmd_is('public', 'businesses',
+  'businesses_select_public_or_member', 'SELECT',
+  'the businesses select policy exists');
+
+select matches(
+  (select pg_get_expr(polqual, polrelid)
+   from pg_policy
+   where polrelid = 'public.businesses'::regclass
+     and polname = 'businesses_select_public_or_member'),
+  'created_by',
+  'a creator can read their own business before the membership trigger fires'
+);
+
+-- The audit entry is written by the owner trigger, not by the caller:
+-- `authenticated` must never be able to write history.
+select ok(
+  not has_table_privilege('authenticated', 'public.audit_logs', 'INSERT'),
+  'clients cannot forge audit entries'
 );
 
 select * from finish();

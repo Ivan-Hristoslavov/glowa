@@ -351,6 +351,8 @@ business id the caller manages for business media, resolved through
 | `…200000_claim_invitations.sql` | `claim_pending_invitations()` links an invited membership to the account that signs in |
 | `…210000_notification_outbox.sql` | `notification_deliveries`, opt-out lookup, appointment trigger, worker claim |
 | `…220000_book_appointment_self_derive.sql` | `book_appointment` writes a complete row instead of relying on the guard trigger |
+| `…090000_creator_can_read_own_business.sql` | a creator can read their own business, which is what makes `INSERT … RETURNING` work |
+| `…091000_onboarding_audit_write.sql` | the onboarding audit entry moves into the owner trigger |
 
 Four of these were written because something failed, not from a plan:
 
@@ -378,6 +380,22 @@ Four of these were written because something failed, not from a plan:
   zero if it had not. The RPC now writes the whole row; the guard still
   overrides everything for a non-member, so the trust boundary is unchanged.
   Found by trying to book, not by reading the schema.
+
+- `0026` and `0027` — **onboarding had never worked**. `create_business` does
+  `insert into businesses ... returning *`, and `RETURNING` requires the new
+  row to pass the SELECT policy as well as the INSERT one. That policy was
+  `status = 'active' or is_business_member(id)`; a new business is `draft`, and
+  the owner's membership is written by an AFTER trigger that has not fired
+  when `RETURNING` is evaluated. The row was invisible to its own creator for
+  that instant, so Postgres refused it and the RPC aborted. Behind it was a
+  second wall: the RPC finished by writing to `audit_logs`, which
+  `authenticated` deliberately cannot write to.
+  The fixes were the missing case, not a wider grant - a creator can read
+  their own business, and the audit entry moved into the owner trigger, which
+  already runs SECURITY DEFINER. Neither the "clients cannot forge history"
+  rule nor `create_business` being SECURITY INVOKER was weakened.
+  It went unnoticed because the demo salons are seeded with their memberships
+  in the same statement, so the real signup path had never been walked.
 
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
