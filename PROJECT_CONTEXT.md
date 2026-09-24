@@ -593,12 +593,28 @@ Four of these were written because something failed, not from a plan:
   next 120 days, active salons only. Tested locally: a closed week goes from
   322 slots to 0, and grants on the recreated functions survive.
 
-**Live project drift, as of 09-24.** The live database has three migrations
-that are not in the repository — `deposits`, `deposit_refund_reference` and
-`search_near` — applied while this work was going on in a parallel session.
-`130500`, `120000`, `20260924130000` and `20260924140000` above are in the
-repository, but the last three are **not yet applied live**, and
-`src/types/database.ts` has the closures types added by hand to match. Reconcile before the next `db push`.
+**Live project, as of 09-24 14:20 UTC: in step with the repository.** The
+two branches were merged, and every migration in `supabase/migrations/` is
+now applied live:
+- `deposits`, `deposit_refund_reference` and `search_near` came from the
+  other session;
+- `slug_transliteration`, `business_closures` and `business_subscriptions`
+  were applied through the Supabase MCP before the merged code was deployed.
+
+Before replacing `get_available_slots`, `app.has_bookable_staff_on` and
+`app.next_free_slug`, their live definitions were compared with the
+repository's previous versions and matched, so nothing made in the dashboard
+was overwritten.
+
+The live migration *versions* are the MCP's timestamps, not the file names;
+the names match. `src/types/database.ts` has the closures and subscription
+types added by hand; regenerate with `npm run db:types` when convenient.
+
+**Deploying.** Vercel project `glowa` (team "ivan-hristoslavov's projects",
+region `dub1`). A push to any branch builds a preview. Production is created
+explicitly: redeploy the chosen preview with `target: production`, or run
+`vercel --prod`. A preview cannot simply be promoted, because it was built
+with preview env vars.
 
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
