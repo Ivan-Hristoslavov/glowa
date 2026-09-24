@@ -9,7 +9,9 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 
 **Repository**: <https://github.com/Ivan-Hristoslavov/glowa>
 **Supabase project**: `reaobqtmwmesmpgdkzwi` (eu-west-1, Postgres 17)
-**Deployment target**: Vercel (not yet configured — Prompt 5)
+**Deployment**: Vercel project `ivan-hristoslavovs-projects/glowa`, production at
+<https://glowa-six.vercel.app> (first deployed 2026-09-24 from the CLI; functions in
+`dub1`, next to the Supabase region). See TODO 26 for what is not live yet.
 
 ---
 
@@ -1256,6 +1258,17 @@ traction claim may appear unless it is real.
     profile/bookings surfaces and the auth pages, which still use the older styling.
 22. The customer surfaces (`/profile`, `/bookings`, `/favorites`, auth pages) got the
     new header and footer but not a composition pass of their own yet.
+26. **Vercel production is up but not complete.** Set in the project: the public
+    Supabase URL and publishable key, `NEXT_PUBLIC_SITE_URL`, the VAPID public key
+    and subject. Still to add (secrets, by the owner): `SUPABASE_SECRET_KEY`,
+    `CRON_SECRET`, `OPENAI_API_KEY`, `VAPID_PRIVATE_KEY`, `RESEND_API_KEY` /
+    `RESEND_FROM`, `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET`. In Supabase → Auth →
+    URL configuration, the site URL and redirect URLs must include the Vercel domain
+    or sign-up confirmation and password reset links point at localhost. The account
+    is on Hobby, which allows **daily** crons only, so `vercel.json` runs
+    notifications at 07:00 and payments at 03:30 UTC; reminders need the minute
+    schedule back - Vercel Pro, or Supabase `pg_cron` + `pg_net` calling the same
+    endpoints.
 24. Gallery order can only be changed by promoting to cover; drag-to-reorder is not
     built. Uploads are not resized in the browser (10 MB cap, `next/image` serves
     resized copies).
