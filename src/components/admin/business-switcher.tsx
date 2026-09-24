@@ -54,13 +54,13 @@ export function BusinessSwitcher({
         <Button
           variant="ghost"
           disabled={isPending}
-          className="h-auto w-full justify-between px-2 py-2"
+          className="bg-card hover:bg-card h-auto w-full justify-between rounded-2xl border px-2.5 py-2.5 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-lift)]"
           aria-label={t("switchBusiness")}
         >
           <span className="flex min-w-0 items-center gap-2.5">
-            <Avatar className="size-8 rounded-lg">
+            <Avatar className="size-9 rounded-xl">
               {active?.logoUrl ? <AvatarImage src={active.logoUrl} alt="" /> : null}
-              <AvatarFallback className="bg-secondary rounded-lg text-xs font-medium">
+              <AvatarFallback className="from-primary to-brand-soft text-primary-foreground rounded-xl bg-gradient-to-br text-sm font-semibold">
                 {active?.name.charAt(0) ?? "?"}
               </AvatarFallback>
             </Avatar>

@@ -1,4 +1,11 @@
-import { CalendarX2, Clock, MapPin, User2 } from "lucide-react";
+import {
+  CalendarX2,
+  Clock,
+  Hourglass,
+  MapPin,
+  ShieldCheck,
+  User2,
+} from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -8,8 +15,10 @@ import { Rating } from "@/components/common/rating";
 import { AddToCalendar } from "@/components/customer/add-to-calendar";
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
 import { CancelAppointmentDialog } from "@/components/customer/cancel-appointment-dialog";
+import { PayDepositButton } from "@/components/customer/pay-deposit-button";
 import { RescheduleDialog } from "@/components/customer/reschedule-dialog";
 import { ReviewForm } from "@/components/customer/review-form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
@@ -17,6 +26,7 @@ import type { Locale } from "@/i18n/routing";
 import { calendarProviders } from "@/lib/calendar";
 import { formatDate, formatPrice, formatTime, formatZoneLabel } from "@/lib/format";
 import { pickLocalized } from "@/lib/localized";
+import { reconcileReturnedSession } from "@/lib/payments/deposits";
 import {
   describeAppointmentWindow,
   getMyAppointment,
@@ -39,6 +49,17 @@ export default async function BookingDetailPage({
   const review = await getTranslations("review");
   const business = await getTranslations("business");
 
+  const sp = await searchParams;
+
+  // Back from Stripe with a paid session: settle it before reading the
+  // booking, so this page shows "paid" even if the webhook is still on its
+  // way. Idempotent, and it verifies the session against the booking itself.
+  const sessionId = typeof sp.session_id === "string" ? sp.session_id : null;
+  if (sp.deposit === "paid" && sessionId) {
+    const mine = await getMyAppointment(id);
+    if (mine) await reconcileReturnedSession(mine.id, sessionId);
+  }
+
   const appointment = await getMyAppointment(id);
   if (!appointment) {
     return (
@@ -55,7 +76,6 @@ export default async function BookingDetailPage({
     );
   }
 
-  const sp = await searchParams;
   const justBooked = sp.booked === "1";
 
   const activeLocale = locale as Locale;
@@ -93,9 +113,47 @@ export default async function BookingDetailPage({
     endsAt: appointment.ends_at,
   });
 
+  const depositAmount =
+    appointment.deposit_cents > 0
+      ? formatPrice(appointment.deposit_cents, appointment.currency, activeLocale)
+      : null;
+  const holdUntil = appointment.payment_due_at
+    ? formatTime(appointment.payment_due_at, zoned)
+    : null;
+
   return (
     <div className="space-y-6">
-      {justBooked ? (
+      {appointment.deposit_status === "paid" && sp.deposit === "paid" ? (
+        <Alert>
+          <ShieldCheck className="size-4" aria-hidden />
+          <AlertTitle>{t("depositPaidTitle")}</AlertTitle>
+          <AlertDescription>{t("depositPaidBody", { amount: depositAmount ?? "" })}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      {appointment.deposit_status === "awaiting" ? (
+        <Alert>
+          <Hourglass className="size-4" aria-hidden />
+          <AlertTitle>{t("depositAwaitingTitle")}</AlertTitle>
+          <AlertDescription className="space-y-3">
+            <p>{t("depositAwaitingBody", { time: holdUntil ?? "" })}</p>
+            <PayDepositButton
+              appointmentId={appointment.id}
+              label={t("payDeposit", { amount: depositAmount ?? "" })}
+            />
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {appointment.deposit_status === "void" ? (
+        <Alert>
+          <CalendarX2 className="size-4" aria-hidden />
+          <AlertTitle>{t("depositVoidTitle")}</AlertTitle>
+          <AlertDescription>{t("depositVoidBody")}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      {justBooked && appointment.deposit_status !== "awaiting" ? (
         <BookingCelebration title={booking("successTitle")} body={booking("successBody")} />
       ) : null}
 
@@ -164,6 +222,16 @@ export default async function BookingDetailPage({
               {formatPrice(appointment.price_cents, appointment.currency, activeLocale)}
             </dd>
           </div>
+
+          {depositAmount && appointment.deposit_status !== "none" ? (
+            <div>
+              <dt className="text-muted-foreground text-xs">{booking("depositLabel")}</dt>
+              <dd className="mt-0.5 flex items-center gap-2">
+                <ShieldCheck className="text-muted-foreground size-4" aria-hidden />
+                {depositAmount} · {t(`depositStatus.${appointment.deposit_status}`)}
+              </dd>
+            </div>
+          ) : null}
         </dl>
 
         {appointment.customer_notes ? (

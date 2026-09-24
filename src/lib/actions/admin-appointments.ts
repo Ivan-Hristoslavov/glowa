@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { z } from "zod";
 
 import { mapWriteError, requireMembership } from "@/lib/actions/guard";
+import { runPaymentsMaintenance } from "@/lib/payments/deposits";
 
 export type AdminAppointmentResult =
   | { ok: true; id?: string }
@@ -91,6 +93,9 @@ const statusSchema = z.object({
   appointmentId: z.uuid(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled", "no_show"]),
   reason: z.string().trim().max(500).optional(),
+  // A late cancellation phoned in: the salon may keep a paid deposit instead
+  // of refunding it. The database only honours this for a member.
+  retainDeposit: z.boolean().optional(),
 });
 
 export async function setAppointmentStatus(
@@ -103,19 +108,28 @@ export async function setAppointmentStatus(
   if (!guard.ok) return guard;
 
   const now = new Date().toISOString();
-  const { error } = await guard.supabase
+  const isCancel = parsed.data.status === "cancelled";
+  const { data: updated, error } = await guard.supabase
     .from("appointments")
     .update({
       status: parsed.data.status,
-      cancellation_reason:
-        parsed.data.status === "cancelled" ? parsed.data.reason || null : null,
-      cancelled_at: parsed.data.status === "cancelled" ? now : null,
+      cancellation_reason: isCancel ? parsed.data.reason || null : null,
+      cancelled_at: isCancel ? now : null,
       completed_at: parsed.data.status === "completed" ? now : null,
+      ...(isCancel && parsed.data.retainDeposit
+        ? { deposit_status: "retained" as const }
+        : {}),
     })
     .eq("id", parsed.data.appointmentId)
-    .eq("business_id", parsed.data.businessId);
+    .eq("business_id", parsed.data.businessId)
+    .select("deposit_status")
+    .maybeSingle();
 
   if (error) return { ok: false, code: mapWriteError(error) };
+
+  if (updated?.deposit_status === "refund_pending") {
+    after(() => runPaymentsMaintenance(5).then(() => undefined, () => undefined));
+  }
 
   revalidatePath("/[locale]/dashboard/calendar", "page");
   revalidatePath("/[locale]/dashboard", "page");

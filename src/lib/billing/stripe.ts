@@ -1,24 +1,19 @@
 import "server-only";
 
-import Stripe from "stripe";
-
-import { requireServerEnv } from "@/lib/env";
+import { getStripe as platformStripe, isStripeConfigured } from "@/lib/payments/stripe";
 
 /**
- * Billing is optional until the keys exist: without them the billing page
- * says plans are free during early access instead of showing buttons that
- * would fail at Stripe.
+ * Subscriptions use the same platform Stripe client as deposits
+ * (`lib/payments/stripe.ts`). Without a key the billing page says plans are
+ * free during early access instead of showing buttons that would fail.
  */
 export function isBillingConfigured() {
-  return Boolean(process.env.STRIPE_SECRET_KEY);
+  return isStripeConfigured();
 }
 
-let client: Stripe | null = null;
-
-/** The API version is the one the installed SDK is typed against. */
+/** The platform client; only called after `isBillingConfigured()`. */
 export function getStripe() {
-  client ??= new Stripe(requireServerEnv("STRIPE_SECRET_KEY"), {
-    appInfo: { name: "glowa" },
-  });
-  return client;
+  const stripe = platformStripe();
+  if (!stripe) throw new Error("Stripe is not configured");
+  return stripe;
 }

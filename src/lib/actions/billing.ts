@@ -7,6 +7,7 @@ import { requireMembership } from "@/lib/actions/guard";
 import { isLiveSubscription, priceLookupKey } from "@/lib/billing/plans";
 import { getStripe, isBillingConfigured } from "@/lib/billing/stripe";
 import { publicEnv } from "@/lib/env";
+import { PLANS } from "@/lib/pricing";
 
 export type BillingResult =
   | { ok: true; url: string }
@@ -54,6 +55,10 @@ export async function startCheckout(input: z.input<typeof checkoutSchema>): Prom
   if (!guard.ok) return { ok: false, code: refusal(guard.code) };
 
   const { businessId, plan, interval } = parsed.data;
+  // A free plan is never sold.
+  if (PLANS.find((item) => item.id === plan)?.monthly === 0) {
+    return { ok: false, code: "invalid" };
+  }
   const locale = await getLocale();
 
   const { data: current } = await guard.supabase

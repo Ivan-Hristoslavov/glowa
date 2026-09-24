@@ -6,6 +6,7 @@ import { useActionState, useEffect, useId, useRef, useState, useTransition } fro
 
 import type { AuthFormState } from "@/app/[locale]/(auth)/actions";
 import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
+import { RequiredNote } from "@/components/common/required-note";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,6 +164,8 @@ export function AuthForm({ mode: initialMode, action, nextPath, inline, google }
         </>
       ) : null}
 
+      <RequiredNote />
+
       {state.status === "error" && state.message ? (
         <Alert variant="destructive" role="alert" className="animate-in fade-in slide-in-from-top-1">
           <AlertDescription>{state.message}</AlertDescription>
@@ -316,7 +319,10 @@ function Field({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id}>{label}</Label>
+        {/* Every field in these forms is required. */}
+        <Label htmlFor={id} required>
+          {label}
+        </Label>
         {aside}
       </div>
       {children}

@@ -2,6 +2,7 @@ import { BarChart3 } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeader } from "@/components/admin/page-header";
 import { BarChart } from "@/components/admin/charts/bar-chart";
 import { HorizontalBarChart } from "@/components/admin/charts/horizontal-bar-chart";
 import { MetricCard } from "@/components/admin/metric-card";
@@ -59,22 +60,24 @@ export default async function AnalyticsPage({
 
   if (appointments.length === 0) {
     return (
-      <div className="space-y-6">
-        <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>
+      <div className="space-y-8">
+        <PageHeader title={t("title")} description={t("subtitle")} />
         <EmptyState icon={BarChart3} title={t("empty")} body={t("emptyBody")} />
       </div>
     );
   }
 
-  // Axis ticks stay compact; Bulgarian's CLDR abbreviation is the month number,
-  // which is correct but ambiguous across a year boundary - so the heading
-  // above the charts carries the year instead of every tick.
-  const monthFormatter = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
-    month: "short",
+  // Axis ticks stay compact. Bulgarian's CLDR "short" month is the number
+  // ("09"), which reads as a code, not a month - so ticks take the first three
+  // letters of the full name ("сеп", "Sep", "sep"), and the heading above the
+  // charts carries the year instead of every tick.
+  const monthNames = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
+    month: "long",
     timeZone: timezone,
   });
+  const monthFormatter = { format: (date: Date) => monthNames.format(date).slice(0, 3) };
   const rangeFormatter = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
-    month: "short",
+    month: "long",
     year: "numeric",
     timeZone: timezone,
   });
@@ -169,12 +172,11 @@ export default async function AnalyticsPage({
 
   return (
     <div className="space-y-8">
-      <div className="space-y-1">
-        <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm">
-          {rangeFormatter.format(from)} – {rangeFormatter.format(now)}
-        </p>
-      </div>
+      <PageHeader
+        eyebrow={`${rangeFormatter.format(from)} – ${rangeFormatter.format(now)}`}
+        title={t("title")}
+        description={t("subtitle")}
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <MetricCard

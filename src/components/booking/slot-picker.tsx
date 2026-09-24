@@ -1,11 +1,12 @@
 "use client";
 
-import { CalendarX2, ChevronLeft, ChevronRight, Loader2, Moon, Sun, Sunrise } from "lucide-react";
+import { CalendarX2, Loader2, Moon, Sun, Sunrise, Zap } from "lucide-react";
 import { m } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { EmptyState } from "@/components/common/empty-state";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { localeHrefLang, type Locale } from "@/i18n/routing";
 import { fetchSlots, type Slot } from "@/lib/actions/booking";
@@ -112,13 +113,9 @@ export function SlotPicker({
       }),
     [locale, timezone],
   );
-  const dateFormatter = useMemo(
+  const dayNumberFormatter = useMemo(
     () =>
-      new Intl.DateTimeFormat(localeHrefLang[locale], {
-        day: "numeric",
-        month: "short",
-        timeZone: timezone,
-      }),
+      new Intl.DateTimeFormat(localeHrefLang[locale], { day: "numeric", timeZone: timezone }),
     [locale, timezone],
   );
   const timeFormatter = useMemo(
@@ -164,92 +161,109 @@ export function SlotPicker({
   }
 
   const times = byDay.get(activeDay) ?? [];
+  const firstFree = days.find((day) => day.count > 0);
+  const firstSlot = firstFree ? byDay.get(firstFree.key)?.[0] : undefined;
 
-  // Morning, afternoon, evening: a long column of identical buttons is hard
-  // to scan, and "something after work" is how people actually think.
-  const hourFormatter = new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    hourCycle: "h23",
+  // Morning, afternoon, evening - in the salon's clock. A wall of twenty
+  // identical buttons is hard to scan; three short rows are not.
+  const hourOf = (slot: Slot) =>
+    Number(
+      new Intl.DateTimeFormat("en-GB", { hour: "numeric", hour12: false, timeZone: timezone }).format(
+        new Date(slot.starts_at),
+      ),
+    );
+  const periods = [
+    { key: "morning" as const, icon: Sunrise, slots: times.filter((slot) => hourOf(slot) < 12) },
+    {
+      key: "afternoon" as const,
+      icon: Sun,
+      slots: times.filter((slot) => hourOf(slot) >= 12 && hourOf(slot) < 17),
+    },
+    { key: "evening" as const, icon: Moon, slots: times.filter((slot) => hourOf(slot) >= 17) },
+  ].filter((period) => period.slots.length > 0);
+
+  const monthLabel = new Intl.DateTimeFormat(localeHrefLang[locale], {
+    month: "long",
+    year: "numeric",
     timeZone: timezone,
-  });
-  const periods = (["morning", "afternoon", "evening"] as const)
-    .map((period) => ({
-      period,
-      slots: times.filter((slot) => {
-        const hour = Number(hourFormatter.format(new Date(slot.starts_at)));
-        return period === "morning" ? hour < 12 : period === "afternoon" ? hour < 17 : hour >= 17;
-      }),
-    }))
-    .filter((group) => group.slots.length > 0);
-
-  const PERIOD_ICON = { morning: Sunrise, afternoon: Sun, evening: Moon } as const;
+  }).format(new Date(`${activeDay}T12:00:00Z`));
 
   return (
     <div className="space-y-5">
-      <DayStrip
-        label={t("chooseTime")}
-        earlier={t("earlier")}
-        later={t("later")}
-        caption={
-          <>
-            {t("timezoneNote", { zone: timezone })}
-            {viewerZone && viewerZone !== timezone ? (
-              <> {t("timezoneDiffers", { viewer: viewerZone })}</>
-            ) : null}
-          </>
-        }
-      >
-        {days.map((day) => {
-          const isActive = day.key === activeDay;
-          const disabled = day.count === 0;
-          return (
-            <button
-              key={day.key}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              disabled={disabled}
-              onClick={() => {
-                setSelectedDay(day.key);
-                onChange(null);
-              }}
-              className={cn(
-                "glowa-focus relative flex w-[4.25rem] shrink-0 snap-start flex-col items-center gap-0.5 rounded-2xl border px-2 py-3 text-center transition-colors duration-300",
-                isActive
-                  ? "text-primary-foreground border-transparent"
-                  : "border-border bg-card hover:border-primary/40",
-                disabled && "cursor-not-allowed opacity-35 hover:border-border",
-              )}
-            >
-              {isActive ? (
-                <m.span
-                  layoutId="active-day"
-                  className="bg-primary absolute inset-0 rounded-2xl"
-                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  aria-hidden
-                />
-              ) : null}
-              <span className="relative text-[0.65rem] tracking-wide uppercase">
-                {dayFormatter.format(day.date)}
-              </span>
-              <span className="relative text-sm font-semibold tabular-nums">
-                {dateFormatter.format(day.date)}
-              </span>
-              {!disabled ? (
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="font-heading text-lg first-letter:uppercase">{monthLabel}</p>
+        {firstSlot && value?.starts_at !== firstSlot.starts_at ? (
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedDay(firstFree!.key);
+              onChange(firstSlot);
+            }}
+            className="glowa-focus bg-primary/10 text-primary hover:bg-primary/15 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
+          >
+            <Zap className="size-3.5" aria-hidden />
+            {t("firstFree", {
+              when: `${dayFormatter.format(new Date(firstSlot.starts_at))} ${timeFormatter.format(new Date(firstSlot.starts_at))}`,
+            })}
+          </button>
+        ) : null}
+      </div>
+
+      <ScrollArea className="w-full">
+        <div className="flex gap-2 pb-3" role="tablist" aria-label={t("chooseTime")}>
+          {days.map((day) => {
+            const isActive = day.key === activeDay;
+            const disabled = day.count === 0;
+            return (
+              <button
+                key={day.key}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                disabled={disabled}
+                onClick={() => {
+                  setSelectedDay(day.key);
+                  onChange(null);
+                }}
+                className={cn(
+                  "glowa-focus flex w-[4.5rem] shrink-0 flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-center transition-all duration-200",
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground shadow-[var(--shadow-lift)]"
+                    : "bg-card hover:border-primary/40 hover:-translate-y-0.5",
+                  disabled && "cursor-not-allowed opacity-35 hover:translate-y-0 hover:border-border",
+                )}
+              >
                 <span
                   className={cn(
-                    "relative mt-0.5 size-1 rounded-full",
-                    isActive ? "bg-primary-foreground/80" : "bg-primary/70",
+                    "text-[0.65rem] tracking-wide uppercase",
+                    isActive ? "text-primary-foreground/85" : "text-muted-foreground",
+                  )}
+                >
+                  {dayFormatter.format(day.date)}
+                </span>
+                <span className="font-heading text-xl leading-none tabular-nums">
+                  {dayNumberFormatter.format(day.date)}
+                </span>
+                <span
+                  className={cn(
+                    "h-1 w-6 rounded-full",
+                    disabled
+                      ? "bg-transparent"
+                      : isActive
+                        ? "bg-primary-foreground/70"
+                        : day.count >= 8
+                          ? "bg-success/70"
+                          : "bg-warning/70",
                   )}
                   aria-hidden
                 />
-              ) : (
-                <span className="relative mt-0.5 size-1" aria-hidden />
-              )}
-            </button>
-          );
-        })}
-      </DayStrip>
+                <span className="sr-only">{t("slotsCount", { count: day.count })}</span>
+              </button>
+            );
+          })}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       {times.length === 0 ? (
         <EmptyState
@@ -263,113 +277,53 @@ export function SlotPicker({
           key={activeDay}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="space-y-4"
+          transition={{ duration: 0.3 }}
+          className="space-y-5"
           role="radiogroup"
           aria-label={t("chooseTime")}
         >
-          {periods.map(({ period, slots: group }) => {
-            const Icon = PERIOD_ICON[period];
-            return (
-              <div key={period} className="space-y-2">
-                <p className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase">
-                  <Icon className="size-3.5" aria-hidden />
-                  {t(period)}
-                </p>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                  {group.map((slot) => {
-                    const isSelected = value?.starts_at === slot.starts_at;
-                    return (
-                      <button
-                        key={slot.starts_at}
-                        type="button"
-                        role="radio"
-                        aria-checked={isSelected}
-                        onClick={() => onChange(slot)}
-                        className={cn(
-                          "glowa-focus relative h-11 rounded-xl border text-sm font-medium tabular-nums transition-all duration-200 active:scale-95",
-                          isSelected
-                            ? "border-primary bg-primary text-primary-foreground shadow-primary/30 shadow-md"
-                            : "border-border bg-card hover:border-primary/50 hover:text-primary",
-                        )}
-                      >
-                        {timeFormatter.format(new Date(slot.starts_at))}
-                      </button>
-                    );
-                  })}
-                </div>
+          {periods.map((period) => (
+            <div key={period.key} className="space-y-2.5">
+              <p className="text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase">
+                <period.icon className="size-3.5" aria-hidden />
+                {t(period.key)}
+              </p>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+                {period.slots.map((slot) => {
+                  const isSelected = value?.starts_at === slot.starts_at;
+                  return (
+                    <button
+                      key={slot.starts_at}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => onChange(slot)}
+                      className={cn(
+                        "glowa-focus relative rounded-full border py-2.5 text-sm font-medium tabular-nums transition-all duration-200",
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground shadow-[var(--shadow-card)]"
+                          : "bg-card hover:border-primary/50 hover:text-primary",
+                      )}
+                    >
+                      {timeFormatter.format(new Date(slot.starts_at))}
+                    </button>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </m.div>
       )}
-    </div>
-  );
-}
 
-/**
- * The horizontally scrolling day list, with arrows on wider screens: a strip
- * that is cut off at the edge does not say "there is more" to everyone, and a
- * mouse has no swipe.
- */
-function DayStrip({
-  label,
-  earlier,
-  later,
-  caption,
-  children,
-}: {
-  label: string;
-  earlier: string;
-  later: string;
-  caption: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  function scroll(direction: 1 | -1) {
-    const node = ref.current;
-    if (!node) return;
-    node.scrollBy({ left: direction * node.clientWidth * 0.8, behavior: "smooth" });
-  }
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-end justify-between gap-4">
-        <p className="text-muted-foreground text-xs">{caption}</p>
-        <div className="hidden shrink-0 gap-1 sm:flex">
-          <button
-            type="button"
-            onClick={() => scroll(-1)}
-            aria-label={earlier}
-            className="glowa-focus hover:bg-accent flex size-8 items-center justify-center rounded-full border transition-colors"
-          >
-            <ChevronLeft className="size-4" aria-hidden />
-          </button>
-          <button
-            type="button"
-            onClick={() => scroll(1)}
-            aria-label={later}
-            className="glowa-focus hover:bg-accent flex size-8 items-center justify-center rounded-full border transition-colors"
-          >
-            <ChevronRight className="size-4" aria-hidden />
-          </button>
-        </div>
-      </div>
-      <div className="relative">
-        <div
-          ref={ref}
-          role="tablist"
-          aria-label={label}
-          className="-mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth px-1 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {children}
-        </div>
-        <div
-          className="from-background pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l to-transparent"
-          aria-hidden
-        />
-      </div>
+      <p className="text-muted-foreground text-xs">
+        {t("timezoneNote", { zone: timezone })}
+        {viewerZone && viewerZone !== timezone ? (
+          <>
+            {" "}
+            {t("timezoneDiffers", { viewer: viewerZone })}
+          </>
+        ) : null}
+      </p>
     </div>
   );
 }

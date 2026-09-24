@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -145,6 +146,8 @@ export function ServiceEditor({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-5">
+
+          <RequiredNote />
           {/* One tab per language: the schema stores {bg,en,ro} and Bulgarian
               is required, so the editor makes that structure visible. */}
           <Tabs defaultValue={routing.defaultLocale}>
@@ -158,7 +161,10 @@ export function ServiceEditor({
             {routing.locales.map((value) => (
               <TabsContent key={value} value={value} className="mt-4 space-y-3">
                 <div className="space-y-2">
-                  <Label htmlFor={`service-name-${value}`}>
+                  <Label
+                    htmlFor={`service-name-${value}`}
+                    required={value === routing.defaultLocale}
+                  >
                     {t("name")}
                     {value === routing.defaultLocale ? " *" : ""}
                   </Label>
@@ -212,7 +218,7 @@ export function ServiceEditor({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-duration">{t("duration")}</Label>
+              <Label htmlFor="service-duration" required>{t("duration")}</Label>
               <Input
                 id="service-duration"
                 type="number"
@@ -226,7 +232,7 @@ export function ServiceEditor({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-price">{t("price")}</Label>
+              <Label htmlFor="service-price" required>{t("price")}</Label>
               <Input
                 id="service-price"
                 type="number"

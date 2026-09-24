@@ -24,6 +24,11 @@ const RULES = [
   { match: /^og-/, width: 1200, quality: 82 },
   { match: /^hero-/, width: 1600, quality: 80 },
   { match: /^(category|cover)-/, width: 1100, quality: 76 },
+  // The showcase salon: portraits are only ever avatars and team cards; the
+  // cover is a full-width page header.
+  { match: /^showcase-staff-/, width: 480, quality: 80 },
+  { match: /^showcase-cover$/, width: 1600, quality: 78 },
+  { match: /^showcase-/, width: 1000, quality: 78 },
   // Flat illustrations compress hard and are never shown large.
   { match: /^(empty|feature)-/, width: 600, quality: 82 },
 ];

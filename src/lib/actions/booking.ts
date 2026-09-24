@@ -2,8 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { after } from "next/server";
+import { z } from "zod";
 
+import { routing } from "@/i18n/routing";
 import { GROWTH_COOKIE } from "@/lib/growth/cookie";
+import {
+  openDepositCheckout,
+  releaseUnpaidDeposit,
+  runPaymentsMaintenance,
+} from "@/lib/payments/deposits";
 import { createClient } from "@/lib/supabase/server";
 
 export type Slot = {
@@ -19,6 +27,13 @@ export type SlotsResult =
 export type BookingResult =
   | { ok: true; appointmentId: string }
   | { ok: false; code: string };
+
+/** A booking that needs a deposit comes back with the page to pay it on. */
+export type NewBookingResult =
+  | { ok: true; appointmentId: string; checkoutUrl: string | null }
+  | { ok: false; code: string };
+
+const localeSchema = z.enum(routing.locales);
 
 /**
  * PostgREST surfaces our `raise … using hint = '…'` as `hint`, which is what
@@ -55,7 +70,11 @@ export async function bookAppointment(input: {
   staffProfileId: string;
   locationId?: string | null;
   notes?: string | null;
-}): Promise<BookingResult> {
+  locale: string;
+}): Promise<NewBookingResult> {
+  const locale = localeSchema.safeParse(input.locale);
+  if (!locale.success) return { ok: false, code: "invalid" };
+
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (typeof claims?.claims?.sub !== "string") {
@@ -81,7 +100,56 @@ export async function bookAppointment(input: {
 
   revalidatePath("/[locale]/bookings", "page");
   revalidatePath("/[locale]/profile", "page");
-  return { ok: true, appointmentId: data.id };
+
+  if (data.deposit_status !== "awaiting") {
+    return { ok: true, appointmentId: data.id, checkoutUrl: null };
+  }
+
+  // The slot is held; now the deposit that secures it. If the payment page
+  // cannot be opened the hold is let go at once - a slot nobody can pay for
+  // should not sit blocked for half an hour.
+  try {
+    const checkout = await openDepositCheckout(data.id, locale.data);
+    if (checkout.ok) {
+      return { ok: true, appointmentId: data.id, checkoutUrl: checkout.url };
+    }
+  } catch (cause) {
+    console.error("booking: deposit checkout failed", cause);
+  }
+
+  await releaseUnpaidDeposit(data.id, "deposit_checkout_failed").catch(() => undefined);
+  return { ok: false, code: "payment_unavailable" };
+}
+
+/**
+ * "Pay the deposit" from the booking page, for a customer who left Checkout
+ * before paying and came back while the slot is still held.
+ */
+export async function resumeDepositCheckout(input: {
+  appointmentId: string;
+  locale: string;
+}): Promise<{ ok: true; url: string } | { ok: false; code: string }> {
+  const locale = localeSchema.safeParse(input.locale);
+  const id = z.uuid().safeParse(input.appointmentId);
+  if (!locale.success || !id.success) return { ok: false, code: "invalid" };
+
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (typeof userId !== "string") return { ok: false, code: "unauthenticated" };
+
+  // RLS also shows a salon's own staff this row; only the customer pays.
+  const { data: appointment } = await supabase
+    .from("appointments")
+    .select("id, customer_profile_id")
+    .eq("id", id.data)
+    .maybeSingle();
+  if (!appointment || appointment.customer_profile_id !== userId) {
+    return { ok: false, code: "not_found" };
+  }
+
+  const checkout = await openDepositCheckout(appointment.id, locale.data);
+  return checkout.ok ? checkout : { ok: false, code: checkout.code };
 }
 
 export async function cancelAppointment(
@@ -95,6 +163,13 @@ export async function cancelAppointment(
   });
 
   if (error || !data) return { ok: false, code: errorCode(error) };
+
+  // A paid deposit was queued for refund in the same transaction. Issue it
+  // now rather than on the next scheduled run, so the money is on its way
+  // before the customer has closed the page.
+  if (data.deposit_status === "refund_pending") {
+    after(() => runPaymentsMaintenance(5).then(() => undefined, () => undefined));
+  }
 
   revalidatePath("/[locale]/bookings", "page");
   revalidatePath("/[locale]/profile", "page");

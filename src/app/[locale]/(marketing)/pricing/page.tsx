@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download, FileX, Percent, ShieldCheck, Sparkles } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 
@@ -9,9 +9,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PricingPlans } from "@/components/pricing/pricing-plans";
-import { Badge } from "@/components/ui/badge";
+import { SavingsCalculator } from "@/components/pricing/savings-calculator";
 import { Button } from "@/components/ui/button";
-import { PRICING_IS_PUBLISHED } from "@/lib/pricing";
+import { Link } from "@/i18n/navigation";
+import { localeHrefLang, type Locale } from "@/i18n/routing";
+import { EARLY_ACCESS_UNTIL } from "@/lib/pricing";
 import { alternatesFor } from "@/lib/seo/structured-data";
 
 export async function generateMetadata({
@@ -21,13 +23,20 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "pricing" });
 
   return {
-    title: t("eyebrow"),
+    title: t("metaTitle"),
     description: t("subtitle"),
     alternates: alternatesFor(`/${locale}/pricing`),
   };
 }
 
-const FAQ_KEYS = ["1", "2", "3", "4", "5"] as const;
+const FAQ_KEYS = ["1", "2", "3", "4", "5", "6", "7"] as const;
+const ZERO_KEYS = ["commission", "deposits", "contract", "export"] as const;
+const ZERO_ICONS = {
+  commission: Percent,
+  deposits: ShieldCheck,
+  contract: FileX,
+  export: Download,
+} as const;
 
 export default async function PricingPage({
   params,
@@ -36,15 +45,26 @@ export default async function PricingPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("pricing");
+  const until = new Intl.DateTimeFormat(localeHrefLang[locale as Locale], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${EARLY_ACCESS_UNTIL}T00:00:00Z`));
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+    <main className="relative mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+      <div
+        aria-hidden
+        className="bg-brand-peach pointer-events-none absolute -top-24 left-1/2 -z-10 h-80 w-[46rem] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
+      />
+
       {/* --------------------------------------------------------------- head */}
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-primary text-xs font-semibold tracking-[0.28em] uppercase">
           {t("eyebrow")}
         </p>
-        <h1 className="font-heading mt-4 text-4xl leading-[1.08] text-balance sm:text-5xl">
+        <h1 className="font-heading mt-4 text-4xl leading-[1.08] text-balance sm:text-6xl">
           {t("title")}
         </h1>
         <p className="text-muted-foreground mt-5 text-base leading-relaxed text-pretty sm:text-lg">
@@ -52,36 +72,51 @@ export default async function PricingPage({
         </p>
       </div>
 
-      {/* Shown instead of a number, never alongside one: an invented price is
-          worse than an honest gap. */}
-      {PRICING_IS_PUBLISHED ? null : (
-        <div className="glowa-card mx-auto mt-10 max-w-2xl p-6 text-center sm:p-8">
-          <Badge variant="secondary">{t("unpublished.badge")}</Badge>
-          <h2 className="font-heading mt-4 text-xl">
-            {t("unpublished.title")}
-          </h2>
-          <p className="text-muted-foreground mt-3 text-sm leading-relaxed text-pretty">
-            {t("unpublished.body")}
-          </p>
-          <Button asChild className="mt-5">
-            <a href="mailto:hello@glowa.bg">
-              {t("unpublished.cta")}
-              <ArrowRight className="size-4" />
-            </a>
-          </Button>
-        </div>
-      )}
+      {/* Subscriptions are not billed yet - say so before any number. */}
+      <div className="border-primary/30 bg-card mx-auto mt-8 flex max-w-2xl items-start gap-3 rounded-2xl border p-4 text-sm shadow-[var(--shadow-card)] sm:items-center">
+        <Sparkles className="text-primary mt-0.5 size-5 shrink-0 sm:mt-0" aria-hidden />
+        <p>
+          <span className="font-semibold">{t("earlyAccess.title", { date: until })}</span>{" "}
+          <span className="text-muted-foreground">{t("earlyAccess.body", { date: until })}</span>
+        </p>
+      </div>
 
       {/* -------------------------------------------------------------- plans */}
       <div className="mt-12">
         <PricingPlans />
       </div>
+      <p className="text-muted-foreground mt-6 text-center text-xs">
+        {t("billing.vat")} {t("billing.annualNote")}
+      </p>
 
-      {PRICING_IS_PUBLISHED ? (
-        <p className="text-muted-foreground mt-6 text-center text-xs">
-          {t("billing.vat")} {t("billing.annualNote")}
-        </p>
-      ) : null}
+      {/* ------------------------------------------------------------- zeroes */}
+      <section aria-labelledby="zero-title" className="mt-20">
+        <h2 id="zero-title" className="font-heading text-center text-2xl sm:text-3xl">
+          {t("zero.title")}
+        </h2>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ZERO_KEYS.map((key) => {
+            const Icon = ZERO_ICONS[key];
+            return (
+              <li key={key} data-glow className="glowa-card glowa-glow rounded-2xl p-5">
+                <span className="bg-primary/12 text-primary flex size-10 items-center justify-center rounded-xl">
+                  <Icon className="size-5" aria-hidden />
+                </span>
+                <p className="font-heading mt-4 text-3xl">{t(`zero.${key}.value`)}</p>
+                <p className="mt-1 font-semibold">{t(`zero.${key}.title`)}</p>
+                <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                  {t(`zero.${key}.body`)}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      {/* --------------------------------------------------------- calculator */}
+      <div className="mt-20">
+        <SavingsCalculator />
+      </div>
 
       {/* ---------------------------------------------------------------- faq */}
       <section className="mx-auto mt-20 max-w-3xl">
@@ -95,12 +130,21 @@ export default async function PricingPage({
                 {t(`faq.q${key}`)}
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
-                {t(`faq.a${key}`)}
+                {t(`faq.a${key}`, { date: until })}
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
       </section>
+
+      <div className="mt-16 text-center">
+        <Button asChild size="lg" className="rounded-full px-8">
+          <Link href="/signup">
+            {t("cta.startFree")}
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </Button>
+      </div>
     </main>
   );
 }

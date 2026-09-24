@@ -1,24 +1,23 @@
 "use client";
 
 import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
+import type { ReactNode } from "react";
 
 /**
- * One place that decides how motion behaves across the app.
+ * Motion for the whole app, on two rules.
  *
- * - `LazyMotion` with `domAnimation` ships only the animation features the
- *   interactive surfaces use (the booking funnel, the success moment), not the
- *   full drag/layout bundle; components use the light `m.*` elements.
- * - `reducedMotion="user"` makes every motion component honour the operating
- *   system's "reduce motion" setting: transforms are dropped and only opacity
- *   changes remain. The CSS side has its own global guard in globals.css.
+ * `LazyMotion` with `domAnimation` and `strict`: components use the small `m`
+ * element, and the animation features load once for everyone instead of each
+ * island pulling in the full `motion` bundle. `strict` makes importing the
+ * heavy `motion.div` by accident a runtime error rather than a silent 30 KB.
  *
- * Marketing pages deliberately animate with CSS instead (scroll-driven
- * reveals), so their content is visible without JavaScript and never waits
- * for hydration to appear.
+ * `reducedMotion="user"`: someone who asked their OS for less motion gets
+ * none - transforms are dropped, opacity changes stay. The CSS guard in
+ * globals.css does the same for everything that is not driven from here.
  */
-export function MotionProvider({ children }: { children: React.ReactNode }) {
+export function MotionProvider({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={domAnimation}>
+    <LazyMotion features={domAnimation} strict>
       <MotionConfig reducedMotion="user" transition={{ ease: [0.22, 1, 0.36, 1] }}>
         {children}
       </MotionConfig>

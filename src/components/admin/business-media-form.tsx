@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
-import { updateBusinessMedia } from "@/lib/actions/business";
+import { updateBusinessImages } from "@/lib/actions/business";
 import { prepareImage } from "@/lib/media/prepare-image";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,11 @@ type BusinessMediaFormProps = {
   businessId: string;
   businessName: string;
   initial: { logoUrl: string | null; coverUrl: string | null; gallery: string[] };
+  /**
+   * Only the logo. Settings uses this beside the photo manager, which owns
+   * the cover and the gallery; saving the logo alone never touches them.
+   */
+  logoOnly?: boolean;
 };
 
 type Kind = "logo" | "cover" | "gallery";
@@ -31,7 +36,12 @@ type Kind = "logo" | "cover" | "gallery";
  * folder, and only from a manager); the server action then accepts only URLs
  * from that folder.
  */
-export function BusinessMediaForm({ businessId, businessName, initial }: BusinessMediaFormProps) {
+export function BusinessMediaForm({
+  businessId,
+  businessName,
+  initial,
+  logoOnly = false,
+}: BusinessMediaFormProps) {
   const t = useTranslations("admin.media");
   const router = useRouter();
   const [logoUrl, setLogoUrl] = useState(initial.logoUrl);
@@ -54,8 +64,8 @@ export function BusinessMediaForm({ businessId, businessName, initial }: Busines
     return supabase.storage.from("business-media").getPublicUrl(path).data.publicUrl;
   }
 
-  async function save(patch: Parameters<typeof updateBusinessMedia>[0]) {
-    const result = await updateBusinessMedia(patch);
+  async function save(patch: Parameters<typeof updateBusinessImages>[0]) {
+    const result = await updateBusinessImages(patch);
     if (!result.ok) throw new Error(result.code);
     router.refresh();
   }
@@ -125,6 +135,7 @@ export function BusinessMediaForm({ businessId, businessName, initial }: Busines
       {/* Cover with the logo overlapping it - exactly how the public page
           composes them, so what the owner sees here is what customers get. */}
       <div>
+        {!logoOnly ? (
         <DropZone
           label={t("cover")}
           hint={t("coverHint")}
@@ -143,8 +154,9 @@ export function BusinessMediaForm({ businessId, businessName, initial }: Busines
             />
           ) : null}
         </DropZone>
+        ) : null}
 
-        <div className="relative -mt-12 ml-6 flex items-end gap-4">
+        <div className={cn("relative flex items-end gap-4", !logoOnly && "-mt-12 ml-6")}>
           <DropZone
             label={t("logo")}
             hint={t("logoHint")}
@@ -161,7 +173,7 @@ export function BusinessMediaForm({ businessId, businessName, initial }: Busines
             )}
           </DropZone>
           <div className="flex flex-wrap gap-2 pb-1">
-            {coverUrl ? (
+            {coverUrl && !logoOnly ? (
               <Button
                 type="button"
                 variant="ghost"
@@ -189,6 +201,7 @@ export function BusinessMediaForm({ businessId, businessName, initial }: Busines
         </div>
       </div>
 
+      {!logoOnly ? (
       <div className="space-y-3">
         <div className="flex items-end justify-between gap-3">
           <div>
@@ -236,6 +249,7 @@ export function BusinessMediaForm({ businessId, businessName, initial }: Busines
           ) : null}
         </ul>
       </div>
+      ) : null}
     </div>
   );
 }

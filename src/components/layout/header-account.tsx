@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { AccountMenu } from "@/components/layout/account-menu";
@@ -45,18 +44,19 @@ export function HeaderAccount() {
 
   return (
     <>
-      <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+      <Button asChild variant="ghost" size="sm" className="hidden rounded-full sm:inline-flex">
         <Link href="/login">{t("login")}</Link>
       </Button>
-      {/* Customers create an account where they need one - at the end of a
-          booking. This button is for the other audience: salons. */}
-      <Button asChild size="sm" className="group hidden sm:inline-flex">
+      <Button
+        asChild
+        size="sm"
+        className="hidden rounded-full px-4 shadow-[0_8px_24px_-10px_var(--primary)] transition-transform hover:-translate-y-px sm:inline-flex"
+      >
+        {/* Customers create an account where they need one - at the end of a
+            booking. This button is for the other audience: salons, who go
+            straight on to create theirs. */}
         <Link href={`/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`}>
-          {t("forBusiness")}
-          <ArrowRight
-            className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-            aria-hidden
-          />
+          {t("getStarted")}
         </Link>
       </Button>
     </>

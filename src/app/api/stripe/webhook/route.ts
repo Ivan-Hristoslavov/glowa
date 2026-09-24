@@ -19,6 +19,11 @@ const HANDLED = new Set([
 /**
  * Stripe → `business_subscriptions`.
  *
+ * A platform endpoint, separate from the Connect endpoint for deposits
+ * (`/api/webhooks/stripe`): subscription events happen on GLOWA's own account,
+ * which a Connect endpoint never receives. Its own signing secret is
+ * `STRIPE_BILLING_WEBHOOK_SECRET`.
+ *
  * The signature is verified against the raw body before anything is read.
  * Only subscription events are handled: each carries the whole subscription,
  * including the `business_id` put in its metadata at checkout, so there is no
@@ -40,7 +45,7 @@ export async function POST(request: Request) {
     event = getStripe().webhooks.constructEvent(
       payload,
       signature ?? "",
-      requireServerEnv("STRIPE_WEBHOOK_SECRET"),
+      requireServerEnv("STRIPE_BILLING_WEBHOOK_SECRET"),
     );
   } catch {
     return NextResponse.json({ error: "invalid_signature" }, { status: 400 });

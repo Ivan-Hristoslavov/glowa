@@ -69,6 +69,16 @@ were made with `sunburst` — pass `--model gpt-image-2.5-sunburst --only featur
 
 ## Art direction (first set, 2026-09-22/23)
 
+**Showcase salon (2026-09-24, `gpt-image-2.5-flare`).** Eleven more photographs for
+the furnished demo salon (`scripts/seed-showcase.sql`): `showcase-cover`, six
+`showcase-gallery-*` (balayage, a bob, the colour trolley, curls, the basin, a bridal
+bun) and four `showcase-staff-*` environmental portraits. Same house style, same
+script (`--only showcase`), served from `public/brand/showcase/`; portraits are
+480px (they are only ever avatars and team cards), the cover 1536px, the gallery
+1000px. The people are generated and depict nobody real.
+
+## Art direction
+
 One paragraph is appended to every photographic prompt, which is what makes the
 set read as one family rather than a pile of images:
 

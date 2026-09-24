@@ -7,8 +7,9 @@ import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import { LEGAL_ENTITY } from "@/lib/legal/entity";
-import { listCities } from "@/lib/queries/discovery";
+import { PLACES } from "@/lib/places";
 
 const LINK_CLASS =
   "text-muted-foreground hover:text-foreground glowa-focus group inline-flex items-center gap-1 rounded text-left text-sm transition-colors";
@@ -33,10 +34,10 @@ export async function SiteFooter() {
   // time, never during a client render.
   const year = new Date().getFullYear();
 
-  // A footer must never take a page down with it.
-  const cities = await listCities()
-    .then((all) => all.slice(0, 6))
-    .catch(() => [] as string[]);
+  // Towns from the same list search uses, named in the visitor's language;
+  // a Romanian visitor gets Romanian towns.
+  const country = locale === "ro" ? "RO" : "BG";
+  const cities = PLACES.filter((place) => place.country === country).slice(0, 6);
 
   const columns = [
     {
@@ -51,6 +52,7 @@ export async function SiteFooter() {
     {
       title: t("business"),
       links: [
+        { href: "/for-business", label: t("whyGlowa") },
         { href: ownerHref, label: t("register") },
         { href: "/pricing", label: t("pricing") },
         { href: "/dashboard", label: t("dashboard") },
@@ -61,8 +63,8 @@ export async function SiteFooter() {
           {
             title: t("cities"),
             links: cities.map((city) => ({
-              href: `/search?city=${encodeURIComponent(city)}`,
-              label: city,
+              href: `/search?place=${city.id}`,
+              label: city.name[locale as Locale],
             })),
           },
         ]

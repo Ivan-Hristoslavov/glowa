@@ -14,13 +14,16 @@ export function formatPrice(
   }).format(cents / 100);
 }
 
+/** "2 ч. 30 мин" / "2 hr 30 min" / "2 h 30 min" - units in the reader's language. */
 export function formatDuration(minutes: number, locale: Locale) {
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  const parts = new Intl.NumberFormat(localeHrefLang[locale]);
-  if (hours && rest) return `${parts.format(hours)} h ${parts.format(rest)} min`;
-  if (hours) return `${parts.format(hours)} h`;
-  return `${parts.format(rest)} min`;
+  const lang = localeHrefLang[locale];
+  const h = new Intl.NumberFormat(lang, { style: "unit", unit: "hour", unitDisplay: "short" });
+  const m = new Intl.NumberFormat(lang, { style: "unit", unit: "minute", unitDisplay: "short" });
+  if (hours && rest) return `${h.format(hours)} ${m.format(rest)}`;
+  if (hours) return h.format(hours);
+  return m.format(rest);
 }
 
 type ZonedOptions = { timeZone: string; locale: Locale };

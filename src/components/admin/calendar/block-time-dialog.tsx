@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { RequiredNote } from "@/components/common/required-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -98,6 +99,8 @@ export function BlockTimeDialog({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
+
+          <RequiredNote />
           <div className="space-y-2">
             <Label htmlFor="block-staff">{t("staff")}</Label>
             <Select value={staffId} onValueChange={setStaffId}>
@@ -116,7 +119,7 @@ export function BlockTimeDialog({
 
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="block-date">{t("startsAt")}</Label>
+              <Label htmlFor="block-date" required>{t("startsAt")}</Label>
               <Input
                 id="block-date"
                 type="date"
@@ -126,7 +129,7 @@ export function BlockTimeDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="block-from">{t("blockFrom")}</Label>
+              <Label htmlFor="block-from" required>{t("blockFrom")}</Label>
               <Input
                 id="block-from"
                 type="time"
@@ -137,7 +140,7 @@ export function BlockTimeDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="block-to">{t("blockTo")}</Label>
+              <Label htmlFor="block-to" required>{t("blockTo")}</Label>
               <Input
                 id="block-to"
                 type="time"

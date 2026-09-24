@@ -1,3 +1,7 @@
+import type { Database } from "@/types/database";
+
+export type DepositStatus = Database["public"]["Enums"]["deposit_status"];
+
 export type CalendarStaff = {
   id: string;
   displayName: string;
@@ -25,7 +29,10 @@ export type CalendarAppointment = {
   staffProfileId: string | null;
   serviceName: string;
   customerName: string | null;
+  customerPhone: string | null;
   priceCents: number;
+  depositCents: number;
+  depositStatus: DepositStatus;
   currency: string;
   internalNotes: string | null;
   customerNotes: string | null;

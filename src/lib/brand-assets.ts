@@ -24,6 +24,16 @@ export const brandAssets = {
   ogImage: `${BASE}/og-cover.webp`,
 } as const;
 
+/**
+ * The showcase salon (`scripts/seed-showcase.sql`): its cover, portfolio and
+ * team. Generated like the rest; the people depict nobody real.
+ */
+export const showcaseAssets = {
+  cover: `${BASE}/showcase/showcase-cover.webp`,
+  gallery: [1, 2, 3, 4, 5, 6].map((n) => `${BASE}/showcase/showcase-gallery-${n}.webp`),
+  staff: [1, 2, 3, 4].map((n) => `${BASE}/showcase/showcase-staff-${n}.webp`),
+} as const;
+
 export const categoryImages = {
   hair: `${BASE}/category-hair.webp`,
   barber: `${BASE}/category-barber.webp`,

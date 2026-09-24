@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { PricingPlans } from "@/components/pricing/pricing-plans";
 import { Button } from "@/components/ui/button";
 import { openBillingPortal, startCheckout, type BillingResult } from "@/lib/actions/billing";
-import type { PlanId } from "@/lib/pricing";
+import { PLANS, type PlanId } from "@/lib/pricing";
 
 type BillingPlansProps = {
   businessId: string;
@@ -58,6 +58,15 @@ export function BillingPlans({
       action={(plan, interval) => {
         const key = `${plan}-${interval}`;
         const isCurrent = subscribed && plan === current;
+        // A free plan has nothing to pay: no checkout, just say so.
+        const details = PLANS.find((item) => item.id === plan);
+        if (details && details.monthly === 0) {
+          return (
+            <Button size="lg" variant="outline" className="w-full rounded-full" disabled>
+              {t("freePlan")}
+            </Button>
+          );
+        }
         return (
           <Button
             size="lg"

@@ -60,6 +60,7 @@
   --color-brand-coral: var(--glowa-coral);
   --color-brand-soft: var(--glowa-soft);
   --color-brand-sage: var(--glowa-sage);
+  --color-brand-peach: var(--glowa-peach);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -79,13 +80,20 @@
 
 :root {
   /* Brand palette - light */
-  --glowa-cream: #f8f3ee;
+  /* 2026-09-24: lifted from #f8f3ee. The beige read as dated next to the new
+     grotesk; a near-white with a whisper of warmth keeps the brand's
+     temperature and lets photographs and coral do the talking. */
+  --glowa-cream: #fbf9f7;
   --glowa-surface: #ffffff;
-  --glowa-ink: #0f1212;
+  --glowa-ink: #111114;
   --glowa-coral: #d96c61;
   --glowa-soft: #eac2bb;
   --glowa-sage: #a9b6a6;
-  --glowa-line: #ddd5ce;
+  --glowa-line: #ebe6e1;
+  /* The "glow": a peach that sits between cream and coral. Marketing washes
+     only, never a UI colour. It is what makes GLOWA's hero warm rather than
+     the cool lavender every booking marketplace uses. */
+  --glowa-peach: #f7d3c4;
 
   --background: var(--glowa-cream);
   --foreground: var(--glowa-ink);
@@ -96,11 +104,11 @@
 
   --primary: var(--glowa-coral);
   --primary-foreground: #fffaf8;
-  --secondary: #f1e7e2;
+  --secondary: #f6efeb;
   --secondary-foreground: #4a2e2a;
-  --muted: #f1ebe5;
-  --muted-foreground: #6b625b;
-  --accent: #f6e8e4;
+  --muted: #f4f1ee;
+  --muted-foreground: #6a6461;
+  --accent: #fbefec;
   --accent-foreground: #4a2e2a;
 
   --destructive: #b3443c;
@@ -120,11 +128,11 @@
   --chart-4: #8e8279;
   --chart-5: #3f4a43;
 
-  --sidebar: #fdfaf7;
+  --sidebar: #f4f0ec;
   --sidebar-foreground: var(--glowa-ink);
   --sidebar-primary: var(--glowa-coral);
   --sidebar-primary-foreground: #fffaf8;
-  --sidebar-accent: #f4ebe6;
+  --sidebar-accent: #ebe4de;
   --sidebar-accent-foreground: #4a2e2a;
   --sidebar-border: var(--glowa-line);
   --sidebar-ring: var(--glowa-coral);
@@ -151,6 +159,7 @@
   --glowa-soft: #4a3330;
   --glowa-sage: #344238;
   --glowa-line: #26302f;
+  --glowa-peach: #3a2621;
 
   --background: var(--glowa-cream);
   --foreground: var(--glowa-ink);
@@ -216,28 +225,32 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Editorial display face is opt-in via .font-heading, never the body font:
-     Cyrillic and Romanian text must stay in the highly legible sans.
+  /* The display cut is opt-in via .font-heading; body copy stays in the Text
+     cut, which is spaced for small sizes. Both are Wix Madefor.
 
-     Playfair is a didone - high stroke contrast with fine hairlines. Tight
-     tracking closes those up and makes it look cramped, so headings get
-     near-zero tracking and a medium weight for presence instead. */
+     Modern grotesk headings want to be bold and set tight: the negative
+     tracking is what separates a product that feels crafted from one that
+     feels like a default template. It tightens further as the size grows. */
   .font-heading {
     font-family: var(--font-heading);
-    font-weight: 500;
-    letter-spacing: -0.004em;
-    /* Playfair's default figures are old-style: a "0" is the height of an
-       "o", so a dashboard reading "0%" looked like "o%". Lining figures sit
-       on the cap height like the text around them. */
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    /* Figures sit on the cap height, so "0%" never reads as "o%". */
     font-variant-numeric: lining-nums;
   }
 
-  /* At display sizes the hairlines can carry more weight without clogging. */
   h1.font-heading,
+  .font-heading.text-3xl,
   .font-heading.text-4xl,
   .font-heading.text-5xl,
   .font-heading.text-6xl {
-    font-weight: 600;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+  }
+
+  /* Numbers line up in tables, prices and the calendar. */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 
   ::selection {
@@ -274,7 +287,8 @@
   [data-slot="popover-content"],
   [data-slot="dropdown-menu-content"],
   [data-slot="select-content"],
-  [data-slot="tooltip-content"] {
+  [data-slot="tooltip-content"],
+  [data-slot="hover-card-content"] {
     animation-timing-function: var(--ease-glowa);
     animation-duration: 200ms;
   }
@@ -302,9 +316,87 @@
   );
 }
 
+/* The theme switch (ThemeToggle): the new theme is revealed as a growing
+   circle, so the default cross-fade between the two snapshots is switched off
+   for that one transition. */
+/* A salon card growing into the salon page's cover (React <ViewTransition
+   share="salon-cover">). A touch of blur mid-flight hides the resampling. */
+::view-transition-group(.salon-cover) {
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-image-pair(.salon-cover) {
+  animation-name: glowa-via-blur;
+}
+
+@keyframes glowa-via-blur {
+  35% {
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+:root[data-theme-switch]::view-transition-old(root),
+:root[data-theme-switch]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+:root[data-theme-switch]::view-transition-old(root) {
+  z-index: 1;
+}
+
+:root[data-theme-switch]::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* The pointer glow (GlowPointer + data-glow): a soft coral light under the
+   cursor, painted over the element's content so it lights photos too. */
+@utility glowa-glow {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 400ms var(--ease-glowa);
+    background: radial-gradient(
+      22rem circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      color-mix(in oklab, var(--primary) 22%, transparent),
+      transparent 60%
+    );
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
 @utility glowa-card {
   @apply bg-card text-card-foreground rounded-xl border;
   box-shadow: var(--shadow-card);
+}
+
+/* Fine diagonal hatching for time that cannot be booked: closed hours,
+   blocked time. Reads as "not available" without shouting, in both themes,
+   because it is drawn from the muted text colour rather than a fixed grey. */
+@utility glowa-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--muted-foreground) 11%, transparent) 0 1px,
+    transparent 1px 8px
+  );
 }
 
 @utility glowa-focus {

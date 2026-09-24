@@ -56,7 +56,8 @@ export default async function CalendarPage({
   const timezone = workspace.business?.timezone ?? "Europe/Sofia";
   const activeLocale = locale as Locale;
   const waitlistT = await getTranslations("waitlist");
-  const closedLabel = (await getTranslations("admin.calendar"))("closedLabel");
+  const calendarT = await getTranslations("admin.calendar");
+  const closedLabel = calendarT("closedLabel");
 
   const sp = await searchParams;
   const view = firstParam(sp.view) === "week" ? "week" : "day";
@@ -145,7 +146,10 @@ export default async function CalendarPage({
       pickLocalized(appointment.services?.name, activeLocale) ||
       pickLocalized(appointment.service_name_snapshot, activeLocale),
     customerName: appointment.customer_name,
+    customerPhone: appointment.customer_phone,
     priceCents: appointment.price_cents,
+    depositCents: appointment.deposit_cents,
+    depositStatus: appointment.deposit_status,
     currency: appointment.currency,
     internalNotes: appointment.internal_notes,
     customerNotes: appointment.customer_notes,
@@ -168,8 +172,10 @@ export default async function CalendarPage({
   }));
 
   return (
-    <div className="space-y-8">
+    <div data-fullwidth className="space-y-8">
+      <h1 className="sr-only">{calendarT("title")}</h1>
       <CalendarBoard
+      openNew={firstParam(sp.new) === "1"}
       businessId={membership.businessId}
       timezone={timezone}
       locale={activeLocale}

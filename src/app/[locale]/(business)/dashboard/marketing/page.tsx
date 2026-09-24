@@ -1,9 +1,10 @@
-import { Info, Megaphone } from "lucide-react";
+import { Info, Megaphone, Pencil } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import Image from "next/image";
 
+import { PageHeader } from "@/components/admin/page-header";
 import { CampaignEditor, type CampaignDraft } from "@/components/admin/campaign-editor";
 import { CampaignSendButton } from "@/components/admin/campaign-send-button";
 import { EmptyState } from "@/components/common/empty-state";
@@ -32,6 +33,7 @@ export default async function MarketingPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("admin.marketing");
+  const common = await getTranslations("common");
   const membership = await getActiveMembership();
   if (!membership) return null;
 
@@ -44,13 +46,14 @@ export default async function MarketingPage({
   const canSend = availableChannels().includes("email");
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>
-        {editable ? <CampaignEditor businessId={membership.businessId} /> : null}
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={editable ? <CampaignEditor businessId={membership.businessId} /> : null}
+      />
 
-      <div className="border-border/70 bg-secondary/40 flex items-start gap-4 rounded-xl border p-4">
+      <div className="border-border/70 bg-secondary/40 flex items-start gap-4 rounded-2xl border p-4">
         <Image
           src={featureArt.growth}
           alt=""
@@ -77,7 +80,7 @@ export default async function MarketingPage({
           body={t("emptyBody")}
         />
       ) : (
-        <ul className="glowa-card divide-border/70 divide-y">
+        <ul className="glowa-card divide-border/70 divide-y rounded-2xl">
           {campaigns.map((campaign) => {
             const audience =
               typeof campaign.audience === "object" &&
@@ -120,16 +123,28 @@ export default async function MarketingPage({
             return (
               <li
                 key={campaign.id}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 p-4"
+                className="flex flex-wrap items-center gap-x-4 gap-y-3 p-4"
               >
+                <span className="bg-primary/12 text-primary flex size-10 shrink-0 items-center justify-center rounded-xl">
+                  <Megaphone className="size-4" aria-hidden />
+                </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{campaign.name}</p>
-                  <p className="text-muted-foreground text-sm">
-                    {t(`type.${campaign.type}`)}
-                    {audience.last_visit_before_days
-                      ? ` · ${t("lastVisitBefore")}: ${audience.last_visit_before_days}`
-                      : null}
-                  </p>
+                  <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="bg-muted rounded-full px-2 py-0.5">
+                      {t(`type.${campaign.type}`)}
+                    </span>
+                    {audience.last_visit_before_days ? (
+                      <span className="bg-muted rounded-full px-2 py-0.5">
+                        {t("audienceLapsed", { days: Number(audience.last_visit_before_days) })}
+                      </span>
+                    ) : null}
+                    {audience.min_visits ? (
+                      <span className="bg-muted rounded-full px-2 py-0.5">
+                        {t("audienceMinVisits", { count: Number(audience.min_visits) })}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
                 {campaignStats ? (
                   <p className="text-muted-foreground text-sm tabular-nums">
@@ -152,7 +167,8 @@ export default async function MarketingPage({
                       campaign={draft}
                       trigger={
                         <Button variant="outline" size="sm">
-                          {t("save")}
+                          <Pencil className="size-3.5" aria-hidden />
+                          {common("edit")}
                         </Button>
                       }
                     />

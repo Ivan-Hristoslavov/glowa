@@ -27,7 +27,8 @@ const stripe = new Stripe(key);
 const NAMES = { solo: "Glowa Solo", studio: "Glowa Studio", salon: "Glowa Salon" } as const;
 
 for (const plan of PLANS) {
-  if (plan.monthly === null || plan.annualMonthly === null) continue;
+  // Unpublished or free plans have nothing to sell.
+  if (plan.monthly === null || plan.annualMonthly === null || plan.monthly === 0) continue;
 
   const found = await stripe.products.search({ query: `metadata['glowa_plan']:'${plan.id}'` });
   const product =

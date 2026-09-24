@@ -9,7 +9,9 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 
 **Repository**: <https://github.com/Ivan-Hristoslavov/glowa>
 **Supabase project**: `reaobqtmwmesmpgdkzwi` (eu-west-1, Postgres 17)
-**Deployment target**: Vercel (not yet configured — Prompt 5)
+**Deployment**: Vercel project `ivan-hristoslavovs-projects/glowa`, production at
+<https://glowa-six.vercel.app> (first deployed 2026-09-24 from the CLI; functions in
+`dub1`, next to the Supabase region). See TODO 26 for what is not live yet.
 
 ---
 
@@ -20,7 +22,7 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | Prompt 1 | Foundation, design system, Supabase, auth, i18n | **Done** |
 | Prompt 2 | Customer experience: discovery, booking, profile, calendar | **Done** |
 | Prompt 3 | Business app: dashboard, calendar, staff, services, CRM, marketing | **Done** |
-| Prompt 4 | Integrations, AI, growth layer | Not started |
+| Prompt 4 | Integrations, AI, growth layer | **In progress** — deposits (Stripe Connect), design pass, showcase salon done |
 | Prompt 5 | Production polish, QA, Vercel | Not started |
 | 09-24 pass | Walkthrough as guest/customer/owner, fixes, landing redesign, motion | **Done** (PR #2, stacked on #1) |
 | 09-24 second pass | Next-up strip, Ctrl+K, salon closures, photo/logo uploads, published prices, flyer studio, email templates, customer conveniences | **Done** (PR #2) |
@@ -69,6 +71,8 @@ the CRM trigger skipped it for the same reason.
 - **next-intl 4** for routing and messages
 - **Supabase** — Postgres, Auth, RLS, Storage
 - `next-themes`, `sonner`, `zod` v4, `date-fns` + `@date-fns/tz`
+- **Stripe** (`stripe` v22, API `2026-08-26.dahlia`) — Connect, direct charges, Checkout
+- **Motion** (`motion` v13) through `LazyMotion` + `m` only (see §4)
 - `sharp` (dev only) for the brand-asset conversion script
 - `motion` (motion/react, via `LazyMotion` + `m.*`) for the interactive
   surfaces only; `canvas-confetti`, loaded on demand, for the booking moment
@@ -123,6 +127,9 @@ src/
           calendar/  clients/[clientId]/  services/  staff/
           reviews/  payments/  marketing/  analytics/  assistant/  settings/
     api/appointments/[id]/ics/   .ics download (RLS-protected)
+    api/cron/notifications/  api/cron/payments/   scheduled workers (bearer CRON_SECRET)
+    api/webhooks/stripe/     Connect webhook (signature-verified)
+    [locale]/(marketing)/for-business/   the pitch to salon owners
     auth/confirm/  auth/signout/
     not-found.tsx  globals.css
   components/
@@ -132,6 +139,9 @@ src/
     auth/ booking/ brand/ common/ customer/ discovery/ layout/ ui/
     home/          landing-only visuals: hero showcase, business calendar preview
     motion/        MotionProvider (LazyMotion + reduced-motion policy)
+
+    business/      salon-page islands: photo gallery, open-now status
+    motion/        MotionProvider, Reveal / Stagger
   i18n/            routing · request · navigation
   lib/
     actions/       booking · favorites · reviews · settings · business ·
@@ -139,6 +149,11 @@ src/
                    ("use server" — every export is a callable endpoint)
       guard.ts     requireMembership + Postgres error mapping (server-only)
     ai/            assistant provider abstraction: types · openai · index
+    payments/      stripe (lazy client) · connect (onboarding, status) · deposits
+                   (checkout, settle, release, refunds + expiry sweep)
+    deposits.ts    effectiveDepositCents - client-safe mirror of the DB rule
+    cron-auth.ts   shared bearer check for /api/cron/*
+    use-now.ts     the clock as a useSyncExternalStore (React Compiler-safe)
     calendar/      provider adapters: types · google · ics
     queries/       server-only reads: discovery · appointments · business
     supabase/      client · server · proxy · admin
@@ -149,6 +164,8 @@ src/
   types/database.ts
   proxy.ts
 messages/          bg.json · en.json · ro.json (969 keys each, verified equal)
+
+messages/          bg.json · en.json · ro.json (1,076 keys each, verified equal)
 supabase/          migrations/ · seed.sql
 ```
 
@@ -183,19 +200,56 @@ inversion.
 | sage | `#A9B6A6` | `#344238` |
 | line | `#DDD5CE` | `#26302F` |
 
-- **Type**: **Onest** for UI and **Playfair Display** for headings, both loaded
-  with `latin`, `latin-ext` and `cyrillic`. Chosen by rendering the real
-  Bulgarian and Romanian strings in five candidate pairings rather than judging
-  font names: Onest is drawn Cyrillic-first, so Bulgarian body copy reads warmer
-  than Inter; Playfair's Cyrillic is properly drawn rather than a Latin face
-  with Cyrillic bolted on, and its stroke contrast is the editorial register the
-  brand asks for. Cormorant Garamond was rejected as too fragile for Cyrillic at
-  display size. The display face stays opt-in through `.font-heading` — body
-  copy is never set in it. Playfair is a didone, so headings take near-zero
-  tracking (tight tracking clogs the hairlines) and gain weight at display
-  sizes instead.
+- **Type** (changed 2026-09-24): **Wix Madefor Text** for UI and body, **Wix Madefor
+  Display** for headings (`.font-heading`, weight 700-750, tracking -0.02/-0.03em).
+  The previous Onest + Playfair pairing read "wooden" to the owner; the brief became
+  "like Fresha" (Roobert, commercial). Twelve Cyrillic families were rendered on real
+  Bulgarian screens; Madefor was closest and, like Roobert, carries **Bulgarian
+  localised forms** (в, д, ж, л, п, т) that the browser applies under `lang="bg"` -
+  expected, not a bug. Text cut for 13-15px, Display for everything large.
+- **Palette** lifted 2026-09-24: canvas `#FBF9F7` (was `#F8F3EE`), line `#EBE6E1`,
+  sidebar `#F4F0EC`; `--glowa-peach` (`brand-peach`, `#F7D3C4` / dark `#3A2621`) is
+  the warm glow behind the hero and the footer. The short-lived lilac wash and black
+  search pill were removed on the owner's request not to resemble Fresha: coral is the
+  brand and the action colour everywhere, including the search submit.
+- **Public header** (`site-header.tsx`): at the top of a page it has no bar; once the
+  page scrolls, `HeaderFrame` gathers it into a floating glass pill (narrower, blurred,
+  shadowed) via a `useSyncExternalStore` scroll snapshot. The band stays `h-16` because
+  the salon page's sticky section tabs sit against it (they extend under the pill with
+  `top-0 pt-16` so the page does not show through around it). `HeaderNav` centres
+  three links with a hover pill that slides between them and a coral dot on the
+  current one. The mobile sheet groups links (explore / my account) with icon tiles and
+  carries language + theme at the bottom.
+- **Footer** (`site-footer.tsx`): brand + one-line about + a "have a salon?" card,
+  three link columns (clients, salons, the six largest towns of the visitor's country
+  → `/search?place=`), © year + language/theme, and the wordmark very large and very
+  faint as the last thing on the page. Links only to pages that exist.
+- **Theme toggle** (`theme-toggle.tsx`): one tap between light and dark. The icon is
+  one SVG that morphs (rays retract, a masked shadow slides across the disc into a
+  crescent); the new theme spreads from the button as a circle through the View
+  Transitions API (`::view-transition-new(root)` clip-path, CSS under
+  `:root[data-theme-switch]`). Instant under reduced motion or without the API.
+  `disableTransitionOnChange` was removed from the provider because it cancelled the
+  icon's own transition; the toggle freezes every other transition itself while the
+  page repaints.
 - **Radius** `0.875rem`; cards `rounded-xl`. **Shadows** `--shadow-card/-lift/-pop`.
-- **Utilities** `glowa-card`, `glowa-focus`. Global `prefers-reduced-motion` guard.
+- **Utilities** `glowa-card`, `glowa-focus`, `glowa-hatch` (fine diagonal hatching for
+  time that cannot be booked). Global `prefers-reduced-motion` guard.
+- **Motion.** `MotionProvider` (root layout) wraps `LazyMotion features={domAnimation}
+  strict` and `MotionConfig reducedMotion="user"`. Use `m.*` only - `strict` makes an
+  accidental `motion.div` a runtime error instead of a silent 30 KB. `Reveal`,
+  `Stagger`, `StaggerItem` (`components/motion/reveal.tsx`) are the one entrance:
+  12px rise, 0.5s, the brand curve. Admin pages arrive through
+  `dashboard/template.tsx`. Never wrap the first thing a visitor must act on.
+- **Admin shell.** Sidebar on the `--sidebar` tone with grouped nav (daily · salon ·
+  growth · account); the working area is a raised rounded sheet. Every admin page
+  opens with `PageHeader` (eyebrow, display title, one-line purpose, actions).
+  `MetricCard` takes a `tone` and an optional `progress` bar. A page can opt out of
+  the 7xl measure with `data-fullwidth` (the calendar does) via a `has-[]` variant
+  on `<main>`.
+- **Required fields.** `Label required` draws a coral asterisk (aria-hidden - the
+  control's own `required` is what assistive tech announces). Every form with a
+  required field opens with `<RequiredNote />`.
 - **Logo**: `GlowaMark` / `GlowaLogo`, stroke-based, `monochrome` variant.
 
 **Motion** (2026-09-24). Two systems, split by what each surface needs:
@@ -315,7 +369,7 @@ profiles ─┬─ businesses ─┬─ business_members ── staff_profiles �
           └─ external_calendar_connections ─┬─ calendar_event_links
                                             └─ private.calendar_credentials
 appointments ─┬─ appointment_status_history
-              ├─ payment_records
+              ├─ payment_records (deposit · refund → related_payment_id)
               ├─ reviews ── review_invitations
               └─ calendar_event_links
 ```
@@ -399,6 +453,17 @@ category and city, join the rating summary and the minimum active price.
 `public.business_rating_summary` is a `security_invoker` view, so a hidden review
 never reaches an average.
 
+**Where** (2026-09-24, migration `…110000_search_near`): `search_businesses` takes
+`p_near_lat` / `p_near_lng`, returns `distance_km` (haversine against the primary
+location) and sorts by it under `p_sort = 'distance'`. Places live in code, not the
+database: `src/lib/places.ts` lists every Bulgarian town over ~20k people and the
+main Romanian cities with bg/latin names and coordinates (`searchPlaces`,
+`matchPlace`, `findPlace`). "Near me" asks the browser only when pressed and coarsens
+the position to two decimals (~1 km) before it goes into a URL. A salon needs
+`locations.latitude/longitude` to be found this way: onboarding now seeds them from
+the town's centre when the city matches a known place, and Settings → "Address & map"
+lets the owner place the exact point.
+
 ### Authorization
 
 `app` (a non-exposed schema) holds the SECURITY DEFINER helpers policies call, so
@@ -449,6 +514,10 @@ business id the caller manages for business media, resolved through
 | `…120000_slug_transliteration.sql` | `app.transliterate_slug`; Cyrillic/Romanian names get readable slugs |
 | `20260924130000_business_closures.sql` | `business_closures`, `upcoming_business_closures()`, closures in `get_available_slots` and "open on" |
 | `20260924140000_business_subscriptions.sql` | `business_subscriptions` (Stripe mirror, members read), `apply_stripe_subscription()` for the webhook only |
+
+| `…100000_deposits.sql` | deposit lifecycle: `business_payment_accounts`, frozen `businesses.deposits_enabled`, appointment deposit columns + state trigger, refund queue trigger, confirmation held until paid, service-role payment RPCs |
+| `…100100_deposit_refund_reference.sql` | `complete_deposit_refund` treats `''` as "no reference" |
+| `…110000_search_near.sql` | `search_businesses` gains a point to search around, `distance_km`, and a distance sort |
 
 Four of these were written because something failed, not from a plan:
 
@@ -699,12 +768,15 @@ inside it: a closure never cancels anyone by itself, the owner is told to call
 them. The calendar shades closures in every column, split per day, and the
 salon page tells customers "closed 24–26 Dec" before they try to book.
 
-**Photos and logo.** Settings → media uploads the cover, the logo and up to 12
-gallery photos straight to `business-media/{businessId}/…`, drag-and-drop or
-picker. `lib/media/prepare-image.ts` re-encodes on a canvas to WebP (which also
-strips EXIF location) and caps the size. `updateBusinessMedia` accepts only
+**Logo.** Settings → Logo uploads it straight to
+`business-media/{businessId}/…`, drag-and-drop or picker.
+`lib/media/prepare-image.ts` re-encodes on a canvas to WebP (which also
+strips EXIF location) and caps the size. `updateBusinessImages` accepts only
 URLs under that business's own folder of the public bucket, so the column can
-never point at someone else's file or an arbitrary host.
+never point at someone else's file or an arbitrary host. Since the merge with
+the other branch, the cover and gallery belong to `BusinessMediaManager` and
+`updateBusinessMedia`, and `BusinessMediaForm` runs `logoOnly` there. Saving
+the logo alone never touches the photos.
 `next.config.ts` derives `images.remotePatterns` from the Supabase URL.
 
 **Flyer studio.** `/dashboard/growth/flyer`: three templates, five accents, the
@@ -722,6 +794,10 @@ is not connected (§11).
 
 **Payments, marketing and the assistant are honest about their state.** Payment
 records and the schema exist with no provider behind them; campaigns save as
+
+**Payments, marketing and the assistant are honest about their state.** Payments
+say "not configured" until the platform has Stripe keys, then offer Stripe
+onboarding (§8l); campaigns save as
 drafts and audiences can be previewed as a *count* (names stay on the server)
 but nothing sends; the assistant renders a "not configured" panel unless
 `OPENAI_API_KEY` is set. Each says so on screen rather than offering a control
@@ -929,13 +1005,10 @@ locale prefix.
   the index.
 
 **`/pricing`** is built and linked from the header and the mobile nav. The
-feature lists are real - every line maps to something that exists. Prices were
-published on 09-24 at the owner's request, three plans for a small, a medium
-and a large business: Solo 9 €/month (7.50 € billed yearly), Studio 24 €
-(20 €), Salon 48 € (40 €), without VAT. A monthly/annual switch defaults to
-annual; the landing page's business section quotes the cheapest yearly figure
-from the same `lib/pricing.ts`. Setting `monthly` back to null hides the
-figures everywhere and the page asks for contact instead.
+feature lists are real - every line maps to something that exists. The prices
+are the ones chosen with the owner in the other branch: Solo free, Studio
+€12, Salon €24 (see `docs/pricing.md`), with a savings calculator. A first
+draft on this branch (€9/€24/€48) was dropped in the merge.
 
 ---
 
@@ -993,8 +1066,13 @@ city.
 - `staff_time_off` is not readable by `anon`, so the staff half runs through
   `app.has_bookable_staff_on`, a SECURITY DEFINER helper that returns a boolean
   and never a row.
-- **Sort** is rating (default), price or name. Under a price sort a salon with
-  no priced service sorts last, not first.
+- **Sort** is rating (default), price or name - and distance, which becomes the
+  default when the search has a point. Under a price sort a salon with no priced
+  service sorts last, not first.
+- **UI** (2026-09-24): `HeroSearch` (what / where / when with labels, `PlacePicker`
+  for every town plus "near me", a date popover, quick chips), `SearchFilters`
+  (category and price chips that apply on tap, sort menu). An empty result falls back
+  to the nearest or most popular salons rather than a dead end.
 
 **Layout (09-24).** Categories are one-tap chips; "open on" is any day /
 today / tomorrow / a date. On a phone city, price, day and sort live in a bottom
@@ -1019,6 +1097,30 @@ book button scrolls away.
 
 ## 8i. The calendar
 
+**Look (2026-09-24 redesign).** Full width (`data-fullwidth`), a fixed-height inner
+scroller that fills the viewport with sticky staff/day headers and a sticky time
+gutter, 120px per hour, closed time hatched, half-hour dashed lines, a "now" line
+with a time pill in the gutter, and on open it scrolls to an hour before now. Toolbar:
+prev / today / next, the date as a button opening a date picker, day/week segmented
+control, block time, new appointment; a compact week strip; staff as avatar chips
+that filter; a live summary (visits, value, secured by deposit). Cards are tinted with
+the stylist's colour, carry a 3px accent bar, time range, service, client and (when
+tall) price; pending cards are dashed with a clock; completed get a check; cancelled
+and no-show are hatched and struck through. Hovering an empty slot shows "+ 10:15".
+The details sheet has a colour band header, tap-to-call phone and the deposit.
+
+**Cards are minimal; the hover card has the rest** (2026-09-24). A card shows only
+what its height allows, in order of importance: start time, the client as "Павлина
+Р.", then the service - plus tiny deposit / note / done icons. Everything else - date,
+range and duration, full name and tap-to-call phone, stylist, price, deposit state,
+both notes - is in a `HoverCard` (Radix, `components/ui/hover-card.tsx`) that opens
+after 250ms, one at a time (`hoverId`), never during a drag, and not on touch (a tap
+opens the sheet as before). Overlaps use `layoutLanes`; in the **week view with the
+whole team** each stylist instead keeps a fixed track in every day (`staffTracks`,
+falling back to lanes if a track would overlap), with a thin colour key under each
+day header - so the week reads as swim lanes, not a staircase. Cancelled and no-show
+cards are hidden unless "Cancelled (n)" is toggled.
+
 Moving and resizing run on **pointer events, not HTML5 drag-and-drop**.
 `draggable` never fires on touch, so on the tablet at the front desk - which is
 where a salon actually runs its day - appointments could not be moved at all.
@@ -1041,34 +1143,21 @@ moved 10:00 → 12:00 across stylists keeping its hour, a resize grew 60 → 105
 minutes leaving the start alone, and a drag onto an occupied slot was refused
 with the appointment left where it was.
 
-**Layout for a big team (09-24).** The owner's screenshot of a ten-person
-salon showed the red "now" line running through the team's names, and ten
-columns squeezed to nothing. The board is now its own scroll box on both axes,
-so its parts can stick. The stacking order is fixed:
-- The time column is z-40.
-- The team row is z-30 and fully opaque. A translucent one let cards show
-  through it.
-- The now line is z-10 and sits under the team row, over the cards. It is
-  drawn only in today's columns, with the time in the gutter, and it updates
-  every minute after mount.
+**Layout for a big team (09-24, after the merge).** The board is the other
+branch's: a full-height scroll box, per-stylist tracks in week view, hover
+details and staff filter chips. The owner's screenshot of it showed the red
+"now" line running through the team's names. The team row and the now line
+were both `z-10`, so the line, drawn later, painted over the row, and the row
+was translucent. The stacking order is now fixed:
+- the time column is z-40;
+- the team row is z-30 and opaque;
+- the now line is z-10, under the team row and over the cards.
 
-The rest of the changes:
-- **Scrolling.** The board opens scrolled to "now" for today, or to the first
-  working hour on other days.
-- **Columns.** Each column keeps a minimum width, and the board scrolls
-  sideways with scroll-snap. Past six columns the header goes compact, with
-  names like "Мария П." (the full name if that would still clash).
-- **Team header.** It carries the avatar in the stylist's colour, the
-  bookings and hours, and a utilisation bar.
-- **Team picker.** It replaces the one-stylist select: tick who is shown, and
-  "only people working that day", on by default. The choices and a zoom level
-  (an hour is 60, 90 or 120px) are kept in `localStorage` per salon.
-- **Week view lanes.** In week view the whole team shares a day column, so
-  overlapping cards are laid out in lanes (`layoutLanes`). At three or more
-  lanes a card shows the stylist's initial and time, with the full summary as
-  the title and accessible name.
-- **Closed time.** It is hatched (`glowa-closed`) rather than grey, and a
-  closure appears once per stretch in week view instead of once per stylist.
+Columns keep a minimum width and the board scrolls sideways under the fixed
+time column. Past six columns they narrow and names go short ("Мария П.", the
+full name if that would still clash, the full name on hover). A first version
+of these fixes on this branch (team picker, zoom, its own lanes) was replaced
+in the merge by the other branch's board, with the fixes applied to it.
 
 ---
 
@@ -1179,8 +1268,16 @@ pays for, when it renews, and the three plans. The cards are the public
   - A late, older "canceled" event did not overwrite "active".
   - "Cancel at period end" was applied, and a foreign price was ignored.
 
-**Without keys** (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` unset) the page
-says plans are free during early access and the buttons are disabled.
+**Two Stripe endpoints.** Subscriptions happen on the platform account and
+deposits on the salons' connected accounts, and a Connect endpoint never
+receives platform events. So `/api/stripe/webhook` (this) and
+`/api/webhooks/stripe` (deposits) are registered separately, each with its own
+secret: `STRIPE_BILLING_WEBHOOK_SECRET` and `STRIPE_WEBHOOK_SECRET`. Both use
+the platform client in `lib/payments/stripe.ts`. Solo is free, so it is never
+sent to checkout.
+
+**Without keys** (`STRIPE_SECRET_KEY` unset) the page says plans are free
+during early access and the buttons are disabled.
 **Plan limits are not enforced**: a Solo salon can still add a second
 stylist. That is the next step, together with a trial and a grace period for
 `past_due` (§11).
@@ -1250,6 +1347,198 @@ does not invent categories for them.
 
 **At collection.** The sign-up form links the terms and the privacy policy
 (GDPR art. 13), opening in a new tab so the form survives.
+
+## 8l. Deposits
+
+A no-show is an hour nobody pays for; a deposit is what stops it, and what salons pay
+a booking platform for. **The money never touches GLOWA**: each salon connects its own
+Stripe account (Connect, controller properties equivalent to Standard - full Stripe
+Dashboard, the salon pays Stripe's fees, Stripe collects KYC and carries negative
+balances) and a deposit is a **direct charge** on that account via Checkout. GLOWA
+holds no funds and needs no licence to. No application fee is taken yet - a
+commercial decision, not a technical one.
+
+**Lifecycle** (`public.deposit_status`), moved only by the payment path and by status
+transitions - never written directly by a customer or a salon:
+
+| State | Meaning |
+| --- | --- |
+| `none` | no deposit (service does not ask, salon not enabled, or booked at the desk) |
+| `awaiting` | booked online, slot held 32 min (`payment_due_at`); confirmation email held back |
+| `paid` | settled from Stripe (webhook or the return page) |
+| `void` | never paid: hold lapsed, checkout expired or could not open |
+| `waived` | the salon confirmed without waiting |
+| `refund_pending` → `refunded` | cancelled in time; refund row queued in the same transaction |
+| `retained` | no-show, or a late cancellation the salon chose to keep |
+| `applied` | visit completed; deposit part of the bill |
+
+- `app.settle_deposit_state` (BEFORE INSERT/UPDATE, fires after the customer guard by
+  name) derives the deposit on insert from the service and `businesses.deposits_enabled`,
+  freezes the columns for every non-trusted writer, and applies transitions:
+  cancel → refund (or `retained` if a *member* asked), no-show → retained, completed →
+  applied, confirmed-while-awaiting → waived, awaiting + cancel → void.
+- `businesses.deposits_enabled` is public (the salon page shows "10 € deposit" signed
+  out) and frozen by `app.freeze_deposits_flag`; only `sync_payment_account` (mirroring
+  Stripe's `charges_enabled`) moves it. An owner cannot switch deposits on by editing
+  the row - verified.
+- The **notification trigger** skips confirmation + reminder while `awaiting`, sends them
+  when the deposit becomes `paid`/`waived` (trigger now fires on `deposit_status` too),
+  and sends no "cancelled" email for a hold that lapsed - it was never confirmed.
+- **Refunds are a queue**, like email: `app.queue_deposit_refund` inserts a pending
+  `payment_records` refund (linked by `related_payment_id`); `runPaymentsMaintenance`
+  issues it with idempotency key `deposit-refund:<row id>`. `charge_already_refunded`
+  counts as done; a request Stripe refuses is marked `failed` with the reason (shown on
+  the payments page); anything else is retried.
+- **Service-role RPCs only**: `link_payment_account`, `sync_payment_account`,
+  `settle_deposit` (idempotent; `paid` / `already` / `refunding` for money after a
+  lapse / `duplicate` for a second payment - both refunded), `release_unpaid_deposit`,
+  `expire_unpaid_deposits` (2-minute grace), `pending_deposit_refunds`,
+  `complete_deposit_refund`.
+- **Trust at the edge.** Any salon on the platform can create Checkout Sessions with
+  any metadata on its own account, so `settleCheckoutSession` and
+  `releaseExpiredSession` verify the event's `account` is the booking's salon account,
+  and the currency and amount match, before touching anything.
+
+**Flow.** `bookAppointment` → RPC returns `awaiting` → `openDepositCheckout` (Checkout,
+`expires_at` = the hold, `locale` = bg/en/ro, idempotency per appointment+expiry) →
+redirect. If Checkout cannot open, the hold is released at once. Return URL
+`/bookings/[id]?deposit=paid&session_id=…` settles synchronously
+(`reconcileReturnedSession`) so the page is right before the webhook lands; the
+booking page offers "Pay deposit" while the hold lives (reuses the open session).
+Webhook `/api/webhooks/stripe` handles `checkout.session.completed`,
+`…async_payment_succeeded`, `…expired`, `account.updated`. `/api/cron/payments` (every
+5 min in `vercel.json`) expires holds and issues refunds; cancellations also kick it
+via `after()`.
+
+**Salon side.** `/dashboard/payments`: pitch + "Connect Stripe" (owners/admins) →
+Stripe onboarding (account link) → return syncs status. States: unconfigured /
+disconnected / pending (details submitted or not) / active, plus collected, saved
+from no-shows (retained) and refunded totals and the history. Calendar cards show a
+shield (secured) or hourglass (awaiting); the details sheet shows the deposit and,
+on cancel with a paid deposit, "cancel and refund" vs "cancel and keep".
+
+**Verified** against the live schema in rolled-back transactions and by
+`supabase/tests/database/deposits.test.sql` (14/14, run the same way): flag frozen,
+sync flips it, customer booking held for 32 min, forged `paid` refused, no email while
+awaiting, settle → paid, re-settle → already, confirmation queued on payment, customer
+cancel → one refund queued, worker sees payment + account, refund completes, lapse
+swept to cancelled/void with no email, late payment → refunding. The member
+"cancel and keep" path was exercised in the browser (retained, no refund row).
+**Not verified end to end**: a real Stripe Checkout, since no Stripe keys exist in this
+environment yet (§11).
+
+---
+
+## 8m. Salon page, booking flow and the pitch
+
+- **Salon page** (`business/[slug]`): photo mosaic with a full-screen viewer
+  (`PhotoGallery`), identity block with a live "open now / opens at" island
+  (`OpenStatus`, computed in the browser in the salon's timezone because the page is
+  cached for an hour), sticky section tabs, services grouped by category with deposit
+  chips, team cards with portraits linking to `book?staff=…`, reviews with salon
+  replies ("visit booked on GLOWA" only when the review is tied to an appointment),
+  about + policies, location + hours, a sticky booking card on desktop and a bottom
+  bar on phones.
+- **Booking flow**: numbered stepper, step transitions, the salon's cover in the
+  summary, a preferred stylist kept when they perform the chosen service, sticky
+  back/next bar. **Slot picker**: month label, "first free" shortcut, day strip with an
+  availability bar, times grouped morning / afternoon / evening.
+- **Landing** (2026-09-24, second pass): left-aligned promise with a coral stroke,
+  an arch-shaped photo collage (`ArchCollage`) on a peach glow, `HeroSearch` below
+  (every town + near me, "when" maps to `openOn`), round category photos, an owner
+  prompt to `/for-business`, photo-first salon cards, a dark "for salons" band, and
+  four concrete promises (no commission, no competitors on your page, client export,
+  direct payouts) - each true of the product. Deliberately not Fresha's layout.
+- **Competitive notes**: `docs/competitive-fresha.md` - what salons and clients
+  dislike about Fresha and what GLOWA does about each, with sources.
+- **Client export**: `/api/business/clients/export` (managers+, active business,
+  read through RLS, UTF-8 BOM, formula-injection safe).
+- **`/for-business`**: the pitch to salon owners - calendar, deposits and the salon
+  page as three pillars with illustrative mocks (hidden from assistive tech, no
+  numbers claimed), everything included, three steps, FAQ, CTA. Links to the showcase
+  salon only when this environment has it. In the header, mobile nav and sitemap.
+
+## 8p. Signature features (2026-09-24)
+
+What should make GLOWA feel like itself rather than one more booking directory:
+
+- **Free today and tomorrow** (`LiveOpenings` on the landing page). Times come first:
+  a rail of "boarding-pass" tickets - the time large on a coral (today) or peach
+  (tomorrow) stub, the service, price, salon and town. `/api/openings`
+  (`listOpenings`, `revalidate = 120`, static) takes the top-rated salons, picks each
+  one's shortest bookable service (it fits the most gaps, and the ticket names it so
+  "15:30" is not read as a promise for a three-hour colour), and asks
+  `get_available_slots` for the next 48 hours. The client drops anything within 15
+  minutes and anything past tomorrow; the section disappears when empty. A ticket
+  links to `book?service=&staff=&at=`, and `BookingFlow` (`initialStartsAt`) opens
+  on the confirm step with the time chosen and a "change" button. Booking still
+  re-checks the slot under the exclusion constraint.
+- **The card becomes the page.** The salon card's photo and the salon page's cover
+  share a React `<ViewTransition name={salonCoverTransition(slug)} share="salon-cover"
+  default="none">`, so the photo grows into the cover on navigation (480ms, a touch of
+  blur mid-flight, `::view-transition-*(.salon-cover)` in `globals.css`; off under
+  reduced motion). React only pairs elements that are on screen. Verified that React
+  names the card at click time; the animation itself could not be watched here
+  because the preview pane was hidden (a hidden document skips view transitions).
+- **Glow.** `GlowPointer` (root layout, one delegated `pointermove` listener, none on
+  touch) sets `--glow-x/--glow-y` on `[data-glow]`; the `glowa-glow` utility paints a
+  soft coral light under the pointer via `::after`. Used on salon card photos,
+  opening tickets, landing promises, `/for-business` cards and the footer CTA. The
+  one effect that is the brand's name.
+- **Salon page SEO**: title "<name> — <trade> in <town>", description = the salon's
+  pitch + what the page offers, cut on a word under 160; gallery photos have alt
+  text. JSON-LD (`BeautySalon`/`HairSalon`/…, address, geo, hours, price range,
+  rating, `ReserveAction`) was already complete.
+
+## 8o. Admin pass: photos, address, reviews, clients (2026-09-24)
+
+- **Settings → Photos** (`BusinessMediaManager`): cover + up to 12 gallery photos,
+  uploaded from the browser straight to `business-media/<business id>/<uuid>.<ext>`
+  (the storage policy already restricts that folder to the salon's managers), saved
+  immediately through `updateBusinessMedia`, which accepts only URLs in that salon's
+  own folder or the bundled `/brand/` images demo salons use. Promote to cover,
+  remove (the file is deleted after the page stops pointing at it), replace cover.
+  Before this there was no way for a salon to add a single photo.
+- **Settings → Address & map** (`BusinessLocationForm` / `updateBusinessLocation`):
+  address, city (datalist of known towns), postcode, and the map point - with a plain
+  status (not on the map / approximate town centre / exact) and "I'm here" to place it
+  from the salon.
+- **Reviews** (`/dashboard/reviews`): summary (average of published reviews, 5→1
+  breakdown, share replied, unanswered count - all counted, nothing estimated),
+  filters all / unanswered / hidden, cards with service and stylist, and a published
+  reply shown as a quoted reply with Edit rather than as an open text box.
+- **Client card** (`/dashboard/clients/[id]`): avatar, tap-to-call and mail, "client
+  since", tags, call / new appointment; upcoming and past visits as date-tile rows;
+  the editable card (name, phone, email - correctly labelled now - notes, tags,
+  consent) in a sticky side panel.
+- **Marketing**: campaign rows show audience as chips ("Not seen for 45+ days"); the
+  edit button says Edit, not "Save campaign".
+- **"My ..." queries filter by the caller.** `listMyAppointments`, `getMyAppointment`,
+  `listMyReviews`, `listSavedBusinesses` and the profile counts relied on RLS alone -
+  and RLS also shows a salon's staff every appointment and review of their salon. A
+  salon owner's "My bookings" listed all their clients' visits (97 instead of 2 in the
+  showcase). Each now filters `customer_profile_id` / `author_profile_id` /
+  `profile_id` = the verified caller.
+- `formatDuration` uses `Intl` units ("2 ч 30 мин", "2 hrs 30 mins", "2 ore 30 min.")
+  instead of hard-coded English "h"/"min". Bulgarian's CLDR short month is the number
+  ("09"), so date tiles and analytics ticks take the first three letters of the long
+  name instead.
+
+## 8n. The showcase salon
+
+`scripts/seed-showcase.sql` turns the business an account owns into a furnished demo
+salon ("Ivanov Atelier", `demo-ivanov-atelier`): cover, gallery and four generated
+portraits (`public/brand/showcase/`, `showcaseAssets` in `brand-assets.ts`), 11
+services (5 with deposits), 5 staff with hours, ~8 weeks of history and 2 ahead,
+reviews with replies, deposits in every state, two QR links and a draft campaign.
+It writes *as the owner* (`role authenticated` + JWT claims) for everything a client
+may write, so RLS and triggers run exactly as for the server actions (the CRM filled
+itself from the appointments; the growth-link codes came from the trigger); only
+reviews by others, deposits and payment records use the service role. Everything
+invented is `is_demo`, which also keeps the outbox silent. It was run for the
+developer's own account on 2026-09-24; that business was previously a throwaway named
+"ivan" (its `test` service was deactivated, its one hand-made appointment left alone).
+
 
 ---
 
@@ -1334,6 +1623,42 @@ traction claim may appear unless it is real.
 20. Motion: done on 09-24 for the marketing pages, the booking funnel, the
     salon page and search (§4). In the business app only the next-up strip
     moves; the calendar and dashboard are still static apart from Radix panels.
+
+3. **Deposits are built (§8l) but not live.** To switch them on: a Stripe platform
+   account with Connect enabled; `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in the
+   server env; a webhook endpoint at `/api/webhooks/stripe` listening to *events on
+   connected accounts* (`checkout.session.completed`,
+   `checkout.session.async_payment_succeeded`, `checkout.session.expired`,
+   `account.updated`); `SUPABASE_SECRET_KEY` (every payment path is service-role);
+   the payments cron. Then walk one real test-mode deposit end to end. Still missing:
+   card-on-file / no-show fees charged after the fact, a refund-failed webhook
+   (`refund.updated`) to flip a refund that Stripe later fails, deposit wording in the
+   confirmation email, and any platform fee (`application_fee_amount`) - a pricing
+   decision.
+20. Motion now has a system (§4): page entrances in the admin, reveals on the salon
+    page and `/for-business`, step transitions in booking. Not yet: the customer
+    profile/bookings surfaces and the auth pages, which still use the older styling.
+22. The customer surfaces (`/profile`, `/bookings`, `/favorites`, auth pages) got the
+    new header and footer but not a composition pass of their own yet.
+26. **Vercel production is up but not complete.** Set in the project: the public
+    Supabase URL and publishable key, `NEXT_PUBLIC_SITE_URL`, the VAPID public key
+    and subject. Still to add (secrets, by the owner): `SUPABASE_SECRET_KEY`,
+    `CRON_SECRET`, `OPENAI_API_KEY`, `VAPID_PRIVATE_KEY`, `RESEND_API_KEY` /
+    `RESEND_FROM`, `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET`. In Supabase → Auth →
+    URL configuration, the site URL and redirect URLs must include the Vercel domain
+    or sign-up confirmation and password reset links point at localhost. The account
+    is on Hobby, which allows **daily** crons only, so `vercel.json` runs
+    notifications at 07:00 and payments at 03:30 UTC; reminders need the minute
+    schedule back - Vercel Pro, or Supabase `pg_cron` + `pg_net` calling the same
+    endpoints.
+24. Gallery order can only be changed by promoting to cover; drag-to-reorder is not
+    built. Uploads are not resized in the browser (10 MB cap, `next/image` serves
+    resized copies).
+25. The admin cannot edit the salon's category, short pitch or opening hours per
+    location from Settings yet (hours live on staff; category and pitch come from
+    onboarding / seed).
+23. `deposits.test.sql` passed (14/14) against the live schema in a rolled-back
+    transaction because Docker is not running here; run `npm run test:db` locally.
 21. City names are plain text, not localized: a Romanian visitor sees
     "Пловдив" in Cyrillic, including in the page's structured data. Defensible
     as the local spelling, awkward for the Romanian market.
@@ -1346,7 +1671,9 @@ traction claim may appear unless it is real.
    before a chain uses them.
 6. Notification channels other than email have no provider and resolve to
    `null` (§8c). A queued SMS stays queued rather than being marked sent.
-8. `payment_records` has no provider. Deposits are modelled but unused.
+8. Stripe Connect accounts are created for `BG` or `RO` only (anything else falls
+   back to `BG`); extend `SUPPORTED_COUNTRIES` in `lib/payments/connect.ts` with the
+   market.
 9. Staff invitations are claimed on sign-in and again in the business layout
    (`claim_pending_invitations`), but no invitation *email* is sent yet — the
    invitee has to be told out of band. Wiring it to the outbox is the next
@@ -1427,3 +1754,12 @@ traction claim may appear unless it is real.
     rebooking" path through the outbox would close that.
 26. The flyer prints through the browser's print dialog. That is a real PDF,
     but a "download PNG for Instagram" export would need a canvas renderer.
+
+16. **Pricing is published** (2026-09-24, `docs/pricing.md`): Solo €0 forever,
+    Studio €12 (€10 yearly) up to 5, Salon €24 (€20 yearly) unlimited; 0%
+    commission, no fee on deposits. Nothing is billed during early access
+    (`EARLY_ACCESS_UNTIL` = 2027-02-28) - **subscription billing is not built** and
+    has to be before that date (Stripe Billing on the platform account, seat
+    counting from `staff_profiles`, 30 days' notice to every business). The
+    `/pricing` page has a savings calculator against the lowest published
+    competitor rates, rounded in their favour; competitors are not named there.
