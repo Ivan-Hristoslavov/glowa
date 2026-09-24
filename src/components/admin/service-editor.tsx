@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Repeat, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -39,6 +39,28 @@ const SERVICE_CATEGORIES = [
 
 type LocalizedDraft = Record<Locale, string>;
 
+/**
+ * How long a result usually lasts, in weeks: when a client is due again.
+ * A starting point the owner can change, not a rule - and nothing for
+ * make-up or tattoos, which are occasions rather than cycles.
+ */
+const REBOOK_WEEKS_BY_CATEGORY: Partial<Record<(typeof SERVICE_CATEGORIES)[number], number>> = {
+  hair: 6,
+  barber: 4,
+  nails: 3,
+  lashes_brows: 3,
+  skincare: 4,
+  massage: 4,
+  spa: 6,
+};
+
+const REBOOK_WEEK_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12, 16, 26] as const;
+
+function suggestedRebookDays(category: (typeof SERVICE_CATEGORIES)[number]) {
+  const weeks = REBOOK_WEEKS_BY_CATEGORY[category];
+  return weeks ? weeks * 7 : null;
+}
+
 export type ServiceDraft = {
   id?: string;
   name: LocalizedDraft;
@@ -52,6 +74,8 @@ export type ServiceDraft = {
   depositCents: number;
   isActive: boolean;
   staffIds: string[];
+  /** Days after a visit at which the client is invited back; null = never. */
+  rebookAfterDays: number | null;
 };
 
 export function emptyServiceDraft(): ServiceDraft {
@@ -67,6 +91,7 @@ export function emptyServiceDraft(): ServiceDraft {
     depositCents: 0,
     isActive: true,
     staffIds: [],
+    rebookAfterDays: suggestedRebookDays("hair"),
   };
 }
 
@@ -87,6 +112,8 @@ export function ServiceEditor({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ServiceDraft>(service ?? emptyServiceDraft());
+  // A new service follows its category's suggestion until the owner picks.
+  const [rebookChosen, setRebookChosen] = useState(Boolean(service));
   const [isPending, startTransition] = useTransition();
 
   function patch(next: Partial<ServiceDraft>) {
@@ -110,6 +137,7 @@ export function ServiceEditor({
         depositCents: draft.depositCents,
         isActive: draft.isActive,
         staffIds: draft.staffIds,
+        rebookAfterDays: draft.rebookAfterDays,
       });
 
       if (!result.ok) {
@@ -200,9 +228,14 @@ export function ServiceEditor({
               <Label htmlFor="service-category">{t("category")}</Label>
               <Select
                 value={draft.category}
-                onValueChange={(value) =>
-                  patch({ category: value as ServiceDraft["category"] })
-                }
+                onValueChange={(value) => {
+                  const category = value as ServiceDraft["category"];
+                  patch(
+                    rebookChosen
+                      ? { category }
+                      : { category, rebookAfterDays: suggestedRebookDays(category) },
+                  );
+                }}
               >
                 <SelectTrigger id="service-category">
                   <SelectValue />
@@ -309,6 +342,37 @@ export function ServiceEditor({
             </label>
           </div>
 
+          <div className="bg-accent/40 space-y-3 rounded-2xl p-4">
+            <div className="flex items-start gap-3">
+              <span className="bg-card text-primary mt-0.5 grid size-8 shrink-0 place-items-center rounded-full">
+                <Repeat className="size-4" aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1 space-y-2">
+                <Label htmlFor="service-rebook">{t("rebook")}</Label>
+                <Select
+                  value={draft.rebookAfterDays ? String(draft.rebookAfterDays) : "off"}
+                  onValueChange={(value) => {
+                    setRebookChosen(true);
+                    patch({ rebookAfterDays: value === "off" ? null : Number(value) });
+                  }}
+                >
+                  <SelectTrigger id="service-rebook" className="bg-card w-full sm:w-64">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="off">{t("rebookOff")}</SelectItem>
+                    {rebookChoices(draft.rebookAfterDays).map((days) => (
+                      <SelectItem key={days} value={String(days)}>
+                        {t("rebookWeeks", { count: Math.round(days / 7) })}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-muted-foreground text-xs leading-relaxed">{t("rebookHint")}</p>
+              </div>
+            </div>
+          </div>
+
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">{t("staff")}</legend>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -359,6 +423,13 @@ export function ServiceEditor({
       </DialogContent>
     </Dialog>
   );
+}
+
+/** The fixed choices, plus a stored value that is not one of them. */
+function rebookChoices(current: number | null) {
+  const days: number[] = REBOOK_WEEK_OPTIONS.map((weeks) => weeks * 7);
+  if (current && !days.includes(current)) days.push(current);
+  return days.sort((a, b) => a - b);
 }
 
 export function AddServiceButton({

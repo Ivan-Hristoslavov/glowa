@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { WhyPay } from "@/components/marketing/why-pay";
 import { PricingPlans } from "@/components/pricing/pricing-plans";
 import { SavingsCalculator } from "@/components/pricing/savings-calculator";
 import { Button } from "@/components/ui/button";
@@ -112,6 +113,11 @@ export default async function PricingPage({
           })}
         </ul>
       </section>
+
+      {/* ------------------------------------------------ why pay at all */}
+      <div className="mt-24">
+        <WhyPay />
+      </div>
 
       {/* --------------------------------------------------------- calculator */}
       <div className="mt-20">

@@ -8,9 +8,11 @@ import { publicEnv } from "@/lib/env";
 import { pickLocalized } from "@/lib/localized";
 
 import { resolveChannel } from "./channels";
+import { localDay, pickInvitationSlots, weeksFromDays, type SlotCandidate } from "./rebook";
 import {
   renderCampaign,
   renderNotification,
+  renderRebookInvitation,
   type NotificationContext,
 } from "./render";
 import type { NotificationDelivery } from "./types";
@@ -227,6 +229,10 @@ async function deliverOne(
     };
   }
 
+  if (delivery.event_type === "rebook_nudge") {
+    return deliverRebookInvitation(delivery, appointment, adapter);
+  }
+
   const context: NotificationContext = {
     locale: asLocale(delivery.locale),
     event: delivery.event_type,
@@ -284,6 +290,160 @@ async function deliverOne(
 
   // A permanent rejection is settled now; a transient one goes back in the
   // queue and the attempt counter decides when to stop.
+  const exhausted = delivery.attempts >= 5;
+  return {
+    bucket: "failed",
+    patch: {
+      status: !result.retryable || exhausted ? "failed" : "queued",
+      provider: adapter.provider,
+      error: result.error.slice(0, 500),
+    },
+  };
+}
+
+const INVITATION_WINDOW_DAYS = 14;
+
+/**
+ * "Time for your next one". Weeks pass between queueing and sending, so the
+ * database is asked again whether the invitation still makes sense (the
+ * client may have booked, visited, or said no; the salon may have switched it
+ * off) and the free times are looked up now, with the same function the
+ * booking flow uses - a time in the email is a time that could be booked a
+ * moment ago, and booking re-checks it anyway.
+ */
+async function deliverRebookInvitation(
+  delivery: NotificationDelivery,
+  appointment: AppointmentRow,
+  adapter: NonNullable<ReturnType<typeof resolveChannel>>,
+): Promise<DeliveryOutcome> {
+  const supabase = createAdminClient();
+  const business = appointment.businesses!;
+
+  const { data: rows, error } = await supabase.rpc("rebook_invitation_context", {
+    p_appointment_id: appointment.id,
+  });
+  if (error) {
+    return {
+      bucket: "failed",
+      patch: {
+        status: delivery.attempts >= 5 ? "failed" : "queued",
+        error: `context: ${error.message}`.slice(0, 500),
+      },
+    };
+  }
+
+  const invitation = rows?.[0];
+  if (!invitation || invitation.state !== "due" || !invitation.service_id) {
+    return {
+      bucket: "skipped",
+      patch: { status: "skipped", error: invitation?.state ?? "missing" },
+    };
+  }
+
+  const locale = asLocale(delivery.locale);
+  const site = publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+  const bookPath = `/${locale}/business/${business.slug}/book`;
+  const serviceId = invitation.service_id;
+
+  const now = new Date();
+  const range = {
+    p_service_id: serviceId,
+    p_from: localDay(now, business.timezone),
+    p_to: localDay(
+      new Date(now.getTime() + INVITATION_WINDOW_DAYS * 86_400_000),
+      business.timezone,
+    ),
+    ...(invitation.location_id ? { p_location_id: invitation.location_id } : {}),
+  };
+
+  // The same stylist first; anyone who does the service if they are full.
+  let sameStaff = Boolean(invitation.staff_profile_id);
+  let candidates: SlotCandidate[] = [];
+  if (invitation.staff_profile_id) {
+    const { data } = await supabase.rpc("get_available_slots", {
+      ...range,
+      p_staff_profile_id: invitation.staff_profile_id,
+    });
+    candidates = data ?? [];
+  }
+  let picked = pickInvitationSlots(candidates, {
+    previousStartsAt: appointment.starts_at,
+    timeZone: business.timezone,
+    now,
+  });
+  if (picked.length === 0) {
+    const { data } = await supabase.rpc("get_available_slots", range);
+    picked = pickInvitationSlots(data ?? [], {
+      previousStartsAt: appointment.starts_at,
+      timeZone: business.timezone,
+      now,
+    });
+    sameStaff = false;
+  }
+
+  const query = (extra: Record<string, string>) =>
+    new URLSearchParams({ service: serviceId, ...extra }).toString();
+  const allTimesPath = `${bookPath}?${query(
+    sameStaff && invitation.staff_profile_id ? { staff: invitation.staff_profile_id } : {},
+  )}`;
+
+  const rendered = await renderRebookInvitation({
+    locale,
+    businessName: business.name,
+    businessTimezone: business.timezone,
+    businessPhone: business.phone,
+    businessLogoUrl: business.logo_url,
+    businessCoverUrl: business.cover_image_url,
+    serviceName: appointment.service_name_snapshot,
+    staffName: sameStaff ? (appointment.staff_profiles?.display_name ?? null) : null,
+    customerName: appointment.customer_name,
+    weeks: weeksFromDays(invitation.rebook_after_days ?? 7),
+    slots: picked.map((slot) => ({
+      startsAt: slot.starts_at,
+      href: `${site}${bookPath}?${query({
+        ...(slot.staff_profile_id ? { staff: slot.staff_profile_id } : {}),
+        at: slot.starts_at,
+      })}`,
+    })),
+    allTimesHref: `${site}${allTimesPath}`,
+    unsubscribeUrl: invitation.unsubscribe_token
+      ? `${site}/${locale}/unsubscribe/${invitation.unsubscribe_token}`
+      : null,
+    locationName: appointment.locations?.name ?? null,
+    locationAddress:
+      [appointment.locations?.address_line1, appointment.locations?.city]
+        .filter(Boolean)
+        .join(", ") || null,
+  });
+
+  const result = await adapter.send({
+    to: {
+      name: appointment.customer_name,
+      email: appointment.customer_email,
+      phone: appointment.customer_phone,
+    },
+    locale,
+    subject: rendered.subject,
+    text: rendered.text,
+    html: rendered.html,
+    idempotencyKey: delivery.idempotency_key,
+    profileId: delivery.profile_id,
+    url: allTimesPath,
+  });
+
+  if (result.ok) {
+    return {
+      bucket: "sent",
+      patch: {
+        status: "sent",
+        sent_at: new Date().toISOString(),
+        provider: adapter.provider,
+        provider_message_id: result.providerMessageId,
+        error: null,
+      },
+    };
+  }
+
   const exhausted = delivery.attempts >= 5;
   return {
     bucket: "failed",

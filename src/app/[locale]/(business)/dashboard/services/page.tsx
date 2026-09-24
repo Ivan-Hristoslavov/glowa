@@ -1,4 +1,4 @@
-import { Clock, Pencil, Scissors, ShieldCheck } from "lucide-react";
+import { Clock, Pencil, Repeat, Scissors, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -122,6 +122,7 @@ export default async function ServicesPage({
                     depositCents: service.deposit_cents,
                     isActive: service.is_active,
                     staffIds: assigned,
+                    rebookAfterDays: service.rebook_after_days,
                   };
                   const description = pickLocalized(service.description, activeLocale);
 
@@ -173,6 +174,12 @@ export default async function ServicesPage({
                           <span className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs">
                             <ShieldCheck className="size-3.5" aria-hidden />
                             {formatPrice(service.deposit_cents, service.currency, activeLocale)}
+                          </span>
+                        ) : null}
+                        {service.rebook_after_days ? (
+                          <span className="bg-accent text-accent-foreground inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs">
+                            <Repeat className="size-3.5" aria-hidden />
+                            {t("rebookChip", { count: Math.round(service.rebook_after_days / 7) })}
                           </span>
                         ) : null}
                         {!service.is_active ? (

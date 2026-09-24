@@ -18,6 +18,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MetricCard } from "@/components/admin/metric-card";
 import { PageHeader } from "@/components/admin/page-header";
 import { SetupChecklist } from "@/components/admin/setup-checklist";
+import { ValuePanel } from "@/components/admin/value-panel";
 import { EmptyState } from "@/components/common/empty-state";
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,6 +31,7 @@ import { pickLocalized } from "@/lib/localized";
 import {
   getActiveMembership,
   getDashboardMetrics,
+  getValueSummary,
   listAppointmentsInRange,
   type AdminAppointment,
 } from "@/lib/queries/business";
@@ -140,9 +142,11 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
   const monthStart = new Date(start.getFullYear(), start.getMonth(), 1);
   const monthEnd = new Date(start.getFullYear(), start.getMonth() + 1, 1);
 
-  const [metrics, today] = await Promise.all([
+  const [metrics, today, value] = await Promise.all([
     getDashboardMetrics(membership.businessId, monthStart, monthEnd),
     listAppointmentsInRange(membership.businessId, start, end),
+    // A secondary panel: if it cannot load, the rest of the dashboard still does.
+    getValueSummary(membership.businessId, monthStart, monthEnd).catch(() => null),
   ]);
 
   const capacityHours = Math.round((metrics?.capacity_minutes ?? 0) / 60);
@@ -240,6 +244,10 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
           tone="warning"
         />
       </div>
+
+      {value && business?.status !== "draft" ? (
+        <ValuePanel summary={value} locale={activeLocale} />
+      ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
         {/* Today, as a timeline: the one list a salon reads twenty times a day. */}

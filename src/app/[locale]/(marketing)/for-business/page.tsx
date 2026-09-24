@@ -15,6 +15,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import Image from "next/image";
 
 import { FEATURE_ICONS, type FeatureIconKey } from "@/components/brand/feature-icons";
+import { WhyPay } from "@/components/marketing/why-pay";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import {
   Accordion,
@@ -361,6 +362,11 @@ export default async function ForBusinessPage({
           </div>
         ))}
       </section>
+
+      {/* ------------------------------------------------------------- why pay */}
+      <div className="px-4 pb-16 sm:px-6 sm:pb-24">
+        <WhyPay pricingLink />
+      </div>
 
       {/* ------------------------------------------------------------ included */}
       <section className="bg-card/60 border-y">

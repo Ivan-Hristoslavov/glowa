@@ -73,7 +73,9 @@ export async function POST(request: Request) {
     p_customer_id:
       typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id,
     p_subscription_id: subscription.id,
-    p_current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+    // The type generator marks every RPC argument non-null; this one takes null
+    // (a subscription without a period yet), so the generated file stays as is.
+    p_current_period_end: (periodEnd ? new Date(periodEnd * 1000).toISOString() : null) as string,
     p_cancel_at_period_end: subscription.cancel_at_period_end,
     p_event_at: new Date(event.created * 1000).toISOString(),
   });
