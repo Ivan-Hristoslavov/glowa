@@ -593,12 +593,28 @@ Four of these were written because something failed, not from a plan:
   next 120 days, active salons only. Tested locally: a closed week goes from
   322 slots to 0, and grants on the recreated functions survive.
 
-**Live project drift, as of 09-24.** The live database has three migrations
-that are not in the repository — `deposits`, `deposit_refund_reference` and
-`search_near` — applied while this work was going on in a parallel session.
-`130500`, `120000`, `20260924130000` and `20260924140000` above are in the
-repository, but the last three are **not yet applied live**, and
-`src/types/database.ts` has the closures types added by hand to match. Reconcile before the next `db push`.
+**Live project, as of 09-24 14:20 UTC: in step with the repository.** The
+two branches were merged, and every migration in `supabase/migrations/` is
+now applied live:
+- `deposits`, `deposit_refund_reference` and `search_near` came from the
+  other session;
+- `slug_transliteration`, `business_closures` and `business_subscriptions`
+  were applied through the Supabase MCP before the merged code was deployed.
+
+Before replacing `get_available_slots`, `app.has_bookable_staff_on` and
+`app.next_free_slug`, their live definitions were compared with the
+repository's previous versions and matched, so nothing made in the dashboard
+was overwritten.
+
+The live migration *versions* are the MCP's timestamps, not the file names;
+the names match. `src/types/database.ts` has the closures and subscription
+types added by hand; regenerate with `npm run db:types` when convenient.
+
+**Deploying.** Vercel project `glowa` (team "ivan-hristoslavov's projects",
+region `dub1`). A push to any branch builds a preview. Production is created
+explicitly: redeploy the chosen preview with `target: production`, or run
+`vercel --prod`. A preview cannot simply be promoted, because it was built
+with preview env vars.
 
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
@@ -1006,8 +1022,8 @@ locale prefix.
 
 **`/pricing`** is built and linked from the header and the mobile nav. The
 feature lists are real - every line maps to something that exists. The prices
-are the ones chosen with the owner in the other branch: Solo free, Studio
-€12, Salon €24 (see `docs/pricing.md`), with a savings calculator. A first
+are the ones chosen with the owner: Solo €6 (€5 yearly; it was free until the
+owner asked for €4–6), Studio €12, Salon €24 (see `docs/pricing.md`), with a savings calculator. A first
 draft on this branch (€9/€24/€48) was dropped in the merge.
 
 ---
@@ -1273,8 +1289,8 @@ deposits on the salons' connected accounts, and a Connect endpoint never
 receives platform events. So `/api/stripe/webhook` (this) and
 `/api/webhooks/stripe` (deposits) are registered separately, each with its own
 secret: `STRIPE_BILLING_WEBHOOK_SECRET` and `STRIPE_WEBHOOK_SECRET`. Both use
-the platform client in `lib/payments/stripe.ts`. Solo is free, so it is never
-sent to checkout.
+the platform client in `lib/payments/stripe.ts`. A plan priced at €0 is never
+sent to checkout; none is, since Solo became €6.
 
 **Without keys** (`STRIPE_SECRET_KEY` unset) the page says plans are free
 during early access and the buttons are disabled.
@@ -1755,11 +1771,12 @@ traction claim may appear unless it is real.
 26. The flyer prints through the browser's print dialog. That is a real PDF,
     but a "download PNG for Instagram" export would need a canvas renderer.
 
-16. **Pricing is published** (2026-09-24, `docs/pricing.md`): Solo €0 forever,
+16. **Pricing is published** (2026-09-24, `docs/pricing.md`): Solo €6 (€5 yearly),
     Studio €12 (€10 yearly) up to 5, Salon €24 (€20 yearly) unlimited; 0%
     commission, no fee on deposits. Nothing is billed during early access
-    (`EARLY_ACCESS_UNTIL` = 2027-02-28) - **subscription billing is not built** and
-    has to be before that date (Stripe Billing on the platform account, seat
-    counting from `staff_profiles`, 30 days' notice to every business). The
+    (`EARLY_ACCESS_UNTIL` = 2027-02-28). Subscription billing is built (§8n:
+    Checkout, portal, webhook) and off until the Stripe keys are set. Still to
+    do before that date: seat limits counted from `staff_profiles`, and 30
+    days' notice to every business. The
     `/pricing` page has a savings calculator against the lowest published
     competitor rates, rounded in their favour; competitors are not named there.

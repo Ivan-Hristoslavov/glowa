@@ -1656,7 +1656,7 @@
     "plans": {
       "solo": {
         "name": "Solo",
-        "tagline": "Pentru un singur specialist. Gratuit — nu de probă, pentru totdeauna.",
+        "tagline": "Pentru un specialist care lucrează singur.",
         "seats": "1 specialist",
         "audience": "Afacere mică"
       },
@@ -1704,8 +1704,8 @@
     },
     "faq": {
       "title": "Întrebări frecvente",
-      "q1": "Solo e chiar gratuit pentru totdeauna?",
-      "a1": "Da. Un specialist are calendarul, programările online, fișele clienților și pagina pe glowa fără abonament. Plătești doar dacă devii o echipă.",
+      "q1": "Ce include Solo?",
+      "a1": "Tot ce îi trebuie unui specialist: calendarul, programările online, fișele clienților, avansurile, mementourile și pagina ta pe glowa. Fără comision și fără contract. Dacă devii o echipă, treci la Studio.",
       "q2": "Ce plătesc în perioada de acces timpuriu?",
       "a2": "Nimic. Toate planurile sunt gratuite până pe {date}. Înainte de orice facturare te anunțăm cu cel puțin 30 de zile și îți alegi singur planul.",
       "q3": "Luați un procent din încasări sau din clienții noi?",
@@ -1759,7 +1759,7 @@
       "savedMonth": "Adică {amount} în fiecare lună.",
       "assumptions": "Ipoteze: ~17 € pe lună pentru un specialist sau ~12 € pe loc în echipă și 20% comision din prima vizită a unui client nou (minimum ~5 €) — cele mai mici tarife publicate în septembrie 2026, rotunjite în favoarea concurentului. Fără TVA și fără taxe de plată, similare peste tot."
     },
-    "metaTitle": "Prețuri — fără comision, Solo gratuit"
+    "metaTitle": "Prețuri — fără comision, fără contract"
   },
   "forBusiness": {
     "metaTitle": "GLOWA pentru saloane",
