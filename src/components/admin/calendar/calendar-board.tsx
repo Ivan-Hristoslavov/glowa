@@ -425,6 +425,19 @@ export function CalendarBoard({
           dayOfWeek: dayOfWeekFromKey(day),
         }));
 
+  // Past six columns the header goes compact: "Мария П." instead of the full
+  // name, unless shortening would make two colleagues look the same.
+  const compact = columns.length > 6;
+  const compactNames = new Map(
+    visibleStaff.map((member) => {
+      const short = shortName(member.displayName);
+      const clash = visibleStaff.some(
+        (other) => other.id !== member.id && shortName(other.displayName) === short,
+      );
+      return [member.id, clash ? member.displayName : short];
+    }),
+  );
+
   // The week with the whole team: every stylist booked this week gets a fixed
   // track, in the same order on every day.
   function teamTracks() {
@@ -781,6 +794,12 @@ export function CalendarBoard({
       ) : null}
 
       {/* The grid */}
+      {/*
+        One scroll box for both axes, so the team row sticks to its top and the
+        hours to its left. The stacking order is fixed: time column 40, team
+        row 30 (opaque), now line 10, cards. With the team row and the now line
+        both at 10 the line was drawn across the names and avatars.
+      */}
       <div className="glowa-card overflow-hidden rounded-2xl">
         <div
           ref={scrollRef}
@@ -788,7 +807,7 @@ export function CalendarBoard({
         >
           <div className="flex min-w-max">
             {/* Time gutter */}
-            <div className="bg-card sticky left-0 z-20 w-16 shrink-0 border-r">
+            <div className="bg-card sticky left-0 z-40 w-16 shrink-0 border-r">
               <div className="bg-card sticky top-0 z-30 h-16 border-b" />
               <div className="relative" style={{ height: totalMinutes * PX_PER_MINUTE }}>
                 {hourMarks.map((minute, index) => (
@@ -834,9 +853,17 @@ export function CalendarBoard({
               const openTo = windows.length ? Math.max(...windows.map((w) => w.endMinutes)) : null;
 
               return (
-                <div key={column.id} className="min-w-48 flex-1 border-r last:border-r-0">
+                <div
+                  key={column.id}
+                  className={cn(
+                    "flex-1 border-r last:border-r-0",
+                    // A big team keeps readable columns and scrolls sideways
+                    // under the fixed time column instead of squeezing.
+                    compact ? "min-w-36 sm:min-w-40" : "min-w-44 sm:min-w-48",
+                  )}
+                >
                   {/* Column header */}
-                  <div className="bg-card/95 sticky top-0 z-10 flex h-16 items-center gap-2.5 border-b px-3 backdrop-blur">
+                  <div className="bg-card sticky top-0 z-30 flex h-16 items-center gap-2.5 border-b px-3">
                     {column.member ? (
                       <>
                         <span
@@ -859,8 +886,13 @@ export function CalendarBoard({
                           </Avatar>
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold">
-                            {column.member.displayName}
+                          <p
+                            className="truncate text-sm font-semibold"
+                            title={column.member.displayName}
+                          >
+                            {compact
+                              ? (compactNames.get(column.member.id) ?? column.member.displayName)
+                              : column.member.displayName}
                           </p>
                           <p className="text-muted-foreground text-xs">
                             {windows.length

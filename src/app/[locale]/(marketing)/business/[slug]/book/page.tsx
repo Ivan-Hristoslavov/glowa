@@ -13,6 +13,7 @@ import { effectiveDepositCents } from "@/lib/deposits";
 import { pickLocalized } from "@/lib/localized";
 import { getBusinessBySlug } from "@/lib/queries/discovery";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthProviders } from "@/lib/supabase/auth-providers";
 
 export async function generateMetadata({
   params,
@@ -101,6 +102,7 @@ export default async function BookPage({
         timezone={business.timezone}
         locale={activeLocale}
         isSignedIn={isSignedIn}
+        googleSignIn={isSignedIn ? false : (await getAuthProviders()).google}
         cancellationWindowHours={policy.cancellation_window_hours ?? 24}
         locations={business.locations.map((location) => ({
           id: location.id,

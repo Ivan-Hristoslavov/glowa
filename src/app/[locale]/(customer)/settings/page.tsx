@@ -8,6 +8,7 @@ import { NotificationSettings } from "@/components/customer/settings-notificatio
 import { PreferencesForm } from "@/components/customer/settings-preferences-form";
 import { ProfileSettingsForm } from "@/components/customer/settings-profile-form";
 import { Button } from "@/components/ui/button";
+import { AccountDataSection } from "@/components/customer/account-data-section";
 import { Section } from "@/components/common/section";
 import { Separator } from "@/components/ui/separator";
 import { routing, type Locale } from "@/i18n/routing";
@@ -32,6 +33,7 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/sett
   const { data: claimsData } = await supabase.auth.getClaims();
   const userId = claimsData?.claims?.sub;
   if (typeof userId !== "string") redirect(`/${locale}/login`);
+  const email = typeof claimsData?.claims?.email === "string" ? claimsData.claims.email : null;
 
   const [{ data: profile }, { data: preferences }, { data: notifications }, { data: connections }] =
     await Promise.all([
@@ -77,9 +79,7 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/sett
       <Section title={t("profile")} description={t("profileBody")}>
         <ProfileSettingsForm
           userId={userId}
-          email={
-            typeof claimsData?.claims?.email === "string" ? claimsData.claims.email : null
-          }
+          email={email}
           initial={{
             fullName: profile?.full_name ?? "",
             phone: profile?.phone ?? "",
@@ -159,6 +159,10 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/sett
             ) : null}
           </div>
         )}
+      </Section>
+
+      <Section title={t("data.title")} description={t("data.body")}>
+        <AccountDataSection email={email ?? ""} />
       </Section>
     </div>
   );

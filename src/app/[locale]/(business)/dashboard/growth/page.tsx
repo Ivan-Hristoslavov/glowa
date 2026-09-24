@@ -1,4 +1,4 @@
-import { QrCode } from "lucide-react";
+import { FileImage, QrCode } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/admin/page-header";
 import { GrowthLinkCard, type GrowthLinkView } from "@/components/admin/growth-link-card";
 import { GrowthLinkCreator } from "@/components/admin/growth-link-creator";
 import { EmptyState } from "@/components/common/empty-state";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { publicEnv } from "@/lib/env";
 import { growthLinkUrl, renderQrSvg } from "@/lib/growth/qr";
@@ -85,13 +87,21 @@ export default async function GrowthPage({
         title={t("title")}
         description={t("subtitle")}
         actions={
-          editable ? (
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link href="/dashboard/growth/flyer">
+                <FileImage className="size-4" aria-hidden />
+                {t("makeFlyer")}
+              </Link>
+            </Button>
+            {editable ? (
             <GrowthLinkCreator
               businessId={membership.businessId}
               services={services}
               clients={clientOptions}
             />
-          ) : null
+            ) : null}
+          </div>
         }
       />
 

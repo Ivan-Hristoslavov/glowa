@@ -1,4 +1,4 @@
-import { CalendarDays, Heart, Settings, Star } from "lucide-react";
+import { ArrowRight, CalendarDays, Heart, LayoutDashboard, Settings, Star, Store } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -32,21 +32,32 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/profi
   // The proxy already gates this route; this is the second line of defence.
   if (typeof userId !== "string") redirect(`/${locale}/login`);
 
-  const [{ data: profile }, { upcoming }, { count: savedCount }, { count: reviewCount }] =
-    await Promise.all([
-      supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
-      listMyAppointments(),
-      // Filtered by the caller explicitly: RLS also shows a salon's staff
-      // the salon's reviews, which are not theirs to count here.
-      supabase
-        .from("saved_businesses")
-        .select("business_id", { count: "exact", head: true })
-        .eq("profile_id", userId),
-      supabase
-        .from("reviews")
-        .select("id", { count: "exact", head: true })
-        .eq("author_profile_id", userId),
-    ]);
+  const [
+    { data: profile },
+    { upcoming },
+    { count: savedCount },
+    { count: reviewCount },
+    { count: membershipCount },
+  ] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
+    listMyAppointments(),
+    // Filtered by the caller explicitly: RLS also shows a salon's staff the
+    // salon's reviews, which are not theirs to count here.
+    supabase
+      .from("saved_businesses")
+      .select("business_id", { count: "exact", head: true })
+      .eq("profile_id", userId),
+    supabase
+      .from("reviews")
+      .select("id", { count: "exact", head: true })
+      .eq("author_profile_id", userId),
+    supabase
+      .from("business_members")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", userId)
+      .eq("status", "active"),
+  ]);
+  const hasBusiness = (membershipCount ?? 0) > 0;
 
   const activeLocale = locale as Locale;
   const next = upcoming[0] ?? null;
@@ -73,7 +84,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/profi
           <li key={key}>
             <Link
               href={href}
-              className="glowa-card glowa-focus hover:shadow-lift flex items-center gap-4 p-5 transition-shadow"
+              className="glowa-card glowa-focus glowa-lift flex items-center gap-4 rounded-2xl p-5"
             >
               <span className="bg-secondary text-primary flex size-11 items-center justify-center rounded-full">
                 <Icon className="size-5" aria-hidden />
@@ -112,6 +123,38 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/profi
           />
         )}
       </Section>
+
+      {/* The customer profile is where everyone lands after signing up,
+          salon owners included. Without this they had no way to find the
+          business app from here. */}
+      <Link
+        href={hasBusiness ? "/dashboard" : "/onboarding"}
+        className="glowa-focus group from-brand-ink relative flex items-center gap-5 overflow-hidden rounded-3xl bg-gradient-to-br to-[#2a3130] p-6 text-[#f7f2ed] shadow-[var(--shadow-lift)] sm:p-7"
+      >
+        <span
+          aria-hidden
+          className="bg-primary/30 pointer-events-none absolute -top-16 -right-10 size-48 rounded-full blur-3xl transition-transform duration-700 group-hover:scale-125"
+        />
+        <span className="bg-primary text-primary-foreground relative flex size-12 shrink-0 items-center justify-center rounded-2xl">
+          {hasBusiness ? (
+            <LayoutDashboard className="size-5" aria-hidden />
+          ) : (
+            <Store className="size-5" aria-hidden />
+          )}
+        </span>
+        <span className="relative min-w-0 flex-1">
+          <span className="font-heading block text-lg sm:text-xl">
+            {hasBusiness ? t("ownerDashboardTitle") : t("ownerTitle")}
+          </span>
+          <span className="block text-sm opacity-75">
+            {hasBusiness ? t("ownerDashboardBody") : t("ownerBody")}
+          </span>
+        </span>
+        <ArrowRight
+          className="relative size-5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+          aria-hidden
+        />
+      </Link>
 
       <Section title={t("quickLinks")}>
         <div className="flex flex-wrap gap-3">

@@ -3,6 +3,8 @@
 import {
   BarChart3,
   CalendarDays,
+  CalendarOff,
+  CreditCard,
   LayoutDashboard,
   Megaphone,
   MessageSquareText,
@@ -30,6 +32,7 @@ export type AdminLink = {
   key:
     | "dashboard"
     | "calendar"
+    | "timeOff"
     | "clients"
     | "services"
     | "staff"
@@ -39,6 +42,7 @@ export type AdminLink = {
     | "growth"
     | "analytics"
     | "assistant"
+    | "billing"
     | "settings";
   icon: LucideIcon;
 };
@@ -51,6 +55,7 @@ export const ADMIN_GROUPS: AdminGroup[] = [
     links: [
       { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
       { href: "/dashboard/calendar", key: "calendar", icon: CalendarDays },
+      { href: "/dashboard/time-off", key: "timeOff", icon: CalendarOff },
       { href: "/dashboard/clients", key: "clients", icon: Users },
     ],
   },
@@ -74,7 +79,10 @@ export const ADMIN_GROUPS: AdminGroup[] = [
   },
   {
     key: "account",
-    links: [{ href: "/dashboard/settings", key: "settings", icon: Settings }],
+    links: [
+      { href: "/dashboard/billing", key: "billing", icon: CreditCard },
+      { href: "/dashboard/settings", key: "settings", icon: Settings },
+    ],
   },
 ];
 

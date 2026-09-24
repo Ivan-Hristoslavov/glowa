@@ -1,5 +1,6 @@
 import {
   CalendarCheck2,
+  CalendarOff,
   Clock,
   ExternalLink,
   Globe,
@@ -30,13 +31,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { routing, type Locale } from "@/i18n/routing";
+import { localeHrefLang, routing, type Locale } from "@/i18n/routing";
 import { brandAssets, fallbackBusinessImage } from "@/lib/brand-assets";
 import { effectiveDepositCents } from "@/lib/deposits";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { salonCoverTransition } from "@/lib/transitions";
 import { pickLocalized } from "@/lib/localized";
-import { getBusinessBySlug, listBusinessSlugs } from "@/lib/queries/discovery";
+import {
+  getBusinessBySlug,
+  listBusinessSlugs,
+  listUpcomingClosures,
+} from "@/lib/queries/discovery";
 import {
   alternatesFor,
   breadcrumbJsonLd,
@@ -147,6 +152,42 @@ export default async function BusinessPage({
   const windowHours = policy.cancellation_window_hours ?? 24;
   const primaryLocation = business.locations[0] ?? null;
   const isDemo = business.slug.startsWith("demo-");
+
+  // Days and hours the salon has closed (owner-entered, timezone-safe); shown
+  // before anyone tries to book into them.
+  const closures = await listUpcomingClosures(business.id);
+  const closureFormat = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    timeZone: business.timezone,
+  });
+  const closureTime = new Intl.DateTimeFormat(localeHrefLang[activeLocale], {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: business.timezone,
+  });
+  // Midnight on the salon's clock marks a whole-day closure.
+  const clock = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+    timeZone: business.timezone,
+  });
+  const atMidnight = (date: Date) => clock.format(date) === "00:00";
+  /** "Fri 25 Dec – Sun 27 Dec", or "Fri 25 Dec, 12:00–18:00" for part of a day. */
+  function describeClosure(startsAt: string, endsAt: string) {
+    const start = new Date(startsAt);
+    const end = new Date(endsAt);
+    const startDay = closureFormat.format(start);
+    if (atMidnight(start) && atMidnight(end)) {
+      const lastDay = closureFormat.format(new Date(end.getTime() - 1));
+      return startDay === lastDay ? startDay : `${startDay} – ${lastDay}`;
+    }
+    return startDay === closureFormat.format(end)
+      ? `${startDay}, ${closureTime.format(start)}–${closureTime.format(end)}`
+      : `${startDay} ${closureTime.format(start)} – ${closureFormat.format(end)} ${closureTime.format(end)}`;
+  }
   const description = pickLocalized(business.description, activeLocale);
   const pitch = pickLocalized(business.short_pitch, activeLocale);
   const staffById = new Map(business.staff_profiles.map((s) => [s.id, s]));
@@ -304,6 +345,22 @@ export default async function BusinessPage({
           </div>
           <SaveBusinessButton businessId={business.id} className="shrink-0 self-start lg:self-end" />
         </div>
+
+        {closures.length > 0 ? (
+          <div className="border-destructive/25 bg-destructive/5 mt-6 flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm">
+            <CalendarOff className="text-destructive mt-0.5 size-4 shrink-0" aria-hidden />
+            <div>
+              <p className="font-medium">{t("closedNotice")}</p>
+              <ul className="text-muted-foreground mt-0.5 space-y-0.5">
+                {closures.slice(0, 3).map((closure) => (
+                  <li key={`${closure.starts_at}-${closure.location_id ?? "all"}`}>
+                    {describeClosure(closure.starts_at, closure.ends_at)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : null}
 
         {isDemo ? (
           <p className="border-border/70 bg-secondary/50 text-muted-foreground mt-6 flex items-start gap-2 rounded-xl border px-4 py-3 text-xs">

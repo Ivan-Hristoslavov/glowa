@@ -7,17 +7,21 @@ import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminQuickCreate } from "@/components/admin/admin-quick-create";
 import { AdminTopbarTitle } from "@/components/admin/admin-topbar-title";
 import { BusinessSwitcher } from "@/components/admin/business-switcher";
+import { CommandMenu } from "@/components/admin/command-menu";
+import { UpcomingStrip } from "@/components/admin/upcoming-strip";
 import { GlowaLogo } from "@/components/brand/glowa-logo";
 import { AccountMenu } from "@/components/layout/account-menu";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import {
   canManage,
   claimPendingInvitations,
   getActiveMembership,
   listMemberships,
+  listUpcomingAppointments,
 } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
@@ -56,13 +60,13 @@ export default async function BusinessLayout({
   const { data: claims } = await supabase.auth.getClaims();
   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
 
-  const { data: profile } = userId
-    ? await supabase
-        .from("profiles")
-        .select("full_name, avatar_url")
-        .eq("id", userId)
-        .maybeSingle()
-    : { data: null };
+  const [{ data: profile }, { data: business }, upcoming] = await Promise.all([
+    userId
+      ? supabase.from("profiles").select("full_name, avatar_url").eq("id", userId).maybeSingle()
+      : Promise.resolve({ data: null }),
+    supabase.from("businesses").select("timezone").eq("id", active.businessId).maybeSingle(),
+    listUpcomingAppointments(active.businessId),
+  ]);
 
   const isLive = active.status === "active";
 
@@ -114,17 +118,21 @@ export default async function BusinessLayout({
       {/* The working surface is a raised sheet on the sidebar's tone, the
           way modern tools separate "where" from "what". */}
       <div className="bg-background flex min-w-0 flex-1 flex-col lg:my-2 lg:mr-2 lg:rounded-3xl lg:border lg:shadow-[var(--shadow-card)]">
-        <header className="bg-background/85 sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b px-4 backdrop-blur-xl sm:px-6 lg:rounded-t-3xl">
+        {/* The header and the "next up" strip travel together, so who is
+            next is on screen whatever page the owner is on. */}
+        <div className="bg-background/85 sticky top-0 z-30 backdrop-blur-xl lg:rounded-t-3xl">
+        <header className="flex h-16 items-center justify-between gap-3 border-b px-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <AdminMobileNav />
             <AdminTopbarTitle businessName={active.name} />
           </div>
 
           <div className="flex items-center gap-1 sm:gap-1.5">
+            <CommandMenu businessId={active.businessId} slug={active.slug} />
             {canManage(active.role) ? (
               <AdminQuickCreate label={calendar("newAppointment")} />
             ) : null}
-            <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
+            <Button asChild variant="ghost" size="sm" className="hidden xl:inline-flex">
               <Link href="/">{t("backToSite")}</Link>
             </Button>
             <LocaleSwitcher />
@@ -133,9 +141,17 @@ export default async function BusinessLayout({
               name={profile?.full_name ?? null}
               email={typeof claims?.claims?.email === "string" ? claims.claims.email : null}
               avatarUrl={profile?.avatar_url ?? null}
+              hasBusiness
             />
           </div>
         </header>
+        <UpcomingStrip
+          businessId={active.businessId}
+          timezone={business?.timezone ?? "Europe/Sofia"}
+          locale={locale as Locale}
+          appointments={upcoming}
+        />
+        </div>
 
         <main
           id="main-content"

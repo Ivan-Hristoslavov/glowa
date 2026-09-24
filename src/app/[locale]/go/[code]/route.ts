@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 import { routing } from "@/i18n/routing";
+import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
+import { GROWTH_COOKIE, GROWTH_COOKIE_MAX_AGE } from "@/lib/growth/cookie";
 import { createPublicClient } from "@/lib/supabase/public";
 
 export const dynamic = "force-dynamic";
@@ -11,16 +13,15 @@ export const dynamic = "force-dynamic";
  * A route handler rather than a page: there is nothing to render, and a person
  * standing in front of a poster should see the salon, not a redirect screen.
  *
- * The cookie is the only thing GLOWA remembers about the visit. It is not an
- * identifier - it holds the link code and nothing else, so the booking that
- * may follow can be credited to the right poster. Thirty days is long enough
- * for "I'll book later tonight" and short enough not to be a tracker.
+ * The visit is counted on the server, which stores nothing on the device.
+ * Crediting a later booking to this code needs the `glowa_ref` cookie, which
+ * is optional under the ePrivacy rules: with consent already given it is set
+ * here; otherwise the code travels in `?ref=` and the cookie banner sets it
+ * if the visitor agrees (lib/actions/consent.ts). Declining costs the salon
+ * the attribution, never the visitor the booking.
  */
-export const GROWTH_COOKIE = "glowa_ref";
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
-
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ locale: string; code: string }> },
 ) {
   const { locale: rawLocale, code } = await params;
@@ -54,9 +55,15 @@ export async function GET(
     destination.searchParams.set("service", link.service_id);
   }
 
+  const consent = parseConsent(request.cookies.get(CONSENT_COOKIE)?.value);
+  if (!consent?.attribution) {
+    destination.searchParams.set("ref", code.toLowerCase());
+    return NextResponse.redirect(destination);
+  }
+
   const response = NextResponse.redirect(destination);
   response.cookies.set(GROWTH_COOKIE, code.toLowerCase(), {
-    maxAge: COOKIE_MAX_AGE,
+    maxAge: GROWTH_COOKIE_MAX_AGE,
     httpOnly: true,
     sameSite: "lax",
     secure: requestUrl.protocol === "https:",

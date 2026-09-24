@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  CalendarCheck,
   CalendarDays,
   CircleSlash,
   Coins,
@@ -15,14 +14,12 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import Image from "next/image";
 
 import { MetricCard } from "@/components/admin/metric-card";
 import { PageHeader } from "@/components/admin/page-header";
-import { PublishBusinessButton } from "@/components/admin/publish-business-button";
+import { SetupChecklist } from "@/components/admin/setup-checklist";
 import { EmptyState } from "@/components/common/empty-state";
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -110,16 +107,29 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
   const { data: claims } = await supabase.auth.getClaims();
   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
 
-  const [{ data: business }, { data: profile }] = await Promise.all([
-    supabase
-      .from("businesses")
-      .select("timezone, currency, status, deposits_enabled")
-      .eq("id", membership.businessId)
-      .maybeSingle(),
-    userId
-      ? supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle()
-      : Promise.resolve({ data: null }),
-  ]);
+  const [{ data: business }, { data: profile }, { count: serviceCount }, { count: hoursCount }] =
+    await Promise.all([
+      supabase
+        .from("businesses")
+        .select("timezone, currency, status, deposits_enabled, cover_image_url, description")
+        .eq("id", membership.businessId)
+        .maybeSingle(),
+      userId
+        ? supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase
+        .from("services")
+        .select("id", { count: "exact", head: true })
+        .eq("business_id", membership.businessId)
+        .eq("is_active", true),
+      supabase
+        .from("business_hours")
+        .select("id, locations!inner(business_id)", { count: "exact", head: true })
+        .eq("locations.business_id", membership.businessId),
+    ]);
+  const hasDescription = Object.values(
+    (business?.description ?? {}) as Record<string, unknown>,
+  ).some((value) => typeof value === "string" && value.trim().length > 0);
 
   const timezone = business?.timezone ?? "Europe/Sofia";
   const currency = business?.currency ?? "EUR";
@@ -189,23 +199,15 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
       />
 
       {business?.status === "draft" ? (
-        <Alert className="rounded-2xl">
-          <CalendarCheck className="size-4" aria-hidden />
-          <AlertTitle>{t("draftTitle")}</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <div className="flex items-start gap-4">
-              <Image
-                src={emptyStateArt.onboarding.light}
-                alt=""
-                width={72}
-                height={72}
-                className="hidden size-16 shrink-0 rounded-lg object-cover sm:block"
-              />
-              <p>{t("draftBody")}</p>
-            </div>
-            <PublishBusinessButton businessId={membership.businessId} />
-          </AlertDescription>
-        </Alert>
+        // A step-by-step list rather than a bare "publish" button: publishing
+        // needs services and hours first, and the list says which is missing.
+        <SetupChecklist
+          businessId={membership.businessId}
+          hasServices={(serviceCount ?? 0) > 0}
+          hasHours={(hoursCount ?? 0) > 0}
+          hasProfile={Boolean(business.cover_image_url || hasDescription)}
+          isPublished={false}
+        />
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

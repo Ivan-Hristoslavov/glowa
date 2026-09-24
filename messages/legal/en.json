@@ -1,0 +1,346 @@
+{
+  "meta": {
+    "updated": "Effective {date}",
+    "toc": "Contents",
+    "pending": "[to be added]",
+    "contactCta": "Questions? Write to us at {email}.",
+    "otherDocs": "Other documents",
+    "backToTop": "Back to top"
+  },
+  "docs": {
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "What personal data Glowa processes, why, for how long, and what your rights are.",
+      "intro": [
+        "This policy explains how Glowa processes your personal data when you look for a salon, book an appointment, create an account or run a business on the platform. It is written in plain language, and it is also the formal information required by Articles 13 and 14 of the General Data Protection Regulation (GDPR)."
+      ],
+      "sections": [
+        {
+          "id": "controller",
+          "heading": "1. Who is responsible for your data",
+          "body": [
+            "The controller is {company}, company number {companyId}, registered at {address} (\"Glowa\", \"we\"). For anything about your personal data, write to {email}."
+          ]
+        },
+        {
+          "id": "roles",
+          "heading": "2. Two different roles",
+          "body": [
+            "Glowa is the controller for your account data, for the bookings you make through the platform, for reviews and for the use of the website.",
+            "Salons also use Glowa as their diary and client list. For the records a salon keeps about its own clients (visit history, internal notes, marketing lists) the salon is the controller and Glowa is a processor acting only on its instructions (Article 28 GDPR). For that data you can contact the salon directly; if you write to us, we will forward your request."
+          ]
+        },
+        {
+          "id": "data",
+          "heading": "3. What data we process",
+          "body": [],
+          "list": [
+            "Account: name, email, phone (optional), photo (optional), preferred language and time zone. Your password is stored only as a cryptographic hash.",
+            "Bookings: salon, service, specialist, date and time, price, status, and any note you wrote for the salon.",
+            "Reviews: rating, text and the name they are shown under.",
+            "Preferences: saved salons, reminder and notification settings, waitlist requests.",
+            "Messages: which emails and notifications we sent you and whether they were delivered.",
+            "Technical data: IP address and hosting logs needed for security, and a push subscription if you turn notifications on.",
+            "Referral data: the code of the QR code or link you came from, only if you agreed (see section 4)."
+          ]
+        },
+        {
+          "id": "health",
+          "heading": "A word about notes",
+          "body": [
+            "Please do not put health information in booking notes unless the salon needs it to treat you safely (an allergy, for example). If you do, it reaches the salon, which is responsible for it as controller."
+          ]
+        },
+        {
+          "id": "purposes",
+          "heading": "4. Why, and on what legal basis",
+          "body": [],
+          "list": [
+            "Creating and maintaining your account, booking appointments, sending confirmations and reminders: performance of a contract (Article 6(1)(b) GDPR).",
+            "Passing the booking details to the salon you chose: performance of a contract; the salon needs them to serve you.",
+            "Publishing a review after a visit: performance of a contract and the legitimate interest of other users in reliable information.",
+            "Security, abuse prevention and technical logs: legitimate interest (Article 6(1)(f) GDPR).",
+            "Marketing messages from a salon: only with your explicit consent (Article 6(1)(a) GDPR), which you can withdraw at any time from the link in every email or from your settings.",
+            "Crediting referrals and QR codes with a cookie: only with consent (Article 5(3) of the ePrivacy Directive, Article 4a of the Bulgarian E-Commerce Act).",
+            "Accounting and tax obligations for business subscriptions: legal obligation (Article 6(1)(c) GDPR)."
+          ]
+        },
+        {
+          "id": "recipients",
+          "heading": "5. Who we share data with",
+          "body": [
+            "The salon you book with: it receives your name, contact details and the booking details. The salon is an independent controller for its relationship with you.",
+            "Service providers that process data on our behalf under contract and only for the purposes below:"
+          ],
+          "list": [
+            "Supabase Inc. – database, sign-in and file storage; data is hosted in the EU (Ireland).",
+            "Vercel Inc. – hosting and delivery of the website.",
+            "Resend (Plus Five Five, Inc.) – sending email.",
+            "OpenAI – the AI assistant for salons; it receives only aggregate business figures, never client data.",
+            "Google – only if you connect Google Calendar or sign in with a Google account.",
+            "OpenStreetMap Foundation – loads the map only when you press \"Show map\".",
+            "Your browser's push service (Google, Apple, Mozilla) – only if you turn notifications on."
+          ]
+        },
+        {
+          "id": "transfers",
+          "heading": "6. Transfers outside the EU",
+          "body": [
+            "Some providers are in the United States. We transfer data there only on the basis of the adequacy decision for the EU–US Data Privacy Framework or the European Commission's standard contractual clauses, with supplementary measures where needed."
+          ]
+        },
+        {
+          "id": "retention",
+          "heading": "7. How long we keep data",
+          "body": [],
+          "list": [
+            "Account: for as long as you use it. After you delete it, account data is removed within 30 days.",
+            "Bookings: up to 3 years after the visit, to settle disputes. The salon may keep its own record longer as an independent controller.",
+            "Reviews: while the account exists; when the account is deleted the review stays without your name or any link to you.",
+            "Message delivery logs: up to 12 months.",
+            "Technical logs: up to 30 days, unless needed to investigate an incident.",
+            "Your cookie choice: 6 months, after which we ask again.",
+            "Accounting records: 10 years under the Bulgarian Accountancy Act."
+          ]
+        },
+        {
+          "id": "rights",
+          "heading": "8. Your rights",
+          "body": [
+            "You have the right to access your data, to have it corrected or erased, to restrict processing, to data portability, and to object to processing based on legitimate interest. You can withdraw consent at any time without affecting the lawfulness of processing before that.",
+            "In your account Settings you can download a copy of your data and delete your account yourself. For anything else write to {email}; we reply within one month.",
+            "You can complain to the Bulgarian Commission for Personal Data Protection: 2 Prof. Tsvetan Lazarov Blvd., Sofia 1592, www.cpdp.bg, or to the supervisory authority where you live – in Romania, ANSPDCP, www.dataprotection.ro."
+          ]
+        },
+        {
+          "id": "automated",
+          "heading": "9. Automated decisions",
+          "body": [
+            "We do not take decisions with legal or similarly significant effects by automated means alone and we do not profile users. How search results are ordered is described in the Terms."
+          ]
+        },
+        {
+          "id": "children",
+          "heading": "10. Children",
+          "body": [
+            "The platform is not intended for anyone under 16. If we learn that we have created an account for a child without a parent's consent, we will delete it."
+          ]
+        },
+        {
+          "id": "security",
+          "heading": "11. Security",
+          "body": [
+            "Connections are encrypted (TLS), passwords are stored as hashes, database access is limited by row-level rules so each salon sees only its own data, and our team's access is minimal and logged."
+          ]
+        },
+        {
+          "id": "changes",
+          "heading": "12. Changes",
+          "body": [
+            "If we change this policy materially, we will tell you by email or in the platform before the change takes effect."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of use",
+      "description": "The rules for using Glowa, for clients and for businesses.",
+      "intro": [
+        "These terms govern the use of the Glowa website and services. By creating an account, booking an appointment or registering a business you accept them. Our details as a provider under Article 4 of the Bulgarian E-Commerce Act are on the \"Provider details\" page."
+      ],
+      "sections": [
+        {
+          "id": "service",
+          "heading": "1. What Glowa is",
+          "body": [
+            "Glowa is an online platform where clients find beauty salons and specialists and book appointments, and where businesses run their diary, clients and online booking.",
+            "Glowa is an intermediary. The contract for the service itself (a haircut, a manicure and so on) is between you and the salon. The salon is responsible for the service, its quality, its price and for honouring the conditions it publishes."
+          ]
+        },
+        {
+          "id": "account",
+          "heading": "2. Your account",
+          "body": [
+            "Give accurate details and keep your password safe. The account is personal. You can delete it at any time from Settings."
+          ]
+        },
+        {
+          "id": "booking",
+          "heading": "3. Booking, changes and cancellations",
+          "body": [],
+          "list": [
+            "A booking is a request to the salon. Some salons confirm appointments by hand; the status is shown in \"My bookings\" and in your email.",
+            "Cancellation and change conditions are set by the salon and shown before you confirm. If you do not come and did not cancel, the salon may record a no-show.",
+            "Glowa is free for clients. You pay the salon at its prices, usually on the spot."
+          ]
+        },
+        {
+          "id": "reviews",
+          "heading": "4. Reviews",
+          "body": [
+            "A review can only be left by the account that made the booking, and only after the salon has marked the visit as completed. Every review on Glowa therefore comes from a real client of a real visit.",
+            "Reviews must be honest and must not contain insults, other people's personal data or advertising. We may remove a review that breaks these rules. We do not accept payment for reviews and do not hide negative reviews at a salon's request."
+          ]
+        },
+        {
+          "id": "ranking",
+          "heading": "5. How search results are ordered",
+          "body": [
+            "Salons are filtered by the criteria you enter (service, category, city, price, day with free time) and are ordered by default by average review rating, then by name. You can also sort by price or by name. No business pays for a higher position."
+          ]
+        },
+        {
+          "id": "conduct",
+          "heading": "6. Not allowed",
+          "body": [],
+          "list": [
+            "Fake bookings, accounts or reviews.",
+            "Attempts to access other people's data or to disrupt the platform.",
+            "Sending unsolicited commercial messages through the platform."
+          ]
+        },
+        {
+          "id": "business",
+          "heading": "7. Terms for businesses",
+          "body": [
+            "A business is responsible for the accuracy of its services, prices, opening hours and team, and for having a lawful basis to process its clients' data in Glowa.",
+            "Plans and prices are published on the Pricing page, excluding VAT. During early access use is free; before any charging starts you will get notice, and you will not be charged without your explicit agreement.",
+            "Changes to these terms that affect businesses are announced at least 15 days in advance, in line with Regulation (EU) 2019/1150. You can stop at any time and export your data."
+          ]
+        },
+        {
+          "id": "dpa",
+          "heading": "8. Processing personal data on the business's behalf (Article 28 GDPR)",
+          "body": [
+            "For the client data a business enters or receives in Glowa, the business is the controller and Glowa is the processor. By accepting these terms the parties agree as follows:"
+          ],
+          "list": [
+            "Subject and duration: hosting and processing of client, booking and communication data for as long as the service is used.",
+            "Categories of data: names, contact details, visit history, notes, preferences and marketing consents of the business's clients.",
+            "Glowa processes the data only on the business's documented instructions, including through the platform's settings.",
+            "Everyone with access is bound by confidentiality.",
+            "We apply appropriate technical and organisational measures under Article 32 GDPR.",
+            "Sub-processors are listed in the Privacy policy. We give advance notice of a new sub-processor and the business may object.",
+            "We assist the business with data subject requests and impact assessments.",
+            "We notify the business without undue delay of a personal data breach.",
+            "On termination the business can export its data; we then delete it within 30 days unless the law requires otherwise.",
+            "We make available the information needed to demonstrate compliance and allow audits with reasonable notice."
+          ]
+        },
+        {
+          "id": "ip",
+          "heading": "9. Content and intellectual property",
+          "body": [
+            "The software, design and the Glowa brand are ours. Businesses keep the rights to the photos and texts they upload and allow us to show them on the platform while their profile is active."
+          ]
+        },
+        {
+          "id": "liability",
+          "heading": "10. Liability",
+          "body": [
+            "We take care to keep the platform running but cannot guarantee it will never be interrupted. We are not responsible for the service a salon provides. Nothing in these terms limits your statutory rights as a consumer."
+          ]
+        },
+        {
+          "id": "termination",
+          "heading": "11. Ending the service",
+          "body": [
+            "You can stop using Glowa at any time. We may suspend an account that breaks these terms, telling you why."
+          ]
+        },
+        {
+          "id": "law",
+          "heading": "12. Governing law and disputes",
+          "body": [
+            "Bulgarian law applies, without affecting the mandatory consumer protections of the country where you live. Disputes are settled by agreement, failing which by the competent Bulgarian court.",
+            "As a consumer you can contact the Bulgarian Commission for Consumer Protection, www.kzp.bg, including its conciliation committees for alternative dispute resolution."
+          ]
+        },
+        {
+          "id": "contact",
+          "heading": "13. Contact",
+          "body": [
+            "Write to us at {email}."
+          ]
+        }
+      ]
+    },
+    "cookies": {
+      "title": "Cookie policy",
+      "description": "What we store in your browser and how to change your choice.",
+      "intro": [
+        "Cookies are small files a website stores in your browser. Glowa keeps this to a minimum: no advertising cookies, no analytics cookies and no third-party tracking."
+      ],
+      "sections": [
+        {
+          "id": "necessary",
+          "heading": "1. Strictly necessary (always on)",
+          "body": [
+            "Without these the site cannot work or remember your choice. They do not require consent (Article 5(3) of the ePrivacy Directive)."
+          ],
+          "list": [
+            "sb-…-auth-token – keeps you signed in; until you sign out or up to 400 days.",
+            "glowa_business – which business you have open in the business dashboard; 1 year.",
+            "NEXT_LOCALE – the language you chose; until you close the browser.",
+            "glowa_consent – your cookie choice; 6 months.",
+            "Local storage: theme (light or dark) and glowa.calendar.* (the calendar view in the business dashboard)."
+          ]
+        },
+        {
+          "id": "optional",
+          "heading": "2. Optional",
+          "body": [
+            "Stored only if you agree."
+          ],
+          "list": [
+            "glowa_ref – the code of the QR code or referral link you came from, so the booking is credited to the right salon or client; 30 days. It holds nothing else and is not used for tracking."
+          ]
+        },
+        {
+          "id": "third",
+          "heading": "3. Third parties",
+          "body": [
+            "By default the site loads nothing that sets third-party cookies. The OpenStreetMap map loads only when you press \"Show map\". Push notifications use your browser's service only if you turn them on."
+          ]
+        },
+        {
+          "id": "manage",
+          "heading": "4. Changing your choice",
+          "body": [
+            "Use \"Cookie settings\" at the bottom of any page. You can also delete cookies in your browser settings."
+          ]
+        }
+      ]
+    },
+    "imprint": {
+      "title": "Provider details",
+      "description": "Information under Article 4 of the Bulgarian E-Commerce Act.",
+      "intro": [
+        "Information about the provider of information society services, published under Article 4 of the Bulgarian E-Commerce Act."
+      ],
+      "sections": [
+        {
+          "id": "provider",
+          "heading": "Provider",
+          "body": [],
+          "list": [
+            "Name: {company}",
+            "Company number (EIK): {companyId}",
+            "VAT number: {vatId}",
+            "Registered address: {address}",
+            "Email: {email}"
+          ]
+        },
+        {
+          "id": "authorities",
+          "heading": "Supervisory authorities",
+          "body": [],
+          "list": [
+            "Commission for Personal Data Protection – www.cpdp.bg",
+            "Commission for Consumer Protection – www.kzp.bg"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -53,6 +53,9 @@ const serverEnvSource = {
   VAPID_SUBJECT: process.env.VAPID_SUBJECT,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+  // Subscriptions arrive on the platform account, deposits on the salons'
+  // connected accounts: two Stripe endpoints, two signing secrets.
+  STRIPE_BILLING_WEBHOOK_SECRET: process.env.STRIPE_BILLING_WEBHOOK_SECRET,
 } satisfies Record<string, string | undefined>;
 
 export type ServerEnvKey = keyof typeof serverEnvSource;

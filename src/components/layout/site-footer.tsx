@@ -1,117 +1,155 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Mail } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { GlowaLogo } from "@/components/brand/glowa-logo";
+import { CookieSettingsButton } from "@/components/legal/cookie-consent";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { LEGAL_ENTITY } from "@/lib/legal/entity";
 import { PLACES } from "@/lib/places";
 
-const linkClass =
-  "glowa-focus text-muted-foreground hover:text-foreground rounded-sm text-sm transition-colors";
+const LINK_CLASS =
+  "text-muted-foreground hover:text-foreground glowa-focus group inline-flex items-center gap-1 rounded text-left text-sm transition-colors";
 
 /**
- * Where a page ends: every door out of it, in three short columns, and one
- * invitation for salon owners - the reader most likely to reach the bottom of
- * a page on purpose. Only pages that exist are linked.
+ * Reads no cookies, so it cannot know whether the visitor is signed in. The
+ * links are the ones that make sense either way: signed-in paths redirect to
+ * sign-in and back.
+ *
+ * Four columns a visitor can scan in one look - clients, businesses, cities,
+ * legal - under a single call to salons, and a bottom bar with the language,
+ * the theme and the cookie settings the law requires to be reachable from
+ * every page.
  */
 export async function SiteFooter() {
   const t = await getTranslations("footer");
-  const nav = await getTranslations("nav");
   const brand = await getTranslations("brand");
-  const locale = (await getLocale()) as Locale;
+  const legal = await getTranslations("legal");
+  const locale = await getLocale();
+  const ownerHref = `/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`;
+  // The year for the copyright line; this is rendered at build or revalidate
+  // time, never during a client render.
+  const year = new Date().getFullYear();
 
-  // The largest towns of the visitor's country, in the list's own order.
+  // Towns from the same list search uses, named in the visitor's language;
+  // a Romanian visitor gets Romanian towns.
   const country = locale === "ro" ? "RO" : "BG";
   const cities = PLACES.filter((place) => place.country === country).slice(0, 6);
 
   const columns = [
     {
-      title: t("forClients"),
+      title: t("customers"),
       links: [
         { href: "/search", label: t("findSalon") },
-        { href: "/bookings", label: nav("bookings") },
-        { href: "/favorites", label: nav("favorites") },
-        { href: "/reviews", label: nav("reviews") },
+        { href: "/bookings", label: t("myBookings") },
+        { href: "/favorites", label: t("favorites") },
+        { href: "/login", label: t("login") },
       ],
     },
     {
-      title: t("forSalons"),
+      title: t("business"),
       links: [
         { href: "/for-business", label: t("whyGlowa") },
-        { href: "/pricing", label: nav("pricing") },
-        { href: "/signup", label: t("registerSalon") },
-        { href: "/login", label: nav("login") },
+        { href: ownerHref, label: t("register") },
+        { href: "/pricing", label: t("pricing") },
+        { href: "/dashboard", label: t("dashboard") },
       ],
     },
-  ] as const;
+    ...(cities.length > 0
+      ? [
+          {
+            title: t("cities"),
+            links: cities.map((city) => ({
+              href: `/search?place=${city.id}`,
+              label: city.name[locale as Locale],
+            })),
+          },
+        ]
+      : []),
+    {
+      title: t("legal"),
+      links: [
+        { href: "/legal/privacy", label: legal("privacy") },
+        { href: "/legal/terms", label: legal("terms") },
+        { href: "/legal/cookies", label: legal("cookies") },
+        { href: "/legal/imprint", label: legal("imprint") },
+      ],
+      cookieSettings: true,
+    },
+  ];
 
   return (
-    <footer className="bg-muted/35 relative mt-24 overflow-hidden border-t">
-      {/* A low warm glow behind the top edge, the same light as the hero. */}
-      <div
-        aria-hidden
-        className="bg-brand-peach/50 pointer-events-none absolute -top-40 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full blur-3xl"
-      />
+    <footer className="border-border/70 bg-secondary/35 mt-24 border-t print:hidden">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        {/* One call, for the audience that pays. */}
+        <div className="border-border/70 relative -mt-px flex flex-col gap-5 overflow-hidden border-b py-10 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-xl">
+            <p className="font-heading text-2xl leading-tight text-balance sm:text-[1.7rem]">
+              {t("ctaTitle")}
+            </p>
+            <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{t("ctaBody")}</p>
+          </div>
+          <Button asChild size="lg" className="group h-11 shrink-0 rounded-full px-6">
+            <Link href={ownerHref}>
+              {t("ctaButton")}
+              <ArrowRight
+                className="size-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                aria-hidden
+              />
+            </Link>
+          </Button>
+        </div>
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 pt-14 pb-8 sm:px-6">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_2fr]">
-          <div className="space-y-5">
-            <GlowaLogo showTagline tagline={brand("tagline")} markClassName="size-8" />
+        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_repeat(4,1fr)] lg:gap-8">
+          <div className="space-y-5 sm:col-span-2 lg:col-span-1">
+            <Link href="/" className="glowa-focus inline-block rounded-md" aria-label="glowa">
+              <GlowaLogo showTagline tagline={brand("tagline")} markClassName="size-8" />
+            </Link>
             <p className="text-muted-foreground max-w-xs text-sm leading-relaxed">
               {t("about")}
             </p>
-            <Link
-              href="/for-business"
-              data-glow
-              className="glowa-focus glowa-glow group bg-card hover:border-primary/40 inline-flex max-w-sm items-center gap-4 rounded-2xl border p-4 shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
+            <a
+              href={`mailto:${LEGAL_ENTITY.email}`}
+              className="text-foreground hover:text-primary glowa-focus inline-flex items-center gap-2 rounded text-sm font-medium transition-colors"
             >
-              <span className="min-w-0">
-                <span className="block text-sm font-semibold">{t("ctaTitle")}</span>
-                <span className="text-muted-foreground mt-0.5 block text-xs">
-                  {t("ctaBody")}
-                </span>
-              </span>
-              <span className="bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center rounded-full transition-transform group-hover:rotate-45">
-                <ArrowUpRight className="size-4" aria-hidden />
-              </span>
-            </Link>
+              <Mail className="size-4" aria-hidden />
+              {LEGAL_ENTITY.email}
+            </a>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            {columns.map((column) => (
-              <nav key={column.title} aria-label={column.title}>
-                <p className="text-sm font-semibold">{column.title}</p>
-                <ul className="mt-4 space-y-2.5">
-                  {column.links.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} className={linkClass}>
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
-            <nav aria-label={t("cities")}>
-              <p className="text-sm font-semibold">{t("cities")}</p>
-              <ul className="mt-4 space-y-2.5">
-                {cities.map((city) => (
-                  <li key={city.id}>
-                    <Link href={`/search?place=${city.id}`} className={linkClass}>
-                      {city.name[locale]}
+          {columns.map((column) => (
+            <nav key={column.title} aria-label={column.title}>
+              <h2 className="text-foreground text-xs font-semibold tracking-[0.16em] uppercase">
+                {column.title}
+              </h2>
+              <ul className="mt-4 space-y-3">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className={LINK_CLASS}>
+                      {link.label}
+                      <ArrowUpRight
+                        className="size-3 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-60"
+                        aria-hidden
+                      />
                     </Link>
                   </li>
                 ))}
+                {"cookieSettings" in column ? (
+                  <li>
+                    <CookieSettingsButton className={LINK_CLASS} />
+                  </li>
+                ) : null}
               </ul>
             </nav>
-          </div>
+          ))}
         </div>
 
-        <div className="text-muted-foreground mt-14 flex flex-col gap-4 border-t pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} glowa · {brand("madeIn")}
+        <div className="border-border/70 flex flex-col gap-4 border-t py-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-muted-foreground text-xs">
+            {t("rights", { year })} · {brand("madeIn")}
           </p>
           <div className="flex items-center gap-1">
             <LocaleSwitcher />
@@ -119,14 +157,6 @@ export async function SiteFooter() {
           </div>
         </div>
       </div>
-
-      {/* The name, very large and very quiet, as the last thing on the page. */}
-      <p
-        aria-hidden
-        className="font-heading text-foreground/[0.045] pointer-events-none -mt-6 h-[0.8em] overflow-hidden text-center text-[clamp(5rem,20vw,16rem)] leading-[0.9] tracking-tighter select-none"
-      >
-        glowa
-      </p>
     </footer>
   );
 }

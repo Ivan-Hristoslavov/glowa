@@ -56,7 +56,12 @@
     "toggleTheme": "Comută tema deschisă / închisă",
     "mainNav": "Navigare principală",
     "explore": "Explorează",
-    "preferences": "Limbă și temă"
+    "preferences": "Limbă și temă",
+    "businessDashboard": "Panou business",
+    "registerBusiness": "Înregistrează-ți salonul",
+    "nextVisit": "Următoarea vizită: {when} la {business}",
+    "today": "Azi",
+    "tomorrow": "Mâine"
   },
   "categories": {
     "hair_salon": "Salon de coafură",
@@ -187,7 +192,20 @@
       "point1": "Clienții se programează singuri, non-stop",
       "point2": "Un avans care te protejează de scaune goale",
       "point3": "O pagină care nu arată concurenți",
-      "more": "Află mai multe"
+      "more": "Află mai multe",
+      "cta": "Înregistrează-ți salonul",
+      "secondary": "Vezi prețurile",
+      "calendarTitle": "Azi",
+      "live": "Live",
+      "appt1": "Vopsit",
+      "appt2": "Tuns bărbați",
+      "appt3": "Manichiură",
+      "appt4": "Coafat",
+      "appt5": "Consultație",
+      "staff1": "Ana",
+      "staff2": "Maria",
+      "staff3": "Andrei",
+      "fromPrice": "Planurile pornesc de la {price} pe lună, cu plată anuală. Clienții tăi nu plătesc nimic."
     },
     "promises": {
       "noCommission": {
@@ -219,6 +237,53 @@
       "today": "Azi",
       "tomorrow": "Mâine",
       "ticketLabel": "{day} la {time}: {service} la {salon}"
+    },
+    "popular": "Populare:",
+    "quick": {
+      "haircut": "Tuns",
+      "color": "Vopsit",
+      "manicure": "Manichiură",
+      "massage": "Masaj",
+      "lashes": "Gene",
+      "beard": "Barbă"
+    },
+    "typing": {
+      "p1": "Tuns în București",
+      "p2": "Manichiură cu gel",
+      "p3": "Masaj pentru doi",
+      "p4": "Frizer lângă mine"
+    },
+    "mock": {
+      "confirmed": "Programare confirmată",
+      "service": "Tuns și coafat",
+      "when": "Azi · 14:30",
+      "freeToday": "Libere azi",
+      "reminder": "Memento",
+      "reminderBody": "Mâine la 10:00 cu Maria",
+      "caption": "Previzualizare ilustrativă a aplicației"
+    },
+    "how": {
+      "eyebrow": "CUM FUNCȚIONEAZĂ",
+      "title": "O programare de frumusețe în trei atingeri.",
+      "subtitle": "Fără telefoane, fără așteptare, fără „vă revenim noi”.",
+      "step1": {
+        "title": "Caută",
+        "body": "Caută după serviciu, salon sau oraș și vezi prețurile reale."
+      },
+      "step2": {
+        "title": "Alege ora",
+        "body": "Locurile libere sunt în timp real — alegi și gata."
+      },
+      "step3": {
+        "title": "Vino și bucură-te",
+        "body": "Primești confirmare și un memento înainte de vizită."
+      }
+    },
+    "final": {
+      "title": "Mai puține griji încep cu o programare.",
+      "body": "Găsește un salon lângă tine sau lasă-ți clienții să se programeze online.",
+      "ctaCustomer": "Găsește un salon",
+      "ctaBusiness": "Am un salon"
     }
   },
   "auth": {
@@ -241,7 +306,9 @@
       "invalidCredentials": "E-mail sau parolă greșită.",
       "emailInUse": "Există deja un cont cu acest e-mail.",
       "weakPassword": "Parola trebuie să aibă cel puțin 8 caractere.",
-      "generic": "Ceva nu a mers. Încearcă din nou."
+      "generic": "Ceva nu a mers. Încearcă din nou.",
+      "oauth": "Autentificarea cu Google nu a reușit. Încearcă din nou sau folosește e-mailul.",
+      "invalidLink": "Linkul este invalid sau a expirat. Cere unul nou."
     },
     "forgotTitle": "Ai uitat parola",
     "forgotSubtitle": "Introdu e-mailul și îți trimitem un link pentru o parolă nouă.",
@@ -261,7 +328,27 @@
       "mismatch": "Parolele nu se potrivesc.",
       "expired": "Linkul a expirat sau a fost deja folosit. Cere unul nou.",
       "generic": "Schimbarea nu a reușit. Încearcă din nou."
-    }
+    },
+    "showPassword": "Arată parola",
+    "hidePassword": "Ascunde parola",
+    "passwordHint": "Cel puțin 8 caractere",
+    "haveAccountTab": "Am cont",
+    "newAccountTab": "Sunt nou aici",
+    "inlineTitle": "Ultimul pas: intră în cont sau creează unul",
+    "inlineSubtitle": "Alegerea ta e salvată. Durează mai puțin de un minut.",
+    "signedIn": "Gata, ai intrat în cont.",
+    "fieldErrors": {
+      "name": "Introdu numele complet.",
+      "email": "Introdu o adresă de email validă.",
+      "password": "Parola trebuie să aibă cel puțin 8 caractere."
+    },
+    "sideTitle": "Frumusețea e mai simplă când totul e într-un singur loc.",
+    "sideBody": "Programări în câteva secunde, mementouri la timp și saloanele preferate în buzunar.",
+    "sidePoint1": "Locuri libere în timp real",
+    "sidePoint2": "Memento înainte de fiecare vizită",
+    "sidePoint3": "Gratuit pentru clienți",
+    "continueWithGoogle": "Continuă cu Google",
+    "or": "sau"
   },
   "search": {
     "title": "Găsește-ți următoarea programare",
@@ -296,7 +383,12 @@
     "nearestInstead": "Cele mai apropiate saloane",
     "popularInstead": "S-ar putea să-ți placă",
     "titleNearYou": "Saloane lângă tine",
-    "sortedFromYou": "cele mai apropiate primele"
+    "sortedFromYou": "cele mai apropiate primele",
+    "anyDay": "Orice zi",
+    "showResults": "Arată rezultatele",
+    "otherDay": "Altă dată",
+    "allShort": "Toate",
+    "filtersTitle": "Filtre și sortare"
   },
   "business": {
     "about": "Despre",
@@ -358,7 +450,17 @@
     "metaTitleCity": "{name} — {category} în {city}",
     "metaDescription": "Prețuri, ore libere și recenzii pentru {name}. Programează-te online într-un minut.",
     "metaDescriptionCity": "{name}, {city}: prețuri, ore libere și recenzii. Programează-te online într-un minut.",
-    "photoOf": "{name} — fotografia {number}"
+    "photoOf": "{name} — fotografia {number}",
+    "closedNotice": "Nu primește programări",
+    "closedRange": "{range}",
+    "galleryOpen": "Deschide fotografia {n} din {total}",
+    "galleryTitle": "Fotografii de la {business}",
+    "galleryHint": "Folosește săgețile sau glisează pentru a răsfoi fotografiile.",
+    "galleryCounter": "{n} / {total}",
+    "galleryClose": "Închide",
+    "galleryPrev": "Fotografia anterioară",
+    "galleryNext": "Fotografia următoare",
+    "galleryPhotoAlt": "{business}, fotografia {n}"
   },
   "booking": {
     "title": "Fă o programare",
@@ -412,7 +514,9 @@
     "evening": "Seara",
     "firstFree": "Primul liber: {when}",
     "slotsCount": "{count, plural, =0 {nicio oră liberă} one {# oră liberă} few {# ore libere} other {# de ore libere}}",
-    "preselected": "Ora e aleasă pentru tine. Verifică și confirmă."
+    "preselected": "Ora e aleasă pentru tine. Verifică și confirmă.",
+    "earlier": "Zile anterioare",
+    "later": "Zile următoare"
   },
   "waitlist": {
     "cta": "Intră pe lista de așteptare",
@@ -511,7 +615,8 @@
       "refunded": "Returnat",
       "retained": "Reținut de salon",
       "applied": "Scăzut din preț"
-    }
+    },
+    "bookAgain": "Rezervă din nou"
   },
   "review": {
     "title": "Cum a fost vizita?",
@@ -632,6 +737,28 @@
       },
       "retry": "Încearcă din nou",
       "failed": "Nu am putut activa notificările în acest browser."
+    },
+    "data": {
+      "title": "Datele tale",
+      "body": "Descarcă o copie a tot ce păstrăm despre tine sau șterge-ți contul.",
+      "downloadTitle": "Descarcă datele",
+      "downloadBody": "Profil, programări, recenzii, saloane salvate și setări într-un fișier JSON.",
+      "download": "Descarcă",
+      "deleteTitle": "Șterge contul",
+      "deleteBody": "Ireversibil. Programările rămân la saloane fără legătură cu tine, iar recenziile devin anonime.",
+      "delete": "Șterge contul",
+      "dialogTitle": "Ești sigur?",
+      "dialogBody": "Contul, saloanele salvate, setările și abonamentele la notificări se șterg imediat. Acțiunea nu poate fi anulată.",
+      "confirmLabel": "Pentru confirmare, scrie adresa de e-mail ({email})",
+      "cancel": "Renunță",
+      "confirmDelete": "Șterge definitiv",
+      "deleted": "Contul tău a fost șters.",
+      "errors": {
+        "unauthorized": "Te rugăm să te autentifici din nou.",
+        "mismatch": "E-mailul nu corespunde acestui cont.",
+        "owner": "Deții un salon. Transferă-l sau scrie-ne înainte de a șterge contul.",
+        "generic": "Ștergerea nu a reușit. Încearcă din nou sau scrie-ne."
+      }
     }
   },
   "profile": {
@@ -644,7 +771,11 @@
     "nextAppointment": "Următoarea programare",
     "noNextAppointment": "Nicio programare viitoare",
     "bookSomething": "Fă o programare",
-    "quickLinks": "Linkuri rapide"
+    "quickLinks": "Linkuri rapide",
+    "ownerTitle": "Ai un salon sau lucrezi independent?",
+    "ownerBody": "Creează profilul afacerii în două minute și primește programări online.",
+    "ownerDashboardTitle": "Panou business",
+    "ownerDashboardBody": "Calendarul, clienții și programările salonului tău."
   },
   "errors": {
     "notFoundTitle": "Pagina nu a fost găsită",
@@ -679,7 +810,9 @@
         "growth": "Creștere",
         "account": "Cont"
       },
-      "settingsSubtitle": "Cum arată afacerea ta și regulile de programare."
+      "settingsSubtitle": "Cum arată afacerea ta și regulile de programare.",
+      "timeOff": "Zile libere",
+      "billing": "Abonament"
     },
     "status": {
       "draft": "Ciornă",
@@ -754,7 +887,36 @@
       "qaInvite": "Invită un coleg",
       "qaQr": "Cod QR pentru salon",
       "qaDeposits": "Activează avansurile",
-      "moreToday": "Încă {count} în calendar"
+      "moreToday": "Încă {count} în calendar",
+      "setup": {
+        "title": "Configurează-ți salonul",
+        "body": "{done} din {total} pași sunt gata. Încă puțin și clienții se pot programa online.",
+        "created": {
+          "title": "Afacerea a fost creată",
+          "body": "",
+          "cta": ""
+        },
+        "services": {
+          "title": "Adaugă primul serviciu",
+          "body": "Nume, durată și preț — din acestea aleg clienții.",
+          "cta": "Adaugă serviciu"
+        },
+        "hours": {
+          "title": "Verifică programul",
+          "body": "Implicit este marți–sâmbătă, 09:00–19:00.",
+          "cta": "Verifică"
+        },
+        "profile": {
+          "title": "Spune câte ceva despre salon",
+          "body": "O descriere scurtă și o fotografie fac profilul mai de încredere.",
+          "cta": "Completează"
+        },
+        "publish": {
+          "title": "Publică",
+          "body": "Salonul apare în căutare și primește programări.",
+          "cta": ""
+        }
+      }
     },
     "calendar": {
       "title": "Calendar",
@@ -834,7 +996,19 @@
       "showCancelled": "Anulate ({count})",
       "weekHint": "Săptămâna se citește cel mai ușor pentru un singur stilist: alege-l mai sus. Treci cu mouse-ul sau atinge o programare pentru detalii.",
       "hoverHint": "Apasă pentru acțiuni",
-      "durationMinutes": "{minutes} min"
+      "durationMinutes": "{minutes} min",
+      "closedLabel": "Închis",
+      "team": "Echipa",
+      "teamShown": "{shown}/{total}",
+      "onlyWorking": "Doar cei care lucrează în ziua respectivă",
+      "showAll": "Arată pe toți",
+      "zoomIn": "Ore mai înalte",
+      "zoomOut": "Ore mai scurte",
+      "dayOff": "Zi liberă",
+      "free": "Nicio programare",
+      "bookings": "{count, plural, one {# programare} few {# programări} other {# de programări}}",
+      "bookedHours": "{hours} h",
+      "loadLabel": "Ocupat {percent}%"
     },
     "services": {
       "title": "Servicii",
@@ -1156,7 +1330,8 @@
         "forbidden": "Sunt necesare drepturi de manager.",
         "generic": "Ceva n-a mers. Încearcă din nou.",
         "copy": "Nu s-a putut copia."
-      }
+      },
+      "makeFlyer": "Creează un flyer"
     },
     "analytics": {
       "title": "Analize",
@@ -1208,7 +1383,18 @@
       "tipLight": "Lumină naturală, fără bliț.",
       "tipWork": "Arată rezultatul — părul, unghiile, tenul.",
       "tipSpace": "Una-două fotografii cu salonul: clientul vrea să știe unde vine.",
-      "tipFormat": "Fără text sau logo peste fotografie."
+      "tipFormat": "Fără text sau logo peste fotografie.",
+      "logo": "Logo",
+      "logoHint": "Pătrat, minim 400 px",
+      "removeCover": "Elimină coperta",
+      "removeLogo": "Elimină logoul",
+      "galleryHint": "{count} din {max} fotografii — spațiul, lucrările, echipa.",
+      "addPhotosHint": "Trage-le aici sau alege",
+      "removePhoto": "Elimină fotografia",
+      "failed": "Încărcarea a eșuat. Încearcă din nou.",
+      "wrongType": "Acceptăm JPG, PNG, WebP și AVIF.",
+      "tooLarge": "Fișierul este prea mare (până la 15 MB).",
+      "galleryFull": "Galeria are loc pentru cel mult {max} fotografii."
     },
     "location": {
       "title": "Adresă și hartă",
@@ -1232,6 +1418,153 @@
       "saved": "Adresa a fost salvată",
       "error": "Nu am putut salva adresa.",
       "missing": "Această afacere nu are încă o locație."
+    },
+    "subscription": {
+      "title": "Abonament",
+      "body": "Cât costă Glowa și ce plan se potrivește echipei tale. În perioada de acces anticipat poți folosi totul gratuit.",
+      "status": "Acces timpuriu · gratuit",
+      "recommended": "{count, plural, one {Pentru # specialist} other {Pentru # specialiști}}",
+      "compare": "Compară planurile",
+      "choosePlan": "Alege planul și plata",
+      "activePlan": "Planul {plan}",
+      "bodyActive": "Abonamentul tău este activ. Schimbarea planului, cardul și facturile sunt la Abonament."
+    },
+    "upcoming": {
+      "title": "Urmează",
+      "add": "Adaugă o programare în calendar",
+      "addShort": "Nou",
+      "empty": "Nicio programare viitoare.",
+      "now": "Acum",
+      "inMinutes": "în {minutes} min",
+      "inHours": "în {hours} h",
+      "tomorrow": "Mâine",
+      "walkIn": "Client",
+      "call": "Sună",
+      "open": "În calendar",
+      "status": {
+        "pending": "În așteptare",
+        "confirmed": "Confirmată"
+      }
+    },
+    "command": {
+      "open": "Căutare rapidă și comenzi",
+      "placeholder": "Caută un client, o pagină sau o acțiune…",
+      "placeholderShort": "Caută…",
+      "empty": "Nu am găsit nimic.",
+      "clients": "Clienți",
+      "actions": "Acțiuni",
+      "pages": "Pagini",
+      "newAppointment": "Programare nouă în calendar",
+      "copyLink": "Copiază linkul de programare",
+      "copied": "Link copiat",
+      "flyer": "Creează un flyer cu cod QR",
+      "publicPage": "Vezi pagina publică",
+      "toggleTheme": "Schimbă tema luminoasă/întunecată",
+      "hint": "↑↓ pentru a alege · Enter pentru a deschide"
+    },
+    "timeOff": {
+      "title": "Zile libere și închideri",
+      "subtitle": "Închide salonul pentru sărbători, concediu sau câteva ore. În acest timp nimeni nu se poate programa online.",
+      "formTitle": "Închide pentru programări",
+      "formBody": "Alege prima și ultima zi. Opțional, doar anumite ore.",
+      "presetToday": "Azi",
+      "presetTomorrow": "Mâine",
+      "presetWeek": "Următoarele 7 zile",
+      "allDay": "Zile întregi",
+      "allDayHint": "Dezactivează pentru a închide doar câteva ore.",
+      "allDayShort": "toată ziua",
+      "fromTime": "De la (pe {date})",
+      "toTime": "Până la (pe {date})",
+      "location": "Locație",
+      "allLocations": "Toate locațiile",
+      "reason": "Motiv",
+      "reasonPlaceholder": "De ex. sărbătorile de Crăciun",
+      "reasonHint": "Îl vede doar echipa. Clienții văd doar că salonul e închis.",
+      "timezoneNote": "Orele sunt în fusul orar al salonului ({zone}).",
+      "submit": "Închide pentru programări",
+      "listTitle": "Închideri viitoare",
+      "listEmpty": "Nicio zi liberă planificată.",
+      "remove": "Elimină",
+      "added": "Închis pentru programări",
+      "removed": "Eliminat",
+      "overlapping": "{count, plural, one {Există deja # programare în această perioadă — nu a fost anulată. Contactează clientul.} few {Există deja # programări în această perioadă — nu au fost anulate. Contactează clienții.} other {Există deja # de programări în această perioadă — nu au fost anulate. Contactează clienții.}}",
+      "errors": {
+        "range": "Sfârșitul trebuie să fie după început.",
+        "generic": "Nu am putut salva. Încearcă din nou."
+      }
+    },
+    "flyer": {
+      "title": "Flyer cu cod QR",
+      "subtitle": "Pune-l la recepție, pe oglindă sau în vitrină. Clientul scanează codul și ajunge direct pe pagina ta, gata să se programeze.",
+      "print": "Descarcă PDF / Tipărește",
+      "printHint": "În fereastra de tipărire alege „Salvează ca PDF” pentru un fișier pentru tipografie.",
+      "template": "Șablon",
+      "templates": {
+        "editorial": "Fotografie",
+        "bold": "Îndrăzneț",
+        "minimal": "Minimal"
+      },
+      "accent": "Culoare",
+      "accents": {
+        "coral": "Coral",
+        "ink": "Negru",
+        "sage": "Salvie",
+        "plum": "Prună",
+        "gold": "Auriu"
+      },
+      "headline": "Titlu",
+      "subline": "Text",
+      "offer": "Ofertă (opțional)",
+      "offerPlaceholder": "De ex. −10% la prima vizită",
+      "showContacts": "Arată adresa și telefonul",
+      "link": "Unde duce codul QR",
+      "tracked": "cu statistici",
+      "direct": "Pagina salonului",
+      "trackedHint": "Scanările sunt numărate pe pagina Creștere.",
+      "directHint": "Duce direct la salon, fără statistici de scanare.",
+      "createTracked": "Creează un link QR cu statistici",
+      "trackedLabel": "Flyer",
+      "linkCreated": "Linkul QR a fost creat",
+      "linkFailed": "Nu am putut crea linkul.",
+      "size": "Dimensiune",
+      "scan": "Scanează și programează-te",
+      "defaults": {
+        "headline": "Programează-te în câteva secunde",
+        "subline": "Îndreaptă camera telefonului spre cod — vezi orele libere și programează-te online, 24/7."
+      }
+    },
+    "billing": {
+      "title": "Abonament",
+      "subtitle": "Alege planul potrivit echipei tale. Plata se face prin Stripe; cardul tău nu este stocat de Glowa.",
+      "success": "Mulțumim! Abonamentul este activ. Dacă nu apare încă, reîmprospătează pagina în câteva secunde.",
+      "cancelled": "Plata a fost anulată. Nu s-a taxat nimic.",
+      "earlyAccess": "Acces anticipat · gratuit",
+      "earlyAccessBody": "Poți alege un plan acum sau poți folosi Glowa gratuit în perioada de acces anticipat.",
+      "notConfiguredBody": "Plățile nu sunt încă activate. Totul este gratuit; te anunțăm înainte de orice taxare.",
+      "currentPlan": "{plan} · {interval}",
+      "interval": {
+        "month": "lunar",
+        "year": "anual"
+      },
+      "renewsOn": "Se reînnoiește pe {date}.",
+      "endsOn": "Abonamentul se încheie pe {date} și nu va fi reînnoit.",
+      "pastDue": "Ultima plată nu a reușit. Actualizează cardul ca abonamentul să nu se oprească.",
+      "manage": "Gestionează plata",
+      "choose": "Alege planul",
+      "switch": "Treci la acest plan",
+      "adminsOnly": "Doar proprietarul sau un administrator al afacerii poate schimba abonamentul.",
+      "stripeNote": "Facturile și plățile sunt gestionate de Stripe.",
+      "errors": {
+        "invalid": "Cerere invalidă.",
+        "unauthenticated": "Te rugăm să te autentifici din nou.",
+        "not_a_member": "Nu ai acces la această afacere.",
+        "forbidden": "Doar proprietarul sau un administrator poate schimba abonamentul.",
+        "not_configured": "Plățile nu sunt încă activate.",
+        "price_missing": "Prețul acestui plan nu este configurat în Stripe.",
+        "no_subscription": "Nu există încă un abonament activ.",
+        "generic": "Ceva nu a mers. Încearcă din nou."
+      },
+      "freePlan": "Gratuit — nimic de plătit"
     }
   },
   "notifications": {
@@ -1282,12 +1615,24 @@
       "leaveReview": "Lasă o recenzie",
       "bookAgain": "Programează-te din nou",
       "viewSalon": "Vezi salonul",
-      "bookSlot": "Rezervă acest loc"
+      "bookSlot": "Rezervă acest loc",
+      "addToCalendar": "Adaugă în calendar",
+      "directions": "Indicații",
+      "call": "Sună"
     },
     "footer": {
       "signature": "Echipa {business}",
       "sentBy": "Trimis prin GLOWA",
       "unsubscribe": "Dezabonează-te de la marketing"
+    },
+    "badge": {
+      "booking_confirmation": "Confirmat",
+      "reminder": "Memento",
+      "reschedule": "Oră nouă",
+      "cancellation": "Anulat",
+      "review_request": "Vă mulțumim",
+      "waitlist_offer": "S-a eliberat un loc",
+      "marketing": "Noutăți"
     }
   },
   "pricing": {
@@ -1303,23 +1648,29 @@
       "label": "Perioada de plată",
       "annualSave": "2 luni cadou",
       "forever": "pentru totdeauna",
-      "billedYearly": "plată o dată pe an"
+      "billedYearly": "plată o dată pe an",
+      "save": "2 luni gratuit",
+      "billedMonthly": "Plată lunară",
+      "orYearly": "sau {amount} / lună la plata anuală"
     },
     "plans": {
       "solo": {
         "name": "Solo",
         "tagline": "Pentru un singur specialist. Gratuit — nu de probă, pentru totdeauna.",
-        "seats": "1 specialist"
+        "seats": "1 specialist",
+        "audience": "Afacere mică"
       },
       "studio": {
         "name": "Studio",
         "tagline": "Pentru o echipă mică. Mai puțin decât costă un loc în altă parte.",
-        "seats": "Până la 5 specialiști"
+        "seats": "Până la 5 specialiști",
+        "audience": "Afacere medie"
       },
       "salon": {
         "name": "Salon",
         "tagline": "Pentru un salon mare, cu roluri, jurnal și asistență prioritară.",
-        "seats": "Echipă nelimitată"
+        "seats": "Echipă nelimitată",
+        "audience": "Afacere mare"
       }
     },
     "features": {
@@ -1347,7 +1698,9 @@
     "cta": {
       "start": "Începe",
       "popular": "Cel mai ales",
-      "startFree": "Începe gratuit"
+      "startFree": "Începe gratuit",
+      "current": "Planul actual",
+      "recommended": "Recomandat pentru echipa ta"
     },
     "faq": {
       "title": "Întrebări frecvente",
@@ -1541,6 +1894,44 @@
     "whyGlowa": "De ce glowa",
     "registerSalon": "Înscrie-ți salonul",
     "ctaTitle": "Ai un salon?",
-    "ctaBody": "Calendar, avansuri și programări online — fără comision."
+    "ctaBody": "Calendar, avansuri și programări online — fără comision.",
+    "customers": "Pentru clienți",
+    "business": "Pentru business",
+    "company": "Glowa",
+    "myBookings": "Programările mele",
+    "login": "Intră în cont",
+    "register": "Înregistrează un salon",
+    "pricing": "Prețuri",
+    "dashboard": "Panou business",
+    "contact": "Contact",
+    "languages": "Български · English · Română",
+    "rights": "© {year} Glowa. Toate drepturile rezervate.",
+    "favorites": "Favorite",
+    "legal": "Informații legale",
+    "ctaButton": "Înregistrează-ți salonul",
+    "backHome": "Înapoi la pagina principală"
+  },
+  "legal": {
+    "privacy": "Confidențialitate",
+    "terms": "Termeni",
+    "cookies": "Cookie-uri",
+    "imprint": "Date despre furnizor",
+    "signupNotice": "Prin crearea contului accepți <terms>Termenii și condițiile</terms> și confirmi că ai citit <privacy>Politica de confidențialitate</privacy>."
+  },
+  "consent": {
+    "title": "Cookie-uri, doar cele necesare",
+    "body": "Folosim cookie-uri ca să rămâi autentificat și să îți reținem limba. Cu acordul tău reținem și de pe ce cod QR sau recomandare ai venit, ca salonul să primească meritul. Fără reclame, fără urmărire.",
+    "policyLink": "Află mai multe",
+    "accept": "Accept",
+    "reject": "Doar cele necesare",
+    "settings": "Setări cookie-uri",
+    "settingsTitle": "Setări cookie-uri",
+    "settingsBody": "Alege ce reținem. Poți schimba oricând din partea de jos a paginii.",
+    "necessaryTitle": "Necesare",
+    "necessaryBody": "Autentificarea, limba, tema și această alegere. Site-ul nu funcționează fără ele, așa că sunt mereu active.",
+    "attributionTitle": "Recomandări și coduri QR",
+    "attributionBody": "Reține timp de 30 de zile de pe ce cod QR sau link ai venit, ca programarea să fie atribuită salonului sau prietenului corect.",
+    "noTracking": "Nu folosim cookie-uri de publicitate sau de analiză și nu împărtășim date cu rețele de reclame.",
+    "save": "Salvează alegerea"
   }
 }

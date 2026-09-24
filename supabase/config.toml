@@ -109,7 +109,15 @@ enabled = true
 # in emails.
 site_url = "http://127.0.0.1:3000"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+# The app sends people back to /auth/confirm (email links) and /auth/callback
+# (Google), each with a `next` query, so the whole origin is allowed. In
+# production add https://<site>/** in the dashboard (Authentication -> URL
+# Configuration), or both flows fall back to the bare site URL.
+additional_redirect_urls = [
+  "https://127.0.0.1:3000",
+  "http://127.0.0.1:3000/**",
+  "http://localhost:3000/**",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # If disabled, the refresh token will never expire.
@@ -254,6 +262,20 @@ redirect_uri = ""
 # or any other third-party OIDC providers.
 url = ""
 # If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
+skip_nonce_check = false
+
+# "Continue with Google". Production is configured in the Supabase dashboard
+# (Authentication -> Providers -> Google) with a Google Cloud OAuth client
+# whose redirect URI is https://<project>.supabase.co/auth/v1/callback, and
+# https://<site>/auth/callback added to the redirect allow-list. Locally, set
+# both variables (e.g. in supabase/.env, never committed) and `enabled = true`.
+# The app shows the button only when the provider reports as enabled.
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+redirect_uri = ""
+url = ""
 skip_nonce_check = false
 
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.

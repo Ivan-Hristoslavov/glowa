@@ -1,6 +1,5 @@
 import {
   CalendarX2,
-  CheckCircle2,
   Clock,
   Hourglass,
   MapPin,
@@ -10,6 +9,7 @@ import {
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { BookingCelebration } from "@/components/booking/booking-celebration";
 import { EmptyState } from "@/components/common/empty-state";
 import { Rating } from "@/components/common/rating";
 import { AddToCalendar } from "@/components/customer/add-to-calendar";
@@ -154,11 +154,7 @@ export default async function BookingDetailPage({
       ) : null}
 
       {justBooked && appointment.deposit_status !== "awaiting" ? (
-        <Alert>
-          <CheckCircle2 className="size-4" aria-hidden />
-          <AlertTitle>{booking("successTitle")}</AlertTitle>
-          <AlertDescription>{booking("successBody")}</AlertDescription>
-        </Alert>
+        <BookingCelebration title={booking("successTitle")} body={booking("successBody")} />
       ) : null}
 
       <div className="flex flex-wrap items-start justify-between gap-4">

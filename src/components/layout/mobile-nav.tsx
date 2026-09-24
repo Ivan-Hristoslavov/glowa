@@ -4,6 +4,7 @@ import {
   ArrowRight,
   CalendarDays,
   Heart,
+  LayoutDashboard,
   Menu,
   Search,
   Settings,
@@ -12,12 +13,13 @@ import {
   Tag,
   User2,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
 
 import { GlowaLogo } from "@/components/brand/glowa-logo";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { useAccount } from "@/components/layout/use-account";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -28,7 +30,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Link, usePathname } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 const PUBLIC_LINKS = [
@@ -57,25 +58,11 @@ export function MobileNav() {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-    let active = true;
-
-    supabase.auth.getClaims().then(({ data }) => {
-      if (active) setIsSignedIn(typeof data?.claims?.sub === "string");
-    });
-
-    const { data: subscription } = supabase.auth.onAuthStateChange(
-      (_event, session) => setIsSignedIn(Boolean(session?.user)),
-    );
-
-    return () => {
-      active = false;
-      subscription.subscription.unsubscribe();
-    };
-  }, []);
+  const locale = useLocale();
+  // The shared account hook: it also hears about an inline sign-in in the
+  // booking funnel, which the browser client alone never learns of.
+  const { account } = useAccount();
+  const isSignedIn = account !== null;
 
   function group(label: string, links: readonly NavLink[]) {
     return (
@@ -144,6 +131,23 @@ export function MobileNav() {
         <nav aria-label={t("mainNav")} className="flex-1 space-y-5 overflow-y-auto px-2.5 py-3">
           {group(t("explore"), PUBLIC_LINKS)}
           {isSignedIn ? group(t("myAccount"), ACCOUNT_LINKS) : null}
+          {/* The way into the business app, or into creating one. */}
+          {account ? (
+            <Link
+              href={account.hasBusiness ? "/dashboard" : "/onboarding"}
+              onClick={() => setOpen(false)}
+              className="glowa-focus text-primary hover:bg-primary/10 flex items-center gap-3 rounded-2xl px-2.5 py-2 text-[0.95rem] font-medium transition-colors"
+            >
+              <span className="bg-primary/10 flex size-9 items-center justify-center rounded-xl">
+                {account.hasBusiness ? (
+                  <LayoutDashboard className="size-4" aria-hidden />
+                ) : (
+                  <Store className="size-4" aria-hidden />
+                )}
+              </span>
+              {account.hasBusiness ? t("businessDashboard") : t("registerBusiness")}
+            </Link>
+          ) : null}
         </nav>
 
         <div className="space-y-3 border-t p-4">
@@ -157,7 +161,9 @@ export function MobileNav() {
           {!isSignedIn ? (
             <div className="grid gap-2">
               <Button asChild className="rounded-full" onClick={() => setOpen(false)}>
-                <Link href="/signup">{t("getStarted")}</Link>
+                <Link href={`/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`}>
+                  {t("getStarted")}
+                </Link>
               </Button>
               <Button
                 asChild

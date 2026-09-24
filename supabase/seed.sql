@@ -25,7 +25,7 @@ insert into public.businesses (
       'ro', 'Un studio de coafură în centrul Sofiei, axat pe culoare, îngrijire și tunsori precise.'
     ),
     jsonb_build_object('bg', 'Цвят и грижа за косата', 'en', 'Colour and hair care', 'ro', 'Culoare și îngrijirea părului'),
-    'hair_salon', 'BGN', 'Europe/Sofia', 'bg', 'active', true, null
+    'hair_salon', 'EUR', 'Europe/Sofia', 'bg', 'active', true, null
   ),
   (
     '11111111-1111-4111-8111-111111111102',
@@ -37,7 +37,7 @@ insert into public.businesses (
       'ro', 'O frizerie clasică cu o atitudine modernă. Tunsori, barbă și prosop cald.'
     ),
     jsonb_build_object('bg', 'Барбършоп в София', 'en', 'Barbershop in Sofia', 'ro', 'Frizerie în Sofia'),
-    'barbershop', 'BGN', 'Europe/Sofia', 'bg', 'active', true, null
+    'barbershop', 'EUR', 'Europe/Sofia', 'bg', 'active', true, null
   ),
   (
     '11111111-1111-4111-8111-111111111103',
@@ -49,7 +49,7 @@ insert into public.businesses (
       'ro', 'Unghii, design și îngrijire într-un studio liniștit din Plovdiv.'
     ),
     jsonb_build_object('bg', 'Ноктопластика и дизайн', 'en', 'Nail art and care', 'ro', 'Manichiură și design'),
-    'nail_studio', 'BGN', 'Europe/Sofia', 'bg', 'active', true, null
+    'nail_studio', 'EUR', 'Europe/Sofia', 'bg', 'active', true, null
   )
 on conflict (id) do nothing;
 
@@ -121,23 +121,23 @@ insert into public.services (
   ('11111111-1111-4111-8111-111111111401', '11111111-1111-4111-8111-111111111101',
    jsonb_build_object('bg', 'Подстригване и оформяне', 'en', 'Cut and finish', 'ro', 'Tuns și styling'),
    jsonb_build_object('bg', 'Консултация, измиване, подстригване и сешоар.', 'en', 'Consultation, wash, cut and blow-dry.', 'ro', 'Consultație, spălat, tuns și coafat.'),
-   'hair', 60, 6000, 'BGN', true, 1),
+   'hair', 60, 3000, 'EUR', true, 1),
   ('11111111-1111-4111-8111-111111111402', '11111111-1111-4111-8111-111111111101',
    jsonb_build_object('bg', 'Боядисване на корени', 'en', 'Root colour', 'ro', 'Vopsit rădăcini'),
    jsonb_build_object('bg', 'Освежаване на цвета при корените.', 'en', 'Refreshing the colour at the roots.', 'ro', 'Împrospătarea culorii la rădăcini.'),
-   'hair', 90, 9000, 'BGN', true, 2),
+   'hair', 90, 4500, 'EUR', true, 2),
   ('11111111-1111-4111-8111-111111111403', '11111111-1111-4111-8111-111111111102',
    jsonb_build_object('bg', 'Мъжко подстригване', 'en', 'Men''s haircut', 'ro', 'Tuns bărbați'),
    jsonb_build_object('bg', 'Машинка, ножица и финално оформяне.', 'en', 'Clipper, scissor work and finish.', 'ro', 'Mașină, foarfecă și finisaj.'),
-   'barber', 45, 4000, 'BGN', true, 1),
+   'barber', 45, 2000, 'EUR', true, 1),
   ('11111111-1111-4111-8111-111111111404', '11111111-1111-4111-8111-111111111102',
    jsonb_build_object('bg', 'Брада с гореща кърпа', 'en', 'Beard with hot towel', 'ro', 'Barbă cu prosop cald'),
    jsonb_build_object('bg', 'Оформяне на брада, гореща кърпа и балсам.', 'en', 'Beard shaping, hot towel and balm.', 'ro', 'Conturarea bărbii, prosop cald și balsam.'),
-   'barber', 30, 3000, 'BGN', true, 2),
+   'barber', 30, 1500, 'EUR', true, 2),
   ('11111111-1111-4111-8111-111111111405', '11111111-1111-4111-8111-111111111103',
    jsonb_build_object('bg', 'Маникюр с гел лак', 'en', 'Gel manicure', 'ro', 'Manichiură cu gel'),
    jsonb_build_object('bg', 'Подготовка, гел лак и грижа за кожичките.', 'en', 'Prep, gel polish and cuticle care.', 'ro', 'Pregătire, oja gel și îngrijirea cuticulelor.'),
-   'nails', 75, 5500, 'BGN', true, 1)
+   'nails', 75, 3000, 'EUR', true, 1)
 on conflict (id) do nothing;
 
 insert into public.service_staff (service_id, staff_profile_id)

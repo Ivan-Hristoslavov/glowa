@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
 
-import { GROWTH_COOKIE } from "@/app/[locale]/go/[code]/route";
 import { routing } from "@/i18n/routing";
+import { GROWTH_COOKIE } from "@/lib/growth/cookie";
 import {
   openDepositCheckout,
   releaseUnpaidDeposit,

@@ -8,11 +8,12 @@ import { z } from "zod";
 
 import { redirect } from "@/i18n/navigation";
 import { publicEnv } from "@/lib/env";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 import { claimPendingInvitations } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthFormState = {
-  status: "idle" | "error" | "check-email";
+  status: "idle" | "error" | "check-email" | "signed-in";
   message?: string;
   email?: string;
 };
@@ -34,8 +35,7 @@ const unreachable = { status: "idle" } as const satisfies AuthFormState;
 
 /** Only same-origin relative paths may be used as a post-login destination. */
 function safeNextPath(value: FormDataEntryValue | null) {
-  const raw = typeof value === "string" ? value : "";
-  return raw.startsWith("/") && !raw.startsWith("//") ? raw : null;
+  return safeRedirectPath(value);
 }
 
 export async function signInAction(
@@ -92,13 +92,36 @@ export async function signUpAction(
     return { status: "error", message: tooShort ? t("weakPassword") : t("generic") };
   }
 
+  const next = safeNextPath(formData.get("next"));
+  const result = await createAccount(parsed.data, locale, next);
+  if (result.status !== "signed-in") return result;
+
+  revalidatePath("/", "layout");
+  if (next) {
+    // A salon owner arrives here from "start free" with `next` pointing at
+    // onboarding; sending them to the customer profile was a dead end.
+    nextRedirect(next as Route);
+  }
+  redirect({ href: "/profile", locale });
+  return unreachable;
+}
+
+async function createAccount(
+  data: z.infer<typeof signUpSchema>,
+  locale: string,
+  next: string | null,
+): Promise<AuthFormState> {
+  const t = await getTranslations("auth.errors");
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
+  const { data: created, error } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
     options: {
-      data: { full_name: parsed.data.fullName, locale },
-      emailRedirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=/${locale}/profile`,
+      data: { full_name: data.fullName, locale },
+      // The confirmation link brings them back to where they were going.
+      emailRedirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=${encodeURIComponent(
+        next ?? `/${locale}/profile`,
+      )}`,
     },
   });
 
@@ -112,13 +135,62 @@ export async function signUpAction(
   }
 
   // With email confirmation on, there is no session yet.
-  if (!data.session) {
-    return { status: "check-email", email: parsed.data.email };
+  if (!created.session) {
+    return { status: "check-email", email: data.email };
+  }
+  return { status: "signed-in" };
+}
+
+/**
+ * Sign in or create an account without leaving the page - used by the
+ * booking funnel's last step.
+ *
+ * Sending a guest to /login at the moment they press "confirm" threw away the
+ * service, the specialist and the time they had just picked, and dropped them
+ * on their profile afterwards. This returns instead of redirecting, and the
+ * funnel refreshes in place with everything still selected.
+ */
+export async function inlineAuthAction(
+  _prev: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const locale = await getLocale();
+  const t = await getTranslations("auth.errors");
+  const mode = formData.get("mode") === "sign-up" ? "sign-up" : "sign-in";
+  const next = safeNextPath(formData.get("next"));
+
+  if (mode === "sign-up") {
+    const parsed = signUpSchema.safeParse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+      fullName: formData.get("fullName"),
+    });
+    if (!parsed.success) {
+      const tooShort = parsed.error.issues.some((i) => i.path[0] === "password");
+      return { status: "error", message: tooShort ? t("weakPassword") : t("generic") };
+    }
+    const result = await createAccount(parsed.data, locale, next);
+    if (result.status === "signed-in") revalidatePath("/", "layout");
+    return result;
   }
 
+  const parsed = credentialsSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+  if (!parsed.success) {
+    return { status: "error", message: t("invalidCredentials") };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  if (error) {
+    return { status: "error", message: t("invalidCredentials") };
+  }
+
+  await claimPendingInvitations();
   revalidatePath("/", "layout");
-  redirect({ href: "/profile", locale });
-  return unreachable;
+  return { status: "signed-in" };
 }
 
 export async function signOutAction() {

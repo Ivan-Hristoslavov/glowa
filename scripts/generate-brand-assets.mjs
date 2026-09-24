@@ -7,7 +7,7 @@
  *   OPENAI_API_KEY=… node scripts/generate-brand-assets.mjs [options]
  *
  *   --out <dir>        where the PNGs land (default: .assets-src)
- *   --model <id>       image model (default: gpt-image-2.5-sunburst)
+ *   --model <id>       image model (default: gpt-image-2.5-flare)
  *   --only <pattern>   substring filter on the asset name
  *   --force            regenerate even if the PNG already exists
  *
@@ -29,7 +29,7 @@ function flag(name, fallback = undefined) {
 }
 
 const OUT = flag("out", ".assets-src");
-const MODEL = flag("model", "gpt-image-2.5-sunburst");
+const MODEL = flag("model", "gpt-image-2.5-flare");
 const ONLY = flag("only");
 const FORCE = args.includes("--force");
 
@@ -40,24 +40,36 @@ if (!KEY) {
 }
 
 /**
- * The house style, appended to every photographic prompt. This paragraph is
- * what makes the set read as one family rather than a pile of images.
+ * The house style, appended to every photographic prompt.
  *
- * The photographic half is deliberately specific about camera, light and skin:
- * without that, image models drift towards the glossy retouched stock look
- * that the whole brand is trying not to be. "This is a photograph, not an
- * illustration" earns its place - dropping it brings back the CGI sheen.
+ * Second direction (2026-09-24). The first set read as generated: every frame
+ * shared one honey light, one cream-coral-sage palette, linen, candles and a
+ * plant placed for composition. Real salon photographs do not coordinate. They
+ * are taken on a phone by someone who works there, under the room's own mixed
+ * light, in a room that is in use. So the direction now names what a styled
+ * shoot removes - clutter, uneven white balance, worn furniture, people who
+ * are not models - and forbids what it adds.
+ *
+ * The brand colours are deliberately NOT in the prompt any more. Asking for
+ * "muted coral and sage accents" is exactly what made every picture match the
+ * UI, and matching the UI is what made them look made-up.
  */
 const PHOTO = `
-Documentary photograph on a full-frame camera, 50mm f/1.8, natural light only.
-Warm cream and warm-neutral palette with muted coral and soft sage accents.
-Unposed and unhurried - people caught mid-action, never a catalogue smile.
-Visible natural skin texture and pores, stray hairs, fabric weave, honest
-imperfection. Shallow depth of field, soft natural shadows, subtle film grain,
-true-to-life colour. Real-looking people of varied ages and appearances.
-This is a photograph: not an illustration, not CGI, not a 3D render, not
-retouched stock. Absolutely no text, letters, numbers, logos, signage or
-watermarks anywhere in the image.`.trim().replace(/\s+/g, " ");
+A real, unretouched photograph taken on a recent smartphone by someone who
+works there - not a production, not a campaign. Available light only: window
+daylight mixed with the room's own overhead LED panels, so the white balance is
+slightly uneven. Handheld, slightly imperfect framing, a little motion blur in
+moving hands, mild sensor noise in the shadows, colours straight out of the
+camera and not graded. Ordinary Eastern European people of different ages and
+builds, real skin with pores, blemishes and flyaway hair, natural expressions,
+nobody posing and nobody smiling at the camera. The room is really in use:
+product bottles with labels turned away or out of focus, a hairdryer cable,
+clips, a spray bottle, a phone and a coffee cup on the counter, cut hair on the
+floor, chairs with a little wear. Nothing is arranged for the picture: no
+colour-coordinated props, no candles, no dried flowers, no linen styling, no
+plants placed for composition. This is a photograph, not an illustration, not
+CGI, not a 3D render, not retouched stock. Absolutely no readable text,
+letters, numbers, logos, signage or watermarks anywhere in the image.`.trim().replace(/\s+/g, " ");
 
 /**
  * The illustrations stay illustrations. Making these "more real" would break
@@ -85,35 +97,35 @@ const ASSETS = [
     size: "landscape",
     style: PHOTO,
     prompt:
-      "A woman in her thirties mid-conversation with her hairstylist in a modern European salon, warm late-afternoon window light raking across the room. She is turned slightly away from camera, caught mid-sentence. Real mirrors and real reflections behind them. The left third of the frame stays calm and uncluttered for text.",
+      "A Saturday morning in a busy neighbourhood hair salon on the ground floor of a Sofia apartment block. A stylist in her forties in a plain black T-shirt blow-dries a client's shoulder-length hair with a round brush; the client is laughing at something and holding her phone. Behind them a second client sits under foils, large plain mirrors, a glass shelf of products, and through the shop window the street and a parked car. The left third of the frame is less busy, a wall and part of the window.",
   },
   {
     name: "hero-salon-dark",
     size: "landscape",
     style: PHOTO,
     prompt:
-      "The same kind of salon after dark: warm lamp light pooling on deep green-black walls, one stylist finishing up, the room quiet. Moody but warm, never cold or blue. The right half of the frame stays dark and uncluttered for text.",
+      "The same kind of neighbourhood salon on a weekday evening after the street lights have come on: warm ceiling spotlights and a lamp at the reception counter, one stylist sweeping cut hair while the last client pays at the counter, the dark street visible through the window. A real low-light phone photo with some grain, warm but not orange. The right half of the frame is darker and quieter.",
   },
   {
     name: "hero-mobile",
     size: "portrait",
     style: PHOTO,
     prompt:
-      "Vertical frame: a young woman stepping out of a small studio onto a sunlit street, glancing down at her phone, hair freshly done. Candid, mid-stride. Clear calm space at the top of the frame for text.",
+      "Vertical phone photo: a woman in her late twenties walking out of a salon door onto a Sofia pavement with old façades and tram wires overhead, looking down at her phone, freshly blow-dried hair moving as she walks. Overcast soft daylight. The top of the frame is building and sky, calm enough for text.",
   },
   {
     name: "hero-barber",
     size: "landscape",
     style: PHOTO,
     prompt:
-      "A barber leaning in to finish a fade, clippers in hand, the client's shoulders under a cape. Close, warm, concentrated. Tiled wall and worn wooden counter in soft focus behind.",
+      "A barber in his thirties with tattooed forearms doing a skin fade with clippers on a young man's neck while the client scrolls his phone under the cape. A long wall mirror, a television showing football out of focus in the background, a black barber chair with wear on the armrest, cut hair on the cape.",
   },
   {
     name: "hero-spa",
     size: "landscape",
     style: PHOTO,
     prompt:
-      "A treatment room at rest: folded linen, a stone bowl, a single candle, light falling through a linen curtain. Nobody in frame. Calm, expensive, unstyled.",
+      "A small massage room in a city day spa between two clients: a massage table with a fresh paper sheet and a folded towel, oil bottles on a small trolley, a wall heater, blinds half closed. Real, slightly cramped, clean. Nobody in frame.",
   },
 
   // --- category cards -----------------------------------------------------
@@ -122,42 +134,42 @@ const ASSETS = [
     size: "square",
     style: PHOTO,
     prompt:
-      "Close editorial frame of a colourist's hands sectioning long hair with a tail comb, foil in the other hand. Only hands and hair in frame.",
+      "A colourist in black gloves painting colour onto a client's roots with a tint brush, the colour bowl in her other hand and foil strips on the trolley beside her. Shot over the stylist's shoulder; the client's face is partly visible in the mirror.",
   },
   {
     name: "category-barber",
     size: "square",
     style: PHOTO,
     prompt:
-      "Close frame of a beard trim in progress: scissors and comb, the barber's hands, part of the client's jaw. Warm skin tones, real stubble texture.",
+      "Close shot of a barber lining up a beard with a trimmer, a comb in his other hand, cut hair scattered on the black cape, the client's eyes half closed.",
   },
   {
     name: "category-nails",
     size: "square",
     style: PHOTO,
     prompt:
-      "Overhead frame of a manicure in progress on a small table: one hand resting, the technician's hands working, a few bottles out of focus. Muted coral polish.",
+      "A nail technician filing a client's nails at a small white desk with a UV lamp and a dust extractor, rows of gel polish bottles out of focus behind, the client holding her phone in her free hand. Shot from the side at desk height.",
   },
   {
     name: "category-skincare",
     size: "square",
     style: PHOTO,
     prompt:
-      "A facial treatment mid-way: gloved hands applying product to a reclining client's cheek, eyes closed, towel around the hairline. Soft even light.",
+      "A cosmetician in a white tunic giving a facial with a steamer beside the treatment bed; the client lies with a headband and closed eyes, a magnifying lamp arm crossing the frame.",
   },
   {
     name: "category-lashes",
     size: "square",
     style: PHOTO,
     prompt:
-      "Very close frame of lash work: tweezers near a closed eye, the technician's hands steady, magnifying lamp light. Skin texture visible.",
+      "A lash technician working on a client lying on a treatment bed with under-eye pads; tweezers in hand, a lash tile on a small tray, the reflection of a ring light in the client's cheek. Shot from above the technician's shoulder.",
   },
   {
     name: "category-spa",
     size: "square",
     style: PHOTO,
     prompt:
-      "An empty spa room with nobody in it: a massage table dressed in white linen, rolled towels, a small plant, warm low light.",
+      "A massage therapist's hands working oil into a client's shoulders, a towel over the lower back, a dim warm room with the blinds down.",
   },
 
   // --- demo salon covers --------------------------------------------------
@@ -166,21 +178,21 @@ const ASSETS = [
     size: "landscape",
     style: PHOTO,
     prompt:
-      "The interior of a small bright hair studio with nobody in frame: two chairs, a long mirror, pale wood and cream walls, plants on the windowsill.",
+      "The inside of a small, bright two-chair hair salon early in the morning before opening: two black hydraulic chairs, a wash basin, a trolley with brushes and a hairdryer, a reception counter with a card terminal, the street through the glass door. A real, lived-in shop. Nobody in frame.",
   },
   {
     name: "cover-black-scissors",
     size: "landscape",
     style: PHOTO,
     prompt:
-      "The interior of a dark masculine barbershop with nobody in frame: black tile, brass fittings, worn leather chairs, a row of bottles on a wooden shelf.",
+      "The inside of a barbershop on a quiet afternoon: three barber chairs, black wall tiles, a waiting bench with a coat thrown on it, products on a shelf, clippers charging on the counter, light from the street. Nobody in frame.",
   },
   {
     name: "cover-bloom-nails",
     size: "landscape",
     style: PHOTO,
     prompt:
-      "The interior of a small nail studio with nobody in frame: a pale table, a curved lamp, a wall of polish bottles in muted tones, dried flowers in a vase.",
+      "The inside of a small nail studio: two manicure desks with lamps and dust collectors, a shelf of gel polish bottles, a pedicure chair in the corner, a window with blinds. Nobody in frame.",
   },
 
   // --- showcase salon ----------------------------------------------------
@@ -271,7 +283,7 @@ const ASSETS = [
     size: "landscape",
     style: PHOTO,
     prompt:
-      "An abstract warm salon interior far out of focus, reading as texture rather than a scene: cream and coral bokeh, a suggestion of a mirror and a window. Nothing identifiable, plenty of calm space.",
+      "A salon interior far out of focus, reading as texture rather than a scene: the blur of mirrors, ceiling lights and a window. Nothing identifiable, plenty of calm space.",
   },
 
   // --- flat illustrations -------------------------------------------------

@@ -194,6 +194,33 @@ export async function listAppointmentsInRange(
   return data ?? [];
 }
 
+/**
+ * What is happening now and next, for the strip at the top of every admin
+ * page: anything still in progress, then the next ones, active statuses only.
+ */
+export async function listUpcomingAppointments(businessId: string, limit = 12) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("appointments")
+    .select(
+      `id, starts_at, ends_at, status, customer_name, customer_phone, customer_notes,
+       service_name_snapshot, services ( name ), staff_profiles ( display_name, color )`,
+    )
+    .eq("business_id", businessId)
+    .in("status", ["pending", "confirmed"])
+    .gt("ends_at", new Date().toISOString())
+    .order("starts_at")
+    .limit(limit);
+
+  // The strip is a convenience on every page; it must never take a page down.
+  if (error) return [];
+  return data ?? [];
+}
+
+export type UpcomingAppointment = Awaited<
+  ReturnType<typeof listUpcomingAppointments>
+>[number];
+
 export type AdminAppointment = Awaited<
   ReturnType<typeof listAppointmentsInRange>
 >[number];

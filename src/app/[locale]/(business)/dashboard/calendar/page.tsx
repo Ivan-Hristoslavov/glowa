@@ -57,6 +57,7 @@ export default async function CalendarPage({
   const activeLocale = locale as Locale;
   const waitlistT = await getTranslations("waitlist");
   const calendarT = await getTranslations("admin.calendar");
+  const closedLabel = calendarT("closedLabel");
 
   const sp = await searchParams;
   const view = firstParam(sp.view) === "week" ? "week" : "day";
@@ -75,7 +76,7 @@ export default async function CalendarPage({
   const to = instantFromZoned(addDaysToKey(days[days.length - 1], 1), 0, timezone);
 
   const supabase = await createClient();
-  const [appointments, waitlistRows, { data: timeOff }] = await Promise.all([
+  const [appointments, waitlistRows, { data: timeOff }, { data: closures }] = await Promise.all([
     listAppointmentsInRange(membership.businessId, from, to),
     listWaitlist(membership.businessId),
     supabase
@@ -83,7 +84,31 @@ export default async function CalendarPage({
       .select("id, staff_profile_id, starts_at, ends_at, reason")
       .gte("ends_at", from.toISOString())
       .lt("starts_at", to.toISOString()),
+    supabase
+      .from("business_closures")
+      .select("id, starts_at, ends_at, reason, location_id")
+      .eq("business_id", membership.businessId)
+      .gte("ends_at", from.toISOString())
+      .lt("starts_at", to.toISOString()),
   ]);
+
+  /**
+   * The board draws a block from its start time down by its duration, within
+   * one day's column. A block that runs past midnight - a week's holiday, a
+   * time off from Friday evening to Monday - is cut into one piece per visible
+   * day so each column shows its own part instead of one block overflowing.
+   */
+  function clipToDays(startsAt: string, endsAt: string) {
+    const start = new Date(startsAt);
+    const end = new Date(endsAt);
+    return days.flatMap((key) => {
+      const dayStart = instantFromZoned(key, 0, timezone);
+      const dayEnd = instantFromZoned(addDaysToKey(key, 1), 0, timezone);
+      const from = start > dayStart ? start : dayStart;
+      const to = end < dayEnd ? end : dayEnd;
+      return to > from ? [{ key, startsAt: from.toISOString(), endsAt: to.toISOString() }] : [];
+    });
+  }
 
   const staffIds = new Set(workspace.staff.map((member) => member.id));
 
@@ -167,15 +192,31 @@ export default async function CalendarPage({
       appointments={calendarAppointments}
       // RLS already limits time off to this business; the filter keeps a
       // multi-business member's rows from leaking into the wrong calendar.
-      blocks={(timeOff ?? [])
-        .filter((row) => staffIds.has(row.staff_profile_id))
-        .map((row) => ({
-          id: row.id,
-          staffProfileId: row.staff_profile_id,
-          startsAt: row.starts_at,
-          endsAt: row.ends_at,
-          reason: row.reason,
-        }))}
+      blocks={[
+        ...(timeOff ?? [])
+          .filter((row) => staffIds.has(row.staff_profile_id))
+          .flatMap((row) =>
+            clipToDays(row.starts_at, row.ends_at).map((piece) => ({
+              id: `${row.id}-${piece.key}`,
+              staffProfileId: row.staff_profile_id,
+              startsAt: piece.startsAt,
+              endsAt: piece.endsAt,
+              reason: row.reason,
+            })),
+          ),
+        // A closure shuts every column, so it is drawn in each one.
+        ...(closures ?? []).flatMap((row) =>
+          clipToDays(row.starts_at, row.ends_at).flatMap((piece) =>
+            workspace.staff.map((member) => ({
+              id: `closure-${row.id}-${member.id}-${piece.key}`,
+              staffProfileId: member.id,
+              startsAt: piece.startsAt,
+              endsAt: piece.endsAt,
+              reason: row.reason ? `${closedLabel} · ${row.reason}` : closedLabel,
+            })),
+          ),
+        ),
+      ]}
       />
 
       <section className="space-y-3">

@@ -2,10 +2,14 @@ import { Lock } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { PageHeader } from "@/components/admin/page-header";
 import { BusinessLocationForm } from "@/components/admin/business-location-form";
+import { BusinessMediaForm } from "@/components/admin/business-media-form";
 import { BusinessMediaManager } from "@/components/admin/business-media-manager";
+import { PageHeader } from "@/components/admin/page-header";
 import { BusinessSettingsForm } from "@/components/admin/business-settings-form";
+import { SubscriptionCard } from "@/components/admin/subscription-card";
+import { isLiveSubscription } from "@/lib/billing/plans";
+import type { PlanId } from "@/lib/pricing";
 import { EmptyState } from "@/components/common/empty-state";
 import { Section } from "@/components/common/section";
 import { routing, type Locale } from "@/i18n/routing";
@@ -43,21 +47,32 @@ export default async function BusinessSettingsPage({
   }
 
   const supabase = await createClient();
-  const [{ data: business }, { data: location }] = await Promise.all([
-    supabase
-      .from("businesses")
-      .select(
-        "name, phone, email, website, google_review_url, description, booking_policy, cover_image_url, gallery",
-      )
-      .eq("id", membership.businessId)
-      .maybeSingle(),
-    supabase
-      .from("locations")
-      .select("address_line1, city, postal_code, latitude, longitude")
-      .eq("business_id", membership.businessId)
-      .eq("is_primary", true)
-      .maybeSingle(),
-  ]);
+  const [{ data: business }, { data: location }, { data: subscription }, { count: staffCount }] =
+    await Promise.all([
+      supabase
+        .from("businesses")
+        .select(
+          "name, phone, email, website, google_review_url, description, booking_policy, logo_url, cover_image_url, gallery",
+        )
+        .eq("id", membership.businessId)
+        .maybeSingle(),
+      supabase
+        .from("locations")
+        .select("address_line1, city, postal_code, latitude, longitude")
+        .eq("business_id", membership.businessId)
+        .eq("is_primary", true)
+        .maybeSingle(),
+      supabase
+        .from("business_subscriptions")
+        .select("plan, status")
+        .eq("business_id", membership.businessId)
+        .maybeSingle(),
+      supabase
+        .from("staff_profiles")
+        .select("id", { count: "exact", head: true })
+        .eq("business_id", membership.businessId)
+        .eq("is_bookable", true),
+    ]);
 
   if (!business) return null;
 
@@ -75,6 +90,16 @@ export default async function BusinessSettingsPage({
   return (
     <div className="space-y-8">
       <PageHeader title={t("settings")} description={t("settingsSubtitle")} />
+
+      {/* The logo on its own: the photo manager below owns cover and gallery. */}
+      <Section id="logo" title={media("logo")} description={media("logoHint")}>
+        <BusinessMediaForm
+          businessId={membership.businessId}
+          businessName={business.name}
+          initial={{ logoUrl: business.logo_url, coverUrl: business.cover_image_url, gallery }}
+          logoOnly
+        />
+      </Section>
 
       <Section title={membership.name}>
         <BusinessSettingsForm
@@ -120,6 +145,11 @@ export default async function BusinessSettingsPage({
           <p className="text-muted-foreground text-sm">{place("missing")}</p>
         )}
       </Section>
+
+      <SubscriptionCard
+        staffCount={staffCount ?? 1}
+        activePlan={isLiveSubscription(subscription?.status) ? (subscription?.plan as PlanId) : null}
+      />
     </div>
   );
 }

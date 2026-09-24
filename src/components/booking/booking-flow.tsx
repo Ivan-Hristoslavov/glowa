@@ -14,13 +14,16 @@ import {
 import { m } from "motion/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { SlotPicker } from "@/components/booking/slot-picker";
 import { WaitlistDialog } from "@/components/booking/waitlist-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { inlineAuthAction } from "@/app/[locale]/(auth)/actions";
+import { AuthForm } from "@/components/auth/auth-form";
+import { AUTH_CHANGED_EVENT } from "@/components/layout/use-account";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -72,6 +75,8 @@ type BookingFlowProps = {
   initialStartsAt?: string;
   /** Shown at the top of the summary, so the booking feels like this salon. */
   coverUrl?: string | null;
+  /** Offer "Continue with Google" at the sign-in step. */
+  googleSignIn?: boolean;
 };
 
 type StepId = "location" | "service" | "staff" | "time" | "confirm";
@@ -93,11 +98,24 @@ export function BookingFlow({
   initialStaffId,
   initialStartsAt,
   coverUrl,
+  googleSignIn = false,
 }: BookingFlowProps) {
   const t = useTranslations("booking");
+  const auth = useTranslations("auth");
   const business = useTranslations("business");
   const common = useTranslations("common");
   const router = useRouter();
+
+  // Signing in inside the funnel re-renders this page with the session; say
+  // so, and tell the header, whose browser client did not see the cookie set.
+  const wasSignedIn = useRef(isSignedIn);
+  useEffect(() => {
+    if (isSignedIn && !wasSignedIn.current) {
+      toast.success(auth("signedIn"));
+      window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+    }
+    wasSignedIn.current = isSignedIn;
+  }, [isSignedIn, auth]);
   const [isPending, startTransition] = useTransition();
 
   const [locationId, setLocationId] = useState<string | null>(
@@ -213,7 +231,8 @@ export function BookingFlow({
       if (!result.ok) {
         const code = result.code;
         if (code === "unauthenticated") {
-          router.push("/login");
+          // The session lapsed mid-flow: the sign-in card above takes over.
+          router.refresh();
           return;
         }
         toast.error(
@@ -567,13 +586,22 @@ export function BookingFlow({
               </p>
             </div>
 
+            {/* Signing in or up happens here, inside the last step: sending a
+                guest to /login lost the service, stylist and time they had
+                picked. The email link, if one is needed, returns here too. */}
             {!isSignedIn ? (
-              <div className="border-border/70 rounded-xl border border-dashed p-4">
-                <p className="font-medium">{t("signInToBook")}</p>
-                <p className="text-muted-foreground mt-1 text-sm">{t("signInHint")}</p>
-                <Button asChild className="mt-3">
-                  <Link href="/login">{t("signInToBook")}</Link>
-                </Button>
+              <div className="glowa-card space-y-4 p-5">
+                <div>
+                  <p className="font-heading text-lg">{auth("inlineTitle")}</p>
+                  <p className="text-muted-foreground mt-1 text-sm">{auth("inlineSubtitle")}</p>
+                </div>
+                <AuthForm
+                  mode="sign-up"
+                  action={inlineAuthAction}
+                  nextPath={`/${locale}/business/${slug}/book${serviceId ? `?service=${serviceId}` : ""}`}
+                  google={googleSignIn}
+                  inline={{ onSignedIn: () => router.refresh() }}
+                />
               </div>
             ) : null}
           </section>

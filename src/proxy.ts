@@ -2,6 +2,7 @@ import createIntlMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { routing } from "@/i18n/routing";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 import { updateSession } from "@/lib/supabase/proxy";
 
 const handleI18nRouting = createIntlMiddleware(routing);
@@ -53,9 +54,14 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isSignedIn && AUTH_ONLY_PREFIXES.some((p) => path.startsWith(p))) {
+    // Someone already signed in who follows "start free" (next=onboarding) or
+    // a sign-in link from a booking should land where the link meant, not on
+    // their profile. Same-origin relative paths only, as everywhere else.
+    const safeNext = safeRedirectPath(request.nextUrl.searchParams.get("next"));
+    const target = new URL(safeNext ?? `/${locale}/profile`, request.nextUrl.origin);
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/profile`;
-    url.search = "";
+    url.pathname = target.pathname;
+    url.search = target.search;
     const redirect = NextResponse.redirect(url);
     response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
     return redirect;
@@ -65,6 +71,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except API routes, Next internals and files with an extension.
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  // Everything except API routes, the locale-free auth handlers, Next
+  // internals and files with an extension. `/auth/` was missing: the locale
+  // middleware redirected /auth/confirm, /auth/callback and /auth/signout to
+  // /bg/auth/..., which does not exist, so every emailed confirmation and
+  // password reset link ended on a 404.
+  matcher: "/((?!api|auth/|_next|_vercel|.*\\..*).*)",
 };
