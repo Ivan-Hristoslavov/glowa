@@ -253,6 +253,35 @@ photograph of the wrong trade.
 
 ---
 
+### Name and logo (open decision, 09-24)
+
+The owner finds the current mark wrong for the brand. It is a coral "S"
+spiral with two leaves, and it reads as the letter S for a name that starts
+with "g". The owner is also open to renaming.
+
+**Six logo directions** are in `docs/brand/logo-proposals.png`: three keep
+"glowa" (a glowing "g", a sunrise in the "o", a mirror with a spark), and
+three go with new names (Zorela ×2, Zorvela). All are vector and designed to
+work as an app icon and a 16px favicon.
+
+**Name research** (domains checked 09-24 through the Vercel registrar):
+- Every pronounceable short or coined `.com` tried was taken.
+- `.bg` cannot be checked from the sandbox; check it at register.bg.
+- Clean options:
+  - **Zorela**: "зора" is dawn in Bulgarian, "zori" in Romanian. `.eu`,
+    `.ro` and `.app` are free, and no beauty or booking conflict was found.
+  - **Zorvela**: `.eu`, `.ro`, `.app` and `.co` are free.
+- Ruled out:
+  - **Zapazi**: zapazi.bg has been a booking competitor since 2012.
+  - **Halora**: existing beauty brands use it.
+  - Zora, Perla, Nimbo, Lumea and similar are taken everywhere.
+- Before committing to a name, search EUIPO/TMview and the Bulgarian Patent
+  Office for trademarks.
+
+A rename touches `brand.*` messages, the logo component, the legal texts and
+the email templates. It is a search-and-replace plus the new mark, not a
+redesign.
+
 ## 5. Internationalisation
 
 - `bg` (default), `en`, `ro`; `localePrefix: "always"`.
