@@ -58,7 +58,18 @@ export default async function ServicesPage({
       </div>
 
       {workspace.services.length === 0 ? (
-        <EmptyState icon={Scissors} title={t("empty")} body={t("emptyBody")} />
+        <EmptyState
+          icon={Scissors}
+          title={t("empty")}
+          body={t("emptyBody")}
+          action={
+            // The one thing to do on an empty page belongs in the middle of
+            // it, not only in the corner.
+            editable ? (
+              <AddServiceButton businessId={membership.businessId} staff={staff} />
+            ) : undefined
+          }
+        />
       ) : (
         <ul className="glowa-card divide-border/70 divide-y">
           {workspace.services.map((service) => {

@@ -109,6 +109,7 @@ export default async function BusinessLayout({
               name={profile?.full_name ?? null}
               email={typeof claims?.claims?.email === "string" ? claims.claims.email : null}
               avatarUrl={profile?.avatar_url ?? null}
+              hasBusiness
             />
           </div>
         </header>

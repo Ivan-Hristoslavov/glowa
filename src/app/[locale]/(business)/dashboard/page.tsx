@@ -1,5 +1,4 @@
 import {
-  CalendarCheck,
   CalendarDays,
   CircleSlash,
   Coins,
@@ -12,14 +11,11 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { MetricCard } from "@/components/admin/metric-card";
-import { PublishBusinessButton } from "@/components/admin/publish-business-button";
+import { SetupChecklist } from "@/components/admin/setup-checklist";
 import { EmptyState } from "@/components/common/empty-state";
-import Image from "next/image";
-
 import { emptyStateArt } from "@/lib/brand-assets";
 import { Section } from "@/components/common/section";
 import { AppointmentStatusBadge } from "@/components/customer/appointment-status-badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -69,11 +65,25 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
   if (!membership) return null;
 
   const supabase = await createClient();
-  const { data: business } = await supabase
-    .from("businesses")
-    .select("timezone, currency, status")
-    .eq("id", membership.businessId)
-    .maybeSingle();
+  const [{ data: business }, { count: serviceCount }, { count: hoursCount }] = await Promise.all([
+    supabase
+      .from("businesses")
+      .select("timezone, currency, status, cover_image_url, description")
+      .eq("id", membership.businessId)
+      .maybeSingle(),
+    supabase
+      .from("services")
+      .select("id", { count: "exact", head: true })
+      .eq("business_id", membership.businessId)
+      .eq("is_active", true),
+    supabase
+      .from("business_hours")
+      .select("id, locations!inner(business_id)", { count: "exact", head: true })
+      .eq("locations.business_id", membership.businessId),
+  ]);
+  const hasDescription = Object.values(
+    (business?.description ?? {}) as Record<string, unknown>,
+  ).some((value) => typeof value === "string" && value.trim().length > 0);
 
   const timezone = business?.timezone ?? "Europe/Sofia";
   const currency = business?.currency ?? "EUR";
@@ -112,23 +122,13 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]">) 
       </div>
 
       {business?.status === "draft" ? (
-        <Alert>
-          <CalendarCheck className="size-4" aria-hidden />
-          <AlertTitle>{t("draftTitle")}</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <div className="flex items-start gap-4">
-              <Image
-                src={emptyStateArt.onboarding.light}
-                alt=""
-                width={72}
-                height={72}
-                className="hidden size-16 shrink-0 rounded-lg object-cover sm:block"
-              />
-              <p>{t("draftBody")}</p>
-            </div>
-            <PublishBusinessButton businessId={membership.businessId} />
-          </AlertDescription>
-        </Alert>
+        <SetupChecklist
+          businessId={membership.businessId}
+          hasServices={(serviceCount ?? 0) > 0}
+          hasHours={(hoursCount ?? 0) > 0}
+          hasProfile={Boolean(business.cover_image_url || hasDescription)}
+          isPublished={false}
+        />
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

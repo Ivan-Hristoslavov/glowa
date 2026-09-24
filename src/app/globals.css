@@ -226,6 +226,10 @@
     font-family: var(--font-heading);
     font-weight: 500;
     letter-spacing: -0.004em;
+    /* Playfair's default figures are old-style: a "0" is the height of an
+       "o", so a dashboard reading "0%" looked like "o%". Lining figures sit
+       on the cap height like the text around them. */
+    font-variant-numeric: lining-nums;
   }
 
   /* At display sizes the hairlines can carry more weight without clogging. */
@@ -294,4 +298,171 @@
 
 @utility glowa-focus {
   @apply focus-visible:ring-ring/60 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+   Marketing surfaces animate with CSS, not JavaScript: content is in the HTML
+   and visible without waiting for hydration, and a browser that does not
+   support an effect simply shows the page as it is. Interactive surfaces (the
+   booking funnel) use motion/react through MotionProvider.
+
+   Every effect here is off under prefers-reduced-motion, by the global guard
+   above and by the explicit media queries below for scroll-driven ones.
+--------------------------------------------------------------------------- */
+
+@keyframes glowa-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes glowa-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glowa-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes glowa-shine {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes glowa-pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes glowa-header-lift {
+  to {
+    box-shadow: 0 10px 30px -18px oklch(0.15 0.01 60 / 0.35);
+    background-color: color-mix(in oklab, var(--background) 92%, transparent);
+  }
+}
+
+/* Staggered entrance for above-the-fold content. `--delay` is set per item. */
+@utility glowa-enter {
+  animation: glowa-rise 0.8s var(--ease-glowa) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@utility glowa-float {
+  animation: glowa-float 6s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+@utility glowa-marquee {
+  animation: glowa-marquee var(--duration, 40s) linear infinite;
+}
+
+/* Scroll-linked reveal: the element rises into place as it enters the
+   viewport. Where scroll-driven animations are unsupported (older Firefox),
+   nothing is hidden - the element is simply there. */
+@utility glowa-reveal {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: glowa-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+/* The sticky header gains depth once the page moves under it. */
+@utility glowa-header {
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: glowa-header-lift linear both;
+      animation-timeline: scroll();
+      animation-range: 0 140px;
+    }
+  }
+}
+
+/* A soft light sweep across a surface - used once, on the primary hero
+   action, never on repeat everywhere. */
+@utility glowa-shine {
+  background-image: linear-gradient(
+    110deg,
+    transparent 35%,
+    color-mix(in oklab, white 35%, transparent) 50%,
+    transparent 65%
+  );
+  background-size: 250% 100%;
+  animation: glowa-shine 3.8s var(--ease-glowa) infinite;
+}
+
+/* Hover lift for cards people are meant to click. */
+@utility glowa-lift {
+  transition:
+    transform 0.45s var(--ease-glowa),
+    box-shadow 0.45s var(--ease-glowa),
+    border-color 0.3s var(--ease-glowa);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-pop);
+  }
+  &:active {
+    transform: translateY(-1px) scale(0.995);
+  }
+}
+
+/* Page-to-page: a salon's photograph travels from its card into the hero of
+   its page (React <ViewTransition name="cover-…">). The blur hides the
+   interpolation between two crops of the same picture. */
+::view-transition-group(.glowa-morph) {
+  animation-duration: 480ms;
+  animation-timing-function: var(--ease-glowa);
+}
+::view-transition-image-pair(.glowa-morph) {
+  animation-name: glowa-via-blur;
+}
+@keyframes glowa-via-blur {
+  30% {
+    filter: blur(4px);
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+}
+
+@keyframes glowa-now {
+  from {
+    top: 14%;
+  }
+  to {
+    top: 82%;
+  }
+}
+
+@keyframes glowa-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }

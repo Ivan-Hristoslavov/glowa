@@ -12,6 +12,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ViewTransition } from "react";
 
 import { EmptyState } from "@/components/common/empty-state";
 import { JsonLd } from "@/components/common/json-ld";
@@ -19,6 +20,7 @@ import { Rating } from "@/components/common/rating";
 import { Section } from "@/components/common/section";
 import { LocationMap } from "@/components/discovery/location-map";
 import { SaveBusinessButton } from "@/components/discovery/save-business-button";
+import { StickyBookBar } from "@/components/discovery/sticky-book-bar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -135,6 +137,16 @@ export default async function BusinessPage({
   const heroImage =
     business.cover_image_url ?? fallbackBusinessImage(business.category, business.slug);
 
+  const cheapest = business.services.reduce<(typeof business.services)[number] | null>(
+    (lowest, service) =>
+      !lowest || service.price_cents < lowest.price_cents ? service : lowest,
+    null,
+  );
+  const fromPrice = cheapest
+    ? formatPrice(cheapest.price_cents, cheapest.currency, activeLocale)
+    : null;
+  const search = await getTranslations("search");
+
   const mapsUrl = primaryLocation
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         [primaryLocation.address_line1, primaryLocation.city, primaryLocation.country_code]
@@ -154,59 +166,70 @@ export default async function BusinessPage({
         ])}
       />
 
-      {/* Hero */}
-      <div className="bg-secondary relative h-44 w-full overflow-hidden sm:h-64">
+      {/* Hero. The photograph shares a view-transition name with its search
+          card, so it travels from the card into this frame. */}
+      <div className="bg-secondary relative h-52 w-full overflow-hidden sm:h-80">
         {heroImage ? (
-          <Image
-            src={heroImage}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          <ViewTransition name={`cover-${business.slug}`} share="glowa-morph" default="none">
+            <div className="absolute inset-0">
+              <Image
+                src={heroImage}
+                alt=""
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
+          </ViewTransition>
         ) : (
           <div className="from-brand-soft/70 via-secondary to-brand-sage/40 h-full bg-gradient-to-br" />
         )}
+        <div
+          aria-hidden
+          className="from-background via-background/10 absolute inset-0 bg-gradient-to-t to-transparent"
+        />
       </div>
 
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
-        <div className="-mt-12 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end sm:justify-between">
+        {/* Only the logo overlaps the photograph. The category badge used to
+            sit above the name inside the overlapping row, and the photo's
+            edge cut it in half. */}
+        <div className="glowa-enter relative -mt-14 flex flex-col gap-5 sm:-mt-16 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-end gap-4">
-            <Avatar className="border-background size-24 border-4 shadow-md sm:size-28">
+            <Avatar className="border-background size-24 border-4 shadow-[var(--shadow-lift)] sm:size-28">
               {business.logo_url ? <AvatarImage src={business.logo_url} alt="" /> : null}
-              <AvatarFallback className="bg-card text-primary">
-                <Sparkles className="size-7" aria-hidden />
+              <AvatarFallback className="bg-card text-primary font-heading text-3xl">
+                {business.name.charAt(0) || <Sparkles className="size-7" aria-hidden />}
               </AvatarFallback>
             </Avatar>
-            <div className="pb-1">
-              <Badge variant="outline" className="mb-2 font-normal">
-                {categories(business.category)}
-              </Badge>
-              <h1 className="font-heading text-2xl leading-tight sm:text-3xl">
-                {business.name}
-              </h1>
-            </div>
+            <h1 className="font-heading pb-1 text-3xl leading-tight text-balance sm:text-4xl">
+              {business.name}
+            </h1>
           </div>
 
           {/* Booking is why anyone is on this page. On a phone it was 97px
               wide next to a 162px "save to favourites" - the secondary action
               outweighing the primary. Now it takes the row and saving shrinks
               to an icon. */}
-          <div className="flex items-center gap-2 pb-1">
-            <Button asChild size="lg" className="flex-1 sm:flex-none">
+          <div id="book-cta" className="flex items-center gap-2 pb-1">
+            <Button asChild size="lg" className="shadow-primary/25 h-11 flex-1 px-6 shadow-lg sm:flex-none">
               <Link href={`/business/${slug}/book`}>{t("bookNow")}</Link>
             </Button>
             {/* Matches the booking button's height so the pair reads as one row. */}
             <SaveBusinessButton
               businessId={business.id}
               variant="icon"
-              className="size-9 shrink-0"
+              className="size-11 shrink-0"
             />
           </div>
         </div>
 
-        <div className="text-muted-foreground mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        <div className="text-muted-foreground mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+          <Badge variant="secondary" className="font-medium">
+            {categories(business.category)}
+          </Badge>
+
           {business.rating.review_count > 0 ? (
             <span className="inline-flex items-center gap-2">
               <Rating
@@ -312,7 +335,7 @@ export default async function BusinessPage({
                     return (
                       <li
                         key={service.id}
-                        className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
+                        className="hover:bg-card -mx-3 flex flex-col gap-3 rounded-2xl px-3 py-4 transition-colors duration-300 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
                       >
                         <div className="min-w-0 space-y-1">
                           <div className="flex flex-wrap items-center gap-2">
@@ -335,7 +358,11 @@ export default async function BusinessPage({
                             {price ? <span className="text-foreground">{price}</span> : null}
                           </p>
                         </div>
-                        <Button asChild variant="outline" className="shrink-0">
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="hover:bg-primary hover:text-primary-foreground hover:border-primary shrink-0 rounded-full px-5"
+                        >
                           <Link href={`/business/${slug}/book?service=${service.id}`}>
                             {t("book")}
                           </Link>
@@ -353,7 +380,7 @@ export default async function BusinessPage({
               ) : (
                 <ul className="grid gap-4 sm:grid-cols-2">
                   {business.staff_profiles.map((member) => (
-                    <li key={member.id} className="glowa-card flex items-center gap-3 p-4">
+                    <li key={member.id} className="glowa-card glowa-lift flex items-center gap-3 rounded-2xl p-4">
                       <Avatar className="size-11">
                         {member.avatar_url ? (
                           <AvatarImage src={member.avatar_url} alt="" />
@@ -530,6 +557,18 @@ export default async function BusinessPage({
           </aside>
         </div>
       </div>
+
+      <StickyBookBar
+        watchId="book-cta"
+        href={`/business/${slug}/book`}
+        label={t("bookNow")}
+        name={business.name}
+        detail={
+          [fromPrice ? search("priceFrom", { price: fromPrice }) : null, primaryLocation?.city]
+            .filter(Boolean)
+            .join(" · ") || null
+        }
+      />
     </main>
   );
 }

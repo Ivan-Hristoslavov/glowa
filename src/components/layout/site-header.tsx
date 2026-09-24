@@ -20,7 +20,7 @@ export async function SiteHeader() {
   const t = await getTranslations("nav");
 
   return (
-    <header className="border-border/70 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
+    <header className="glowa-header border-border/70 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="glowa-focus rounded-md" aria-label="glowa">
@@ -29,14 +29,14 @@ export async function SiteHeader() {
           <nav className="hidden items-center gap-5 sm:flex">
             <Link
               href="/search"
-              className="text-muted-foreground hover:text-foreground glowa-focus inline-flex items-center gap-1.5 rounded-md text-sm font-medium transition-colors"
+              className="text-muted-foreground hover:text-foreground glowa-focus relative inline-flex items-center gap-1.5 rounded-md text-sm font-medium transition-colors after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100"
             >
               <Search className="size-4" aria-hidden />
               {t("discover")}
             </Link>
             <Link
               href="/pricing"
-              className="text-muted-foreground hover:text-foreground glowa-focus rounded-md text-sm font-medium transition-colors"
+              className="text-muted-foreground hover:text-foreground glowa-focus relative rounded-md text-sm font-medium transition-colors after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100"
             >
               {t("pricing")}
             </Link>

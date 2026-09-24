@@ -9,10 +9,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("signUp") };
 }
 
-export default async function SignupPage({ params }: PageProps<"/[locale]/signup">) {
+export default async function SignupPage({
+  params,
+  searchParams,
+}: PageProps<"/[locale]/signup">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const { next } = await searchParams;
   const t = await getTranslations("auth");
 
   return (
@@ -21,7 +25,11 @@ export default async function SignupPage({ params }: PageProps<"/[locale]/signup
         <h1 className="font-heading text-2xl">{t("signupTitle")}</h1>
         <p className="text-muted-foreground text-sm">{t("signupSubtitle")}</p>
       </div>
-      <AuthForm mode="sign-up" action={signUpAction} />
+      <AuthForm
+        mode="sign-up"
+        action={signUpAction}
+        nextPath={typeof next === "string" ? next : undefined}
+      />
     </div>
   );
 }

@@ -1,6 +1,15 @@
 "use client";
 
-import { CalendarDays, Heart, LogOut, Settings, Star, User2 } from "lucide-react";
+import {
+  CalendarDays,
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Star,
+  Store,
+  User2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +29,7 @@ type AccountMenuProps = {
   name: string | null;
   email: string | null;
   avatarUrl: string | null;
+  hasBusiness: boolean;
 };
 
 const LINKS = [
@@ -30,7 +40,7 @@ const LINKS = [
   { href: "/settings", key: "settings", icon: Settings },
 ] as const;
 
-export function AccountMenu({ name, email, avatarUrl }: AccountMenuProps) {
+export function AccountMenu({ name, email, avatarUrl, hasBusiness }: AccountMenuProps) {
   const t = useTranslations("nav");
   const auth = useTranslations("auth");
   const initials = (name ?? email ?? "?").trim().charAt(0).toUpperCase();
@@ -61,6 +71,22 @@ export function AccountMenu({ name, email, avatarUrl }: AccountMenuProps) {
             </span>
           ) : null}
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {/* The way in to the business app. An owner has a dashboard; anyone
+            else is one form away from having one. */}
+        <DropdownMenuItem asChild>
+          <Link
+            href={hasBusiness ? "/dashboard" : "/onboarding"}
+            className="text-primary focus:text-primary font-medium"
+          >
+            {hasBusiness ? (
+              <LayoutDashboard className="size-4" aria-hidden />
+            ) : (
+              <Store className="size-4" aria-hidden />
+            )}
+            {hasBusiness ? t("businessDashboard") : t("registerBusiness")}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         {LINKS.map(({ href, key, icon: Icon }) => (
           <DropdownMenuItem key={href} asChild>

@@ -128,7 +128,9 @@ export default async function PricingPage({
                 className="mt-6 w-full"
               >
                 {PRICING_IS_PUBLISHED ? (
-                  <Link href="/signup">{t("cta.start")}</Link>
+                  <Link href={`/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`}>
+                    {t("cta.start")}
+                  </Link>
                 ) : (
                   <a href="mailto:hello@glowa.bg">{t("cta.contact")}</a>
                 )}

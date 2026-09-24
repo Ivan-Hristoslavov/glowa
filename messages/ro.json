@@ -50,7 +50,10 @@
     "reviews": "Recenziile mele",
     "settings": "Setări",
     "menu": "Meniu",
-    "myAccount": "Contul meu"
+    "myAccount": "Contul meu",
+    "businessDashboard": "Panou business",
+    "registerBusiness": "Înregistrează-ți salonul",
+    "forBusiness": "Pentru business"
   },
   "categories": {
     "hair_salon": "Salon de coafură",
@@ -159,7 +162,71 @@
       "title": "De la tuns la o zi de spa.",
       "subtitle": "Alege ce cauți și vezi saloanele care îl oferă."
     },
-    "ownerPrompt": "Ai un salon?"
+    "ownerPrompt": "Ai un salon?",
+    "popular": "Populare:",
+    "quick": {
+      "haircut": "Tuns",
+      "color": "Vopsit",
+      "manicure": "Manichiură",
+      "massage": "Masaj",
+      "lashes": "Gene",
+      "beard": "Barbă"
+    },
+    "typing": {
+      "p1": "Tuns în București",
+      "p2": "Manichiură cu gel",
+      "p3": "Masaj pentru doi",
+      "p4": "Frizer lângă mine"
+    },
+    "mock": {
+      "confirmed": "Programare confirmată",
+      "service": "Tuns și coafat",
+      "when": "Azi · 14:30",
+      "freeToday": "Libere azi",
+      "reminder": "Memento",
+      "reminderBody": "Mâine la 10:00 cu Maria",
+      "caption": "Previzualizare ilustrativă a aplicației"
+    },
+    "how": {
+      "eyebrow": "CUM FUNCȚIONEAZĂ",
+      "title": "O programare de frumusețe în trei atingeri.",
+      "subtitle": "Fără telefoane, fără așteptare, fără „vă revenim noi”.",
+      "step1": {
+        "title": "Caută",
+        "body": "Caută după serviciu, salon sau oraș și vezi prețurile reale."
+      },
+      "step2": {
+        "title": "Alege ora",
+        "body": "Locurile libere sunt în timp real — alegi și gata."
+      },
+      "step3": {
+        "title": "Vino și bucură-te",
+        "body": "Primești confirmare și un memento înainte de vizită."
+      }
+    },
+    "business": {
+      "eyebrow": "PENTRU SALOANE ȘI SPECIALIȘTI",
+      "title": "Tot salonul tău. Pe un singur ecran liniștit.",
+      "body": "Calendar pentru echipă, fișe de clienți, mementouri și programări online — configurate în câteva minute, în limba ta.",
+      "cta": "Înregistrează-ți salonul",
+      "secondary": "Vezi prețurile",
+      "calendarTitle": "Azi",
+      "live": "Live",
+      "appt1": "Vopsit",
+      "appt2": "Tuns bărbați",
+      "appt3": "Manichiură",
+      "appt4": "Coafat",
+      "appt5": "Consultație",
+      "staff1": "Ana",
+      "staff2": "Maria",
+      "staff3": "Andrei"
+    },
+    "final": {
+      "title": "Mai puține griji încep cu o programare.",
+      "body": "Găsește un salon lângă tine sau lasă-ți clienții să se programeze online.",
+      "ctaCustomer": "Găsește un salon",
+      "ctaBusiness": "Am un salon"
+    }
   },
   "auth": {
     "loginTitle": "Bine ai revenit",
@@ -201,7 +268,25 @@
       "mismatch": "Parolele nu se potrivesc.",
       "expired": "Linkul a expirat sau a fost deja folosit. Cere unul nou.",
       "generic": "Schimbarea nu a reușit. Încearcă din nou."
-    }
+    },
+    "showPassword": "Arată parola",
+    "hidePassword": "Ascunde parola",
+    "passwordHint": "Cel puțin 8 caractere",
+    "haveAccountTab": "Am cont",
+    "newAccountTab": "Sunt nou aici",
+    "inlineTitle": "Ultimul pas: intră în cont sau creează unul",
+    "inlineSubtitle": "Alegerea ta e salvată. Durează mai puțin de un minut.",
+    "signedIn": "Gata, ai intrat în cont.",
+    "fieldErrors": {
+      "name": "Introdu numele complet.",
+      "email": "Introdu o adresă de email validă.",
+      "password": "Parola trebuie să aibă cel puțin 8 caractere."
+    },
+    "sideTitle": "Frumusețea e mai simplă când totul e într-un singur loc.",
+    "sideBody": "Programări în câteva secunde, mementouri la timp și saloanele preferate în buzunar.",
+    "sidePoint1": "Locuri libere în timp real",
+    "sidePoint2": "Memento înainte de fiecare vizită",
+    "sidePoint3": "Gratuit pentru clienți"
   },
   "search": {
     "title": "Găsește-ți următoarea programare",
@@ -229,7 +314,12 @@
       "rating": "După rating",
       "price": "După preț",
       "name": "După nume"
-    }
+    },
+    "anyDay": "Orice zi",
+    "showResults": "Arată rezultatele",
+    "otherDay": "Altă dată",
+    "allShort": "Toate",
+    "filtersTitle": "Filtre și sortare"
   },
   "business": {
     "about": "Despre",
@@ -303,7 +393,12 @@
       "slot_taken": "Cineva tocmai a rezervat ora. Alege alta.",
       "generic": "Programarea nu a reușit. Încearcă din nou."
     },
-    "stepsLabel": "Pași"
+    "stepsLabel": "Pași",
+    "morning": "Dimineața",
+    "afternoon": "După-amiaza",
+    "evening": "Seara",
+    "earlier": "Zile anterioare",
+    "later": "Zile următoare"
   },
   "waitlist": {
     "cta": "Intră pe lista de așteptare",
@@ -516,7 +611,11 @@
     "nextAppointment": "Următoarea programare",
     "noNextAppointment": "Nicio programare viitoare",
     "bookSomething": "Fă o programare",
-    "quickLinks": "Linkuri rapide"
+    "quickLinks": "Linkuri rapide",
+    "ownerTitle": "Ai un salon sau lucrezi independent?",
+    "ownerBody": "Creează profilul afacerii în două minute și primește programări online.",
+    "ownerDashboardTitle": "Panou business",
+    "ownerDashboardBody": "Calendarul, clienții și programările salonului tău."
   },
   "errors": {
     "notFoundTitle": "Pagina nu a fost găsită",
@@ -604,7 +703,36 @@
       "draftBody": "Ciornele nu apar în căutare și nu primesc programări. Publică după ce ai setat serviciile și programul.",
       "publish": "Publică afacerea",
       "published": "Afacerea a fost publicată",
-      "noMetrics": "Încă nu există date pentru această perioadă."
+      "noMetrics": "Încă nu există date pentru această perioadă.",
+      "setup": {
+        "title": "Configurează-ți salonul",
+        "body": "{done} din {total} pași sunt gata. Încă puțin și clienții se pot programa online.",
+        "created": {
+          "title": "Afacerea a fost creată",
+          "body": "",
+          "cta": ""
+        },
+        "services": {
+          "title": "Adaugă primul serviciu",
+          "body": "Nume, durată și preț — din acestea aleg clienții.",
+          "cta": "Adaugă serviciu"
+        },
+        "hours": {
+          "title": "Verifică programul",
+          "body": "Implicit este marți–sâmbătă, 09:00–19:00.",
+          "cta": "Verifică"
+        },
+        "profile": {
+          "title": "Spune câte ceva despre salon",
+          "body": "O descriere scurtă și o fotografie fac profilul mai de încredere.",
+          "cta": "Completează"
+        },
+        "publish": {
+          "title": "Publică",
+          "body": "Salonul apare în căutare și primește programări.",
+          "cta": ""
+        }
+      }
     },
     "calendar": {
       "title": "Calendar",
@@ -1059,5 +1187,19 @@
       "q5": "Pot schimba planul?",
       "a5": "Da, oricând. Schimbarea se aplică din următoarea perioadă de facturare."
     }
+  },
+  "footer": {
+    "customers": "Pentru clienți",
+    "business": "Pentru business",
+    "company": "Glowa",
+    "findSalon": "Găsește un salon",
+    "myBookings": "Programările mele",
+    "login": "Intră în cont",
+    "register": "Înregistrează un salon",
+    "pricing": "Prețuri",
+    "dashboard": "Panou business",
+    "contact": "Contact",
+    "languages": "Български · English · Română",
+    "rights": "© {year} Glowa. Toate drepturile rezervate."
   }
 }

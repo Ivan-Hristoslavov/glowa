@@ -1,18 +1,12 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
 import { AccountMenu } from "@/components/layout/account-menu";
+import { useAccount } from "@/components/layout/use-account";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/client";
-
-type Account = {
-  name: string | null;
-  email: string | null;
-  avatarUrl: string | null;
-};
 
 /**
  * The only part of the header that depends on who is looking.
@@ -26,58 +20,8 @@ type Account = {
  */
 export function HeaderAccount() {
   const t = useTranslations("nav");
-  const [account, setAccount] = useState<Account | null>(null);
-  const [resolved, setResolved] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-    let active = true;
-
-    async function load(userId: string | null, email: string | null) {
-      if (!userId) {
-        if (active) {
-          setAccount(null);
-          setResolved(true);
-        }
-        return;
-      }
-
-      const { data } = await supabase
-        .from("profiles")
-        .select("full_name, avatar_url")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if (!active) return;
-      setAccount({
-        name: data?.full_name ?? null,
-        email,
-        avatarUrl: data?.avatar_url ?? null,
-      });
-      setResolved(true);
-    }
-
-    // `getClaims` verifies the JWT signature rather than trusting the stored
-    // session, the same rule the server side follows.
-    supabase.auth.getClaims().then(({ data }) => {
-      const claims = data?.claims;
-      const userId = typeof claims?.sub === "string" ? claims.sub : null;
-      const email = typeof claims?.email === "string" ? claims.email : null;
-      void load(userId, email);
-    });
-
-    // Signing in or out in another tab should be reflected here too.
-    const { data: subscription } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        void load(session?.user?.id ?? null, session?.user?.email ?? null);
-      },
-    );
-
-    return () => {
-      active = false;
-      subscription.subscription.unsubscribe();
-    };
-  }, []);
+  const locale = useLocale();
+  const { account, resolved } = useAccount();
 
   if (!resolved) {
     // Reserves the width of the widest state so the header does not jump.
@@ -90,6 +34,7 @@ export function HeaderAccount() {
         name={account.name}
         email={account.email}
         avatarUrl={account.avatarUrl}
+        hasBusiness={account.hasBusiness}
       />
     );
   }
@@ -99,8 +44,16 @@ export function HeaderAccount() {
       <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
         <Link href="/login">{t("login")}</Link>
       </Button>
-      <Button asChild size="sm" className="hidden sm:inline-flex">
-        <Link href="/signup">{t("getStarted")}</Link>
+      {/* Customers create an account where they need one - at the end of a
+          booking. This button is for the other audience: salons. */}
+      <Button asChild size="sm" className="group hidden sm:inline-flex">
+        <Link href={`/signup?next=${encodeURIComponent(`/${locale}/onboarding`)}`}>
+          {t("forBusiness")}
+          <ArrowRight
+            className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </Link>
       </Button>
     </>
   );

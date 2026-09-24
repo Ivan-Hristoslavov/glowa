@@ -50,7 +50,10 @@
     "reviews": "My reviews",
     "settings": "Settings",
     "menu": "Menu",
-    "myAccount": "My account"
+    "myAccount": "My account",
+    "businessDashboard": "Business dashboard",
+    "registerBusiness": "Register your salon",
+    "forBusiness": "For business"
   },
   "categories": {
     "hair_salon": "Hair salon",
@@ -159,7 +162,71 @@
       "title": "From a haircut to a spa day.",
       "subtitle": "Pick what you are after and see the places that offer it."
     },
-    "ownerPrompt": "Run a salon?"
+    "ownerPrompt": "Run a salon?",
+    "popular": "Popular:",
+    "quick": {
+      "haircut": "Haircut",
+      "color": "Colour",
+      "manicure": "Manicure",
+      "massage": "Massage",
+      "lashes": "Lashes",
+      "beard": "Beard"
+    },
+    "typing": {
+      "p1": "Haircut in Sofia",
+      "p2": "Gel manicure",
+      "p3": "Massage for two",
+      "p4": "Barber near me"
+    },
+    "mock": {
+      "confirmed": "Booking confirmed",
+      "service": "Cut and blow-dry",
+      "when": "Today · 14:30",
+      "freeToday": "Free today",
+      "reminder": "Reminder",
+      "reminderBody": "Tomorrow at 10:00 with Maria",
+      "caption": "Illustrative app preview"
+    },
+    "how": {
+      "eyebrow": "HOW IT WORKS",
+      "title": "A beauty appointment in three taps.",
+      "subtitle": "No phone calls, no waiting on hold, no \"we'll get back to you\".",
+      "step1": {
+        "title": "Find",
+        "body": "Search by service, salon or city and see real prices."
+      },
+      "step2": {
+        "title": "Pick a time",
+        "body": "Free slots are live — choose one and you're done."
+      },
+      "step3": {
+        "title": "Show up and enjoy",
+        "body": "You get a confirmation and a reminder before your visit."
+      }
+    },
+    "business": {
+      "eyebrow": "FOR SALONS AND PROFESSIONALS",
+      "title": "Your whole salon. On one calm screen.",
+      "body": "A team calendar, client records, reminders and online booking — set up in minutes, in your language.",
+      "cta": "Register your salon",
+      "secondary": "See pricing",
+      "calendarTitle": "Today",
+      "live": "Live",
+      "appt1": "Colour",
+      "appt2": "Men's cut",
+      "appt3": "Manicure",
+      "appt4": "Blow-dry",
+      "appt5": "Consultation",
+      "staff1": "Nikki",
+      "staff2": "Maria",
+      "staff3": "George"
+    },
+    "final": {
+      "title": "Less hassle starts with one appointment.",
+      "body": "Find a salon near you, or let your clients book you online.",
+      "ctaCustomer": "Find a salon",
+      "ctaBusiness": "I own a salon"
+    }
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -201,7 +268,25 @@
       "mismatch": "The passwords do not match.",
       "expired": "That link has expired or was already used. Request a new one.",
       "generic": "The change did not go through. Please try again."
-    }
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordHint": "At least 8 characters",
+    "haveAccountTab": "I have an account",
+    "newAccountTab": "I'm new here",
+    "inlineTitle": "Last step: sign in or create an account",
+    "inlineSubtitle": "Your choice is saved. It takes less than a minute.",
+    "signedIn": "Done, you're signed in.",
+    "fieldErrors": {
+      "name": "Enter your full name.",
+      "email": "Enter a valid email address.",
+      "password": "Your password needs at least 8 characters."
+    },
+    "sideTitle": "Beauty is easier when everything is in one place.",
+    "sideBody": "Book in seconds, get reminded on time, and keep the salons you love in your pocket.",
+    "sidePoint1": "Live free slots",
+    "sidePoint2": "A reminder before every visit",
+    "sidePoint3": "Free for clients"
   },
   "search": {
     "title": "Find your next appointment",
@@ -229,7 +314,12 @@
       "rating": "By rating",
       "price": "By price",
       "name": "By name"
-    }
+    },
+    "anyDay": "Any day",
+    "showResults": "Show results",
+    "otherDay": "Other date",
+    "allShort": "All",
+    "filtersTitle": "Filters and sorting"
   },
   "business": {
     "about": "About",
@@ -303,7 +393,12 @@
       "slot_taken": "Someone just took that time. Pick another one.",
       "generic": "The booking did not go through. Please try again."
     },
-    "stepsLabel": "Steps"
+    "stepsLabel": "Steps",
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "earlier": "Earlier days",
+    "later": "Later days"
   },
   "waitlist": {
     "cta": "Join the waitlist",
@@ -516,7 +611,11 @@
     "nextAppointment": "Next appointment",
     "noNextAppointment": "No upcoming appointment",
     "bookSomething": "Book an appointment",
-    "quickLinks": "Quick links"
+    "quickLinks": "Quick links",
+    "ownerTitle": "Own a salon or work independently?",
+    "ownerBody": "Set up your business in two minutes and start taking bookings online.",
+    "ownerDashboardTitle": "Business dashboard",
+    "ownerDashboardBody": "Your salon's calendar, clients and bookings."
   },
   "errors": {
     "notFoundTitle": "Page not found",
@@ -604,7 +703,36 @@
       "draftBody": "Drafts do not appear in search and cannot take bookings. Publish once your services and hours are set.",
       "publish": "Publish business",
       "published": "Business published",
-      "noMetrics": "No data for this period yet."
+      "noMetrics": "No data for this period yet.",
+      "setup": {
+        "title": "Set up your salon",
+        "body": "{done} of {total} steps done. A little more and clients can book you online.",
+        "created": {
+          "title": "Business created",
+          "body": "",
+          "cta": ""
+        },
+        "services": {
+          "title": "Add your first service",
+          "body": "Name, duration and price — this is what clients choose from.",
+          "cta": "Add a service"
+        },
+        "hours": {
+          "title": "Check your opening hours",
+          "body": "The default is Tuesday–Saturday, 09:00–19:00.",
+          "cta": "Check"
+        },
+        "profile": {
+          "title": "Tell people about your salon",
+          "body": "A short description and a photo make your page more trustworthy.",
+          "cta": "Complete"
+        },
+        "publish": {
+          "title": "Publish",
+          "body": "Your salon appears in search and starts taking bookings.",
+          "cta": ""
+        }
+      }
     },
     "calendar": {
       "title": "Calendar",
@@ -1059,5 +1187,19 @@
       "q5": "Can I change plan?",
       "a5": "Yes, at any time. The change applies from the next billing period."
     }
+  },
+  "footer": {
+    "customers": "For clients",
+    "business": "For business",
+    "company": "Glowa",
+    "findSalon": "Find a salon",
+    "myBookings": "My bookings",
+    "login": "Sign in",
+    "register": "Register a salon",
+    "pricing": "Pricing",
+    "dashboard": "Business dashboard",
+    "contact": "Contact",
+    "languages": "Български · English · Română",
+    "rights": "© {year} Glowa. All rights reserved."
   }
 }

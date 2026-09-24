@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Onest, Playfair_Display } from "next/font/google";
 import { notFound } from "next/navigation";
 
+import { MotionProvider } from "@/components/motion/motion-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { localeHrefLang, routing } from "@/i18n/routing";
@@ -125,8 +126,10 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider>
-            {children}
-            <Toaster position="top-center" />
+            <MotionProvider>
+              {children}
+              <Toaster position="top-center" />
+            </MotionProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

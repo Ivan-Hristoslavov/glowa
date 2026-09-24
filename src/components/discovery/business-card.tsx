@@ -1,6 +1,7 @@
 import { MapPin, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
+import { ViewTransition } from "react";
 
 import { Rating } from "@/components/common/rating";
 import { Badge } from "@/components/ui/badge";
@@ -32,17 +33,24 @@ export async function BusinessCard({ business, locale }: BusinessCardProps) {
   return (
     <Link
       href={`/business/${business.slug}`}
-      className="glowa-focus group glowa-card hover:shadow-lift focus-visible:ring-ring/60 flex flex-col overflow-hidden transition-shadow duration-300 focus-visible:ring-2 focus-visible:outline-none"
+      className="glowa-focus group glowa-card glowa-lift focus-visible:ring-ring/60 flex h-full flex-col overflow-hidden rounded-3xl focus-visible:ring-2 focus-visible:outline-none"
     >
       <div className="bg-secondary relative aspect-[16/10] overflow-hidden">
         {image ? (
-          <Image
-            src={image}
-            alt=""
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
+          // The same name sits on the salon page's hero, so the photograph
+          // travels from this card into the page instead of the page swapping
+          // out from under it.
+          <ViewTransition name={`cover-${business.slug}`} share="glowa-morph" default="none">
+            <div className="absolute inset-0">
+              <Image
+                src={image}
+                alt=""
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-transform duration-[900ms] ease-[var(--ease-glowa)] group-hover:scale-[1.06]"
+              />
+            </div>
+          </ViewTransition>
         ) : (
           <div className="from-brand-soft/70 via-secondary to-brand-sage/40 flex h-full items-center justify-center bg-gradient-to-br">
             <Sparkles className="text-primary/70 size-7" aria-hidden />
@@ -58,11 +66,13 @@ export async function BusinessCard({ business, locale }: BusinessCardProps) {
         ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-2 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-heading text-base leading-snug">{business.name}</h3>
+          <h3 className="font-heading group-hover:text-primary text-lg leading-snug transition-colors">
+            {business.name}
+          </h3>
           {price ? (
-            <span className="text-muted-foreground shrink-0 text-xs">
+            <span className="bg-secondary text-secondary-foreground shrink-0 rounded-full px-2.5 py-1 text-xs font-medium tabular-nums">
               {t("priceFrom", { price })}
             </span>
           ) : null}

@@ -1,7 +1,8 @@
-import { CalendarX2, CheckCircle2, Clock, MapPin, User2 } from "lucide-react";
+import { CalendarX2, Clock, MapPin, User2 } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { BookingCelebration } from "@/components/booking/booking-celebration";
 import { EmptyState } from "@/components/common/empty-state";
 import { Rating } from "@/components/common/rating";
 import { AddToCalendar } from "@/components/customer/add-to-calendar";
@@ -9,7 +10,6 @@ import { AppointmentStatusBadge } from "@/components/customer/appointment-status
 import { CancelAppointmentDialog } from "@/components/customer/cancel-appointment-dialog";
 import { RescheduleDialog } from "@/components/customer/reschedule-dialog";
 import { ReviewForm } from "@/components/customer/review-form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
@@ -96,11 +96,7 @@ export default async function BookingDetailPage({
   return (
     <div className="space-y-6">
       {justBooked ? (
-        <Alert>
-          <CheckCircle2 className="size-4" aria-hidden />
-          <AlertTitle>{booking("successTitle")}</AlertTitle>
-          <AlertDescription>{booking("successBody")}</AlertDescription>
-        </Alert>
+        <BookingCelebration title={booking("successTitle")} body={booking("successBody")} />
       ) : null}
 
       <div className="flex flex-wrap items-start justify-between gap-4">
