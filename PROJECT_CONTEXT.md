@@ -623,10 +623,14 @@ accepts as null (`apply_stripe_subscription.p_current_period_end`) is cast at
 the call site instead of editing the generated file.
 
 **Deploying.** Vercel project `glowa` (team "ivan-hristoslavov's projects",
-region `dub1`). A push to any branch builds a preview. Production is created
-explicitly: redeploy the chosen preview with `target: production`, or run
-`vercel --prod`. A preview cannot simply be promoted, because it was built
-with preview env vars.
+region `dub1`). **`main` is Vercel's production branch: a push to `main`
+deploys production** (confirmed 09-25, when `main` was fast-forwarded to
+`6caa39d` and Vercel built it as production on its own). A push to any other
+branch builds a preview. Until 09-25 `main` stood at Prompt 3 and all work
+landed on `feat/growth-notifications-and-production-readiness`, so production
+was created by hand - redeploying a preview with `target: production` (a
+preview cannot simply be promoted, because it was built with preview env
+vars). That still works, but the normal path is now: PR → merge to `main`.
 
 The `100100` backfill has to set `app.trusted_write`: a migration runs as the
 owner, which the customer guard trigger treats as "not a member" and refuses.
