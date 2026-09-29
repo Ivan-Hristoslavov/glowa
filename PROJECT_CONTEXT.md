@@ -47,6 +47,34 @@ came out of it: "My bookings" listed a salon owner's whole diary as their own
 visits (§8l). Each piece was used in Chromium against the local stack;
 `npm run check` and `npm run build` pass.
 
+**09-29 status check** (read-only; no code changed). Production runs `64e0198`
+(Vercel READY), the live database has all 37 repository migrations, and
+`npm run check` passes (83 tests) once `npx next typegen` has generated the
+`PageProps`/`LayoutProps` globals, which a fresh clone does not have. What is
+not fine:
+- **Both production crons have failed every day since 09-25**: Vercel runtime
+  logs show `Missing server environment variable SUPABASE_SECRET_KEY` from
+  `/api/cron/notifications` and `/api/cron/payments`. `CRON_SECRET` is set
+  (the bearer check passed). 12 emails queued on 09-24 have never been sent.
+- **The worker sends stale messages** (TODO 30): it does not check the
+  appointment time, so once the key is set the 09-24 backlog goes out,
+  reminders included; and with the daily Hobby cron (07:00 UTC) the default
+  24-hour reminder for a visit before ~10:00 Sofia time is sent after it.
+  Booking confirmations wait for the next cron too, up to a day.
+- **Production is the development project.** The QA fixture
+  (`qa.customer@glowa.test`, owner of `demo-hair-lab-sofia`) is in it (§10).
+  The Supabase org is on the Free plan, and Vercel Hobby is for non-commercial
+  use, so both need a paid plan before salons are charged.
+- **Real usage is zero**: 2 auth users (the developer and the QA fixture),
+  4 salons, all `is_demo`, no subscriptions, no connected Stripe accounts.
+- Copy: the hero promises "Потвърждение веднага", but an online booking is
+  saved `pending` ("Чака потвърждение") until the salon confirms, and there is
+  no auto-confirm setting. The `/for-business` calendar mock hard-codes
+  "10:30 · 3 h" (English unit in every locale).
+- Name: a web search for the name surfaces GLOWWA (hair supplements, "trusted
+  by hair & skin pros") and "Glowa Hair Food" in retail, the same sector.
+  Relevant to the open name decision (§4).
+
 Verified at the end of Prompt 3: `npm run lint`, `npm run typecheck` and
 `npm run build` pass (68 static entries, 28 routes). The business app was
 exercised in the browser as a real owner: dashboard metrics, calendar with live
@@ -1873,3 +1901,12 @@ traction claim may appear unless it is real.
     days' notice to every business. The
     `/pricing` page has a savings calculator against the lowest published
     competitor rates, rounded in their favour; competitors are not named there.
+30. **Stale notifications** (found 09-29, §1): the worker should skip a
+    `reminder` whose appointment has started, and booking should kick the
+    worker with `after()` (as it already does for payments) so confirmations
+    do not wait for the daily cron. Until then, clear the 09-24 backlog
+    (mark it `skipped`) before setting `SUPABASE_SECRET_KEY` in Vercel.
+31. **Before charging anyone, infrastructure**: a production Supabase project
+    separate from development (or at least remove the QA fixture and demo
+    owners' test data), Supabase Pro for backups, Vercel Pro (Hobby is
+    non-commercial and daily-cron only).
