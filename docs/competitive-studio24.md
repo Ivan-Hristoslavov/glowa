@@ -130,8 +130,9 @@ Salon side - these decide whether a salon moves:
 6. **A "we move you" onboarding** (a service, not code): build the salon's page
    and load its services, as Studio24 does by phone. The import (shipped)
    removes the data half.
-7. **Service × city landing pages** (`/frizyor-sofia`) - their main source of
-   traffic. Ours stop at `/search?place=`.
+7. **Service × city landing pages** - their main source of traffic. Shipped
+   10-05 as `/salons/hair-salon/sofia` (indexed only when a real salon is on
+   the page; in the sitemap). Needs real salons to be worth anything.
 8. **Embeddable booking widget** for the salon's own site and Google
    Reservations. Stripe Checkout cannot be framed, so the widget has to hand
    the deposit step to the top window.

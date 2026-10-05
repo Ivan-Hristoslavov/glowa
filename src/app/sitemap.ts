@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 
 import { routing } from "@/i18n/routing";
 import { publicEnv } from "@/lib/env";
+import { matchPlace } from "@/lib/places";
+import { landingPath } from "@/lib/seo/landing";
 import { createPublicClient } from "@/lib/supabase/public";
 
 /**
@@ -60,6 +62,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // A sitemap that 500s is worse than one listing only the static pages.
   if (error || !businesses) return entries;
+
+  // Service × town pages, only for combinations that have a real salon: a page
+  // with nobody on it is kept out of the index (and out of this list).
+  const { data: placed } = await supabase
+    .from("businesses")
+    .select("category, locations!inner(city)")
+    .eq("status", "active")
+    .eq("is_demo", false)
+    .limit(20_000);
+  const seen = new Set<string>();
+  for (const row of placed ?? []) {
+    for (const location of row.locations ?? []) {
+      const place = matchPlace(location.city);
+      if (!place || row.category === "other") continue;
+      const path = landingPath(row.category, place);
+      if (seen.has(path)) continue;
+      seen.add(path);
+      for (const locale of routing.locales) {
+        entries.push({
+          url: `${BASE}/${locale}${path}`,
+          changeFrequency: "daily",
+          priority: 0.7,
+          alternates: alternates(path),
+        });
+      }
+    }
+  }
 
   for (const business of businesses) {
     const path = `/business/${business.slug}`;

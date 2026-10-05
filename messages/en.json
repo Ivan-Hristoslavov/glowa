@@ -1743,19 +1743,22 @@
         "name": "Solo",
         "tagline": "For one professional working on their own.",
         "seats": "1 professional",
-        "audience": "Small business"
+        "audience": "Small business",
+        "outcome": "You work alone and the phone never stops. Clients book themselves, a deposit protects your slots from no-shows, and invitations bring the regulars back."
       },
       "studio": {
         "name": "Studio",
         "tagline": "For a small team. Less than one seat costs elsewhere.",
         "seats": "Up to 5 professionals",
-        "audience": "Medium business"
+        "audience": "Medium business",
+        "outcome": "A team of up to 5 in one calendar. Everyone has their own schedule, and you see occupancy and revenue and can message clients who haven't been in for a while."
       },
       "salon": {
         "name": "Salon",
         "tagline": "For a large salon with roles, audit and priority help.",
         "seats": "Unlimited team",
-        "audience": "Large business"
+        "audience": "Large business",
+        "outcome": "You're growing: several locations, roles and permissions, an action log and an AI assistant that answers questions about your numbers."
       }
     },
     "features": {
@@ -1845,7 +1848,36 @@
       "savedMonth": "That's {amount} every month.",
       "assumptions": "Assumptions: ~€17 a month for one professional or ~€12 per team seat, and 20% commission on a new client's first visit (minimum ~€5) — the lowest published rates as of September 2026, rounded in the competitor's favour. Excludes VAT and payment fees, which are similar everywhere."
     },
-    "metaTitle": "Pricing — no commission, no contract"
+    "metaTitle": "Pricing — no commission, no contract",
+    "included": {
+      "title": "In every plan",
+      "commission": "0% commission — including clients who find you through GLOWA",
+      "deposits": "No-show deposits paid straight into your own Stripe account",
+      "export": "Export your clients to CSV any time",
+      "import": "Import clients from a file — moving over from another system takes minutes",
+      "languages": "A page in Bulgarian, English and Romanian",
+      "app": "Installs as an app on phone and tablet"
+    },
+    "forClients": {
+      "title": "What your client gets — free",
+      "subtitle": "A salon that is easier to book earns trust before the first visit.",
+      "free": {
+        "title": "No cost to the client",
+        "body": "Booking through GLOWA costs nobody anything."
+      },
+      "instant": {
+        "title": "Instant confirmation",
+        "body": "They see real free times and don't wait for anyone to call back."
+      },
+      "rules": {
+        "title": "Clear rules",
+        "body": "The cancellation window is written before they pick a time. No account blocking."
+      },
+      "remind": {
+        "title": "Reminder and calendar",
+        "body": "An email reminder and one tap to add the booking to their calendar."
+      }
+    }
   },
   "forBusiness": {
     "metaTitle": "GLOWA for salons",
@@ -2054,5 +2086,24 @@
       "body": "Every month the dashboard shows how many visits were booked online, how many clients came back after an invitation and how much in deposits you kept. Counted from your own diary — nothing estimated."
     },
     "seePricing": "See pricing"
+  },
+  "landing": {
+    "metaTitle": "{category} in {city} — book online",
+    "metaDescription": "Free times, prices and photos: {categoryLower} in {city}. Book online in a minute, with instant confirmation and clear cancellation rules.",
+    "h1": "{category} in {city}",
+    "intro": "See photos, services and prices and book a free time at a {categoryLower} in {city} — online, in a minute. Times are live and the cancellation rules are clear before you confirm.",
+    "points": {
+      "live": "Live free times",
+      "rules": "Clear cancellation rules",
+      "free": "Free for the client"
+    },
+    "count": "{count, plural, one {# salon} other {# salons}} in {city}",
+    "noneTitle": "No {categoryLower} in {city} on GLOWA yet",
+    "noneBody": "Here are the nearest to the town.",
+    "otherCategories": "More in {city}",
+    "otherPlaces": "{category} in other towns",
+    "ownerTitle": "Run a {categoryLower} in {city}?",
+    "ownerBody": "Calendar, deposits and online booking — no commission. Bring your clients over from a file in minutes.",
+    "ownerCta": "See how it works"
   }
 }

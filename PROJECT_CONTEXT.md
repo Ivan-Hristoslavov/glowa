@@ -166,7 +166,7 @@ src/
     env.ts  format.ts  localized.ts  utils.ts
   types/database.ts
   proxy.ts
-messages/          bg.json · en.json · ro.json (1,668 keys each, verified equal)
+messages/          bg.json · en.json · ro.json (1,703 keys each, verified equal)
 supabase/          migrations/ · seed.sql
 ```
 
@@ -1721,6 +1721,31 @@ site at 1440×900, 1366×768 and 390×844 as a guest, a customer and an owner.
   recur on a second load and the code has no cause that can be named. Watch for
   it.
 
+**Second part of the pass (same day): pricing page, landing pages, go-to-market**
+
+- **Pricing page.** Each plan card now says what the plan does for the salon in
+  outcomes (`pricing.plans.<id>.outcome`), above the feature list; a "In every
+  plan" block (0% commission, deposits to the salon's own Stripe, CSV export
+  and import, three languages, installable app - each true today); and "What
+  your client gets - free" (no cost, instant confirmation, clear rules,
+  reminder + calendar).
+- **Service × town landing pages**: `/[locale]/salons/[category]/[city]`
+  (`/salons/hair-salon/sofia`; category slug = enum with hyphens, town = id from
+  `lib/places.ts`; `lib/seo/landing.ts`). Built on first request and cached an
+  hour (`generateStaticParams` returns nothing on purpose - hundreds of
+  combinations at build for no benefit). The salons shown are those whose
+  location city matches; with none, the nearest are shown and the page is
+  **`noindex`** - a page with nobody on it has nothing for a search engine. The
+  sitemap lists only combinations with a real, non-demo salon. Bulgarian takes
+  "във" before в/ф (`inPreposition`). Copy: `landing.*`. Not yet linked from
+  the footer or the home page - the sitemap and the cross-links between pages
+  are the only way in; add footer links when there are salons to show.
+- **`docs/go-to-market.md`**: the path to the first salons and clients (who to
+  start with, a 90-day plan, channels, tricks for salon income and platform
+  income, what to measure, scripts, risks). No invented numbers; targets are to
+  be set after the first ten salons.
+- Not built, named there: a salon-refers-salon link, gift vouchers, Viber/SMS.
+
 **Decisions left to the owner**
 
 - The display font's Bulgarian letterforms make "вт" read "Bm" and "Екип" read
@@ -1802,7 +1827,8 @@ traction claim may appear unless it is real.
 
 ## 11. Known TODOs for the next prompts
 
-0. **Beating the incumbent** (10-05): the ranked gap list is in
+0. **Beating the incumbent** (10-05): the plan to reach salons is
+   `docs/go-to-market.md`; the ranked gap list is in
    `docs/competitive-studio24.md` - password-less booking, several services in
    one visit, service variants, Viber/SMS, map in search, service × city pages,
    embeddable widget. Supply (real salons) matters more than any of them.

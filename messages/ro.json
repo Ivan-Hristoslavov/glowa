@@ -1743,19 +1743,22 @@
         "name": "Solo",
         "tagline": "Pentru un specialist care lucrează singur.",
         "seats": "1 specialist",
-        "audience": "Afacere mică"
+        "audience": "Afacere mică",
+        "outcome": "Lucrezi singur și telefonul nu tace. Clienții se programează singuri, avansul îți ferește orele de neprezentări, iar invitațiile îi readuc pe cei fideli."
       },
       "studio": {
         "name": "Studio",
         "tagline": "Pentru o echipă mică. Mai puțin decât costă un loc în altă parte.",
         "seats": "Până la 5 specialiști",
-        "audience": "Afacere medie"
+        "audience": "Afacere medie",
+        "outcome": "O echipă de până la 5 persoane într-un singur calendar. Fiecare are programul lui, iar tu vezi gradul de ocupare și încasările și trimiți campanii clienților care nu au mai venit de mult."
       },
       "salon": {
         "name": "Salon",
         "tagline": "Pentru un salon mare, cu roluri, jurnal și asistență prioritară.",
         "seats": "Echipă nelimitată",
-        "audience": "Afacere mare"
+        "audience": "Afacere mare",
+        "outcome": "Crești: mai multe locații, roluri și permisiuni, jurnal de acțiuni și un asistent AI care răspunde la întrebări despre cifrele tale."
       }
     },
     "features": {
@@ -1845,7 +1848,36 @@
       "savedMonth": "Adică {amount} în fiecare lună.",
       "assumptions": "Ipoteze: ~17 € pe lună pentru un specialist sau ~12 € pe loc în echipă și 20% comision din prima vizită a unui client nou (minimum ~5 €) — cele mai mici tarife publicate în septembrie 2026, rotunjite în favoarea concurentului. Fără TVA și fără taxe de plată, similare peste tot."
     },
-    "metaTitle": "Prețuri — fără comision, fără contract"
+    "metaTitle": "Prețuri — fără comision, fără contract",
+    "included": {
+      "title": "În fiecare plan",
+      "commission": "0% comision — inclusiv pentru clienții care te găsesc prin GLOWA",
+      "deposits": "Avansuri anti-neprezentare direct în contul tău Stripe",
+      "export": "Exportă clienții în CSV oricând",
+      "import": "Import de clienți din fișier — te muți din alt sistem în câteva minute",
+      "languages": "Pagină în bulgară, engleză și română",
+      "app": "Se instalează ca aplicație pe telefon și tabletă"
+    },
+    "forClients": {
+      "title": "Ce primește clientul tău — gratuit",
+      "subtitle": "Un salon mai ușor de programat câștigă încredere înainte de prima vizită.",
+      "free": {
+        "title": "Fără cost pentru client",
+        "body": "Programarea prin GLOWA nu costă pe nimeni nimic."
+      },
+      "instant": {
+        "title": "Confirmare pe loc",
+        "body": "Vede orele libere reale și nu așteaptă să fie sunat."
+      },
+      "rules": {
+        "title": "Reguli clare",
+        "body": "Intervalul de anulare e scris înainte să aleagă ora. Fără blocarea contului."
+      },
+      "remind": {
+        "title": "Memento și calendar",
+        "body": "Memento pe email și un tap pentru a adăuga programarea în calendar."
+      }
+    }
   },
   "forBusiness": {
     "metaTitle": "GLOWA pentru saloane",
@@ -2054,5 +2086,24 @@
       "body": "În fiecare lună, panoul arată câte vizite au fost programate online, câți clienți au revenit după o invitație și câte avansuri ai reținut. Numărate din propriul calendar — nimic estimat."
     },
     "seePricing": "Vezi prețurile"
+  },
+  "landing": {
+    "metaTitle": "{category} în {city} — programează online",
+    "metaDescription": "Ore libere, prețuri și poze: {categoryLower} în {city}. Programează online într-un minut, cu confirmare pe loc și reguli clare de anulare.",
+    "h1": "{category} în {city}",
+    "intro": "Vezi poze, servicii și prețuri și programează o oră liberă la {categoryLower} în {city} — online, într-un minut. Orele sunt live, iar regulile de anulare sunt clare înainte să confirmi.",
+    "points": {
+      "live": "Ore libere live",
+      "rules": "Reguli clare de anulare",
+      "free": "Gratuit pentru client"
+    },
+    "count": "{count, plural, one {# salon} few {# saloane} other {# de saloane}} în {city}",
+    "noneTitle": "Încă nu există {categoryLower} în {city} pe GLOWA",
+    "noneBody": "Iată cele mai apropiate de oraș.",
+    "otherCategories": "Mai multe în {city}",
+    "otherPlaces": "{category} în alte orașe",
+    "ownerTitle": "Ai {categoryLower} în {city}?",
+    "ownerBody": "Calendar, avansuri și programare online — fără comision. Îți aduci clienții dintr-un fișier în câteva minute.",
+    "ownerCta": "Vezi cum funcționează"
   }
 }
