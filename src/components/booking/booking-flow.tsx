@@ -37,6 +37,8 @@ export type BookingLocation = { id: string; name: string; city: string | null };
 export type BookingService = {
   id: string;
   name: string;
+  /** Already translated: the heading the service sits under. */
+  categoryLabel: string;
   description: string;
   durationMinutes: number;
   priceCents: number;
@@ -182,6 +184,17 @@ export function BookingFlow({
     [staff],
   );
 
+  // Services under their category headings, in the order the salon sorted them.
+  const serviceGroups = useMemo(() => {
+    const groups = new Map<string, BookingService[]>();
+    for (const item of services) {
+      const group = groups.get(item.categoryLabel) ?? [];
+      group.push(item);
+      groups.set(item.categoryLabel, group);
+    }
+    return [...groups.entries()];
+  }, [services]);
+
   const steps = useMemo<StepId[]>(() => {
     const list: StepId[] = [];
     if (locations.length > 1) list.push("location");
@@ -269,6 +282,26 @@ export function BookingFlow({
     service && service.depositCents > 0
       ? formatPrice(service.priceCents - service.depositCents, service.currency, locale)
       : null;
+
+  // The running summary shown beside the primary button (see the bar below).
+  const slotLabel = slot
+    ? `${formatDate(slot.starts_at, { timeZone: timezone, locale })} · ${formatTime(slot.starts_at, { timeZone: timezone, locale })}`
+    : null;
+  const chosenStaffName =
+    staffChoice !== ANY_STAFF
+      ? eligibleStaff.find((member) => member.id === staffChoice)?.displayName
+      : undefined;
+  const serviceFacts = service
+    ? [formatDuration(service.durationMinutes, locale), summaryPrice].filter(Boolean).join(" · ")
+    : null;
+  const [barLabel, barDetail] =
+    (current === "time" || current === "confirm") && slotLabel
+      ? [slotLabel, [service?.name, summaryPrice].filter(Boolean).join(" · ")]
+      : current === "staff" && service
+        ? [chosenStaffName ?? t("anyStaff"), service.name]
+        : current === "service" && service
+          ? [service.name, serviceFacts]
+          : [null, null];
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
@@ -370,8 +403,17 @@ export function BookingFlow({
         {current === "service" ? (
           <section className="space-y-3">
             <h2 className="font-heading text-xl">{t("chooseService")}</h2>
-            <div className="space-y-2">
-              {services.map((item) => (
+            <div className="space-y-6">
+              {serviceGroups.map(([categoryLabel, group]) => (
+                <div key={categoryLabel} className="space-y-2">
+                  {/* A salon with thirty services is a very long flat list;
+                      under headings it is a menu. One group needs no heading. */}
+                  {serviceGroups.length > 1 ? (
+                    <h3 className="text-muted-foreground pt-1 text-xs font-medium tracking-[0.14em] uppercase">
+                      {categoryLabel}
+                    </h3>
+                  ) : null}
+                  {group.map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -423,6 +465,8 @@ export function BookingFlow({
                     ) : null}
                   </span>
                 </button>
+                  ))}
+                </div>
               ))}
             </div>
           </section>
@@ -615,15 +659,35 @@ export function BookingFlow({
           {stepIndex > 0 ? (
             <Button type="button" variant="ghost" onClick={goBack} disabled={isPending}>
               <ArrowLeft className="size-4" aria-hidden />
-              {common("back")}
+              <span className={barLabel ? "sr-only sm:not-sr-only" : undefined}>
+                {common("back")}
+              </span>
             </Button>
           ) : (
             <Button asChild variant="ghost">
               <Link href={`/business/${slug}`}>
                 <ArrowLeft className="size-4" aria-hidden />
-                {common("back")}
+                <span className={barLabel ? "sr-only sm:not-sr-only" : undefined}>
+                  {common("back")}
+                </span>
               </Link>
             </Button>
+          )}
+
+          {/* What has been chosen so far, next to the button that moves on.
+              The summary card holds the same facts, but on a phone it sits
+              below the fold; this is where the thumb already is. */}
+          {barLabel ? (
+            <p className="min-w-0 flex-1 leading-tight" aria-live="polite">
+              <span className="block truncate text-sm font-medium first-letter:uppercase">
+                {barLabel}
+              </span>
+              {barDetail ? (
+                <span className="text-muted-foreground block truncate text-xs">{barDetail}</span>
+              ) : null}
+            </p>
+          ) : (
+            <span className="flex-1" aria-hidden />
           )}
 
           {current === "confirm" ? (
@@ -632,7 +696,6 @@ export function BookingFlow({
               size="lg"
               onClick={confirm}
               disabled={isPending || !isSignedIn || !slot}
-              className="ml-auto"
             >
               {isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -650,13 +713,7 @@ export function BookingFlow({
                   : t("confirm")}
             </Button>
           ) : (
-            <Button
-              type="button"
-              size="lg"
-              onClick={goNext}
-              disabled={!canAdvance}
-              className="ml-auto"
-            >
+            <Button type="button" size="lg" onClick={goNext} disabled={!canAdvance}>
               {common("next")}
             </Button>
           )}

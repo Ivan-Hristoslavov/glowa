@@ -1,4 +1,4 @@
-import { ArrowRight, Check, LayoutGrid } from "lucide-react";
+import { ArrowRight, Check, CalendarClock, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import Image from "next/image";
 
@@ -15,6 +15,7 @@ import type { Locale } from "@/i18n/routing";
 import { categoryImages, showcaseAssets } from "@/lib/brand-assets";
 import type { BusinessCategory } from "@/lib/business-categories";
 import { searchBusinesses } from "@/lib/queries/discovery";
+import { cn } from "@/lib/utils";
 import { organizationJsonLd } from "@/lib/seo/structured-data";
 
 /** Categories as round portraits under the search - one tap each. */
@@ -42,6 +43,15 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const featured = await searchBusinesses({ limit: 6 });
 
   const promises = ["noCommission", "noCompetitors", "dataYours", "directPayouts"] as const;
+  // What a client gets, stated as rules rather than adjectives. Each line is a
+  // behaviour of the product: no cap on bookings, no account blocking, no
+  // phone calls from us, the deposit returned when a booking is cancelled in
+  // time.
+  const clientPoints = [
+    { key: "live", icon: Zap },
+    { key: "easy", icon: CalendarClock },
+    { key: "fair", icon: ShieldCheck },
+  ] as const;
 
   return (
     <main>
@@ -76,7 +86,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   />
                 </span>
               </h1>
-              <p className="text-muted-foreground mt-6 max-w-lg text-lg leading-relaxed text-pretty">
+              <p className="text-muted-foreground mt-4 max-w-lg text-base leading-relaxed text-pretty sm:mt-6 sm:text-lg">
                 {t("subtitle")}
               </p>
             </Reveal>
@@ -157,7 +167,15 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               </Link>
             </Button>
           </div>
-          <Stagger onView className="grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Four cards in a three-column grid leave one alone on a second
+              row; with exactly four the grid is four wide. */}
+          <Stagger
+            onView
+            className={cn(
+              "grid gap-x-5 gap-y-9 sm:grid-cols-2",
+              featured.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3",
+            )}
+          >
             {featured.map((business) => (
               <StaggerItem key={business.id}>
                 <BusinessCard business={business} locale={locale as Locale} />
@@ -166,6 +184,27 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </Stagger>
         </section>
       ) : null}
+
+      {/* ------------------------------------------------------ for clients */}
+      <section className="mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6">
+        <div className="max-w-2xl">
+          <h2 className="font-heading text-3xl text-balance sm:text-4xl">{t("clients.title")}</h2>
+          <p className="text-muted-foreground mt-2">{t("clients.subtitle")}</p>
+        </div>
+        <ul className="mt-8 grid gap-4 md:grid-cols-3">
+          {clientPoints.map(({ key, icon: Icon }) => (
+            <li key={key} data-glow className="glowa-card glowa-glow rounded-2xl p-6">
+              <span className="bg-primary/10 text-primary flex size-11 items-center justify-center rounded-xl">
+                <Icon className="size-5" aria-hidden />
+              </span>
+              <p className="font-heading mt-4 text-lg">{t(`clients.${key}.title`)}</p>
+              <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                {t(`clients.${key}.body`)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* ------------------------------------------------------ for businesses */}
       <section className="px-4 pb-20 sm:px-6">

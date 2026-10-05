@@ -284,6 +284,22 @@
       "body": "Găsește un salon lângă tine sau lasă-ți clienții să se programeze online.",
       "ctaCustomer": "Găsește un salon",
       "ctaBusiness": "Am un salon"
+    },
+    "clients": {
+      "title": "O programare care nu îți adaugă griji",
+      "subtitle": "Regulile sunt clare înainte să alegi ora, nu după.",
+      "live": {
+        "title": "Doar ore libere",
+        "body": "Vezi orele libere reale ale salonului și primești confirmarea pe loc, fără să aștepți să te sune cineva."
+      },
+      "easy": {
+        "title": "Schimbări fără telefon",
+        "body": "Anulezi online în câteva secunde, iar la saloanele care permit, îți muți și singur programarea. O adaugi în calendar cu un singur tap."
+      },
+      "fair": {
+        "title": "Reguli corecte",
+        "body": "Anulare gratuită în intervalul salonului. Nu îți blocăm contul pentru o programare anulată și nu te sunăm. Avansul, dacă există, se întoarce când anulezi la timp."
+      }
     }
   },
   "auth": {
@@ -516,7 +532,8 @@
     "slotsCount": "{count, plural, =0 {nicio oră liberă} one {# oră liberă} few {# ore libere} other {# de ore libere}}",
     "preselected": "Ora e aleasă pentru tine. Verifică și confirmă.",
     "earlier": "Zile anterioare",
-    "later": "Zile următoare"
+    "later": "Zile următoare",
+    "trustNoStrikes": "GLOWA nu îți blochează contul pentru o programare anulată și nu te sună."
   },
   "waitlist": {
     "cta": "Intră pe lista de așteptare",
@@ -1142,7 +1159,45 @@
       "call": "Sună",
       "averageTicket": "Bon mediu",
       "upcoming": "Programări viitoare",
-      "profileCard": "Fișa clientului"
+      "profileCard": "Fișa clientului",
+      "import": {
+        "button": "Import din fișier",
+        "title": "Adu-ți clienții aici",
+        "intro": "Încarcă o listă de clienți dintr-un alt sistem sau dintr-un tabel. De obicei sunt un nume, un telefon și un email.",
+        "choose": "Alege un fișier sau trage-l aici",
+        "chooseHint": "Fișier CSV, până la 5 MB",
+        "excelTip": "Ai Excel sau Google Sheets? Salvează tabelul ca CSV (Fișier → Salvare ca sau Descărcare → CSV) și încarcă-l aici. Majoritatea sistemelor își pot exporta clienții ca CSV.",
+        "rowsInFile": "{count, plural, one {# rând} few {# rânduri} other {# de rânduri}} în fișier",
+        "otherFile": "Alt fișier",
+        "mapTitle": "Ce conține fiecare coloană?",
+        "fields": {
+          "name": "Nume",
+          "lastName": "Nume de familie (dacă e coloană separată)",
+          "phone": "Telefon",
+          "email": "Email",
+          "notes": "Note"
+        },
+        "skipColumn": "— nu folosi —",
+        "unnamedColumn": "Coloana {number}",
+        "needIdentity": "Alege cel puțin o coloană pentru nume, telefon sau email.",
+        "ready": "gata de import",
+        "left": "{count, plural, one {# rând este omis} few {# rânduri sunt omise} other {# de rânduri sunt omise}} (goale sau repetate)",
+        "rights": "Confirm că aceștia sunt clienții mei și am dreptul să le păstrez datele și să îi contactez.",
+        "submit": "{count, plural, one {Importă # client} few {Importă # clienți} other {Importă # de clienți}}",
+        "importing": "Se importă… {done} din {total}",
+        "doneTitle": "{count, plural, =0 {Niciun client nou} one {Am adăugat # client} few {Am adăugat # clienți} other {Am adăugat # de clienți}}",
+        "doneBody": "Deja în lista ta (omiși): {skipped}. Fără nume, telefon sau email: {invalid}.",
+        "consentNote": "Clienții importați nu au acord de marketing înregistrat, deci nu vor primi campanii până nu îl marchezi pe fișa lor.",
+        "emptyHint": "Vii dintr-un alt sistem? Adu-ți clienții cu un singur fișier.",
+        "errors": {
+          "tooBig": "Fișierul depășește 5 MB. Împarte-l în părți.",
+          "empty": "Fișierul nu conține rânduri cu clienți.",
+          "tooMany": "Fișierul are peste {max} rânduri. Împarte-l în părți.",
+          "unreadable": "Fișierul nu a putut fi citit. Verifică dacă este CSV.",
+          "forbidden": "Nu ai voie să adaugi clienți.",
+          "generic": "Ceva nu a mers. Încearcă din nou."
+        }
+      }
     },
     "reviewsAdmin": {
       "title": "Recenzii și reputație",
@@ -1896,6 +1951,14 @@
       "clients": {
         "q": "Ce văd clienții?",
         "a": "Pagina salonului cu fotografii, servicii, prețuri, echipă și recenzii, plus programare într-un minut cu confirmare și memento pe e-mail."
+      },
+      "switch": {
+        "q": "Vin de pe o altă platformă. Îmi pot aduce clienții?",
+        "a": "Da. La Clienți alegi „Import din fișier” și încarci un CSV - din Excel, Google Sheets sau un export din vechiul sistem. Spui ce conține fiecare coloană și vezi o previzualizare înainte să se salveze ceva. Clienții pe care îi ai deja nu se dublează. Istoricul vizitelor nu se transferă: se construiește din programările făcute în GLOWA."
+      },
+      "exit": {
+        "q": "Îmi pot lua clienții dacă hotărăsc să plec?",
+        "a": "Da, oricând și fără să ceri voie cuiva: Clienți → „Export CSV”. Clienții sunt ai tăi, nu ai platformei."
       }
     },
     "cta": {
@@ -1951,7 +2014,7 @@
   },
   "consent": {
     "title": "Cookie-uri, doar cele necesare",
-    "body": "Folosim cookie-uri ca să rămâi autentificat și să îți reținem limba. Cu acordul tău reținem și de pe ce cod QR sau recomandare ai venit, ca salonul să primească meritul. Fără reclame, fără urmărire.",
+    "body": "Pentru autentificare și limbă. Cu acordul tău reținem și de pe ce cod QR sau recomandare ai venit. Fără reclame, fără urmărire.",
     "policyLink": "Află mai multe",
     "accept": "Accept",
     "reject": "Doar cele necesare",
@@ -1963,7 +2026,8 @@
     "attributionTitle": "Recomandări și coduri QR",
     "attributionBody": "Reține timp de 30 de zile de pe ce cod QR sau link ai venit, ca programarea să fie atribuită salonului sau prietenului corect.",
     "noTracking": "Nu folosim cookie-uri de publicitate sau de analiză și nu împărtășim date cu rețele de reclame.",
-    "save": "Salvează alegerea"
+    "save": "Salvează alegerea",
+    "settingsShort": "Setări"
   },
   "whyPay": {
     "eyebrow": "De ce să plătești când altele sunt gratuite",

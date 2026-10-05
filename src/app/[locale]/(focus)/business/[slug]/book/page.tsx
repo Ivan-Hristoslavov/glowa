@@ -1,3 +1,4 @@
+import { ShieldCheck, Undo2 } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -45,6 +46,8 @@ export default async function BookPage({
   if (!business) notFound();
 
   const t = await getTranslations("booking");
+  const businessT = await getTranslations("business");
+  const serviceCategories = await getTranslations("serviceCategories");
   const sp = await searchParams;
 
   const supabase = await createClient();
@@ -58,6 +61,7 @@ export default async function BookPage({
   const services: BookingService[] = business.services.map((service) => ({
     id: service.id,
     name: pickLocalized(service.name, activeLocale),
+    categoryLabel: serviceCategories(service.category),
     description: pickLocalized(service.description, activeLocale),
     durationMinutes: service.duration_minutes,
     priceCents: service.price_cents,
@@ -88,11 +92,26 @@ export default async function BookPage({
       ? (business.booking_policy as { cancellation_window_hours?: number })
       : {};
 
+  const cancellationWindowHours = policy.cancellation_window_hours ?? 24;
+
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="mb-8 space-y-1">
         <p className="text-muted-foreground text-sm">{business.name}</p>
         <h1 className="font-heading text-3xl">{t("title")}</h1>
+        {/* The rules, before the first choice rather than at the last step:
+            a cancellation rule that shows up after you have picked a time is
+            the kind of surprise people write complaints about. */}
+        <ul className="text-muted-foreground flex flex-wrap gap-x-5 gap-y-1.5 pt-2 text-sm">
+          <li className="flex items-center gap-1.5">
+            <Undo2 className="text-primary size-4 shrink-0" aria-hidden />
+            {businessT("cancellationPolicy", { hours: cancellationWindowHours })}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <ShieldCheck className="text-primary size-4 shrink-0" aria-hidden />
+            {t("trustNoStrikes")}
+          </li>
+        </ul>
       </div>
 
       <BookingFlow
@@ -103,7 +122,7 @@ export default async function BookPage({
         locale={activeLocale}
         isSignedIn={isSignedIn}
         googleSignIn={isSignedIn ? false : (await getAuthProviders()).google}
-        cancellationWindowHours={policy.cancellation_window_hours ?? 24}
+        cancellationWindowHours={cancellationWindowHours}
         locations={business.locations.map((location) => ({
           id: location.id,
           name: location.name,

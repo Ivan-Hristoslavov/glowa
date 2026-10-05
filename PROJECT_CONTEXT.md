@@ -26,6 +26,7 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | Prompt 5 | Production polish, QA, Vercel | Not started |
 | 09-24 pass | Walkthrough as guest/customer/owner, fixes, landing redesign, motion | **Done** (PR #2, stacked on #1) |
 | 09-24 second pass | Next-up strip, Ctrl+K, salon closures, photo/logo uploads, published prices, flyer studio, email templates, customer conveniences | **Done** (PR #2) |
+| 10-05 Studio24 pass | Competitor research, walkthrough at three screen sizes, cookie notice, focused chrome for booking/onboarding, booking-funnel clarity, client CSV import, customer section on the landing page | **Done** (§8r) |
 
 **09-24 pass.** The database was built from the repository with `supabase
 start` (images pulled via `mirror.gcr.io`, because Docker Hub rate-limits and
@@ -113,14 +114,16 @@ src/
         page.tsx            landing: hero search + featured salons
         search/             discovery with filters (+ loading.tsx)
         business/[slug]/    profile page
-        business/[slug]/book/  booking funnel (noindex)
       (auth)/               signed-out surface
         actions.ts          signIn / signUp / signOut
         login/  signup/
       (customer)/           signed-in customer surface
         profile/            dashboard: counts, next appointment
         bookings/           list (+ loading.tsx) and [id]/ detail
-        favorites/  reviews/  settings/  onboarding/
+        favorites/  reviews/  settings/
+      (focus)/              a task in progress: same header, slim footer (§8r)
+        business/[slug]/book/  booking funnel (noindex)
+        onboarding/         create a salon
       (business)/           signed-in business surface
         layout.tsx          sidebar shell; redirects to /onboarding with no membership
         dashboard/          metrics + today's schedule
@@ -163,9 +166,7 @@ src/
     env.ts  format.ts  localized.ts  utils.ts
   types/database.ts
   proxy.ts
-messages/          bg.json · en.json · ro.json (969 keys each, verified equal)
-
-messages/          bg.json · en.json · ro.json (1,076 keys each, verified equal)
+messages/          bg.json · en.json · ro.json (1,668 keys each, verified equal)
 supabase/          migrations/ · seed.sql
 ```
 
@@ -1644,6 +1645,93 @@ developer's own account on 2026-09-24; that business was previously a throwaway 
 
 ---
 
+## 8r. The Studio24 pass (2026-10-05)
+
+Asked for: study the local incumbent (it charges salons for new clients and
+takes a share), find what GLOWA lacks, make the design clearer, and fix what
+people dislike about the competitor. The research and the ranked list of what
+is still missing are in [`docs/competitive-studio24.md`](./docs/competitive-studio24.md);
+this section records what was built and why it is built that way.
+
+**How it was done.** The sandbox cannot reach `*.supabase.co`, so the app ran
+against a local stack: start the Docker daemon (`dockerd &`, it is not running by
+default), then `npx supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta`
+(images come through the registries the sandbox allows; mailpit is rate-limited
+on Docker Hub, so it is left to the CLI's retry). `.env.local` (git-ignored)
+points at `127.0.0.1:54321`. The owner's showcase salon was loaded with
+`scripts/seed-showcase.sql`. Chromium (Playwright, `/opt/pw-browsers`) drove the
+site at 1440×900, 1366×768 and 390×844 as a guest, a customer and an owner.
+
+**What the walkthrough found, and what was done**
+
+- **The cookie notice sat on the first screen.** A 250 px card, bottom right: on
+  a laptop it covered the hero search's submit button; on a phone it took a
+  third of the first screen. Now one slim strip (`cookie-consent.tsx`), copy cut
+  to one sentence, accept and decline still equal weight, settings reachable
+  from the same line. New key `consent.settingsShort`.
+- **Tasks shared a footer with the pitch.** The booking funnel and onboarding
+  were under the marketing footer: "Have a salon? Register it" beneath a
+  customer's confirm button, and beneath a salon owner registering one. They
+  moved to a new `(focus)` route group (`layout.tsx`, `FocusFooter`): the same
+  `SiteHeader` (account and language stay reachable) and a slim footer with the
+  legal links and the cookie choice. URLs are unchanged; moving a page between
+  route groups does not change its path. The onboarding page now carries its
+  own container (the customer layout used to).
+- **Booking funnel.** The cancellation rule and "GLOWA won't block your account
+  over a cancelled booking, and won't phone you" sit under the title, before
+  the first choice (`booking.trustNoStrikes`; the cancellation line reuses
+  `business.cancellationPolicy`). The sticky bar shows what has been chosen so
+  far next to *Next* (`barLabel`/`barDetail`; *Back* collapses to an icon on a
+  phone). Services sit under category headings when there is more than one
+  category (`BookingService.categoryLabel`, resolved on the server). Time chips
+  are four per row on a phone.
+  - Both promises are true of the code: there is no cap on active bookings and
+    no logic anywhere that suspends a customer, and nothing in GLOWA phones
+    anyone. If either ever changes, change the copy first.
+- **Landing page.** A section for customers (`home.clients.*`): only free times,
+  changes without a phone call, fair rules. Until now the page spoke almost
+  only to salons below the hero. With exactly four featured salons the grid is
+  four wide instead of leaving one card alone. The hero subtitle is smaller on
+  a phone so the search is closer to the first screen.
+- **Client import** (`/dashboard/clients` → "Import from file", also the action
+  in the empty state). Files: `lib/crm/import.ts` (pure, tested: parsing,
+  header detection, normalising, dedupe), `lib/actions/crm-import.ts` (the one
+  server action), `components/admin/client-import.tsx` (the dialog). Decisions:
+  - Parsed and previewed **in the browser**; nothing is sent until "Import".
+    The server cleans every row again and trusts nothing.
+  - Reads UTF-8 first and falls back to **Windows-1251**: Excel on a Bulgarian
+    PC writes that unless "CSV UTF-8" is picked, and every name would otherwise
+    arrive as question marks. Delimiter (`,` `;` tab) is detected.
+  - Header detection knows bg/en/ro names; the owner can correct any column.
+    Unicode decomposition (NFD) must not be used to fold headers - it strips the
+    breve from Cyrillic "й" and "Имейл" stops matching (found by the test).
+  - A person already in the CRM is skipped - by email, by the last nine digits of
+    the phone (so `+359 88…` and `088…` match), or by bare name when there is
+    nothing else. Each 500-row request re-reads the CRM, so a large file dedupes
+    against its own earlier parts.
+  - **No marketing consent is recorded** (`consent_marketing` false, no date), so
+    imported clients get no campaign until the owner marks consent (campaign
+    audiences require it). No visits or spend are invented.
+  - Uses the existing manager-only INSERT policy; no migration.
+  - Ceiling 5,000 rows and 5 MB per file; a limit that is easy to raise.
+- **Salon pitch.** Two FAQ answers on `/for-business`: bringing clients in, and
+  taking them out (the export that already existed).
+- **Not reproduced:** one transient `Primitive.button failed to slot onto its
+  children` on the services page during the first cold compile; it did not
+  recur on a second load and the code has no cause that can be named. Watch for
+  it.
+
+**Decisions left to the owner**
+
+- The display font's Bulgarian letterforms make "вт" read "Bm" and "Екип" read
+  "Ekun" at UI sizes (see the end of the competitor note). Correct, accepted on
+  09-24, but the first thing a non-designer notices.
+- The big missing pieces are not styling: a password-less way to book, several
+  services in one visit, service variants and Viber/SMS. Ranked list in the
+  competitor note.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -1713,6 +1801,11 @@ traction claim may appear unless it is real.
 ---
 
 ## 11. Known TODOs for the next prompts
+
+0. **Beating the incumbent** (10-05): the ranked gap list is in
+   `docs/competitive-studio24.md` - password-less booking, several services in
+   one visit, service variants, Viber/SMS, map in search, service × city pages,
+   embeddable widget. Supply (real salons) matters more than any of them.
 
 1. **Prompt 4** — integrations, AI and growth: Google Calendar OAuth end to end,
    the notification channel abstraction and actual sending (email first),

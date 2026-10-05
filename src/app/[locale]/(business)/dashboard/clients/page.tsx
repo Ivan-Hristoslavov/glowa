@@ -2,6 +2,7 @@ import { Download, Search, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { ClientImport } from "@/components/admin/client-import";
 import { PageHeader } from "@/components/admin/page-header";
 import { EmptyState } from "@/components/common/empty-state";
 import { emptyStateArt } from "@/lib/brand-assets";
@@ -99,14 +100,23 @@ export default async function ClientsPage({
           className="bg-card h-11 rounded-full pl-10"
         />
       </form>
-      {canManage(membership.role) && clients.length > 0 ? (
-        // A plain link: the browser handles the download, no client JS.
-        <Button asChild variant="outline" className="rounded-full">
-          <a href="/api/business/clients/export" download>
-            <Download className="size-4" aria-hidden />
-            {t("export")}
-          </a>
-        </Button>
+      {canManage(membership.role) ? (
+        <div className="flex flex-wrap gap-2">
+          {/* Coming from another system is the moment a salon most needs this,
+              and the clients page is the first place it looks. */}
+          {clients.length > 0 || query ? (
+            <ClientImport businessId={membership.businessId} />
+          ) : null}
+          {clients.length > 0 ? (
+            // A plain link: the browser handles the download, no client JS.
+            <Button asChild variant="outline" className="rounded-full">
+              <a href="/api/business/clients/export" download>
+                <Download className="size-4" aria-hidden />
+                {t("export")}
+              </a>
+            </Button>
+          ) : null}
+        </div>
       ) : null}
       </div>
 
@@ -116,6 +126,16 @@ export default async function ClientsPage({
           art={query ? undefined : emptyStateArt.clients}
           title={query ? t("noResults") : t("empty")}
           body={query ? undefined : t("emptyBody")}
+          action={
+            !query && canManage(membership.role) ? (
+              <div className="flex flex-col items-center gap-2">
+                <ClientImport businessId={membership.businessId} variant="default" />
+                <p className="text-muted-foreground max-w-xs text-center text-sm">
+                  {t("import.emptyHint")}
+                </p>
+              </div>
+            ) : undefined
+          }
         />
       ) : (
         <div className="glowa-card overflow-hidden rounded-2xl">

@@ -284,6 +284,22 @@
       "body": "Find a salon near you, or let your clients book you online.",
       "ctaCustomer": "Find a salon",
       "ctaBusiness": "I own a salon"
+    },
+    "clients": {
+      "title": "Booking that doesn't add to your worries",
+      "subtitle": "The rules are clear before you pick a time, not after.",
+      "live": {
+        "title": "Only free times",
+        "body": "You see the salon's real free times and get confirmation straight away, without waiting for anyone to call you back."
+      },
+      "easy": {
+        "title": "Changes without a phone call",
+        "body": "Cancel online in seconds and, at salons that allow it, reschedule yourself too. The booking goes into your calendar in one tap."
+      },
+      "fair": {
+        "title": "Fair rules",
+        "body": "Free cancellation within the salon's window. We don't block your account over a cancelled booking and we don't phone you. A deposit, if there is one, comes back when you cancel in time."
+      }
     }
   },
   "auth": {
@@ -516,7 +532,8 @@
     "slotsCount": "{count, plural, =0 {no free times} one {# free time} other {# free times}}",
     "preselected": "Your time is picked. Check it and confirm.",
     "earlier": "Earlier days",
-    "later": "Later days"
+    "later": "Later days",
+    "trustNoStrikes": "GLOWA won't block your account over a cancelled booking, and won't phone you."
   },
   "waitlist": {
     "cta": "Join the waitlist",
@@ -1142,7 +1159,45 @@
       "call": "Call",
       "averageTicket": "Average ticket",
       "upcoming": "Upcoming",
-      "profileCard": "Client card"
+      "profileCard": "Client card",
+      "import": {
+        "button": "Import from file",
+        "title": "Bring your clients over",
+        "intro": "Upload a client list from another system or a spreadsheet. Usually that is a name, a phone number and an email.",
+        "choose": "Choose a file or drop it here",
+        "chooseHint": "CSV file, up to 5 MB",
+        "excelTip": "Have Excel or Google Sheets? Save the sheet as CSV (File → Save as, or Download → CSV) and upload it here. Most systems can export their clients as CSV.",
+        "rowsInFile": "{count, plural, one {# row} other {# rows}} in the file",
+        "otherFile": "Another file",
+        "mapTitle": "Which column holds what?",
+        "fields": {
+          "name": "Name",
+          "lastName": "Last name (if in its own column)",
+          "phone": "Phone",
+          "email": "Email",
+          "notes": "Notes"
+        },
+        "skipColumn": "— don't use —",
+        "unnamedColumn": "Column {number}",
+        "needIdentity": "Pick at least a name, phone or email column.",
+        "ready": "ready to import",
+        "left": "{count, plural, one {# row is skipped} other {# rows are skipped}} (empty or repeated)",
+        "rights": "I confirm these are my clients and I am entitled to keep their details and contact them.",
+        "submit": "{count, plural, one {Import # client} other {Import # clients}}",
+        "importing": "Importing… {done} of {total}",
+        "doneTitle": "{count, plural, =0 {No new clients} one {Added # client} other {Added # clients}}",
+        "doneBody": "Already in your list (skipped): {skipped}. Without a name, phone or email: {invalid}.",
+        "consentNote": "Imported clients have no marketing consent recorded, so they will not receive campaigns until you mark it on their card.",
+        "emptyHint": "Coming from another system? Bring your clients over with one file.",
+        "errors": {
+          "tooBig": "The file is over 5 MB. Split it into parts.",
+          "empty": "The file has no client rows.",
+          "tooMany": "The file has more than {max} rows. Split it into parts.",
+          "unreadable": "The file could not be read. Check that it is a CSV.",
+          "forbidden": "You are not allowed to add clients.",
+          "generic": "Something went wrong. Please try again."
+        }
+      }
     },
     "reviewsAdmin": {
       "title": "Reviews and reputation",
@@ -1896,6 +1951,14 @@
       "clients": {
         "q": "What do clients see?",
         "a": "Your salon page with photos, services, prices, team and reviews, and booking in a minute with an email confirmation and reminder."
+      },
+      "switch": {
+        "q": "I'm coming from another platform. Can I bring my clients?",
+        "a": "Yes. Under Clients choose “Import from file” and upload a CSV - from Excel, Google Sheets or an export from your old system. You say which column is which and see a preview before anything is saved. Clients you already have are not duplicated. Visit history does not come across: it is built from bookings made in GLOWA."
+      },
+      "exit": {
+        "q": "Can I take my clients with me if I decide to leave?",
+        "a": "Yes, any time and without asking anyone: Clients → “Export CSV”. The clients are yours, not the platform's."
       }
     },
     "cta": {
@@ -1951,7 +2014,7 @@
   },
   "consent": {
     "title": "Cookies, only the ones we need",
-    "body": "We use cookies to keep you signed in and remember your language. With your consent we also remember which QR code or referral brought you, so the salon gets the credit. No ads, no tracking.",
+    "body": "For sign-in and language. With your consent we also remember which QR code or referral brought you. No ads, no tracking.",
     "policyLink": "Learn more",
     "accept": "Accept",
     "reject": "Necessary only",
@@ -1963,7 +2026,8 @@
     "attributionTitle": "Referrals and QR codes",
     "attributionBody": "Remembers for 30 days which QR code or link you came from, so the booking is credited to the right salon or friend.",
     "noTracking": "We use no advertising or analytics cookies and share no data with ad networks.",
-    "save": "Save my choice"
+    "save": "Save my choice",
+    "settingsShort": "Settings"
   },
   "whyPay": {
     "eyebrow": "Why pay when others are free",
