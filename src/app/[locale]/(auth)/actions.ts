@@ -11,6 +11,7 @@ import { publicEnv } from "@/lib/env";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 import { claimPendingInvitations } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 
 export type AuthFormState = {
   status: "idle" | "error" | "check-email" | "signed-in";
@@ -220,7 +221,12 @@ export async function requestPasswordReset(
     return { status: "error", message: t("generic") };
   }
 
-  const supabase = await createClient();
+  // A plain client with the implicit flow, not the request's PKCE one. A PKCE
+  // reset link only works in the browser that asked for it (the code verifier
+  // lives in that browser's cookie), and people ask for a reset on a laptop and
+  // open the email on a phone. The link carries a plain `token_hash` that
+  // /auth/confirm verifies anywhere; nothing is signed in until it is used.
+  const supabase = createPublicClient();
   await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=/${locale}/reset-password`,
   });

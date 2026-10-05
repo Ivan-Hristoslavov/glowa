@@ -1798,6 +1798,31 @@ PR branch, so it can be reverted as one unit:
 
 ---
 
+## 8t. Tester-readiness pass (2026-10-05)
+
+Full write-up, with what must be switched on, in
+[`docs/test-readiness.md`](./docs/test-readiness.md). Every page was swept in
+three languages and two sizes; the guest → sign-up → booking → email journey,
+password reset (now cross-browser), team invitation and client import were
+driven in Chromium. Behaviour changed in four places that are easy to forget:
+
+- **Online bookings are confirmed immediately** (the customer guard in
+  `app.enforce_customer_booking_fields`), except a booking that asks for a
+  deposit, which stays `pending` and is confirmed by `settle_deposit` when paid.
+  This reverses "every online booking is pending until the salon confirms".
+- **A reminder in the past is never queued** (`app.appointment_notifications`).
+- **Password reset uses a plain implicit-flow client** (`createPublicClient`),
+  so the link works on another device. Sign-up confirmation still uses the PKCE
+  client, so a confirmation link opened in another browser can still fail.
+- **Team invitations send an email** (`lib/notifications/invitation.ts`), straight
+  through the email channel, not the outbox (the outbox is keyed to appointments).
+- Auth email templates live in `supabase/templates/` (local config only; paste
+  into the dashboard for production).
+- A translation patch must never turn a string key into a namespace - the invite
+  label broke that way once (`inviteEmail`); the message is now `inviteMail.*`.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all

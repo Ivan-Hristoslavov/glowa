@@ -1083,7 +1083,13 @@
       "title": "Echipă",
       "add": "Adaugă specialist",
       "invite": "Invită prin e-mail",
-      "inviteEmail": "E-mail",
+      "inviteEmail": "Email",
+      "inviteMail": {
+        "subject": "Ești invitat să te alături {business} pe Lavena",
+        "heading": "Ești invitat în echipa {business}",
+        "body": "{business} te-a invitat ca „{role}” pe Lavena. Înregistrează-te cu această adresă de email și primești acces imediat.",
+        "button": "Înregistrează-te"
+      },
       "inviteRole": "Rol",
       "role": {
         "owner": "Proprietar",
@@ -1119,7 +1125,11 @@
       "permissionsBody": "Proprietarul și administratorul gestionează tot. Managerul se ocupă de calendar, servicii și clienți. Specialistul vede calendarul echipei.",
       "invited": "Invitație salvată",
       "inviteHint": "Primește acces imediat ce se autentifică cu acest e-mail.",
-      "subtitle": "Oamenii din spatele scaunului, rolurile și zilele lor de lucru."
+      "subtitle": "Oamenii din spatele scaunului, rolurile și zilele lor de lucru.",
+      "invitedEmailed": "Invitația a fost trimisă pe email",
+      "invitedNoEmail": "Invitația este salvată, dar emailul nu a putut fi trimis. Spune-i să se înregistreze cu această adresă.",
+      "inviteDuplicate": "Acest email este deja invitat.",
+      "inviteFailed": "Invitația nu a putut fi salvată. Încearcă din nou."
     },
     "clients": {
       "title": "Clienți",
@@ -1432,7 +1442,7 @@
       "send": "Trimite",
       "thinking": "Se gândește…",
       "unavailable": "Asistentul AI nu este configurat",
-      "unavailableBody": "Adaugă OPENAI_API_KEY pe server pentru a-l activa. Asistentul rulează doar pe server și primește cifre agregate, nu date personale ale clienților.",
+      "unavailableBody": "Asistentul nu este încă activat pentru platformă. Când va fi, va răspunde la întrebări despre cifrele salonului tău și va redacta mesaje, fără să vadă date personale ale clienților.",
       "disclaimer": "Asistentul poate greși. Verifică cifrele importante în calendar și analize.",
       "dataNote": "Trimitem doar indicatori agregați pentru perioada selectată — fără nume, e-mailuri sau telefoane."
     },

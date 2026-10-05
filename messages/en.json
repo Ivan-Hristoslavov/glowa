@@ -1084,6 +1084,12 @@
       "add": "Add specialist",
       "invite": "Invite by email",
       "inviteEmail": "Email",
+      "inviteMail": {
+        "subject": "You're invited to join {business} on Lavena",
+        "heading": "You're invited to {business}'s team",
+        "body": "{business} invited you as “{role}” on Lavena. Sign up with this email address and you get access straight away.",
+        "button": "Sign up"
+      },
       "inviteRole": "Role",
       "role": {
         "owner": "Owner",
@@ -1119,7 +1125,11 @@
       "permissionsBody": "Owner and admin manage everything. A manager runs the calendar, services and clients. A specialist sees the team calendar.",
       "invited": "Invitation saved",
       "inviteHint": "They get access as soon as they sign in with this email.",
-      "subtitle": "The people behind the chair, their roles and working days."
+      "subtitle": "The people behind the chair, their roles and working days.",
+      "invitedEmailed": "Invitation sent by email",
+      "invitedNoEmail": "The invitation is saved, but the email could not be sent. Ask them to sign up with this address.",
+      "inviteDuplicate": "This email is already invited.",
+      "inviteFailed": "The invitation could not be saved. Please try again."
     },
     "clients": {
       "title": "Clients",
@@ -1432,7 +1442,7 @@
       "send": "Send",
       "thinking": "Thinking…",
       "unavailable": "The AI assistant is not configured",
-      "unavailableBody": "Add OPENAI_API_KEY on the server to switch it on. The assistant runs server-side only and receives aggregate figures, not client personal data.",
+      "unavailableBody": "The assistant isn't switched on for the platform yet. When it is, it will answer questions about your salon's figures and draft messages, without seeing clients' personal data.",
       "disclaimer": "The assistant can be wrong. Check important numbers in the calendar and analytics.",
       "dataNote": "We send only aggregate metrics for the selected period — no names, emails or phone numbers."
     },

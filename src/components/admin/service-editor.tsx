@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Plus, Repeat, Trash2 } from "lucide-react";
+import { Loader2, Plus, Repeat, Trash2, Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -448,6 +448,42 @@ export function AddServiceButton({
         <Button>
           <Plus className="size-4" aria-hidden />
           {t("add")}
+        </Button>
+      }
+    />
+  );
+}
+
+/**
+ * The pencil on a service card. Built here, in the client module, rather than
+ * passed from the page as a `trigger` element: an element of a server-rendered
+ * `Button` handed across the boundary is not a valid child for Radix's
+ * `asChild`, so the services page failed to render on the server and fell back
+ * to client rendering ("Primitive.button failed to slot onto its children").
+ */
+export function EditServiceButton({
+  businessId,
+  staff,
+  service,
+}: {
+  businessId: string;
+  staff: Array<{ id: string; displayName: string }>;
+  service: ServiceDraft;
+}) {
+  const t = useTranslations("admin.services");
+  return (
+    <ServiceEditor
+      businessId={businessId}
+      staff={staff}
+      service={service}
+      trigger={
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0 rounded-full"
+          aria-label={t("edit")}
+        >
+          <Pencil className="size-4" aria-hidden />
         </Button>
       }
     />

@@ -337,3 +337,22 @@ s3_region = "env(S3_REGION)"
 s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
+
+# Branded Bulgarian auth emails. `token_hash` links work in any browser, so a
+# link opened on another device than the one that asked still signs the person
+# in. In production paste the same HTML into Authentication -> Emails.
+[auth.email.template.confirmation]
+subject = "Потвърди имейла си в Lavena"
+content_path = "./supabase/templates/confirmation.html"
+[auth.email.template.recovery]
+subject = "Нова парола за Lavena"
+content_path = "./supabase/templates/recovery.html"
+[auth.email.template.magic_link]
+subject = "Вход в Lavena"
+content_path = "./supabase/templates/magic_link.html"
+[auth.email.template.invite]
+subject = "Покана в Lavena"
+content_path = "./supabase/templates/invite.html"
+[auth.email.template.email_change]
+subject = "Потвърди новия имейл в Lavena"
+content_path = "./supabase/templates/email_change.html"
