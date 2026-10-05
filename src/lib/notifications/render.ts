@@ -505,7 +505,7 @@ function formatWhen(iso: string, locale: Locale, timeZone: string) {
  */
 const BADGE_COLOURS: Record<BadgeTone, { bg: string; fg: string }> = {
   green: { bg: "#e6f1e9", fg: "#35684a" },
-  coral: { bg: "#fbe7e3", fg: "#b24d42" },
+  coral: { bg: "#efe7fa", fg: "#b24d42" },
   grey: { bg: "#efebe7", fg: "#6b625b" },
   gold: { bg: "#f7eed9", fg: "#8a6420" },
 };
@@ -532,11 +532,11 @@ function renderHtml(input: {
 
   const logo = input.brand.logoUrl
     ? `<img src="${escapeHtml(input.brand.logoUrl)}" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border-radius:50%;object-fit:cover;border:0;" />`
-    : `<div style="width:44px;height:44px;border-radius:50%;background:#fbe7e3;color:#d96c61;font-family:${serif};font-size:20px;line-height:44px;text-align:center;">${escapeHtml(input.brand.name.charAt(0))}</div>`;
+    : `<div style="width:44px;height:44px;border-radius:50%;background:#efe7fa;color:#7556b5;font-family:${serif};font-size:20px;line-height:44px;text-align:center;">${escapeHtml(input.brand.name.charAt(0))}</div>`;
 
   const cover = input.brand.coverUrl
     ? `<tr><td style="padding:0;"><img src="${escapeHtml(input.brand.coverUrl)}" width="560" alt="" style="display:block;width:100%;max-width:560px;height:auto;max-height:240px;object-fit:cover;border:0;" /></td></tr>`
-    : `<tr><td style="padding:0;height:6px;background:linear-gradient(90deg,#d96c61,#eac2bb,#a9b6a6);font-size:0;line-height:0;">&nbsp;</td></tr>`;
+    : `<tr><td style="padding:0;height:6px;background:linear-gradient(90deg,#7556b5,#dccef3,#a9b6a6);font-size:0;line-height:0;">&nbsp;</td></tr>`;
 
   const badge = input.badge
     ? `<span style="display:inline-block;padding:5px 12px;border-radius:999px;background:${BADGE_COLOURS[input.badge.tone].bg};color:${BADGE_COLOURS[input.badge.tone].fg};font-size:12px;font-weight:700;letter-spacing:0.04em;">${escapeHtml(input.badge.label)}</span>`
@@ -544,14 +544,14 @@ function renderHtml(input: {
 
   const ticket = input.ticket
     ? `
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border:1px solid #eadfd6;border-radius:18px;border-collapse:separate;overflow:hidden;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border:1px solid #e4dcf0;border-radius:18px;border-collapse:separate;overflow:hidden;">
             <tr>
-              <td width="96" align="center" valign="middle" style="background:#d96c61;color:#ffffff;padding:16px 8px;border-radius:17px 0 0 17px;">
+              <td width="96" align="center" valign="middle" style="background:#7556b5;color:#ffffff;padding:16px 8px;border-radius:17px 0 0 17px;">
                 <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;">${escapeHtml(input.ticket.month)}</div>
                 <div style="font-family:${serif};font-size:40px;line-height:1.05;font-weight:600;">${escapeHtml(input.ticket.day)}</div>
                 <div style="font-size:12px;opacity:0.9;">${escapeHtml(input.ticket.weekday)}</div>
               </td>
-              <td valign="middle" style="padding:16px 20px;background:#fffaf7;">
+              <td valign="middle" style="padding:16px 20px;background:#fbf9ff;">
                 <div style="font-size:22px;font-weight:700;color:#0f1212;letter-spacing:-0.01em;">${escapeHtml(input.ticket.time)}</div>
                 <div style="margin-top:4px;font-size:15px;color:#0f1212;">${escapeHtml(input.ticket.title)}</div>
                 ${input.ticket.subtitle ? `<div style="margin-top:2px;font-size:13px;color:#6b625b;">${escapeHtml(input.ticket.subtitle)}</div>` : ""}
@@ -567,7 +567,7 @@ function renderHtml(input: {
               (choice) => `
             <tr>
               <td style="padding:0 0 10px;">
-                <a href="${escapeHtml(choice.href)}" style="display:block;padding:14px 18px;border:1px solid #eadfd6;border-radius:14px;background:#fffaf7;color:#0f1212;text-decoration:none;font-size:15px;font-weight:600;"><span style="color:#d96c61;">&#9679;</span>&nbsp; ${escapeHtml(choice.label)} <span style="color:#d96c61;font-weight:700;">&rarr;</span></a>
+                <a href="${escapeHtml(choice.href)}" style="display:block;padding:14px 18px;border:1px solid #e4dcf0;border-radius:14px;background:#fbf9ff;color:#0f1212;text-decoration:none;font-size:15px;font-weight:600;"><span style="color:#7556b5;">&#9679;</span>&nbsp; ${escapeHtml(choice.label)} <span style="color:#7556b5;font-weight:700;">&rarr;</span></a>
               </td>
             </tr>`,
             )
@@ -586,14 +586,14 @@ function renderHtml(input: {
     .join("");
 
   const button = input.primary
-    ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 0;"><tr><td style="border-radius:14px;background:#d96c61;box-shadow:0 8px 20px -10px rgba(217,108,97,0.8);"><a href="${escapeHtml(input.primary.href)}" style="display:inline-block;padding:14px 26px;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;">${escapeHtml(input.primary.label)} &rarr;</a></td></tr></table>`
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 0;"><tr><td style="border-radius:14px;background:#7556b5;box-shadow:0 8px 20px -10px rgba(117,86,181,0.8);"><a href="${escapeHtml(input.primary.href)}" style="display:inline-block;padding:14px 26px;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;">${escapeHtml(input.primary.label)} &rarr;</a></td></tr></table>`
     : "";
 
   const secondary = input.secondary.length
     ? `<p style="margin:18px 0 0;font-size:13px;line-height:2;">${input.secondary
         .map(
           (action) =>
-            `<a href="${escapeHtml(action.href)}" style="display:inline-block;margin:0 8px 6px 0;padding:6px 12px;border:1px solid #eadfd6;border-radius:999px;color:#4a2e2a;text-decoration:none;background:#ffffff;">${escapeHtml(action.label)}</a>`,
+            `<a href="${escapeHtml(action.href)}" style="display:inline-block;margin:0 8px 6px 0;padding:6px 12px;border:1px solid #e4dcf0;border-radius:999px;color:#2d2347;text-decoration:none;background:#ffffff;">${escapeHtml(action.label)}</a>`,
         )
         .join("")}</p>`
     : "";
@@ -625,13 +625,13 @@ function renderHtml(input: {
                   <tr>
                     <td width="52" valign="middle">${logo}</td>
                     <td valign="middle" style="font-family:${serif};font-size:19px;color:#0f1212;">${escapeHtml(input.brand.name)}</td>
-                    <td align="right" valign="middle" style="font-size:12px;font-weight:800;letter-spacing:0.16em;color:#d96c61;">GLOWA</td>
+                    <td align="right" valign="middle" style="font-size:12px;font-weight:800;letter-spacing:0.16em;color:#7556b5;">LAVENA</td>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:24px;overflow:hidden;border:1px solid #eadfd6;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:24px;overflow:hidden;border:1px solid #e4dcf0;">
             ${cover}
             <tr>
               <td style="padding:28px 28px 32px;">

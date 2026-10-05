@@ -11,7 +11,7 @@ export const LEGAL_ENTITY = {
   companyId: null as string | null,
   vatId: null as string | null,
   address: null as string | null,
-  email: "hello@glowa.bg",
+  email: "hello@lavena.eu",
 };
 
 /** When the current texts took effect; change it with any material edit. */

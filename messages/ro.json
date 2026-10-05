@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "glowa",
+    "name": "Lavena",
     "tagline": "BEAUTY MOVES PEOPLE",
     "madeIn": "Creat în Bulgaria, pentru lume"
   },
@@ -100,7 +100,7 @@
     "eyebrow": "BEAUTY GETS EASIER",
     "titleLine1": "Mai multă frumusețe.",
     "titleLine2": "Mai puțină birocrație.",
-    "subtitle": "Glowa este platforma modernă pentru programări online, administrarea salonului și clienți mai fericiți — totul într-un singur loc.",
+    "subtitle": "Lavena este platforma modernă pentru programări online, administrarea salonului și clienți mai fericiți — totul într-un singur loc.",
     "ctaPrimary": "Începe gratuit",
     "ctaSecondary": "Găsește un salon",
     "searchPlaceholder": "Serviciu, salon sau oraș",
@@ -112,7 +112,7 @@
     },
     "featured": {
       "title": "Descoperă saloane",
-      "subtitle": "Afaceri care primesc programări prin Glowa.",
+      "subtitle": "Afaceri care primesc programări prin Lavena.",
       "all": "Vezi toate"
     },
     "foundation": {
@@ -124,7 +124,7 @@
       "eyebrow": "TOT CE AI NEVOIE",
       "title": "Creat pentru oamenii care fac",
       "titleAccent": "lumea mai frumoasă.",
-      "subtitle": "Glowa îți oferă instrumentele ca să îți administrezi, organizezi și dezvolți afacerea — simplu și eficient.",
+      "subtitle": "Lavena îți oferă instrumentele ca să îți administrezi, organizezi și dezvolți afacerea — simplu și eficient.",
       "booking": {
         "title": "Programări online",
         "body": "Clienții rezervă non-stop, fără telefoane și fără așteptare."
@@ -172,7 +172,7 @@
     },
     "ownerPrompt": "Ai un salon?",
     "pill": "Programare la salon într-un minut, fără telefon",
-    "ownerLink": "Vezi GLOWA pentru saloane",
+    "ownerLink": "Vezi Lavena pentru saloane",
     "search": {
       "what": "Manichiură, tuns, salon…",
       "where": "Oraș sau lângă mine",
@@ -305,7 +305,7 @@
   "auth": {
     "loginTitle": "Bine ai revenit",
     "loginSubtitle": "Autentifică-te pentru a-ți gestiona afacerea și programările.",
-    "signupTitle": "Creează-ți contul GLOWA",
+    "signupTitle": "Creează-ți contul Lavena",
     "signupSubtitle": "Gratuit la început. Fără card bancar.",
     "email": "E-mail",
     "password": "Parolă",
@@ -422,7 +422,7 @@
     "noReviews": "Încă nu există recenzii.",
     "noReviewsBody": "Fii primul care povestește cum a fost vizita.",
     "googleReview": "Lasă o recenzie pe Google",
-    "googleReviewNote": "Deschide profilul Google al afacerii. Glowa nu administrează recenziile Google.",
+    "googleReviewNote": "Deschide profilul Google al afacerii. Lavena nu administrează recenziile Google.",
     "reviewsCount": "{count, plural, =0 {fără recenzii} one {# recenzie} other {# recenzii}}",
     "cancellationPolicy": "Anulare gratuită cu până la {hours} h înainte.",
     "leadTime": "Programează cu cel puțin {minutes} min înainte de start.",
@@ -443,7 +443,7 @@
     "sectionsLabel": "Secțiuni",
     "serviceCount": "{count, plural, one {# serviciu} few {# servicii} other {# de servicii}}",
     "bookWith": "Programează-te la {name}",
-    "verifiedVisit": "Vizită prin GLOWA",
+    "verifiedVisit": "Vizită prin Lavena",
     "salonReply": "Răspuns de la {name}",
     "depositPolicy": "Unele servicii cer un mic avans la programarea online. Se returnează integral dacă anulezi cu cel puțin {hours} ore înainte.",
     "directions": "Indicații",
@@ -520,7 +520,7 @@
     "depositChip": "Avans {amount}",
     "depositTitle": "Avans de {amount} acum",
     "depositBody": "Restul de {rest} se plătește la salon. Avansul îți este returnat integral dacă anulezi cu cel puțin {hours} ore înainte.",
-    "depositHold": "Îți păstrăm ora 30 de minute cât timp plătești. Plata se face prin Stripe; datele cardului tău nu trec prin GLOWA.",
+    "depositHold": "Îți păstrăm ora 30 de minute cât timp plătești. Plata se face prin Stripe; datele cardului tău nu trec prin Lavena.",
     "depositLabel": "Avans",
     "depositSummary": "{amount} acum · {rest} la salon",
     "payDeposit": "Plătește avansul de {amount}",
@@ -533,7 +533,7 @@
     "preselected": "Ora e aleasă pentru tine. Verifică și confirmă.",
     "earlier": "Zile anterioare",
     "later": "Zile următoare",
-    "trustNoStrikes": "GLOWA nu îți blochează contul pentru o programare anulată și nu te sună."
+    "trustNoStrikes": "Lavena nu îți blochează contul pentru o programare anulată și nu te sună."
   },
   "waitlist": {
     "cta": "Intră pe lista de așteptare",
@@ -646,7 +646,7 @@
     "submitting": "Se publică…",
     "thanks": "Mulțumim pentru recenzie!",
     "googlePrompt": "Vrei să o publici și pe Google?",
-    "googleNote": "Deschide profilul public Google al salonului. Glowa nu publică și nu administrează recenzii Google.",
+    "googleNote": "Deschide profilul public Google al salonului. Lavena nu publică și nu administrează recenzii Google.",
     "businessReplied": "Răspuns de la salon",
     "alreadyReviewed": "Ai lăsat deja o recenzie pentru această vizită.",
     "onlyAfterVisit": "Poți lăsa o recenzie după ce vizita este finalizată.",
@@ -687,7 +687,7 @@
   "settings": {
     "title": "Setări",
     "profile": "Profil",
-    "profileBody": "Cum apari în Glowa și către saloane.",
+    "profileBody": "Cum apari în Lavena și către saloane.",
     "fullName": "Nume complet",
     "phone": "Telefon",
     "locale": "Limbă",
@@ -744,9 +744,9 @@
       "turnOff": "Dezactivează notificările",
       "enabled": "Notificările sunt active.",
       "disabled": "Notificările sunt oprite.",
-      "onNote": "Acest browser va primi notificări chiar și când GLOWA e închisă.",
+      "onNote": "Acest browser va primi notificări chiar și când Lavena e închisă.",
       "offNote": "Îți cerem permisiunea o singură dată.",
-      "unsupported": "Acest browser nu suportă notificări. Pe iPhone, adaugă mai întâi GLOWA pe ecranul principal.",
+      "unsupported": "Acest browser nu suportă notificări. Pe iPhone, adaugă mai întâi Lavena pe ecranul principal.",
       "blocked": "Notificările sunt blocate pentru acest site. Permite-le din setările browserului.",
       "errors": {
         "unauthenticated": "Autentifică-te.",
@@ -936,7 +936,7 @@
         }
       },
       "value": {
-        "title": "Ce ți-a adus GLOWA luna aceasta",
+        "title": "Ce ți-a adus Lavena luna aceasta",
         "subtitle": "Doar programări reale din propriul calendar — nimic estimat.",
         "online": "Programați online de clienți singuri",
         "invited": "Reveniți după o invitație",
@@ -1076,7 +1076,7 @@
       "rebook": "Invită clientul din nou după",
       "rebookOff": "Fără invitație",
       "rebookWeeks": "{count, plural, one {# săptămână} few {# săptămâni} other {# de săptămâni}}",
-      "rebookHint": "Dacă clientul nu s-a programat până atunci, GLOWA îi scrie în numele salonului cu primele ore libere — la același specialist, în jurul orei la care vine de obicei. Nu scriem nimănui care are deja următoarea vizită sau s-a dezabonat.",
+      "rebookHint": "Dacă clientul nu s-a programat până atunci, Lavena îi scrie în numele salonului cu primele ore libere — la același specialist, în jurul orei la care vine de obicei. Nu scriem nimănui care are deja următoarea vizită sau s-a dezabonat.",
       "rebookChip": "Invitație după {count, plural, one {# săptămână} few {# săptămâni} other {# de săptămâni}}"
     },
     "staff": {
@@ -1215,7 +1215,7 @@
       "empty": "Nicio recenzie încă",
       "emptyBody": "Recenziile apar după vizite finalizate.",
       "googleTitle": "Profil Google",
-      "googleBody": "Adaugă un link către profilul tău public Google. Glowa doar îndrumă clienții acolo — nu citește și nu publică recenzii Google.",
+      "googleBody": "Adaugă un link către profilul tău public Google. Lavena doar îndrumă clienții acolo — nu citește și nu publică recenzii Google.",
       "googleLabel": "Link recenzii Google",
       "googleSaved": "Link salvat",
       "invitations": "Invitații la recenzie",
@@ -1266,7 +1266,7 @@
       "pitchPoint3": "Tu decizi pentru ce servicii și cât",
       "connect": "Conectează Stripe",
       "adminOnly": "Doar un proprietar sau administrator poate conecta plățile.",
-      "stripeNote": "Configurarea se face pe Stripe și durează circa 10 minute. GLOWA nu vede datele tale bancare.",
+      "stripeNote": "Configurarea se face pe Stripe și durează circa 10 minute. Lavena nu vede datele tale bancare.",
       "reviewing": "În verificare",
       "unfinished": "Neterminat",
       "pendingTitle": "Contul tău Stripe nu este încă activ",
@@ -1497,7 +1497,7 @@
     },
     "subscription": {
       "title": "Abonament",
-      "body": "Cât costă Glowa și ce plan se potrivește echipei tale. În perioada de acces anticipat poți folosi totul gratuit.",
+      "body": "Cât costă Lavena și ce plan se potrivește echipei tale. În perioada de acces anticipat poți folosi totul gratuit.",
       "status": "Acces timpuriu · gratuit",
       "recommended": "{count, plural, one {Pentru # specialist} other {Pentru # specialiști}}",
       "compare": "Compară planurile",
@@ -1611,11 +1611,11 @@
     },
     "billing": {
       "title": "Abonament",
-      "subtitle": "Alege planul potrivit echipei tale. Plata se face prin Stripe; cardul tău nu este stocat de Glowa.",
+      "subtitle": "Alege planul potrivit echipei tale. Plata se face prin Stripe; cardul tău nu este stocat de Lavena.",
       "success": "Mulțumim! Abonamentul este activ. Dacă nu apare încă, reîmprospătează pagina în câteva secunde.",
       "cancelled": "Plata a fost anulată. Nu s-a taxat nimic.",
       "earlyAccess": "Acces anticipat · gratuit",
-      "earlyAccessBody": "Poți alege un plan acum sau poți folosi Glowa gratuit în perioada de acces anticipat.",
+      "earlyAccessBody": "Poți alege un plan acum sau poți folosi Lavena gratuit în perioada de acces anticipat.",
       "notConfiguredBody": "Plățile nu sunt încă activate. Totul este gratuit; te anunțăm înainte de orice taxare.",
       "currentPlan": "{plan} · {interval}",
       "interval": {
@@ -1699,7 +1699,7 @@
     },
     "footer": {
       "signature": "Echipa {business}",
-      "sentBy": "Trimis prin GLOWA",
+      "sentBy": "Trimis prin Lavena",
       "unsubscribe": "Dezabonează-te de la marketing",
       "noInvitations": "Nu mai vreau invitații de la {business}"
     },
@@ -1794,17 +1794,17 @@
     "faq": {
       "title": "Întrebări frecvente",
       "q1": "Ce include Solo?",
-      "a1": "Tot ce îi trebuie unui specialist: calendarul, programările online, fișele clienților, avansurile, mementourile și pagina ta pe glowa. Fără comision și fără contract. Dacă devii o echipă, treci la Studio.",
+      "a1": "Tot ce îi trebuie unui specialist: calendarul, programările online, fișele clienților, avansurile, mementourile și pagina ta pe Lavena. Fără comision și fără contract. Dacă devii o echipă, treci la Studio.",
       "q2": "Ce plătesc în perioada de acces timpuriu?",
       "a2": "Nimic. Toate planurile sunt gratuite până pe {date}. Înainte de orice facturare te anunțăm cu cel puțin 30 de zile și îți alegi singur planul.",
       "q3": "Luați un procent din încasări sau din clienții noi?",
-      "a3": "Nu. Abonamentul e fix. Un client care te găsește prin glowa e al tău — fără comision, nici la prima vizită.",
+      "a3": "Nu. Abonamentul e fix. Un client care te găsește prin Lavena e al tău — fără comision, nici la prima vizită.",
       "q4": "Și avansurile?",
-      "a4": "Avansul ajunge direct în contul tău Stripe. Glowa nu adaugă nicio taxă — plătești doar taxa standard Stripe pentru card.",
+      "a4": "Avansul ajunge direct în contul tău Stripe. Lavena nu adaugă nicio taxă — plătești doar taxa standard Stripe pentru card.",
       "q5": "Ce se întâmplă cu datele mele dacă renunț?",
       "a5": "Rămân ale tale. Exporți clienții și programările oricând; închiderea contului nu îți reține conținutul.",
       "q6": "Clienții plătesc ca să se programeze?",
-      "a6": "Nu. Programarea prin glowa e gratuită pentru clienți.",
+      "a6": "Nu. Programarea prin Lavena e gratuită pentru clienți.",
       "q7": "Pot schimba planul?",
       "a7": "Da, oricând. Schimbarea se aplică din următoarea perioadă de facturare."
     },
@@ -1842,7 +1842,7 @@
       "newClients": "Clienți noi de pe platformă pe lună",
       "average": "Nota medie la prima vizită",
       "theirs": "Platformă tipică",
-      "ours": "Glowa",
+      "ours": "Lavena",
       "perMonth": "pe lună",
       "savedYear": "Economisești pe an",
       "savedMonth": "Adică {amount} în fiecare lună.",
@@ -1851,7 +1851,7 @@
     "metaTitle": "Prețuri — fără comision, fără contract",
     "included": {
       "title": "În fiecare plan",
-      "commission": "0% comision — inclusiv pentru clienții care te găsesc prin GLOWA",
+      "commission": "0% comision — inclusiv pentru clienții care te găsesc prin Lavena",
       "deposits": "Avansuri anti-neprezentare direct în contul tău Stripe",
       "export": "Exportă clienții în CSV oricând",
       "import": "Import de clienți din fișier — te muți din alt sistem în câteva minute",
@@ -1863,7 +1863,7 @@
       "subtitle": "Un salon mai ușor de programat câștigă încredere înainte de prima vizită.",
       "free": {
         "title": "Fără cost pentru client",
-        "body": "Programarea prin GLOWA nu costă pe nimeni nimic."
+        "body": "Programarea prin Lavena nu costă pe nimeni nimic."
       },
       "instant": {
         "title": "Confirmare pe loc",
@@ -1880,12 +1880,12 @@
     }
   },
   "forBusiness": {
-    "metaTitle": "GLOWA pentru saloane",
+    "metaTitle": "Lavena pentru saloane",
     "metaDescription": "Programări online, calendar de echipă, avansuri împotriva neprezentărilor și o pagină frumoasă pentru salonul tău.",
     "eyebrow": "Pentru saloane și studiouri",
     "title": "Calendarul care umple scaunul.",
     "titleAccent": "Avansul care îl protejează.",
-    "subtitle": "GLOWA aduce programările online, calendarul de echipă, avansurile și o pagină frumoasă pentru salon într-un singur loc. În bulgară, engleză și română din prima zi.",
+    "subtitle": "Lavena aduce programările online, calendarul de echipă, avansurile și o pagină frumoasă pentru salon într-un singur loc. În bulgară, engleză și română din prima zi.",
     "ctaPrimary": "Începe gratuit",
     "ctaShowcase": "Vezi un salon exemplu",
     "heroPoint1": "Fără card de credit",
@@ -1978,7 +1978,7 @@
       },
       "phone": {
         "q": "Merge pe telefon și tabletă?",
-        "a": "Da. GLOWA se instalează ca aplicație pe telefon, iar pe tableta de la recepție programările se mută cu degetul."
+        "a": "Da. Lavena se instalează ca aplicație pe telefon, iar pe tableta de la recepție programările se mută cu degetul."
       },
       "clients": {
         "q": "Ce văd clienții?",
@@ -1986,7 +1986,7 @@
       },
       "switch": {
         "q": "Vin de pe o altă platformă. Îmi pot aduce clienții?",
-        "a": "Da. La Clienți alegi „Import din fișier” și încarci un CSV - din Excel, Google Sheets sau un export din vechiul sistem. Spui ce conține fiecare coloană și vezi o previzualizare înainte să se salveze ceva. Clienții pe care îi ai deja nu se dublează. Istoricul vizitelor nu se transferă: se construiește din programările făcute în GLOWA."
+        "a": "Da. La Clienți alegi „Import din fișier” și încarci un CSV - din Excel, Google Sheets sau un export din vechiul sistem. Spui ce conține fiecare coloană și vezi o previzualizare înainte să se salveze ceva. Clienții pe care îi ai deja nu se dublează. Istoricul vizitelor nu se transferă: se construiește din programările făcute în Lavena."
       },
       "exit": {
         "q": "Îmi pot lua clienții dacă hotărăsc să plec?",
@@ -2017,13 +2017,13 @@
     "forSalons": "Pentru saloane",
     "cities": "Orașe",
     "findSalon": "Găsește un salon",
-    "whyGlowa": "De ce glowa",
+    "whyGlowa": "De ce Lavena",
     "registerSalon": "Înscrie-ți salonul",
     "ctaTitle": "Ai un salon?",
     "ctaBody": "Calendar, avansuri și programări online — fără comision.",
     "customers": "Pentru clienți",
     "business": "Pentru business",
-    "company": "Glowa",
+    "company": "Lavena",
     "myBookings": "Programările mele",
     "login": "Intră în cont",
     "register": "Înregistrează un salon",
@@ -2031,7 +2031,7 @@
     "dashboard": "Panou business",
     "contact": "Contact",
     "languages": "Български · English · Română",
-    "rights": "© {year} Glowa. Toate drepturile rezervate.",
+    "rights": "© {year} Lavena. Toate drepturile rezervate.",
     "favorites": "Favorite",
     "legal": "Informații legale",
     "ctaButton": "Înregistrează-ți salonul",
@@ -2064,10 +2064,10 @@
   "whyPay": {
     "eyebrow": "De ce să plătești când altele sunt gratuite",
     "title": "Când programarea e „gratuită”, plătești cu clienții tăi.",
-    "subtitle": "Platformele gratuite câștigă de obicei din comision pe clienții noi și din plasare plătită în căutare. GLOWA ia doar un abonament fix — de aceea totul în ea e făcut ca clienții tăi să revină la tine, nu la următorul salon din listă.",
+    "subtitle": "Platformele gratuite câștigă de obicei din comision pe clienții noi și din plasare plătită în căutare. Lavena ia doar un abonament fix — de aceea totul în ea e făcut ca clienții tăi să revină la tine, nu la următorul salon din listă.",
     "rebook": {
       "title": "Clienții revin singuri",
-      "body": "Când manichiura sau tunsoarea trebuie refăcută, GLOWA invită clientul în numele salonului cu până la trei ore libere reale — la același specialist, în jurul orei la care vine de obicei. O atingere și e la pasul de confirmare. Nu scriem nimănui care are deja o programare sau s-a dezabonat."
+      "body": "Când manichiura sau tunsoarea trebuie refăcută, Lavena invită clientul în numele salonului cu până la trei ore libere reale — la același specialist, în jurul orei la care vine de obicei. O atingere și e la pasul de confirmare. Nu scriem nimănui care are deja o programare sau s-a dezabonat."
     },
     "waitlist": {
       "title": "O oră eliberată nu rămâne goală",
@@ -2098,7 +2098,7 @@
       "free": "Gratuit pentru client"
     },
     "count": "{count, plural, one {# salon} few {# saloane} other {# de saloane}} în {city}",
-    "noneTitle": "Încă nu există {categoryLower} în {city} pe GLOWA",
+    "noneTitle": "Încă nu există {categoryLower} în {city} pe Lavena",
     "noneBody": "Iată cele mai apropiate de oraș.",
     "otherCategories": "Mai multe în {city}",
     "otherPlaces": "{category} în alte orașe",

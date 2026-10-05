@@ -108,7 +108,7 @@ export function UpcomingStrip({ businessId, timezone, locale, appointments }: Up
             index > 0 ? toZonedDateKey(new Date(visible[index - 1].starts_at), timezone) : todayKey;
           const newDay = previousKey !== null && dayKey !== previousKey;
           const inProgress = now !== null && new Date(item.starts_at).getTime() <= now;
-          const color = item.staff_profiles?.color ?? "#d96c61";
+          const color = item.staff_profiles?.color ?? "#7556b5";
           const name = item.customer_name?.trim() || t("walkIn");
           const initials = name
             .split(/\s+/)

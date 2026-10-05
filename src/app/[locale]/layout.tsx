@@ -66,7 +66,7 @@ export async function generateMetadata({
     // and a status bar that blends into the dark header.
     appleWebApp: {
       capable: true,
-      title: "GLOWA",
+      title: "Lavena",
       statusBarStyle: "black-translucent",
     },
     alternates: alternatesFor(`/${locale}`),

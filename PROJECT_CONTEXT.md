@@ -1757,6 +1757,47 @@ site at 1440×900, 1366×768 and 390×844 as a guest, a customer and an owner.
 
 ---
 
+
+## 8s. Rename to Lavena and new identity (2026-10-05)
+
+The owner chose **Lavena** and asked for a total redesign. Done in code, on the
+PR branch, so it can be reverted as one unit:
+
+- **Name.** Every user-facing "GLOWA/Glowa/glowa" in `messages/**` (UI and legal),
+  the manifest, page title, JSON-LD, the email wordmark, the offline page, the
+  AI prompt, the Stripe app info and the Stripe product names now says Lavena.
+  Contact addresses moved to `hello@lavena.eu`, **a domain nobody owns yet**
+  (`lavena.eu` was free on 10-05, `.com` and `.app` were taken); register it
+  before launch, and check EUIPO/TMview and the Bulgarian Patent Office first.
+  Internal names are unchanged on purpose - `glowa-*` CSS utilities,
+  `--glowa-*` tokens, `GlowaLogo`/`GlowaMark`, the `glowa_consent` / `glowa_ref`
+  cookies, the `glowa:` events, the Vercel project - renaming them touches
+  hundreds of lines for nothing a visitor sees. (Cookie names change only if the
+  old ones should stop being honoured.)
+- **Mark.** A rounded "L" with a leaf growing from it, drawn as two shapes (a
+  stroke and a leaf) so it holds at 16 px and prints in one colour
+  (`components/brand/glowa-logo.tsx`; monochrome cuts the leaf out of the stem
+  with a mask). Favicon (`app/icon.svg`) and the app icons (`public/icon-*.png`,
+  `app/apple-icon.png`) are a white mark on a deep-lavender field.
+- **Palette.** Coral became lavender: `--glowa-coral` (the token keeps its old
+  name) is `#7556B5` light / `#B79BE8` dark, with soft, peach and a new
+  `--glowa-lilac` for the leaf; the same values replaced the hard-coded hexes in
+  the flyer studio, the confetti, the up-next strip, the email templates and the
+  offline page. White on `#7556B5` is about 5.5:1.
+  **Not re-validated:** the chart series pair (the validator run in §8a was for
+  coral + blue; plum and blue sit close in hue) and the colour-blind separation
+  of the calendar's staff colours. Re-run the dataviz check before launch.
+- **Not done - needs an image model.** The generated photographs and
+  illustrations (heroes, category photos, ten feature illustrations, empty
+  states, the share card `og-cover.webp`) are the old art direction and the
+  share card still carries the old mark. `scripts/generate-brand-assets.mjs`
+  regenerates them, and `npm run assets:social` rebuilds the card; both need
+  `OPENAI_API_KEY`, which this environment does not have. `build-social-card.mjs`
+  still draws the old mark geometry and must be updated with the new one.
+- The logo directions in `docs/brand/` are the old exploration and are obsolete.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all

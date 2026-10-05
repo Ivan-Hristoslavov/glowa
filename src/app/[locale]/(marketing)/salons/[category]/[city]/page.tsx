@@ -103,7 +103,7 @@ export default async function LandingPage({
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <JsonLd
         data={breadcrumbJsonLd(activeLocale, [
-          { name: "GLOWA", path: "" },
+          { name: "Lavena", path: "" },
           { name: categories(data.type), path: "/search?category=" + data.type },
           { name: placeName, path: landingPath(data.type, data.place) },
         ])}
