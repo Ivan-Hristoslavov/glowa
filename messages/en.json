@@ -238,7 +238,7 @@
       "tomorrow": "Tomorrow",
       "ticketLabel": "{day} at {time}: {service} at {salon}"
     },
-    "popular": "Popular:",
+    "popular": "Popular searches",
     "quick": {
       "haircut": "Haircut",
       "color": "Colour",

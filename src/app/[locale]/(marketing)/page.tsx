@@ -14,7 +14,8 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { categoryImages, showcaseAssets } from "@/lib/brand-assets";
 import type { BusinessCategory } from "@/lib/business-categories";
-import { searchBusinesses } from "@/lib/queries/discovery";
+import { listLandingCombos, searchBusinesses } from "@/lib/queries/discovery";
+import { landingPath } from "@/lib/seo/landing";
 import { cn } from "@/lib/utils";
 import { organizationJsonLd } from "@/lib/seo/structured-data";
 
@@ -41,6 +42,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const t = await getTranslations("home");
   const categories = await getTranslations("categories");
   const featured = await searchBusinesses({ limit: 6 });
+  const combos = (await listLandingCombos()).slice(0, 12);
 
   const promises = ["noCommission", "noCompetitors", "dataYours", "directPayouts"] as const;
   // What a client gets, stated as rules rather than adjectives. Each line is a
@@ -182,6 +184,26 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               </StaggerItem>
             ))}
           </Stagger>
+        </section>
+      ) : null}
+
+      {/* Popular searches: real category × town pages only, so every link
+          lands on a page with a salon on it. Hidden until there are some. */}
+      {combos.length > 0 ? (
+        <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
+          <h2 className="font-heading text-2xl">{t("popular")}</h2>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {combos.map(({ category, place }) => (
+              <li key={`${category}/${place.id}`}>
+                <Link
+                  href={landingPath(category, place)}
+                  className="glowa-focus hover:bg-accent inline-block rounded-full border px-4 py-2 text-sm"
+                >
+                  {categories(category)} · {place.name[locale as Locale]}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 

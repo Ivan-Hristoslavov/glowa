@@ -238,7 +238,7 @@
       "tomorrow": "Утре",
       "ticketLabel": "{day} в {time}: {service} в {salon}"
     },
-    "popular": "Популярно:",
+    "popular": "Популярни търсения",
     "quick": {
       "haircut": "Подстригване",
       "color": "Боядисване",

@@ -1737,9 +1737,9 @@ site at 1440×900, 1366×768 and 390×844 as a guest, a customer and an owner.
   location city matches; with none, the nearest are shown and the page is
   **`noindex`** - a page with nobody on it has nothing for a search engine. The
   sitemap lists only combinations with a real, non-demo salon. Bulgarian takes
-  "във" before в/ф (`inPreposition`). Copy: `landing.*`. Not yet linked from
-  the footer or the home page - the sitemap and the cross-links between pages
-  are the only way in; add footer links when there are salons to show.
+  "във" before в/ф (`inPreposition`). Copy: `landing.*`. The home page links to up to twelve
+  "Popular searches" - only pairs with a real salon (`listLandingCombos`, also
+  used by the sitemap); the section is hidden until there are some.
 - **`docs/go-to-market.md`**: the path to the first salons and clients (who to
   start with, a 90-day plan, channels, tricks for salon income and platform
   income, what to measure, scripts, risks). No invented numbers; targets are to
