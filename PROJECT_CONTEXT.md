@@ -1864,6 +1864,8 @@ the build environment. What changed and is easy to forget:
   after the layout has streamed (HTTP 200 plus a client redirect); `networkidle`
   waits in tests can stall on the aborted stream - use `load`.
 
+- Body text turns off the font's Bulgarian localised forms (`locl`) so "вт"/"Екип" read right; headings keep them. A specialist's card has a "Time off" button (the calendar's block-time dialog).
+
 **Migrations still to apply to the live database:**
 `20261005120000_auto_confirm_bookings.sql`, `20261005120100_reminder_not_in_the_past.sql`,
 `20261006090000_account_deletion_cascade.sql`.

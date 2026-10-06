@@ -225,6 +225,16 @@
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
+    /* Bulgarian localised letterforms read as "Bm" for "вт" and "Ekun" for
+       "Екип" at UI sizes. Headings keep them; running UI text does not. */
+    font-feature-settings: "locl" 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-heading {
+    font-feature-settings: normal;
   }
 
   /* The display cut is opt-in via .font-heading; body copy stays in the Text

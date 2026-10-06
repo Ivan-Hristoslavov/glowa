@@ -1,11 +1,12 @@
 "use client";
 
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { CalendarOff, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { RequiredNote } from "@/components/common/required-note";
+import { BlockTimeDialog } from "@/components/admin/calendar/block-time-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,6 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "@/i18n/navigation";
+import { zonedDateKey } from "@/lib/timezone";
 import { localeLabels, routing, type Locale } from "@/i18n/routing";
 import { deleteStaff, upsertStaff } from "@/lib/actions/catalog";
 
@@ -331,5 +333,53 @@ export function EditStaffButton({
         </Button>
       }
     />
+  );
+}
+
+/**
+ * "Time off" on a specialist's card: leave, a sick day, training. It opens the
+ * same dialog the calendar uses to block time, already set to this person, so
+ * the owner does not have to know it lives in the calendar.
+ */
+export function StaffTimeOffButton({
+  businessId,
+  timezone,
+  member,
+}: {
+  businessId: string;
+  timezone: string;
+  member: { id: string; displayName: string; color: string };
+}) {
+  const t = useTranslations("admin.staff");
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="rounded-full"
+        onClick={() => setOpen(true)}
+      >
+        <CalendarOff className="size-4" aria-hidden />
+        {t("timeOff")}
+      </Button>
+      <BlockTimeDialog
+        open={open}
+        onOpenChange={setOpen}
+        businessId={businessId}
+        timezone={timezone}
+        defaultDateKey={zonedDateKey(new Date(), timezone)}
+        staff={[
+          {
+            id: member.id,
+            displayName: member.displayName,
+            color: member.color,
+            avatarUrl: null,
+            isBookable: true,
+            hours: [],
+          },
+        ]}
+      />
+    </>
   );
 }

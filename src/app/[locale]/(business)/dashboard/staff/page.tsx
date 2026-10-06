@@ -7,6 +7,7 @@ import { InviteMemberDialog } from "@/components/admin/invite-member-dialog";
 import {
   AddStaffButton,
   EditStaffButton,
+  StaffTimeOffButton,
   type StaffDraft,
 } from "@/components/admin/staff-editor";
 import { EmptyState } from "@/components/common/empty-state";
@@ -125,7 +126,18 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/dashboa
                     </div>
                   </div>
                   {editable ? (
-                    <EditStaffButton businessId={membership.businessId} member={draft} />
+                    <div className="flex shrink-0 items-center gap-1">
+                      <StaffTimeOffButton
+                        businessId={membership.businessId}
+                        timezone={workspace.business?.timezone ?? "Europe/Sofia"}
+                        member={{
+                          id: member.id,
+                          displayName: member.display_name,
+                          color: member.color,
+                        }}
+                      />
+                      <EditStaffButton businessId={membership.businessId} member={draft} />
+                    </div>
                   ) : null}
                 </div>
 
