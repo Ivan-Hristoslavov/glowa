@@ -105,3 +105,100 @@ export async function getPlatformOverview(days = 365): Promise<PlatformOverview 
   }
   return { ...overview, revenue: { mrrCents, trialMrrCents, payingSalons, trialingSalons } };
 }
+
+// --- Moderation, people, problems and the audit log --------------------------
+
+export type ContentSalon = {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  logo_url: string | null;
+  cover_url: string | null;
+  gallery: string[];
+  description: unknown;
+  created_at: string;
+};
+
+export type ContentReview = {
+  id: string;
+  business_id: string;
+  business_name: string;
+  rating: number;
+  comment: string | null;
+  response: string | null;
+  status: "published" | "pending" | "hidden";
+  created_at: string;
+};
+
+export type PlatformUser = {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  created_at: string;
+  last_sign_in_at: string | null;
+  banned_until: string | null;
+  bookings: number;
+  salons: Array<{ name: string; role: string }>;
+  is_platform_admin: boolean;
+};
+
+export type FailedMessage = {
+  id: string;
+  event: string;
+  channel: string;
+  attempts: number;
+  error: string | null;
+  business_id: string | null;
+  business_name: string | null;
+  updated_at: string;
+};
+
+export type PaymentProblem = {
+  id: string;
+  kind: string;
+  status: string;
+  amount_cents: number;
+  currency: string;
+  reason: string | null;
+  business_name: string | null;
+  created_at: string;
+};
+
+export type AuditEntry = {
+  id: string;
+  action: string;
+  target_type: string;
+  target_id: string | null;
+  details: Record<string, unknown>;
+  created_at: string;
+  admin_email: string | null;
+};
+
+async function call<T>(fn: string, args?: Record<string, unknown>): Promise<T | null> {
+  const supabase = await createClient();
+  // The generated types know each function's exact arguments; this helper is
+  // deliberately loose because every call here is typed at its use site.
+  const { data, error } = await (supabase.rpc as unknown as (
+    name: string,
+    params?: Record<string, unknown>,
+  ) => Promise<{ data: unknown; error: unknown }>)(fn, args);
+  if (error) return null;
+  return data as T;
+}
+
+export const getPlatformContent = () =>
+  call<{ salons: ContentSalon[]; reviews: ContentReview[] }>("platform_content", { p_limit: 40 });
+
+export const getPlatformUsers = (query: string) =>
+  call<PlatformUser[]>("platform_users", { p_query: query || null, p_limit: 50 });
+
+export const getPlatformProblems = () =>
+  call<{
+    failed_messages: FailedMessage[];
+    stuck_messages: number;
+    payments: PaymentProblem[];
+    summary: { failed_messages_7d: number; sent_messages_7d: number };
+  }>("platform_problems");
+
+export const getPlatformAudit = () => call<AuditEntry[]>("platform_audit", { p_limit: 100 });

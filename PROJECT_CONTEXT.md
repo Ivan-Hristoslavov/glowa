@@ -1897,6 +1897,31 @@ the build environment. What changed and is easy to forget:
   browser render the same text.
 - New migration to apply live: `20261006120000_platform_admin.sql`.
 
+### Console, second step: moderation and support (same day)
+
+`/{locale}/platform?tab=...` has five sections: overview, **salons and content**
+(newest salons with every picture, remove one photo / logo / cover, suspend or
+restore a salon, hide or show a review), **people** (search by e-mail or name,
+block or unblock an account), **problems** (failed messages from the outbox with
+"try again", messages stuck in the queue over an hour, failed payments and
+refunds pending over a day) and an **audit log** (who changed what, with the
+reason). Rules to keep:
+
+- Every change is a SECURITY DEFINER function in migration
+  `20261006150000_platform_moderation.sql` that starts with
+  `app.require_platform_admin()` and writes `platform_audit_log` in the same
+  transaction. Table policies were not widened. pgTAP: `platform_moderation.test.sql`.
+- Blocking an account is `auth.admin.updateUserById(ban_duration)` from the
+  server action (`lib/actions/platform.ts`) after `isPlatformAdmin()`; it is
+  reversible, deletes nothing, and refuses the caller and other platform admins.
+  This is moderation for abuse - it does not contradict "Lavena does not block a
+  customer for cancelling", which is a product promise about cancellations.
+- A removed photo is only un-referenced; the file stays in storage.
+- `revalidatePublicSurfaces()` reads the slug with the service client, because a
+  suspended salon is not readable by the admin who suspends it.
+- `types/database.ts` has hand-added entries for these functions.
+- New migration to apply live: `20261006150000_platform_moderation.sql`.
+
 ---
 
 ## 9. Known advisor findings (reviewed, accepted)

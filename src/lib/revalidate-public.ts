@@ -3,7 +3,7 @@ import "server-only";
 import { revalidatePath } from "next/cache";
 
 import { routing } from "@/i18n/routing";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * The public surfaces that show a salon's data are cached for an hour (the
@@ -19,7 +19,9 @@ import { createClient } from "@/lib/supabase/server";
  * what the owner actually sees refresh.
  */
 export async function revalidatePublicSurfaces(businessId: string) {
-  const supabase = await createClient();
+  // The service client, not the caller's: a platform admin suspending a salon
+  // is not a member of it, and a suspended salon is not readable by anyone else.
+  const supabase = createAdminClient();
   const { data } = await supabase
     .from("businesses")
     .select("slug")

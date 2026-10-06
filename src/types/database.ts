@@ -2020,6 +2020,35 @@ export type Database = {
       }
       claim_pending_invitations: { Args: never; Returns: number }
       platform_overview: { Args: { p_days?: number }; Returns: Json }
+      platform_set_business_status: {
+        Args: {
+          p_business_id: string
+          p_reason?: string
+          p_status: Database["public"]["Enums"]["business_status"]
+        }
+        Returns: undefined
+      }
+      platform_remove_business_media: {
+        Args: { p_business_id: string; p_kind: string; p_reason?: string; p_url?: string }
+        Returns: undefined
+      }
+      platform_set_review_status: {
+        Args: {
+          p_reason?: string
+          p_review_id: string
+          p_status: Database["public"]["Enums"]["review_status"]
+        }
+        Returns: undefined
+      }
+      platform_log: {
+        Args: { p_action: string; p_details?: Json; p_target_id: string; p_target_type: string }
+        Returns: undefined
+      }
+      platform_retry_notification: { Args: { p_id: string }; Returns: undefined }
+      platform_content: { Args: { p_limit?: number }; Returns: Json }
+      platform_users: { Args: { p_limit?: number; p_query?: string }; Returns: Json }
+      platform_problems: { Args: never; Returns: Json }
+      platform_audit: { Args: { p_limit?: number }; Returns: Json }
       complete_deposit_refund: {
         Args: {
           p_error?: string
