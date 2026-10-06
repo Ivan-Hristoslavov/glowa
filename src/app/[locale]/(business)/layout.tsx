@@ -1,4 +1,4 @@
-import { ArrowUpRight, Globe } from "lucide-react";
+import { ArrowUpRight, BarChart3, Globe } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
@@ -35,6 +35,7 @@ export default async function BusinessLayout({
   const t = await getTranslations("admin.nav");
   const statusLabels = await getTranslations("admin.status");
   const calendar = await getTranslations("admin.calendar");
+  const platform = await getTranslations("platform");
 
   let [memberships, active] = await Promise.all([
     listMemberships(),
@@ -85,6 +86,18 @@ export default async function BusinessLayout({
         <div className="flex-1 overflow-y-auto px-3 pb-4">
           <AdminNav role={active.role} />
         </div>
+
+        {platformAdmin ? (
+          <div className="px-3 pb-1">
+            <Link
+              href="/platform"
+              className="glowa-focus bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <BarChart3 className="size-4" aria-hidden />
+              {platform("menu")}
+            </Link>
+          </div>
+        ) : null}
 
         {/* The salon's shop window, one click away - with its state, so a
             draft is never mistaken for a page customers can already see. */}
