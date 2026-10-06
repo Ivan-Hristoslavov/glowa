@@ -611,3 +611,23 @@
     -webkit-print-color-adjust: exact;
   }
 }
+
+/* Charts draw themselves in once; reduced-motion readers get them finished. */
+@keyframes lav-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes lav-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.lav-draw {
+  stroke-dasharray: 1;
+  animation: lav-draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.lav-fade {
+  animation: lav-fade 0.9s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lav-draw, .lav-fade { animation: none; }
+}

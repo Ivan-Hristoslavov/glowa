@@ -23,6 +23,7 @@ import {
   listMemberships,
   listUpcomingAppointments,
 } from "@/lib/queries/business";
+import { isPlatformAdmin } from "@/lib/platform/overview";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -60,12 +61,13 @@ export default async function BusinessLayout({
   const { data: claims } = await supabase.auth.getClaims();
   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
 
-  const [{ data: profile }, { data: business }, upcoming] = await Promise.all([
+  const [{ data: profile }, { data: business }, upcoming, platformAdmin] = await Promise.all([
     userId
       ? supabase.from("profiles").select("full_name, avatar_url").eq("id", userId).maybeSingle()
       : Promise.resolve({ data: null }),
     supabase.from("businesses").select("timezone").eq("id", active.businessId).maybeSingle(),
     listUpcomingAppointments(active.businessId),
+    isPlatformAdmin(),
   ]);
 
   const isLive = active.status === "active";
@@ -142,6 +144,7 @@ export default async function BusinessLayout({
               email={typeof claims?.claims?.email === "string" ? claims.claims.email : null}
               avatarUrl={profile?.avatar_url ?? null}
               hasBusiness
+              isPlatformAdmin={platformAdmin}
             />
           </div>
         </header>

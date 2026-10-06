@@ -1264,6 +1264,29 @@ export type Database = {
           },
         ]
       }
+      platform_admins: {
+        Row: {
+          created_at: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_admins_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1996,6 +2019,7 @@ export type Database = {
         }
       }
       claim_pending_invitations: { Args: never; Returns: number }
+      platform_overview: { Args: { p_days?: number }; Returns: Json }
       complete_deposit_refund: {
         Args: {
           p_error?: string

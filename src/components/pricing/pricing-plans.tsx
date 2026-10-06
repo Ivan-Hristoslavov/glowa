@@ -112,6 +112,11 @@ export function PricingPlans({
                   {t(`plans.${plan.id}.seats`)}
                   {annual && !free ? ` · ${t("billing.billedYearly")}` : ""}
                 </p>
+                {free ? null : (
+                  <p className="text-primary mt-2 inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium">
+                    {t("billing.trial")}
+                  </p>
+                )}
               </div>
 
               {action ? (

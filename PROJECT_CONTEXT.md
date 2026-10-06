@@ -1868,7 +1868,34 @@ the build environment. What changed and is easy to forget:
 
 **Migrations still to apply to the live database:**
 `20261005120000_auto_confirm_bookings.sql`, `20261005120100_reminder_not_in_the_past.sql`,
-`20261006090000_account_deletion_cascade.sql`.
+`20261006090000_account_deletion_cascade.sql`, `20261006120000_platform_admin.sql`.
+
+## 8v. Free first month and the platform console (2026-10-06)
+
+- **Free first month**: the subscription checkout passes `trial_period_days`
+  (`TRIAL_DAYS = 30` in `lib/billing/plans.ts`) the first time a salon subscribes;
+  card up front. A salon with a `business_subscriptions` row (any status) gets no
+  second trial. Plan cards say "First month free" (`pricing.billing.trial`). The
+  early-access window (`EARLY_ACCESS_UNTIL`) is separate and still means "nothing
+  is charged". Untested against real Stripe.
+- **Platform console** at `/{locale}/platform` (route group `(platform)`), for
+  whoever runs Lavena. Access = a row in `public.platform_admins`; there is no
+  UI or policy to add one. As the project owner, in SQL:
+  `insert into public.platform_admins (profile_id) select id from auth.users where email = '<you>';`
+  Everyone else gets a 404 (layout) and the data function refuses them too
+  (`public.platform_overview`, SECURITY DEFINER, checks `app.is_platform_admin()`).
+  Demo data is excluded from every number. Migration `20261006120000_platform_admin.sql`,
+  pgTAP `platform_admin.test.sql`. `types/database.ts` was edited by hand for the
+  new table and function (the local type generator needs postgres-meta, which the
+  local stack leaves out) - regenerate with `npm run db:types` when you can.
+- The console shows KPIs with sparklines and change vs the previous period, one
+  interactive chart (range 7/30/90/365, five metrics, crosshair + keyboard), a
+  nested sign-up-to-paying funnel, the subscription mix and a searchable, sortable
+  salon table with a "what to do" column (no services, unpublished, no bookings in
+  30 days, payment problem, trial ending). Revenue is an estimate from list
+  prices; Stripe is the ledger. Dates are cut in Europe/Sofia so the server and
+  browser render the same text.
+- New migration to apply live: `20261006120000_platform_admin.sql`.
 
 ---
 

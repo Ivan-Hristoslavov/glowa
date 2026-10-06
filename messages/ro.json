@@ -1746,7 +1746,8 @@
       "billedYearly": "plată o dată pe an",
       "save": "2 luni gratuit",
       "billedMonthly": "Plată lunară",
-      "orYearly": "sau {amount} / lună la plata anuală"
+      "orYearly": "sau {amount} / lună la plata anuală",
+      "trial": "Prima lună este gratuită"
     },
     "plans": {
       "solo": {
@@ -2115,5 +2116,110 @@
     "ownerTitle": "Ai {categoryLower} în {city}?",
     "ownerBody": "Calendar, avansuri și programare online — fără comision. Îți aduci clienții dintr-un fișier în câteva minute.",
     "ownerCta": "Vezi cum funcționează"
+  },
+  "platform": {
+    "title": "Consola platformei",
+    "subtitle": "Toate saloanele, programările și veniturile într-un singur loc. Doar pentru tine.",
+    "back": "Înapoi la salonul meu",
+    "range": {
+      "7": "7 zile",
+      "30": "30 de zile",
+      "90": "90 de zile",
+      "365": "1 an"
+    },
+    "rangeLabel": "Perioadă",
+    "kpi": {
+      "salons": "Saloane",
+      "salonsNote": "{active} publicate",
+      "users": "Utilizatori",
+      "bookings": "Programări",
+      "bookedValue": "Valoarea programărilor",
+      "mrr": "Venit lunar (estimare)",
+      "mrrNote": "{paying, plural, =0 {Încă niciun salon plătitor} one {# salon plătitor} other {# saloane plătitoare}}",
+      "trial": "În perioada de probă",
+      "trialNote": "{amount} / lună după probă",
+      "vsPrevious": "față de cele {days} zile anterioare",
+      "noChange": "fără schimbare",
+      "online": "{share}% online"
+    },
+    "chart": {
+      "title": "Ce se întâmplă",
+      "metric": "Indicator",
+      "bookings": "Programări",
+      "onlineBookings": "Programări online",
+      "businesses": "Saloane noi",
+      "users": "Utilizatori noi",
+      "bookedValue": "Valoarea programărilor",
+      "total": "Total pe perioadă: {value}",
+      "peak": "Cea mai bună zi: {value}",
+      "tableCaption": "Date pe zile"
+    },
+    "funnel": {
+      "title": "De la înregistrare la plată",
+      "help": "Unde se pierd saloanele. Fiecare pas este o parte din cel anterior.",
+      "registered": "Înregistrate",
+      "services": "Cu cel puțin un serviciu",
+      "published": "Publicate",
+      "booking": "Cu prima programare",
+      "paying": "Probă sau plan plătit"
+    },
+    "mix": {
+      "title": "Abonamente",
+      "empty": "Încă nu există abonamente. Apar când un salon își începe luna gratuită.",
+      "plan": "{plan, select, solo {Solo} studio {Studio} salon {Salon} other {{plan}}}",
+      "status": {
+        "trialing": "Probă",
+        "active": "Plătesc",
+        "past_due": "Plată restantă",
+        "other": "Altele"
+      }
+    },
+    "cat": {
+      "title": "Saloane după tip"
+    },
+    "table": {
+      "title": "Saloane",
+      "search": "Caută un salon sau un oraș",
+      "salon": "Salon",
+      "status": "Stare",
+      "plan": "Plan",
+      "bookings30": "Programări (30 de zile)",
+      "bookingsTotal": "Total",
+      "clients": "Clienți",
+      "created": "Creat",
+      "lastBooking": "Ultima programare",
+      "attention": "Ce de făcut",
+      "open": "Deschide pagina",
+      "empty": "Niciun salon nu corespunde filtrelor.",
+      "never": "încă niciuna",
+      "noPlan": "—",
+      "count": "{count, plural, one {# salon} other {# saloane}}"
+    },
+    "filter": {
+      "all": "Toate",
+      "attention": "Necesită atenție",
+      "active": "Publicate",
+      "draft": "Ciorne",
+      "paying": "Cu plan"
+    },
+    "status": {
+      "draft": "Ciornă",
+      "active": "Publicat",
+      "suspended": "Suspendat",
+      "archived": "Arhivat"
+    },
+    "flag": {
+      "noServices": "Fără servicii - ajută-l să adauge",
+      "unpublished": "Nepublicat - îndeamnă-l să publice",
+      "noBookings": "Publicat, dar fără programări în 30 de zile",
+      "paymentIssue": "Problemă de plată",
+      "trialEnding": "Proba se termină curând",
+      "ok": "Totul e în regulă"
+    },
+    "revenueNote": "Venitul este o estimare după prețurile afișate, fără reduceri și TVA. Cifrele reale sunt în Stripe.",
+    "loadError": "Datele nu s-au încărcat. Încearcă din nou într-o clipă.",
+    "updated": "Actualizat {time}",
+    "demoNote": "Salonele demo nu sunt numărate.",
+    "menu": "Consola platformei"
   }
 }
