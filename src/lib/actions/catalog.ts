@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidatePublicSurfaces } from "@/lib/revalidate-public";
 import { z } from "zod";
 
 import { requireMembership } from "@/lib/actions/guard";
@@ -106,6 +107,7 @@ export async function upsertService(
   }
 
   revalidatePath("/[locale]/dashboard/services", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true, id: data.id };
 }
 
@@ -125,6 +127,7 @@ export async function deleteService(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/services", "page");
+  await revalidatePublicSurfaces(businessId);
   return { ok: true };
 }
 
@@ -208,6 +211,7 @@ export async function upsertStaff(
 
   revalidatePath("/[locale]/dashboard/staff", "page");
   revalidatePath("/[locale]/dashboard/calendar", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true, id: data.id };
 }
 
@@ -227,6 +231,7 @@ export async function deleteStaff(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/staff", "page");
+  await revalidatePublicSurfaces(businessId);
   return { ok: true };
 }
 

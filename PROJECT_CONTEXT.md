@@ -1821,6 +1821,53 @@ driven in Chromium. Behaviour changed in four places that are easy to forget:
 - A translation patch must never turn a string key into a namespace - the invite
   label broke that way once (`inviteEmail`); the message is now `inviteMail.*`.
 
+## 8u. Browser QA pass (2026-10-06)
+
+Every finding, with status, is in [`docs/qa-findings.md`](./docs/qa-findings.md)
+(one file on purpose). Stripe could **not** be exercised: no keys or account in
+the build environment. What changed and is easy to forget:
+
+- **Roles are enforced in the admin, not just on buttons.** One table,
+  `src/lib/admin-access.ts` (`canOpenSection`): owner/admin everything; manager
+  everything except `billing`, `payments`, `settings`; staff only `dashboard`,
+  `calendar`, `timeOff`. Every dashboard page calls `requireSection(locale, key)`
+  (`lib/queries/business.ts`) right after `setRequestLocale`, and the sidebar,
+  mobile drawer and Ctrl+K filter with the same function. A new admin page must
+  do both. RLS is still the data enforcement.
+- **Public pages are cached for an hour, so every action that changes what they
+  show calls `revalidatePublicSurfaces(businessId)`** (`lib/revalidate-public.ts`).
+  It revalidates the salon's page by its *literal* path in every locale -
+  `revalidatePath("/[locale]/business/[slug]", "page")` alone did not refresh
+  the prerendered copies in a production build (verified: saved text, stale
+  page). Use the helper, never the pattern, for the salon page.
+- **A server page must not hand a server-rendered `Button` to a client dialog as
+  `trigger`** (Radix `asChild` fails: "Primitive.button failed to slot", the page
+  silently falls back to client rendering). Build the trigger inside the client
+  module: `EditServiceButton`, `EditStaffButton`, `EditCampaignButton`.
+- **Account deletion works** (migration `20261006090000`): the customer write
+  guard lets the FK `ON DELETE SET NULL` update through when there is no signed-in
+  user and only `customer_profile_id`/`created_by`/`updated_at` change.
+  pgTAP: `account_deletion.test.sql`.
+- New services default to the whole team (a published salon with a service no
+  one performs has zero slots). Invitations are claimed at sign-up too.
+- Unknown paths under a locale go through `app/[locale]/[...rest]/page.tsx`
+  (`notFound()`), so the 404 is translated and has the layout; the root
+  `app/not-found.tsx` reads `messages/bg.json`.
+- Brand strings must come from `messages` (`brand.name`) - `<title>` template,
+  `og:site_name`, logo `aria-label`, `.ics`, download filenames (`lavena-*`) and
+  the service worker had kept "glowa".
+- The "leave a review" email falls back to `/bookings/<id>` (it used to link to
+  `/review/<id>`, which does not exist); "manage booking" links to the booking.
+- Dev-only noise that is not ours: React warns "Encountered a script tag while
+  rendering React component" (next-themes 0.4.6); it does not appear in a
+  production build. Redirecting a staff user from a forbidden section happens
+  after the layout has streamed (HTTP 200 plus a client redirect); `networkidle`
+  waits in tests can stall on the aborted stream - use `load`.
+
+**Migrations still to apply to the live database:**
+`20261005120000_auto_confirm_bookings.sql`, `20261005120100_reminder_not_in_the_past.sql`,
+`20261006090000_account_deletion_cascade.sql`.
+
 ---
 
 ## 9. Known advisor findings (reviewed, accepted)
@@ -1892,6 +1939,11 @@ traction claim may appear unless it is real.
 ---
 
 ## 11. Known TODOs for the next prompts
+
+00. **Before testers** (10-06): apply the three migrations above, set the keys
+   in `docs/test-readiness.md`, and walk the Stripe flow by hand with test keys
+   (deposit booking, subscription, refund) - the one area the QA pass could not
+   reach.
 
 0. **Beating the incumbent** (10-05): the plan to reach salons is
    `docs/go-to-market.md`; the ranked gap list is in

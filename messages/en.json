@@ -1457,7 +1457,7 @@
       "remove": "Remove",
       "gallery": "Gallery",
       "addPhotos": "Add photos",
-      "makeCover": "Cover",
+      "makeCover": "Make cover",
       "photoAlt": "Photo {number}",
       "uploading": "{count, plural, one {Uploading # photo…} other {Uploading # photos…}}",
       "saved": "Photos saved",

@@ -81,7 +81,7 @@ export default async function BusinessLayout({
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 pb-4">
-          <AdminNav />
+          <AdminNav role={active.role} />
         </div>
 
         {/* The salon's shop window, one click away - with its state, so a
@@ -123,12 +123,12 @@ export default async function BusinessLayout({
         <div className="bg-background/85 sticky top-0 z-30 backdrop-blur-xl lg:rounded-t-3xl">
         <header className="flex h-16 items-center justify-between gap-3 border-b px-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-2">
-            <AdminMobileNav />
+            <AdminMobileNav role={active.role} />
             <AdminTopbarTitle businessName={active.name} />
           </div>
 
           <div className="flex items-center gap-1 sm:gap-1.5">
-            <CommandMenu businessId={active.businessId} slug={active.slug} />
+            <CommandMenu businessId={active.businessId} slug={active.slug} role={active.role} />
             {canManage(active.role) ? (
               <AdminQuickCreate label={calendar("newAppointment")} />
             ) : null}

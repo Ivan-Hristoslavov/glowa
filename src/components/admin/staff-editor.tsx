@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -296,6 +296,38 @@ export function AddStaffButton({ businessId }: { businessId: string }) {
         <Button>
           <Plus className="size-4" aria-hidden />
           {t("add")}
+        </Button>
+      }
+    />
+  );
+}
+
+/**
+ * The pencil on a specialist's card. Built in this client module instead of
+ * being passed from the server page as a `trigger` element, because a
+ * server-rendered `Button` is not a valid child for Radix's `asChild` and the
+ * whole page then fell back to client rendering.
+ */
+export function EditStaffButton({
+  businessId,
+  member,
+}: {
+  businessId: string;
+  member: StaffDraft;
+}) {
+  const common = useTranslations("common");
+  return (
+    <StaffEditor
+      businessId={businessId}
+      member={member}
+      trigger={
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          aria-label={common("edit")}
+        >
+          <Pencil className="size-4" aria-hidden />
         </Button>
       }
     />

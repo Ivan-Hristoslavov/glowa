@@ -97,6 +97,12 @@ export async function signUpAction(
   const result = await createAccount(parsed.data, locale, next);
   if (result.status !== "signed-in") return result;
 
+  // Someone invited to a salon's team signs up from the invitation email, with
+  // the dashboard as their destination. Sign-in claims the invitation before
+  // redirecting; sign-up did not, so the dashboard found no membership and
+  // sent them to "create your business" - the one screen they do not need.
+  await claimPendingInvitations();
+
   revalidatePath("/", "layout");
   if (next) {
     // A salon owner arrives here from "start free" with `next` pointing at
@@ -171,7 +177,10 @@ export async function inlineAuthAction(
       return { status: "error", message: tooShort ? t("weakPassword") : t("generic") };
     }
     const result = await createAccount(parsed.data, locale, next);
-    if (result.status === "signed-in") revalidatePath("/", "layout");
+    if (result.status === "signed-in") {
+      await claimPendingInvitations();
+      revalidatePath("/", "layout");
+    }
     return result;
   }
 

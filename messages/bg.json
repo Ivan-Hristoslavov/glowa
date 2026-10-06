@@ -1457,7 +1457,7 @@
       "remove": "Премахни",
       "gallery": "Галерия",
       "addPhotos": "Добави снимки",
-      "makeCover": "Корица",
+      "makeCover": "Направи корица",
       "photoAlt": "Снимка {number}",
       "uploading": "{count, plural, one {Качваме # снимка…} other {Качваме # снимки…}}",
       "saved": "Снимките са запазени",

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireMembership } from "@/lib/actions/guard";
+import { revalidatePublicSurfaces } from "@/lib/revalidate-public";
 
 export type ClosureResult =
   | { ok: true; overlapping: number }
@@ -23,10 +24,11 @@ const addSchema = z
     path: ["endsAt"],
   });
 
-function revalidateSchedules() {
+async function revalidateSchedules(businessId: string) {
   revalidatePath("/[locale]/dashboard/time-off", "page");
   revalidatePath("/[locale]/dashboard/calendar", "page");
-  revalidatePath("/[locale]/business/[slug]", "page");
+  // The salon page warns about a closure, so it has to follow it.
+  await revalidatePublicSurfaces(businessId);
 }
 
 /**
@@ -65,7 +67,7 @@ export async function addClosure(input: z.input<typeof addSchema>): Promise<Clos
   if (locationId) overlapping = overlapping.eq("location_id", locationId);
   const { count } = await overlapping;
 
-  revalidateSchedules();
+  await revalidateSchedules(businessId);
   return { ok: true, overlapping: count ?? 0 };
 }
 
@@ -87,6 +89,6 @@ export async function removeClosure(
     .eq("business_id", parsed.data.businessId);
   if (error) return { ok: false, code: "generic" };
 
-  revalidateSchedules();
+  await revalidateSchedules(parsed.data.businessId);
   return { ok: true, overlapping: 0 };
 }

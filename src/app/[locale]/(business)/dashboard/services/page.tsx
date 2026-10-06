@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { isLocalizedText, pickLocalized } from "@/lib/localized";
-import { canManage, getActiveMembership, getBusinessWorkspace } from "@/lib/queries/business";
+import { canManage, getActiveMembership, getBusinessWorkspace, requireSection } from "@/lib/queries/business";
 import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -35,6 +35,7 @@ export default async function ServicesPage({
 }: PageProps<"/[locale]/dashboard/services">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "services");
 
   const t = await getTranslations("admin.services");
   const categories = await getTranslations("serviceCategories");

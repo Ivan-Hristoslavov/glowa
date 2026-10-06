@@ -1,5 +1,5 @@
 /**
- * GLOWA service worker.
+ * Lavena service worker.
  *
  * Two jobs, deliberately no more:
  *
@@ -14,7 +14,7 @@
  * free right now.
  */
 
-const VERSION = "glowa-v1";
+const VERSION = "lavena-v1";
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {
@@ -61,11 +61,11 @@ self.addEventListener("push", (event) => {
   try {
     payload = event.data.json();
   } catch {
-    payload = { title: "GLOWA", body: event.data.text() };
+    payload = { title: "Lavena", body: event.data.text() };
   }
 
   event.waitUntil(
-    self.registration.showNotification(payload.title ?? "GLOWA", {
+    self.registration.showNotification(payload.title ?? "Lavena", {
       body: payload.body ?? "",
       icon: "/icon-192.png",
       badge: "/icon-192.png",
@@ -86,7 +86,7 @@ self.addEventListener("notificationclick", (event) => {
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((windows) => {
-        // Reuse a tab that is already on GLOWA instead of piling up new ones.
+        // Reuse a tab that is already on Lavena instead of piling up new ones.
         for (const client of windows) {
           if (client.url.includes(new URL(target, self.location.origin).pathname)) {
             return client.focus();

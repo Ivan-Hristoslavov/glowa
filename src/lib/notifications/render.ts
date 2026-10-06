@@ -427,9 +427,12 @@ function primaryAction(
     // Google is linked, never scraped: GLOWA sends the customer to the
     // business's own public destination and claims nothing about what
     // happens there.
+    // The fallback is the booking itself: that page is where a finished
+    // visit takes its review. (It used to point at /review/<id>, a page that
+    // does not exist, so the button in the e-mail ended on a 404.)
     const href =
       context.googleReviewUrl ??
-      `${base}/review/${context.appointmentId}`;
+      `${base}/bookings/${context.appointmentId}`;
     return { label: t("action.leaveReview"), href };
   }
 
@@ -448,7 +451,7 @@ function primaryAction(
     };
   }
 
-  return { label: t("action.manageBooking"), href: `${base}/bookings` };
+  return { label: t("action.manageBooking"), href: `${base}/bookings/${context.appointmentId}` };
 }
 
 function detailLines(

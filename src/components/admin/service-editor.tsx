@@ -111,7 +111,12 @@ export function ServiceEditor({
   const categories = useTranslations("serviceCategories");
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<ServiceDraft>(service ?? emptyServiceDraft());
+  // A new service starts with the whole team ticked. It used to start with
+  // nobody, and a service nobody performs has no bookable times: a salon could
+  // publish, and every customer would see an empty calendar with no hint why.
+  const [draft, setDraft] = useState<ServiceDraft>(
+    () => service ?? { ...emptyServiceDraft(), staffIds: staff.map((member) => member.id) },
+  );
   // A new service follows its category's suggestion until the owner picks.
   const [rebookChosen, setRebookChosen] = useState(Boolean(service));
   const [isPending, startTransition] = useTransition();

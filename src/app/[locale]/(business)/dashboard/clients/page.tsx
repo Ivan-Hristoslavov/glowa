@@ -15,8 +15,7 @@ import { formatPrice } from "@/lib/format";
 import {
   canManage,
   getActiveMembership,
-  listBusinessClients,
-} from "@/lib/queries/business";
+  listBusinessClients, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,6 +33,7 @@ export default async function ClientsPage({
 }: PageProps<"/[locale]/dashboard/clients">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "clients");
 
   const t = await getTranslations("admin.clients");
   const membership = await getActiveMembership();

@@ -16,8 +16,7 @@ import {
   canAdminister,
   canManage,
   getActiveMembership,
-  listBusinessReviews,
-} from "@/lib/queries/business";
+  listBusinessReviews, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +38,7 @@ export default async function AdminReviewsPage({
   const { locale } = await params;
   const sp = await searchParams;
   setRequestLocale(locale);
+  await requireSection(locale, "reviews");
 
   const t = await getTranslations("admin.reviewsAdmin");
   const membership = await getActiveMembership();

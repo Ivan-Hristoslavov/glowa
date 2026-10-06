@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { revalidatePublicSurfaces } from "@/lib/revalidate-public";
 import { z } from "zod";
 
 import { routing } from "@/i18n/routing";
@@ -118,7 +119,9 @@ export async function publishBusiness(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard", "layout");
-  revalidatePath("/[locale]/search", "page");
+  // A salon page that was a 404 while it was a draft must not stay one for an
+  // hour after the owner publishes it.
+  await revalidatePublicSurfaces(businessId);
   return { ok: true };
 }
 
@@ -176,7 +179,7 @@ export async function updateBusinessSettings(
   revalidatePath("/[locale]/dashboard", "layout");
   // The public page is cached for an hour; a new phone number or description
   // should not wait that long to reach customers.
-  revalidatePath("/[locale]/business/[slug]", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true };
 }
 
@@ -229,9 +232,7 @@ export async function updateBusinessImages(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard", "layout");
-  revalidatePath("/[locale]/business/[slug]", "page");
-  revalidatePath("/[locale]/search", "page");
-  revalidatePath("/[locale]", "page");
+  await revalidatePublicSurfaces(businessId);
   return { ok: true };
 }
 
@@ -281,9 +282,7 @@ export async function updateBusinessMedia(
   if (error || !business) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/settings", "page");
-  revalidatePath("/[locale]/business/[slug]", "page");
-  revalidatePath("/[locale]/search", "page");
-  revalidatePath("/[locale]", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true };
 }
 
@@ -332,7 +331,6 @@ export async function updateBusinessLocation(
   if (!location) return { ok: false, code: "no_location" };
 
   revalidatePath("/[locale]/dashboard/settings", "page");
-  revalidatePath("/[locale]/business/[slug]", "page");
-  revalidatePath("/[locale]/search", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true };
 }
