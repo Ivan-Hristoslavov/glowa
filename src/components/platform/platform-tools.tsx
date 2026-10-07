@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Eye, EyeOff, RotateCcw, Search, ShieldBan, ShieldCheck, Trash2 } from "lucide-react";
+import { Check, ExternalLink, Eye, EyeOff, Mail, RotateCcw, Search, ShieldBan, ShieldCheck, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -9,11 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
+  clearErrorGroup,
   removeSalonPhoto,
   retryMessage,
   setAccountBlocked,
   setReviewVisibility,
   setSalonStatus,
+  setTicketStatus,
   type PlatformResult,
 } from "@/lib/actions/platform";
 import { formatPrice } from "@/lib/format";
@@ -22,9 +24,11 @@ import type {
   AuditEntry,
   ContentReview,
   ContentSalon,
+  ErrorGroup,
   FailedMessage,
   PaymentProblem,
   PlatformUser,
+  SupportTicket,
 } from "@/lib/platform/overview";
 import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
@@ -494,6 +498,132 @@ export function AuditLog({ entries }: { entries: AuditEntry[] }) {
                 <p className="text-muted-foreground text-xs whitespace-nowrap">
                   {entry.admin_email ?? "—"} · {date(entry.created_at, true)}
                 </p>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+export function ErrorsBoard({ groups }: { groups: ErrorGroup[] }) {
+  const t = useTranslations("platform");
+  const { act, pending } = useAct();
+  const date = useDate();
+  return (
+    <section className="space-y-4">
+      <div>
+        <h2 className="font-heading text-xl">{t("errors_.title")}</h2>
+        <p className="text-muted-foreground mt-1 max-w-2xl text-sm">{t("errors_.help")}</p>
+      </div>
+      {groups.length === 0 ? (
+        <p className="glowa-card text-muted-foreground p-6 text-sm">{t("errors_.empty")}</p>
+      ) : (
+        <div className="glowa-card overflow-x-auto p-1">
+          <table className="w-full min-w-[760px] text-left text-sm">
+            <thead className="text-muted-foreground text-xs">
+              <tr className="border-b">
+                {(["message", "where", "times", "last"] as const).map((key) => (
+                  <th key={key} scope="col" className="px-4 py-3 font-medium">
+                    {t(`errors_.${key}`)}
+                  </th>
+                ))}
+                <th scope="col" className="px-4 py-3" />
+              </tr>
+            </thead>
+            <tbody>
+              {groups.map((group) => (
+                <tr key={group.fingerprint} className="hover:bg-muted/40 border-b align-top last:border-0">
+                  <td className="max-w-md px-4 py-3">
+                    <p className="text-destructive font-medium break-words">{group.message}</p>
+                    <p className="text-muted-foreground text-xs">{t("errors_.source", { source: group.source })}</p>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs break-all">{group.path ?? "—"}</td>
+                  <td className="px-4 py-3 tabular-nums">
+                    {group.count_24h} / {group.count}
+                  </td>
+                  <td className="px-4 py-3 text-xs whitespace-nowrap">{date(group.last_seen, true)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-full"
+                      disabled={pending}
+                      onClick={() => {
+                        if (!window.confirm(t("errors_.confirmClear"))) return;
+                        act(() => clearErrorGroup(group.fingerprint), t("errors_.cleared"));
+                      }}
+                    >
+                      <Trash2 className="size-4" aria-hidden />
+                      {t("errors_.clear")}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export function SupportInbox({ tickets }: { tickets: SupportTicket[] }) {
+  const t = useTranslations("platform");
+  const { act, pending } = useAct();
+  const date = useDate();
+  return (
+    <section className="space-y-4">
+      <div>
+        <h2 className="font-heading text-xl">{t("support_.title")}</h2>
+        <p className="text-muted-foreground mt-1 max-w-2xl text-sm">{t("support_.help")}</p>
+      </div>
+      {tickets.length === 0 ? (
+        <p className="glowa-card text-muted-foreground p-6 text-sm">{t("support_.empty")}</p>
+      ) : (
+        <ul className="space-y-3">
+          {tickets.map((ticket) => {
+            const done = ticket.status === "done";
+            return (
+              <li key={ticket.id} className={cn("glowa-card space-y-3 p-5", done && "opacity-60")}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="flex flex-wrap items-center gap-2">
+                      <span className="font-heading text-lg">{ticket.subject}</span>
+                      <Badge variant={done ? "outline" : "default"} className="font-normal">
+                        {done ? t("support_.done") : t("support_.open")}
+                      </Badge>
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {ticket.name ? `${ticket.name} · ` : ""}
+                      {ticket.email} · {date(ticket.created_at, true)}
+                      {ticket.business_name ? ` · ${t("support_.salon", { name: ticket.business_name })}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button asChild variant="outline" size="sm" className="rounded-full">
+                      <a href={`mailto:${ticket.email}?subject=${encodeURIComponent(`Re: ${ticket.subject}`)}`}>
+                        <Mail className="size-4" aria-hidden />
+                        {t("support_.reply")}
+                      </a>
+                    </Button>
+                    <Button
+                      variant={done ? "ghost" : "default"}
+                      size="sm"
+                      className="rounded-full"
+                      disabled={pending}
+                      onClick={() => act(() => setTicketStatus(ticket.id, done ? "open" : "done"))}
+                    >
+                      {done ? null : <Check className="size-4" aria-hidden />}
+                      {done ? t("support_.reopen") : t("support_.markDone")}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed whitespace-pre-line">{ticket.message}</p>
+                {ticket.page ? (
+                  <p className="text-muted-foreground font-mono text-xs break-all">{t("support_.page", { page: ticket.page })}</p>
+                ) : null}
               </li>
             );
           })}

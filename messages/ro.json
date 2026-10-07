@@ -61,7 +61,8 @@
     "registerBusiness": "Înregistrează-ți salonul",
     "nextVisit": "Următoarea vizită: {when} la {business}",
     "today": "Azi",
-    "tomorrow": "Mâine"
+    "tomorrow": "Mâine",
+    "support": "Ajutor"
   },
   "categories": {
     "hair_salon": "Salon de coafură",
@@ -324,7 +325,8 @@
       "weakPassword": "Parola trebuie să aibă cel puțin 8 caractere.",
       "generic": "Ceva nu a mers. Încearcă din nou.",
       "oauth": "Autentificarea cu Google nu a reușit. Încearcă din nou sau folosește e-mailul.",
-      "invalidLink": "Linkul este invalid sau a expirat. Cere unul nou."
+      "invalidLink": "Linkul este invalid sau a expirat. Cere unul nou.",
+      "rateLimited": "Prea multe încercări. Așteaptă puțin și încearcă din nou."
     },
     "forgotTitle": "Ai uitat parola",
     "forgotSubtitle": "Introdu e-mailul și îți trimitem un link pentru o parolă nouă.",
@@ -2046,7 +2048,8 @@
     "favorites": "Favorite",
     "legal": "Informații legale",
     "ctaButton": "Înregistrează-ți salonul",
-    "backHome": "Înapoi la pagina principală"
+    "backHome": "Înapoi la pagina principală",
+    "support": "Ajutor și suport"
   },
   "legal": {
     "privacy": "Confidențialitate",
@@ -2227,7 +2230,9 @@
       "salons": "Saloane și conținut",
       "people": "Persoane",
       "problems": "Probleme",
-      "audit": "Jurnal"
+      "audit": "Jurnal",
+      "errors": "Erori",
+      "support": "Suport"
     },
     "mod": {
       "salonsTitle": "Saloane și fotografii",
@@ -2314,7 +2319,7 @@
       "who": "Cine",
       "what": "Ce",
       "reason": "Motiv: {reason}",
-      "action": "{action, select, business_status {Starea salonului} remove_media {Poză eliminată} review_status {Recenzie} block_account {Cont blocat} unblock_account {Cont deblocat} retry_notification {Mesaj retrimis} other {{action}}}"
+      "action": "{action, select, business_status {Starea salonului} remove_media {Poză eliminată} review_status {Recenzie} block_account {Cont blocat} unblock_account {Cont deblocat} retry_notification {Mesaj retrimis} clear_errors {Eroare ștearsă} support_status {Cerere de suport} other {{action}}}"
     },
     "errors": {
       "forbidden": "Nu ai voie să faci asta.",
@@ -2322,6 +2327,48 @@
       "failed": "Nu a mers. Încearcă din nou.",
       "self": "Nu îți poți bloca propriul cont.",
       "admin": "Contul unui administrator nu poate fi blocat de aici."
+    },
+    "errors_": {
+      "title": "Erori pe site (30 de zile)",
+      "help": "Fiecare eroare prinsă de site, grupată după cauză. Dacă ceva apare aici, cineva a văzut o pagină stricată.",
+      "empty": "Nicio eroare. Bine.",
+      "message": "Eroare",
+      "where": "Unde",
+      "times": "De câte ori (24 h / total)",
+      "last": "Ultima dată",
+      "clear": "Șterge",
+      "cleared": "Șters",
+      "source": "{source, select, client {în browser} other {pe server}}",
+      "confirmClear": "Ștergi această eroare din listă? Dacă se întâmplă din nou, va apărea din nou."
+    },
+    "support_": {
+      "title": "Cereri de ajutor",
+      "help": "Tot ce au scris oamenii din pagina de suport. Răspunde prin e-mail și marchează ca rezolvat.",
+      "empty": "Încă nu există cereri.",
+      "open": "Deschisă",
+      "done": "Rezolvată",
+      "markDone": "Rezolvată",
+      "reopen": "Redeschide",
+      "reply": "Răspunde prin e-mail",
+      "salon": "Salon: {name}",
+      "page": "Pagină: {page}"
+    }
+  },
+  "support": {
+    "title": "Ajutor și suport",
+    "subtitle": "Spune-ne ce nu funcționează sau ce nu înțelegi. Răspundem la e-mailul introdus. Dacă ești în salon, spune când s-a întâmplat.",
+    "name": "Nume",
+    "email": "E-mail pentru răspuns",
+    "subject": "Subiect",
+    "message": "Ce s-a întâmplat?",
+    "messageHint": "Cu cât mai multe detalii, cu atât ajutăm mai repede.",
+    "send": "Trimite",
+    "sentTitle": "Am primit mesajul tău",
+    "sentBody": "Îți vom răspunde la e-mailul indicat.",
+    "errors": {
+      "invalid": "Verifică e-mailul și completează subiectul și mesajul.",
+      "rateLimited": "Prea multe mesaje într-un timp scurt. Încearcă mai târziu.",
+      "failed": "Nu a mers. Încearcă din nou într-o clipă."
     }
   }
 }

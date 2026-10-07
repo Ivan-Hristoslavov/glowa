@@ -144,3 +144,23 @@ export async function retryMessage(id: string): Promise<PlatformResult> {
   if (error) return { ok: false, code: "failed" };
   return done();
 }
+
+export async function clearErrorGroup(fingerprint: string): Promise<PlatformResult> {
+  if (!/^[0-9a-f]{16}$/.test(fingerprint)) return { ok: false, code: "invalid" };
+  const supabase = await gate();
+  if (!supabase) return { ok: false, code: "forbidden" };
+  const { error } = await supabase.rpc("platform_clear_errors", { p_fingerprint: fingerprint });
+  if (error) return { ok: false, code: "failed" };
+  return done();
+}
+
+export async function setTicketStatus(id: string, status: "open" | "done"): Promise<PlatformResult> {
+  if (!z.uuid().safeParse(id).success || !["open", "done"].includes(status)) {
+    return { ok: false, code: "invalid" };
+  }
+  const supabase = await gate();
+  if (!supabase) return { ok: false, code: "forbidden" };
+  const { error } = await supabase.rpc("platform_set_ticket_status", { p_id: id, p_status: status });
+  if (error) return { ok: false, code: "failed" };
+  return done();
+}

@@ -8,6 +8,7 @@ import type { AuthFormState } from "@/app/[locale]/(auth)/actions";
 import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { RequiredNote } from "@/components/common/required-note";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Turnstile } from "@/components/common/turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -261,6 +262,8 @@ export function AuthForm({ mode: initialMode, action, nextPath, inline, google }
           </button>
         </div>
       </Field>
+
+      {isSignUp ? <Turnstile /> : null}
 
       <Button type="submit" size="lg" className="h-11 w-full" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}

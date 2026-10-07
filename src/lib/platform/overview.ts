@@ -202,3 +202,29 @@ export const getPlatformProblems = () =>
   }>("platform_problems");
 
 export const getPlatformAudit = () => call<AuditEntry[]>("platform_audit", { p_limit: 100 });
+
+export type ErrorGroup = {
+  fingerprint: string;
+  message: string;
+  path: string | null;
+  source: "server" | "client";
+  count: number;
+  count_24h: number;
+  first_seen: string;
+  last_seen: string;
+};
+
+export type SupportTicket = {
+  id: string;
+  created_at: string;
+  name: string | null;
+  email: string;
+  subject: string;
+  message: string;
+  page: string | null;
+  status: "open" | "done";
+  business_name: string | null;
+};
+
+export const getPlatformErrors = () => call<ErrorGroup[]>("platform_errors", { p_limit: 100 });
+export const getPlatformSupport = () => call<SupportTicket[]>("platform_support", { p_limit: 100 });

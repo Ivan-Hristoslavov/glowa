@@ -1922,6 +1922,31 @@ reason). Rules to keep:
 - `types/database.ts` has hand-added entries for these functions.
 - New migration to apply live: `20261006150000_platform_moderation.sql`.
 
+### Abuse limits, error log, support inbox, CI (2026-10-07)
+
+- **Rate limits** (`lib/rate-limit.ts`, `public.rate_limit_check`, service role
+  only): sign-in 8 per 10 min per address+e-mail and 40 per address; sign-up 6 an
+  hour; password reset 6 an hour per address and 3 per mailbox; support 5 an hour.
+  Fixed windows in `rate_limit_hits`. The limiter **fails open** if the counter is
+  unreachable. The address is `x-forwarded-for`; locally everyone shares one bucket.
+- **Captcha is optional**: `lib/turnstile.ts` + `<Turnstile />` on sign-up, password
+  reset and support. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`
+  together (Cloudflare Turnstile, free) and it switches on; without them nothing
+  changes. Not yet exercised against Cloudflare.
+- **Error log, no third party**: `src/instrumentation.ts` (`onRequestError`) and the
+  error screen (`reportClientError`) write to `error_events` through
+  `lib/errors/record.ts` (grouped by a fingerprint, at most 20 rows an hour per bug).
+  The console's *Errors* tab lists them. If Sentry is wanted later it can sit beside this.
+- **Support**: public page `/support` (also in the footer and the account menu) ->
+  `support_tickets`; the console's *Support* tab lists them with "reply by e-mail" and
+  done / reopen. A signed-in sender is linked to their account and salon.
+- **CI**: `.github/workflows/ci.yml` runs `npm run check`, `supabase test db` and the
+  production build against a local Supabase. It could not be run from here - the
+  first run on GitHub is its first test.
+- Google sign-in already exists (`components/auth/google-button.tsx`; it needs the
+  provider switched on in Supabase Auth).
+- New migration to apply live: `20261007090000_abuse_errors_support.sql`.
+
 ---
 
 ## 9. Known advisor findings (reviewed, accepted)

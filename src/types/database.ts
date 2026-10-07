@@ -1264,6 +1264,68 @@ export type Database = {
           },
         ]
       }
+      error_events: {
+        Row: {
+          created_at: string
+          details: Json
+          digest: string | null
+          fingerprint: string
+          id: string
+          message: string
+          method: string | null
+          path: string | null
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          digest?: string | null
+          fingerprint: string
+          id?: string
+          message: string
+          method?: string | null
+          path?: string | null
+          source: string
+          user_id?: string | null
+        }
+        Update: {
+          details?: Json
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          email: string
+          id: string
+          locale: string | null
+          message: string
+          name: string | null
+          page: string | null
+          profile_id: string | null
+          status: string
+          subject: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          locale?: string | null
+          message: string
+          name?: string | null
+          page?: string | null
+          profile_id?: string | null
+          status?: string
+          subject: string
+        }
+        Update: {
+          status?: string
+        }
+        Relationships: []
+      }
       platform_admins: {
         Row: {
           created_at: string
@@ -2046,6 +2108,14 @@ export type Database = {
       }
       platform_retry_notification: { Args: { p_id: string }; Returns: undefined }
       platform_content: { Args: { p_limit?: number }; Returns: Json }
+      rate_limit_check: {
+        Args: { p_key: string; p_limit: number; p_window_seconds: number }
+        Returns: boolean
+      }
+      platform_errors: { Args: { p_limit?: number }; Returns: Json }
+      platform_clear_errors: { Args: { p_fingerprint: string }; Returns: undefined }
+      platform_support: { Args: { p_limit?: number }; Returns: Json }
+      platform_set_ticket_status: { Args: { p_id: string; p_status: string }; Returns: undefined }
       platform_users: { Args: { p_limit?: number; p_query?: string }; Returns: Json }
       platform_problems: { Args: never; Returns: Json }
       platform_audit: { Args: { p_limit?: number }; Returns: Json }

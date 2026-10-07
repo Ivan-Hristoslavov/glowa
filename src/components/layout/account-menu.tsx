@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  LifeBuoy,
   CalendarDays,
   Heart,
   LayoutDashboard,
@@ -41,6 +42,7 @@ const LINKS = [
   { href: "/favorites", key: "favorites", icon: Heart },
   { href: "/reviews", key: "reviews", icon: Star },
   { href: "/settings", key: "settings", icon: Settings },
+  { href: "/support", key: "support", icon: LifeBuoy },
 ] as const;
 
 export function AccountMenu({ name, email, avatarUrl, hasBusiness, isPlatformAdmin = false }: AccountMenuProps) {

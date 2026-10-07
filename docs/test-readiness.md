@@ -52,7 +52,9 @@ Chromium at 1440×900 and 390×844) as a guest, a customer and a salon owner.
    sent and bookings queue silently**), `NEXT_PUBLIC_SITE_URL`. For deposits and
    billing: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
    `STRIPE_BILLING_WEBHOOK_SECRET`. Optional: `OPENAI_API_KEY` (assistant,
-   images), VAPID keys (push).
+   images), VAPID keys (push), and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` +
+   `TURNSTILE_SECRET_KEY` (Cloudflare Turnstile, free: a captcha on sign-up,
+   password reset and the support form; set both or neither).
 4. **Cron**: reminders need a per-minute schedule. Hobby only allows daily
    (`vercel.json` runs notifications at 07:00 UTC), so reminders and the "send
    now" second pass are late. Vercel Pro, or Supabase `pg_cron` + `pg_net`

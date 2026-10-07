@@ -61,7 +61,8 @@
     "registerBusiness": "Register your salon",
     "nextVisit": "Next visit: {when} at {business}",
     "today": "Today",
-    "tomorrow": "Tomorrow"
+    "tomorrow": "Tomorrow",
+    "support": "Help"
   },
   "categories": {
     "hair_salon": "Hair salon",
@@ -324,7 +325,8 @@
       "weakPassword": "Password must be at least 8 characters.",
       "generic": "Something went wrong. Please try again.",
       "oauth": "Signing in with Google did not work. Try again or use your email.",
-      "invalidLink": "The link is invalid or has expired. Ask for a new one."
+      "invalidLink": "The link is invalid or has expired. Ask for a new one.",
+      "rateLimited": "Too many attempts. Wait a little and try again."
     },
     "forgotTitle": "Forgot your password",
     "forgotSubtitle": "Enter your email and we will send you a link to set a new one.",
@@ -2046,7 +2048,8 @@
     "favorites": "Favourites",
     "legal": "Legal",
     "ctaButton": "Register your salon",
-    "backHome": "Back to the home page"
+    "backHome": "Back to the home page",
+    "support": "Help and support"
   },
   "legal": {
     "privacy": "Privacy",
@@ -2227,7 +2230,9 @@
       "salons": "Salons and content",
       "people": "People",
       "problems": "Problems",
-      "audit": "Log"
+      "audit": "Log",
+      "errors": "Errors",
+      "support": "Support"
     },
     "mod": {
       "salonsTitle": "Salons and photos",
@@ -2314,7 +2319,7 @@
       "who": "Who",
       "what": "What",
       "reason": "Reason: {reason}",
-      "action": "{action, select, business_status {Salon status} remove_media {Photo removed} review_status {Review} block_account {Account blocked} unblock_account {Account unblocked} retry_notification {Message retried} other {{action}}}"
+      "action": "{action, select, business_status {Salon status} remove_media {Photo removed} review_status {Review} block_account {Account blocked} unblock_account {Account unblocked} retry_notification {Message retried} clear_errors {Error cleared} support_status {Support request} other {{action}}}"
     },
     "errors": {
       "forbidden": "You are not allowed to do that.",
@@ -2322,6 +2327,48 @@
       "failed": "That did not work. Try again.",
       "self": "You cannot block your own account.",
       "admin": "A platform admin's account cannot be blocked from here."
+    },
+    "errors_": {
+      "title": "Errors on the site (30 days)",
+      "help": "Every error the site caught, grouped by cause. If something is listed here, someone saw a broken page.",
+      "empty": "No errors. Good.",
+      "message": "Error",
+      "where": "Where",
+      "times": "Times (24 h / total)",
+      "last": "Last seen",
+      "clear": "Clear",
+      "cleared": "Cleared",
+      "source": "{source, select, client {in the browser} other {on the server}}",
+      "confirmClear": "Clear this error from the list? If it happens again it will show up again."
+    },
+    "support_": {
+      "title": "Help requests",
+      "help": "Everything people wrote from the support page. Reply by e-mail and mark it done.",
+      "empty": "No requests yet.",
+      "open": "Open",
+      "done": "Done",
+      "markDone": "Mark done",
+      "reopen": "Reopen",
+      "reply": "Reply by e-mail",
+      "salon": "Salon: {name}",
+      "page": "Page: {page}"
+    }
+  },
+  "support": {
+    "title": "Help and support",
+    "subtitle": "Tell us what is not working or what you do not understand. We reply to the e-mail you enter. If you are in your salon, say when it happened.",
+    "name": "Name",
+    "email": "E-mail for the reply",
+    "subject": "Subject",
+    "message": "What happened?",
+    "messageHint": "The more detail, the faster we can help.",
+    "send": "Send",
+    "sentTitle": "We got your message",
+    "sentBody": "We will reply to the e-mail you gave.",
+    "errors": {
+      "invalid": "Check the e-mail and fill in the subject and the message.",
+      "rateLimited": "Too many messages in a short time. Try again later.",
+      "failed": "That did not work. Try again in a moment."
     }
   }
 }

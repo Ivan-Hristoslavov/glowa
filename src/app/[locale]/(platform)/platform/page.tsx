@@ -3,21 +3,25 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PlatformDashboard } from "@/components/platform/platform-dashboard";
 import {
   AuditLog,
+  ErrorsBoard,
   PeopleManager,
   ProblemsBoard,
   SalonModeration,
+  SupportInbox,
 } from "@/components/platform/platform-tools";
 import { Link } from "@/i18n/navigation";
 import {
   getPlatformAudit,
   getPlatformContent,
+  getPlatformErrors,
   getPlatformOverview,
   getPlatformProblems,
+  getPlatformSupport,
   getPlatformUsers,
 } from "@/lib/platform/overview";
 import { cn } from "@/lib/utils";
 
-const TABS = ["overview", "salons", "people", "problems", "audit"] as const;
+const TABS = ["overview", "salons", "people", "problems", "errors", "support", "audit"] as const;
 type Tab = (typeof TABS)[number];
 
 export async function generateMetadata() {
@@ -59,6 +63,12 @@ export default async function PlatformPage({
     ) : (
       <LoadError />
     );
+  } else if (tab === "errors") {
+    const groups = await getPlatformErrors();
+    body = groups ? <ErrorsBoard groups={groups} /> : <LoadError />;
+  } else if (tab === "support") {
+    const tickets = await getPlatformSupport();
+    body = tickets ? <SupportInbox tickets={tickets} /> : <LoadError />;
   } else if (tab === "audit") {
     const entries = await getPlatformAudit();
     body = entries ? <AuditLog entries={entries} /> : <LoadError />;
