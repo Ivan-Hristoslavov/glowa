@@ -46,7 +46,25 @@ Chromium at 1440×900 and 390×844) as a guest, a customer and a salon owner.
    - decide whether "confirm email" is on. On: the funnel's sign-up says "check
      your email", and the time chosen is not restored after the click (known).
      Off is simpler for a first test;
-   - turn on leaked-password protection.
+   - turn on leaked-password protection (Auth → Sign In / Providers → Password
+     security) and set the minimum password length to 8 (`config.toml` already
+     says 8 locally);
+   - **Sign in with Google / Apple** (buttons show up on their own once the
+     provider is enabled; nothing to change in code):
+     - Providers → add `https://<project-ref>.supabase.co/auth/v1/callback` as
+       the redirect URI at the provider;
+     - *Google*: Google Cloud Console → APIs & Services → Credentials → OAuth
+       client (Web) → paste Client ID and Secret in Supabase → Google;
+     - *Apple* (needs a paid Apple Developer account): create an App ID with
+       "Sign in with Apple", a **Services ID** (this is the Client ID; set the
+       domain and the Supabase callback above as return URL) and a **Sign in with
+       Apple key**, then generate the client secret JWT from it. Apple secrets
+       expire after at most 6 months - put a reminder in the calendar. Paste
+       Services ID + secret in Supabase → Apple;
+     - Apple may hand over a Private Relay address (`...@privaterelay.appleid.com`)
+       and gives the name only on the first sign-in; reminder emails still reach
+       the person only if the relay is allowed to send from Lavena's domain
+       (Apple developer → Services → Configure email sources).
 3. **Vercel environment**: `SUPABASE_SECRET_KEY`, `CRON_SECRET`, `RESEND_API_KEY`
    and `RESEND_FROM` (a sender on a domain you own - **without these no email is
    sent and bookings queue silently**), `NEXT_PUBLIC_SITE_URL`. For deposits and

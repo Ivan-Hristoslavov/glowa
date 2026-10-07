@@ -324,7 +324,7 @@
       "emailInUse": "Există deja un cont cu acest e-mail.",
       "weakPassword": "Parola trebuie să aibă cel puțin 8 caractere.",
       "generic": "Ceva nu a mers. Încearcă din nou.",
-      "oauth": "Autentificarea cu Google nu a reușit. Încearcă din nou sau folosește e-mailul.",
+      "oauth": "Autentificarea nu a reușit. Încearcă din nou sau folosește e-mailul.",
       "invalidLink": "Linkul este invalid sau a expirat. Cere unul nou.",
       "rateLimited": "Prea multe încercări. Așteaptă puțin și încearcă din nou."
     },
@@ -366,7 +366,8 @@
     "sidePoint2": "Memento înainte de fiecare vizită",
     "sidePoint3": "Gratuit pentru clienți",
     "continueWithGoogle": "Continuă cu Google",
-    "or": "sau"
+    "or": "sau",
+    "continueWithApple": "Continuă cu Apple"
   },
   "search": {
     "title": "Găsește-ți următoarea programare",

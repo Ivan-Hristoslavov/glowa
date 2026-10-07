@@ -79,6 +79,8 @@ type BookingFlowProps = {
   coverUrl?: string | null;
   /** Offer "Continue with Google" at the sign-in step. */
   googleSignIn?: boolean;
+  /** Offer "Continue with Apple" at the sign-in step. */
+  appleSignIn?: boolean;
 };
 
 type StepId = "location" | "service" | "staff" | "time" | "confirm";
@@ -101,6 +103,7 @@ export function BookingFlow({
   initialStartsAt,
   coverUrl,
   googleSignIn = false,
+  appleSignIn = false,
 }: BookingFlowProps) {
   const t = useTranslations("booking");
   const auth = useTranslations("auth");
@@ -644,6 +647,7 @@ export function BookingFlow({
                   action={inlineAuthAction}
                   nextPath={`/${locale}/business/${slug}/book${serviceId ? `?service=${serviceId}` : ""}`}
                   google={googleSignIn}
+                  apple={appleSignIn}
                   inline={{ onSignedIn: () => router.refresh() }}
                 />
               </div>

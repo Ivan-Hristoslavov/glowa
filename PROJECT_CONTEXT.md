@@ -2189,3 +2189,7 @@ traction claim may appear unless it is real.
     days' notice to every business. The
     `/pricing` page has a savings calculator against the lowest published
     competitor rates, rounded in their favour; competitors are not named there.
+
+### Sign in with Google / Apple
+- `src/components/auth/google-button.tsx` exports `GoogleButton` and `AppleButton` (one shared `ProviderButton`, PKCE via `signInWithOAuth`, return to `/auth/callback?next=`). `getAuthProviders()` returns `{google, apple}` from `/auth/v1/settings`; `AuthForm` (login, signup, booking funnel) shows a button only when the provider is enabled, so nothing appears until it is configured in Supabase.
+- Config: `minimum_password_length = 8` (matches the zod rule). Dashboard steps (Google Cloud client, Apple Services ID + key + secret JWT that expires within 6 months, Private Relay, leaked-password protection, redirect URLs) are in `docs/test-readiness.md`. Real Google/Apple flows are untested here: they need accounts only the owner has.

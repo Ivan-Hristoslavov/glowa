@@ -19,12 +19,26 @@ function GoogleMark() {
   );
 }
 
+type OAuthProvider = "google" | "apple";
+
 /**
- * "Continue with Google". Starts a PKCE flow in the browser; the provider
- * returns to /auth/callback, which sets the session and sends the person on
- * to `next` - the booking they were in the middle of, or their profile.
+ * One "Continue with ..." button. Starts a PKCE flow in the browser; the
+ * provider returns to /auth/callback, which sets the session and sends the
+ * person on to `next` - the booking they were in the middle of, or their
+ * profile. Apple has no account picker to ask for, so only Google gets
+ * `prompt=select_account`.
  */
-export function GoogleButton({ nextPath }: { nextPath?: string }) {
+function ProviderButton({
+  provider,
+  nextPath,
+  mark,
+  label,
+}: {
+  provider: OAuthProvider;
+  nextPath?: string;
+  mark: React.ReactNode;
+  label: string;
+}) {
   const t = useTranslations("auth");
   const locale = useLocale();
   const [pending, setPending] = useState(false);
@@ -35,10 +49,10 @@ export function GoogleButton({ nextPath }: { nextPath?: string }) {
     setFailed(false);
     const next = nextPath ?? `/${locale}/profile`;
     const { error } = await createClient().auth.signInWithOAuth({
-      provider: "google",
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-        queryParams: { prompt: "select_account" },
+        ...(provider === "google" ? { queryParams: { prompt: "select_account" } } : {}),
       },
     });
     // On success the browser is already leaving the page.
@@ -58,8 +72,8 @@ export function GoogleButton({ nextPath }: { nextPath?: string }) {
         onClick={start}
         disabled={pending}
       >
-        {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <GoogleMark />}
-        {t("continueWithGoogle")}
+        {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : mark}
+        {label}
       </Button>
       {failed ? (
         <p role="alert" className="text-destructive text-center text-xs">
@@ -67,6 +81,29 @@ export function GoogleButton({ nextPath }: { nextPath?: string }) {
         </p>
       ) : null}
     </div>
+  );
+}
+
+export function GoogleButton({ nextPath }: { nextPath?: string }) {
+  const t = useTranslations("auth");
+  return (
+    <ProviderButton provider="google" nextPath={nextPath} mark={<GoogleMark />} label={t("continueWithGoogle")} />
+  );
+}
+
+export function AppleButton({ nextPath }: { nextPath?: string }) {
+  const t = useTranslations("auth");
+  return (
+    <ProviderButton provider="apple" nextPath={nextPath} mark={<AppleMark />} label={t("continueWithApple")} />
+  );
+}
+
+/** Apple's mark, in the current text colour so it follows light and dark. */
+function AppleMark() {
+  return (
+    <svg viewBox="0 0 24 24" className="size-4" aria-hidden fill="currentColor">
+      <path d="M16.37 12.62c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.71-3.19-1.73-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.1 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.04 1.52-.71 2.85-.71s1.7.71 2.87.69c1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.2-2.48-.03-.01-2.3-.88-2.28-3.54zM14.2 6.1c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.56-1.23z" />
+    </svg>
   );
 }
 

@@ -122,6 +122,7 @@ export default async function BookPage({
         locale={activeLocale}
         isSignedIn={isSignedIn}
         googleSignIn={isSignedIn ? false : (await getAuthProviders()).google}
+        appleSignIn={isSignedIn ? false : (await getAuthProviders()).apple}
         cancellationWindowHours={cancellationWindowHours}
         locations={business.locations.map((location) => ({
           id: location.id,

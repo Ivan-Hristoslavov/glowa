@@ -324,7 +324,7 @@
       "emailInUse": "An account with this email already exists.",
       "weakPassword": "Password must be at least 8 characters.",
       "generic": "Something went wrong. Please try again.",
-      "oauth": "Signing in with Google did not work. Try again or use your email.",
+      "oauth": "Signing in did not work. Try again or use your email.",
       "invalidLink": "The link is invalid or has expired. Ask for a new one.",
       "rateLimited": "Too many attempts. Wait a little and try again."
     },
@@ -366,7 +366,8 @@
     "sidePoint2": "A reminder before every visit",
     "sidePoint3": "Free for clients",
     "continueWithGoogle": "Continue with Google",
-    "or": "or"
+    "or": "or",
+    "continueWithApple": "Continue with Apple"
   },
   "search": {
     "title": "Find your next appointment",

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useId, useRef, useState, useTransition } from "react";
 
 import type { AuthFormState } from "@/app/[locale]/(auth)/actions";
-import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
+import { AppleButton, AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { RequiredNote } from "@/components/common/required-note";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Turnstile } from "@/components/common/turnstile";
@@ -32,6 +32,8 @@ type AuthFormProps = {
   };
   /** Show "Continue with Google" (the provider is enabled in Supabase). */
   google?: boolean;
+  /** Show "Continue with Apple" (the provider is enabled in Supabase). */
+  apple?: boolean;
 };
 
 type FieldErrors = Partial<Record<"fullName" | "email" | "password", string>>;
@@ -51,7 +53,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  * server still validates everything, because the browser is not a trust
  * boundary.
  */
-export function AuthForm({ mode: initialMode, action, nextPath, inline, google }: AuthFormProps) {
+export function AuthForm({ mode: initialMode, action, nextPath, inline, google, apple }: AuthFormProps) {
   const t = useTranslations("auth");
   const legal = useTranslations("legal");
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -158,9 +160,12 @@ export function AuthForm({ mode: initialMode, action, nextPath, inline, google }
         </div>
       ) : null}
 
-      {google ? (
+      {google || apple ? (
         <>
-          <GoogleButton nextPath={nextPath} />
+          <div className="space-y-3">
+            {google ? <GoogleButton nextPath={nextPath} /> : null}
+            {apple ? <AppleButton nextPath={nextPath} /> : null}
+          </div>
           <AuthDivider />
         </>
       ) : null}
