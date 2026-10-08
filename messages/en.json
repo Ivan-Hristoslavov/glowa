@@ -833,7 +833,8 @@
       },
       "settingsSubtitle": "How your business looks and the rules for booking it.",
       "timeOff": "Days off",
-      "billing": "Subscription"
+      "billing": "Subscription",
+      "integrations": "Integrations"
     },
     "status": {
       "draft": "Draft",
@@ -1654,6 +1655,147 @@
         "generic": "Something went wrong. Please try again."
       },
       "freePlan": "Free — nothing to pay"
+    },
+    "integrations": {
+      "title": "Connect your website",
+      "subtitle": "Let your own site book into Lavena, get told when a booking changes, and keep a calendar you already use in step.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "errors": {
+        "invalid": "Some details are missing or wrong.",
+        "forbidden": "Only an owner or admin can do this.",
+        "not_a_member": "You do not have access to this salon.",
+        "unauthenticated": "Sign in again to continue.",
+        "not_found": "That item no longer exists.",
+        "limit": "You have reached the limit. Remove one first.",
+        "unsafe_url": "The address must be a public https:// address.",
+        "duplicate": "That calendar is already connected for this person.",
+        "generic": "Something went wrong. Try again."
+      },
+      "embed": {
+        "title": "Booking button for your site",
+        "description": "Put a Lavena booking button on any page of your site. It opens your booking page, where clients pick a service and a time.",
+        "linkTitle": "A plain link",
+        "linkBody": "Works everywhere, even in a page builder that does not allow scripts.",
+        "scriptTitle": "A button with a script",
+        "scriptBody": "Any element marked data-lavena-book opens your booking page in a new tab. Add data-lavena-service set to a service id to start at that service.",
+        "buttonText": "Book now",
+        "note": "Clients sign in or sign up on Lavena to finish. For a fully custom booking form on your own site, use the API below."
+      },
+      "keys": {
+        "title": "API keys",
+        "description": "A key lets your website read your services and free times and make bookings. Treat it like a password and keep it on your server, never in a web page.",
+        "name": "Name",
+        "namePlaceholder": "My website",
+        "scopesTitle": "What this key may do",
+        "scopes": {
+          "read": {
+            "label": "Read",
+            "hint": "Services, team, free times and bookings."
+          },
+          "bookings": {
+            "label": "Bookings",
+            "hint": "Create and cancel bookings."
+          },
+          "catalog": {
+            "label": "Services",
+            "hint": "Create and update services."
+          }
+        },
+        "create": "Create key",
+        "createdTitle": "Your new key",
+        "createdBody": "Copy it now. For your safety it is not shown again.",
+        "keyLabel": "API key",
+        "done": "I have copied it",
+        "empty": "No keys yet.",
+        "lastUsed": "Last used {when}",
+        "neverUsed": "Never used",
+        "revoke": "Revoke",
+        "revokedToast": "Key revoked. It stops working immediately.",
+        "revokedCount": "{count, plural, one {# revoked key is hidden.} other {# revoked keys are hidden.}}"
+      },
+      "webhooks": {
+        "title": "Notifications to your site (webhooks)",
+        "description": "Lavena calls your address when a booking is created, moved or cancelled. Each call is signed, so you can check it really came from us; if your server is down we try again for about 15 hours.",
+        "flush": "Send waiting now",
+        "url": "Address (https)",
+        "note": "Note (optional)",
+        "events": "Events",
+        "eventsHint": "Leave all unticked to receive every event.",
+        "eventNames": {
+          "created": "Booking created",
+          "rescheduled": "Booking moved",
+          "cancelled": "Booking cancelled",
+          "status_changed": "Status changed (completed, no-show…)"
+        },
+        "allEvents": "All events",
+        "add": "Add address",
+        "secretTitle": "Signing secret",
+        "secretBody": "Use it to check the Lavena-Signature header on each call. Copy it now - it is not shown again.",
+        "secretLabel": "Secret",
+        "empty": "No addresses yet.",
+        "active": "Active",
+        "paused": "Paused",
+        "switchedOff": "Switched off after repeated failures",
+        "lastSuccess": "Last delivered {when}",
+        "noSuccessYet": "Nothing delivered yet",
+        "failures": "{count} failed in a row",
+        "test": "Send test",
+        "testOk": "Your server answered {status}.",
+        "testFail": "Could not deliver: {error}",
+        "pause": "Pause",
+        "resume": "Turn on",
+        "delete": "Delete",
+        "recent": "Recent deliveries",
+        "colWhen": "When",
+        "colEvent": "Event",
+        "colTo": "To",
+        "colResult": "Result",
+        "deliveryStatus": {
+          "queued": "Waiting",
+          "sending": "Sending",
+          "delivered": "Delivered",
+          "failed": "Failed"
+        },
+        "attempts": "{count} tries",
+        "errorCodes": {
+          "http": "Your server answered {status}",
+          "timeout": "No answer in time",
+          "network": "Could not connect",
+          "too_large": "Answer too large",
+          "unsafe_url": "Address not allowed",
+          "endpoint_inactive": "Address is switched off"
+        }
+      },
+      "feeds": {
+        "title": "Import your calendar",
+        "description": "Paste the private iCal address of a calendar you already keep (Google Calendar, Apple, Outlook, your own system). Times marked busy there become unavailable on Lavena for that team member. Event titles are never copied.",
+        "noStaff": "Add a team member first.",
+        "staff": "Team member",
+        "name": "Name",
+        "namePlaceholder": "Google Calendar",
+        "url": "Calendar address (iCal)",
+        "urlHelp": "Google Calendar: Settings → your calendar → Secret address in iCal format. webcal:// links work too.",
+        "add": "Connect calendar",
+        "empty": "No calendars connected.",
+        "blocks": "{count, plural, one {# busy block} other {# busy blocks}}",
+        "lastSynced": "Synced {when}",
+        "neverSynced": "Not synced yet",
+        "keptOldBlocks": "The previous busy times are kept until it works again.",
+        "syncNow": "Sync now",
+        "delete": "Remove calendar",
+        "syncOk": "Done: {count, plural, one {# busy block} other {# busy blocks}} copied.",
+        "syncFailed": "Could not read the calendar: {error}",
+        "errorCodes": {
+          "http": "The calendar server answered {status}",
+          "timeout": "No answer in time",
+          "network": "Could not connect",
+          "too_large": "File too large",
+          "unsafe_url": "Address not allowed",
+          "not_calendar": "That address is not an iCal calendar"
+        },
+        "note": "Calendars refresh about once a day and whenever you press Sync now. Times are read in your salon's time zone unless the calendar says otherwise."
+      }
     }
   },
   "notifications": {

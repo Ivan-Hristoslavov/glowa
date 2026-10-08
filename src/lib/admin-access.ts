@@ -25,10 +25,11 @@ export type AdminSection =
   | "analytics"
   | "assistant"
   | "billing"
+  | "integrations"
   | "settings";
 
 const STAFF: readonly AdminSection[] = ["dashboard", "calendar", "timeOff"];
-const ADMIN_ONLY: readonly AdminSection[] = ["billing", "payments", "settings"];
+const ADMIN_ONLY: readonly AdminSection[] = ["billing", "payments", "integrations", "settings"];
 
 export function canOpenSection(role: BusinessRole, section: AdminSection) {
   if (role === "owner" || role === "admin") return true;

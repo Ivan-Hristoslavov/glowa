@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageSquareText,
+  Plug,
   QrCode,
   Scissors,
   Settings,
@@ -45,6 +46,7 @@ export type AdminLink = {
     | "analytics"
     | "assistant"
     | "billing"
+    | "integrations"
     | "settings";
   icon: LucideIcon;
 };
@@ -83,6 +85,7 @@ export const ADMIN_GROUPS: AdminGroup[] = [
     key: "account",
     links: [
       { href: "/dashboard/billing", key: "billing", icon: CreditCard },
+      { href: "/dashboard/integrations", key: "integrations", icon: Plug },
       { href: "/dashboard/settings", key: "settings", icon: Settings },
     ],
   },

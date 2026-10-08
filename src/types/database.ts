@@ -93,6 +93,7 @@ export type Database = {
           starts_at: string
           status: Database["public"]["Enums"]["appointment_status"]
           updated_at: string
+          external_ref: string | null
         }
         Insert: {
           business_id: string
@@ -124,6 +125,7 @@ export type Database = {
           starts_at: string
           status?: Database["public"]["Enums"]["appointment_status"]
           updated_at?: string
+          external_ref?: string | null
         }
         Update: {
           business_id?: string
@@ -155,6 +157,7 @@ export type Database = {
           starts_at?: string
           status?: Database["public"]["Enums"]["appointment_status"]
           updated_at?: string
+          external_ref?: string | null
         }
         Relationships: [
           {
@@ -1326,6 +1329,154 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          scopes: string[]
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Update: {
+          revoked_at?: string | null
+        }
+        Relationships: []
+      }
+      webhook_endpoints: {
+        Row: {
+          business_id: string
+          consecutive_failures: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          disabled_reason: string | null
+          events: string[]
+          id: string
+          is_active: boolean
+          last_failure_at: string | null
+          last_success_at: string | null
+          secret: string
+          url: string
+        }
+        Insert: {
+          business_id: string
+          consecutive_failures?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          disabled_reason?: string | null
+          events?: string[]
+          id?: string
+          is_active?: boolean
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          secret: string
+          url: string
+        }
+        Update: {
+          consecutive_failures?: number
+          description?: string | null
+          disabled_reason?: string | null
+          events?: string[]
+          is_active?: boolean
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
+      webhook_deliveries: {
+        Row: {
+          attempts: number
+          business_id: string
+          created_at: string
+          delivered_at: string | null
+          endpoint_id: string
+          event: string
+          id: string
+          last_attempt_at: string | null
+          last_error: string | null
+          last_status_code: number | null
+          next_attempt_at: string
+          payload: Json
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          business_id: string
+          created_at?: string
+          delivered_at?: string | null
+          endpoint_id: string
+          event: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          last_status_code?: number | null
+          next_attempt_at?: string
+          payload: Json
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          delivered_at?: string | null
+          last_attempt_at?: string | null
+          last_error?: string | null
+          last_status_code?: number | null
+          next_attempt_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      calendar_feeds: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          last_error: string | null
+          last_event_count: number | null
+          last_synced_at: string | null
+          name: string
+          staff_profile_id: string
+          url: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          last_error?: string | null
+          last_event_count?: number | null
+          last_synced_at?: string | null
+          name: string
+          staff_profile_id: string
+          url: string
+        }
+        Update: {
+          is_active?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
       platform_admins: {
         Row: {
           created_at: string
@@ -1642,6 +1793,7 @@ export type Database = {
           requires_deposit: boolean
           sort_order: number
           updated_at: string
+          external_id: string | null
         }
         Insert: {
           buffer_after_minutes?: number
@@ -1661,6 +1813,7 @@ export type Database = {
           requires_deposit?: boolean
           sort_order?: number
           updated_at?: string
+          external_id?: string | null
         }
         Update: {
           buffer_after_minutes?: number
@@ -1680,6 +1833,7 @@ export type Database = {
           requires_deposit?: boolean
           sort_order?: number
           updated_at?: string
+          external_id?: string | null
         }
         Relationships: [
           {
@@ -1759,6 +1913,7 @@ export type Database = {
           reason: string | null
           staff_profile_id: string
           starts_at: string
+          feed_id: string | null
         }
         Insert: {
           created_at?: string
@@ -1767,6 +1922,7 @@ export type Database = {
           reason?: string | null
           staff_profile_id: string
           starts_at: string
+          feed_id?: string | null
         }
         Update: {
           created_at?: string
@@ -1775,6 +1931,7 @@ export type Database = {
           reason?: string | null
           staff_profile_id?: string
           starts_at?: string
+          feed_id?: string | null
         }
         Relationships: [
           {
@@ -1947,6 +2104,41 @@ export type Database = {
           p_subscription_id: string
         }
         Returns: undefined
+      }
+      api_book_appointment: {
+        Args: {
+          p_business_id: string
+          p_customer_email?: string
+          p_customer_name: string
+          p_customer_phone?: string
+          p_external_ref?: string
+          p_location_id?: string
+          p_notes?: string
+          p_service_id: string
+          p_staff_profile_id?: string
+          p_starts_at: string
+        }
+        Returns: Database["public"]["Tables"]["appointments"]["Row"]
+      }
+      api_cancel_appointment: {
+        Args: { p_appointment_id: string; p_business_id: string; p_reason?: string }
+        Returns: Database["public"]["Tables"]["appointments"]["Row"]
+      }
+      apply_calendar_feed: {
+        Args: { p_blocks: Json; p_error?: string; p_feed_id: string }
+        Returns: number
+      }
+      claim_webhook_deliveries: {
+        Args: { p_limit?: number }
+        Returns: Database["public"]["Tables"]["webhook_deliveries"]["Row"][]
+      }
+      verify_api_key: {
+        Args: { p_key_hash: string }
+        Returns: {
+          api_key_id: string
+          business_id: string
+          scopes: string[]
+        }[]
       }
       book_appointment: {
         Args: {
@@ -2377,6 +2569,7 @@ export type Database = {
         | "business_admin"
         | "walk_in"
         | "import"
+        | "api"
       appointment_status:
         | "pending"
         | "confirmed"
@@ -2577,6 +2770,7 @@ export const Constants = {
         "business_admin",
         "walk_in",
         "import",
+        "api",
       ],
       appointment_status: [
         "pending",

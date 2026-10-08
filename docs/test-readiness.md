@@ -73,6 +73,11 @@ Chromium at 1440×900 and 390×844) as a guest, a customer and a salon owner.
    images), VAPID keys (push), and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` +
    `TURNSTILE_SECRET_KEY` (Cloudflare Turnstile, free: a captcha on sign-up,
    password reset and the support form; set both or neither).
+3b. **Integrations** (`docs/integrations.md`): apply the two `20261008...`
+   migrations to the live database. Nothing else to configure; the scheduled
+   job that sends webhooks and refreshes calendar feeds is the existing
+   `/api/cron/notifications` (same `CRON_SECRET`). Local only:
+   `LAVENA_ALLOW_PRIVATE_FETCH=1` lets webhooks/feeds call localhost.
 4. **Cron**: reminders need a per-minute schedule. Hobby only allows daily
    (`vercel.json` runs notifications at 07:00 UTC), so reminders and the "send
    now" second pass are late. Vercel Pro, or Supabase `pg_cron` + `pg_net`

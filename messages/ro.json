@@ -833,7 +833,8 @@
       },
       "settingsSubtitle": "Cum arată afacerea ta și regulile de programare.",
       "timeOff": "Zile libere",
-      "billing": "Abonament"
+      "billing": "Abonament",
+      "integrations": "Integrări"
     },
     "status": {
       "draft": "Ciornă",
@@ -1654,6 +1655,147 @@
         "generic": "Ceva nu a mers. Încearcă din nou."
       },
       "freePlan": "Gratuit — nimic de plătit"
+    },
+    "integrations": {
+      "title": "Conectează-ți site-ul",
+      "subtitle": "Lasă site-ul tău să facă programări în Lavena, să primească o notificare la fiecare schimbare și să păstreze sincronizat un calendar pe care îl folosești deja.",
+      "copy": "Copiază",
+      "copied": "Copiat",
+      "errors": {
+        "invalid": "Unele date lipsesc sau sunt greșite.",
+        "forbidden": "Doar proprietarul sau administratorul poate face asta.",
+        "not_a_member": "Nu ai acces la acest salon.",
+        "unauthenticated": "Autentifică-te din nou pentru a continua.",
+        "not_found": "Acest element nu mai există.",
+        "limit": "Ai atins limita. Elimină mai întâi unul.",
+        "unsafe_url": "Adresa trebuie să fie o adresă publică https://.",
+        "duplicate": "Acest calendar este deja conectat pentru această persoană.",
+        "generic": "Ceva nu a mers. Încearcă din nou."
+      },
+      "embed": {
+        "title": "Buton de programare pentru site-ul tău",
+        "description": "Pune un buton de programare Lavena pe orice pagină a site-ului tău. Se deschide pagina ta de programare, unde clienții aleg serviciul și ora.",
+        "linkTitle": "Un link simplu",
+        "linkBody": "Funcționează peste tot, chiar și într-un constructor de site-uri care nu permite scripturi.",
+        "scriptTitle": "Un buton cu script",
+        "scriptBody": "Orice element cu data-lavena-book deschide pagina ta de programare într-o filă nouă. Adaugă data-lavena-service cu id-ul unui serviciu pentru a porni de la acel serviciu.",
+        "buttonText": "Programează-te",
+        "note": "Clienții se conectează sau își fac cont în Lavena pentru a finaliza. Pentru un formular de programare complet personalizat pe site-ul tău, folosește API-ul de mai jos."
+      },
+      "keys": {
+        "title": "Chei API",
+        "description": "O cheie permite site-ului tău să citească serviciile și orele libere și să facă programări. Tratează-o ca pe o parolă și păstreaz-o pe serverul tău, niciodată într-o pagină web.",
+        "name": "Nume",
+        "namePlaceholder": "Site-ul meu",
+        "scopesTitle": "Ce poate face această cheie",
+        "scopes": {
+          "read": {
+            "label": "Citire",
+            "hint": "Servicii, echipă, ore libere și programări."
+          },
+          "bookings": {
+            "label": "Programări",
+            "hint": "Creare și anulare de programări."
+          },
+          "catalog": {
+            "label": "Servicii",
+            "hint": "Creare și modificare de servicii."
+          }
+        },
+        "create": "Creează cheia",
+        "createdTitle": "Noua ta cheie",
+        "createdBody": "Copiază-o acum. Din motive de siguranță nu va mai fi afișată.",
+        "keyLabel": "Cheie API",
+        "done": "Am copiat-o",
+        "empty": "Încă nu există chei.",
+        "lastUsed": "Ultima utilizare {when}",
+        "neverUsed": "Încă nefolosită",
+        "revoke": "Revocă",
+        "revokedToast": "Cheia a fost revocată. Nu mai funcționează imediat.",
+        "revokedCount": "{count, plural, one {# cheie revocată este ascunsă.} few {# chei revocate sunt ascunse.} other {# de chei revocate sunt ascunse.}}"
+      },
+      "webhooks": {
+        "title": "Notificări către site-ul tău (webhooks)",
+        "description": "Lavena apelează adresa ta când o programare este creată, mutată sau anulată. Fiecare apel este semnat, ca să poți verifica faptul că vine de la noi; dacă serverul tău nu răspunde, reîncercăm timp de aproximativ 15 ore.",
+        "flush": "Trimite acum cele în așteptare",
+        "url": "Adresă (https)",
+        "note": "Notă (opțional)",
+        "events": "Evenimente",
+        "eventsHint": "Dacă nu bifezi nimic, primești toate evenimentele.",
+        "eventNames": {
+          "created": "Programare creată",
+          "rescheduled": "Programare mutată",
+          "cancelled": "Programare anulată",
+          "status_changed": "Stare schimbată (finalizată, neprezentare…)"
+        },
+        "allEvents": "Toate evenimentele",
+        "add": "Adaugă adresa",
+        "secretTitle": "Secret de semnare",
+        "secretBody": "Folosește-l pentru a verifica antetul Lavena-Signature al fiecărui apel. Copiază-l acum – nu va mai fi afișat.",
+        "secretLabel": "Secret",
+        "empty": "Încă nu există adrese.",
+        "active": "Activ",
+        "paused": "În pauză",
+        "switchedOff": "Oprit după eșecuri repetate",
+        "lastSuccess": "Ultima livrare {when}",
+        "noSuccessYet": "Încă nu s-a livrat nimic",
+        "failures": "{count} eșecuri la rând",
+        "test": "Trimite test",
+        "testOk": "Serverul tău a răspuns {status}.",
+        "testFail": "Livrarea a eșuat: {error}",
+        "pause": "Pune pe pauză",
+        "resume": "Pornește",
+        "delete": "Șterge",
+        "recent": "Livrări recente",
+        "colWhen": "Când",
+        "colEvent": "Eveniment",
+        "colTo": "Către",
+        "colResult": "Rezultat",
+        "deliveryStatus": {
+          "queued": "În așteptare",
+          "sending": "Se trimite",
+          "delivered": "Livrat",
+          "failed": "Eșuat"
+        },
+        "attempts": "{count} încercări",
+        "errorCodes": {
+          "http": "Serverul tău a răspuns {status}",
+          "timeout": "Niciun răspuns la timp",
+          "network": "Nu s-a putut conecta",
+          "too_large": "Răspuns prea mare",
+          "unsafe_url": "Adresă nepermisă",
+          "endpoint_inactive": "Adresa este oprită"
+        }
+      },
+      "feeds": {
+        "title": "Importă-ți calendarul",
+        "description": "Lipește adresa iCal privată a unui calendar pe care îl ții deja (Google Calendar, Apple, Outlook, propriul sistem). Orele marcate ca ocupate devin indisponibile în Lavena pentru acel membru al echipei. Titlurile evenimentelor nu sunt copiate niciodată.",
+        "noStaff": "Adaugă mai întâi un membru al echipei.",
+        "staff": "Membru al echipei",
+        "name": "Nume",
+        "namePlaceholder": "Google Calendar",
+        "url": "Adresa calendarului (iCal)",
+        "urlHelp": "Google Calendar: Setări → calendarul tău → Adresă secretă în format iCal. Funcționează și linkurile webcal://.",
+        "add": "Conectează calendarul",
+        "empty": "Niciun calendar conectat.",
+        "blocks": "{count, plural, one {# interval ocupat} few {# intervale ocupate} other {# de intervale ocupate}}",
+        "lastSynced": "Sincronizat {when}",
+        "neverSynced": "Încă nesincronizat",
+        "keptOldBlocks": "Orele ocupate anterioare se păstrează până când funcționează din nou.",
+        "syncNow": "Sincronizează acum",
+        "delete": "Elimină calendarul",
+        "syncOk": "Gata: {count, plural, one {# interval ocupat copiat} few {# intervale ocupate copiate} other {# de intervale ocupate copiate}}.",
+        "syncFailed": "Calendarul nu a putut fi citit: {error}",
+        "errorCodes": {
+          "http": "Serverul calendarului a răspuns {status}",
+          "timeout": "Niciun răspuns la timp",
+          "network": "Nu s-a putut conecta",
+          "too_large": "Fișier prea mare",
+          "unsafe_url": "Adresă nepermisă",
+          "not_calendar": "Această adresă nu este un calendar iCal"
+        },
+        "note": "Calendarele se actualizează aproximativ o dată pe zi și de fiecare dată când apeși „Sincronizează acum”. Orele se citesc în fusul orar al salonului, dacă nu spune altceva calendarul."
+      }
     }
   },
   "notifications": {
