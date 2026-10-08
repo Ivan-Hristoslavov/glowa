@@ -13,8 +13,7 @@ import { pickLocalized } from "@/lib/localized";
 import {
   getActiveMembership,
   getDashboardMetrics,
-  listAppointmentsInRange,
-} from "@/lib/queries/business";
+  listAppointmentsInRange, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,6 +28,7 @@ export default async function AnalyticsPage({
 }: PageProps<"/[locale]/dashboard/analytics">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "analytics");
 
   const t = await getTranslations("admin.analytics");
   const dashboard = await getTranslations("admin.dashboard");

@@ -8,23 +8,19 @@ type GlowaMarkProps = {
 };
 
 /**
- * The GLOWA mark, reconstructed from the brand reference in the brief.
+ * The Lavena mark: a rounded "L" with a lavender leaf growing from it.
  *
- * It is a squared coral spiral - flat top and bottom edges joined by half-turns
- * on the left and right, which is what gives it a rounded-square silhouette
- * rather than the two stacked circles a plain "S" would make - crossed by two
- * near-horizontal pointed leaves.
+ * Stroke and leaf only - no gradients, no masks - so it holds at 16px and
+ * prints in one colour. (The component keeps its old name; renaming the file
+ * would touch a hundred imports for no visible gain.)
  *
- * The geometry was measured off the reference rather than eyeballed: the leaf
- * bounding boxes and the spiral's extents match it to within half a unit of
- * this 48-unit grid. The reference is a soft raster, so this is a faithful
- * reconstruction, not a pixel trace.
- *
- * In monochrome the leaves are punched out of the spiral with a mask, so the
- * mark still reads as two forms when there is only one colour available.
+ * In monochrome the leaf is cut out of a single-colour stem with a mask, so
+ * the mark still reads as two forms.
  */
 export function GlowaMark({ className, monochrome, title }: GlowaMarkProps) {
-  const maskId = "glowa-mark-leaves";
+  const maskId = "lavena-mark-leaf";
+  const stem = "M15 6V32Q15 41 24 41H41";
+  const leaf = "M24 24Q24 12 36 11Q36 24 24 24Z";
 
   return (
     <svg
@@ -36,41 +32,19 @@ export function GlowaMark({ className, monochrome, title }: GlowaMarkProps) {
       className={cn("size-8", className)}
     >
       {title ? <title>{title}</title> : null}
-
       {monochrome ? (
         <>
-          {/* The mask is stroked as well as filled, which opens a gap around
-              each leaf. Without it the leaves merge into the spiral and the
-              mark collapses into a plain S. */}
           <mask id={maskId}>
             <rect width="48" height="48" fill="white" />
-            <g fill="black" stroke="black" strokeWidth="2.6" strokeLinejoin="round">
-              <path d="M19 21.5Q31 13.8 43.4 18.8Q31 25.4 19 21.5Z" />
-              <path d="M26.6 26.3Q14.6 34 2.2 29Q14.6 22.4 26.6 26.3Z" />
-            </g>
+            <path d={leaf} fill="black" stroke="black" strokeWidth="2.4" strokeLinejoin="round" />
           </mask>
-          <path
-            d="M33 7.8H17A8.2 8.2 0 0 0 17 24.2H31A8.2 8.2 0 0 1 31 40.6H14"
-            stroke="currentColor"
-            strokeWidth="9.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            mask={`url(#${maskId})`}
-          />
-          <path d="M19 21.5Q31 13.8 43.4 18.8Q31 25.4 19 21.5Z" fill="currentColor" />
-          <path d="M26.6 26.3Q14.6 34 2.2 29Q14.6 22.4 26.6 26.3Z" fill="currentColor" />
+          <path d={stem} stroke="currentColor" strokeWidth="8" strokeLinecap="round" mask={`url(#${maskId})`} />
+          <path d={leaf} fill="currentColor" />
         </>
       ) : (
         <>
-          <path
-            d="M33 7.8H17A8.2 8.2 0 0 0 17 24.2H31A8.2 8.2 0 0 1 31 40.6H14"
-            stroke="var(--glowa-coral)"
-            strokeWidth="9.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path d="M19 21.5Q31 13.8 43.4 18.8Q31 25.4 19 21.5Z" fill="currentColor" />
-          <path d="M26.6 26.3Q14.6 34 2.2 29Q14.6 22.4 26.6 26.3Z" fill="currentColor" />
+          <path d={stem} stroke="var(--glowa-coral)" strokeWidth="8" strokeLinecap="round" />
+          <path d={leaf} fill="var(--glowa-lilac)" />
         </>
       )}
     </svg>
@@ -98,7 +72,7 @@ export function GlowaLogo({
       <GlowaMark className={cn("size-8 shrink-0", markClassName)} monochrome={monochrome} />
       <span className="flex flex-col leading-none">
         <span className="text-[1.375rem] font-semibold tracking-tight lowercase">
-          glowa
+          lavena
         </span>
         {showTagline && tagline ? (
           <span className="text-muted-foreground mt-1 text-[0.5rem] font-medium tracking-[0.22em] uppercase">

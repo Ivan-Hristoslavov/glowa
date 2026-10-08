@@ -5,7 +5,7 @@ import { FlyerStudio, type FlyerLinkOption } from "@/components/admin/flyer-stud
 import type { Locale } from "@/i18n/routing";
 import { publicEnv } from "@/lib/env";
 import { growthLinkUrl, renderQrSvg } from "@/lib/growth/qr";
-import { canManage, getActiveMembership, listGrowthLinks } from "@/lib/queries/business";
+import { canManage, getActiveMembership, listGrowthLinks, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FlyerPage({ params }: PageProps<"/[locale]/dashboard/growth/flyer">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "growth");
 
   const membership = await getActiveMembership();
   if (!membership) return null;

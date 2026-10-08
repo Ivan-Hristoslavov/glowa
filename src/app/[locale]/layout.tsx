@@ -56,25 +56,25 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(publicEnv.NEXT_PUBLIC_SITE_URL),
     title: {
-      default: `glowa — ${t("titleLine1")} ${t("titleLine2")}`,
-      template: "%s · glowa",
+      default: `${brand("name")} — ${t("titleLine1")} ${t("titleLine2")}`,
+      template: `%s · ${brand("name")}`,
     },
     description: t("subtitle"),
-    applicationName: "glowa",
+    applicationName: brand("name"),
     manifest: "/manifest.webmanifest",
     // Installed on an iPhone this is how the app behaves: no browser chrome,
     // and a status bar that blends into the dark header.
     appleWebApp: {
       capable: true,
-      title: "GLOWA",
+      title: brand("name"),
       statusBarStyle: "black-translucent",
     },
     alternates: alternatesFor(`/${locale}`),
     openGraph: {
       type: "website",
-      siteName: "glowa",
+      siteName: brand("name"),
       locale: localeHrefLang[locale as keyof typeof localeHrefLang],
-      title: `glowa — ${brand("tagline")}`,
+      title: `${brand("name")} — ${brand("tagline")}`,
       description: t("subtitle"),
       // Without this a shared link renders as a bare URL in every messenger.
       images: [
@@ -82,13 +82,13 @@ export async function generateMetadata({
           url: brandAssets.ogImage,
           width: 1200,
           height: 630,
-          alt: `glowa — ${brand("tagline")}`,
+          alt: `${brand("name")} — ${brand("tagline")}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `glowa — ${brand("tagline")}`,
+      title: `${brand("name")} — ${brand("tagline")}`,
       description: t("subtitle"),
       images: [brandAssets.ogImage],
     },

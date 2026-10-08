@@ -1,21 +1,20 @@
-import { Clock, Pencil, Repeat, Scissors, ShieldCheck } from "lucide-react";
+import { Clock, Repeat, Scissors, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   AddServiceButton,
-  ServiceEditor,
+  EditServiceButton,
   type ServiceDraft,
 } from "@/components/admin/service-editor";
 import { PageHeader } from "@/components/admin/page-header";
 import { EmptyState } from "@/components/common/empty-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { isLocalizedText, pickLocalized } from "@/lib/localized";
-import { canManage, getActiveMembership, getBusinessWorkspace } from "@/lib/queries/business";
+import { canManage, getActiveMembership, getBusinessWorkspace, requireSection } from "@/lib/queries/business";
 import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,6 +35,7 @@ export default async function ServicesPage({
 }: PageProps<"/[locale]/dashboard/services">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "services");
 
   const t = await getTranslations("admin.services");
   const categories = await getTranslations("serviceCategories");
@@ -144,20 +144,10 @@ export default async function ServicesPage({
                           ) : null}
                         </div>
                         {editable ? (
-                          <ServiceEditor
+                          <EditServiceButton
                             businessId={membership.businessId}
                             staff={staff}
                             service={draft}
-                            trigger={
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="shrink-0 rounded-full"
-                                aria-label={t("edit")}
-                              >
-                                <Pencil className="size-4" aria-hidden />
-                              </Button>
-                            }
                           />
                         ) : null}
                       </div>

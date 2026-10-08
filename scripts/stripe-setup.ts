@@ -24,7 +24,7 @@ if (!key) {
 }
 
 const stripe = new Stripe(key);
-const NAMES = { solo: "Glowa Solo", studio: "Glowa Studio", salon: "Glowa Salon" } as const;
+const NAMES = { solo: "Lavena Solo", studio: "Lavena Studio", salon: "Lavena Salon" } as const;
 
 for (const plan of PLANS) {
   // Unpublished or free plans have nothing to sell.

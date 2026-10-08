@@ -1,4 +1,4 @@
-import { Info, Pencil, Sparkles } from "lucide-react";
+import { Info, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -6,14 +6,14 @@ import { PageHeader } from "@/components/admin/page-header";
 import { InviteMemberDialog } from "@/components/admin/invite-member-dialog";
 import {
   AddStaffButton,
-  StaffEditor,
+  EditStaffButton,
+  StaffTimeOffButton,
   type StaffDraft,
 } from "@/components/admin/staff-editor";
 import { EmptyState } from "@/components/common/empty-state";
 import { Section } from "@/components/common/section";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
 import { isLocalizedText, pickLocalized } from "@/lib/localized";
 import { cn } from "@/lib/utils";
@@ -21,8 +21,7 @@ import {
   canAdminister,
   canManage,
   getActiveMembership,
-  getBusinessWorkspace,
-} from "@/lib/queries/business";
+  getBusinessWorkspace, requireSection } from "@/lib/queries/business";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.staff");
@@ -39,6 +38,7 @@ function toDraftText(value: unknown): Record<Locale, string> {
 export default async function StaffPage({ params }: PageProps<"/[locale]/dashboard/staff">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "staff");
 
   const t = await getTranslations("admin.staff");
   const weekdays = await getTranslations("weekdays");
@@ -126,15 +126,18 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/dashboa
                     </div>
                   </div>
                   {editable ? (
-                    <StaffEditor
-                      businessId={membership.businessId}
-                      member={draft}
-                      trigger={
-                        <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("save")}>
-                          <Pencil className="size-4" />
-                        </Button>
-                      }
-                    />
+                    <div className="flex shrink-0 items-center gap-1">
+                      <StaffTimeOffButton
+                        businessId={membership.businessId}
+                        timezone={workspace.business?.timezone ?? "Europe/Sofia"}
+                        member={{
+                          id: member.id,
+                          displayName: member.display_name,
+                          color: member.color,
+                        }}
+                      />
+                      <EditStaffButton businessId={membership.businessId} member={draft} />
+                    </div>
                   ) : null}
                 </div>
 

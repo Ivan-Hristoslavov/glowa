@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Plus, Users } from "lucide-react";
+import { Loader2, Pencil, Plus, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -265,5 +265,32 @@ export function CampaignEditor({
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * The "Edit" button on a campaign row. It lives here, in the client module,
+ * for the same reason as the service and staff pencils: a `Button` element
+ * handed across from the server page is not a valid `asChild` child.
+ */
+export function EditCampaignButton({
+  businessId,
+  campaign,
+}: {
+  businessId: string;
+  campaign: CampaignDraft;
+}) {
+  const common = useTranslations("common");
+  return (
+    <CampaignEditor
+      businessId={businessId}
+      campaign={campaign}
+      trigger={
+        <Button variant="outline" size="sm">
+          <Pencil className="size-3.5" aria-hidden />
+          {common("edit")}
+        </Button>
+      }
+    />
   );
 }

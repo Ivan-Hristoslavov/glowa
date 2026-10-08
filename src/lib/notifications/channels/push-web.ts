@@ -34,7 +34,7 @@ export const webPushChannel: ChannelAdapter = {
     }
 
     webpush.setVapidDetails(
-      process.env.VAPID_SUBJECT ?? "mailto:hello@glowa.bg",
+      process.env.VAPID_SUBJECT ?? "mailto:hello@lavena.eu",
       process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
       process.env.VAPID_PRIVATE_KEY!,
     );

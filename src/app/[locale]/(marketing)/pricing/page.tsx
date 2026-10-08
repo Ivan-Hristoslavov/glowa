@@ -1,4 +1,15 @@
-import { ArrowRight, Download, FileX, Percent, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BellRing,
+  Check,
+  Download,
+  FileX,
+  Gift,
+  Percent,
+  ShieldCheck,
+  Sparkles,
+  Zap,
+} from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 
@@ -31,6 +42,13 @@ export async function generateMetadata({
 }
 
 const FAQ_KEYS = ["1", "2", "3", "4", "5", "6", "7"] as const;
+const INCLUDED_KEYS = ["commission", "deposits", "export", "import", "languages", "app"] as const;
+const CLIENT_POINTS = [
+  { key: "free", icon: Gift },
+  { key: "instant", icon: Zap },
+  { key: "rules", icon: ShieldCheck },
+  { key: "remind", icon: BellRing },
+] as const;
 const ZERO_KEYS = ["commission", "deposits", "contract", "export"] as const;
 const ZERO_ICONS = {
   commission: Percent,
@@ -111,6 +129,44 @@ export default async function PricingPage({
               </li>
             );
           })}
+        </ul>
+      </section>
+
+      {/* --------------------------------------------- included in every plan */}
+      <section aria-labelledby="included-title" className="mt-20">
+        <h2 id="included-title" className="font-heading text-center text-2xl sm:text-3xl">
+          {t("included.title")}
+        </h2>
+        <ul className="mx-auto mt-8 grid max-w-4xl gap-x-8 gap-y-3 sm:grid-cols-2">
+          {INCLUDED_KEYS.map((key) => (
+            <li key={key} className="flex items-start gap-2.5 text-sm">
+              <Check className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>{t(`included.${key}`)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ----------------------------------------- what the salon's client gets */}
+      <section aria-labelledby="clients-title" className="mt-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 id="clients-title" className="font-heading text-2xl sm:text-3xl">
+            {t("forClients.title")}
+          </h2>
+          <p className="text-muted-foreground mt-2">{t("forClients.subtitle")}</p>
+        </div>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {CLIENT_POINTS.map(({ key, icon: Icon }) => (
+            <li key={key} className="glowa-card rounded-2xl p-5">
+              <span className="bg-primary/12 text-primary flex size-10 items-center justify-center rounded-xl">
+                <Icon className="size-5" aria-hidden />
+              </span>
+              <p className="mt-4 font-semibold">{t(`forClients.${key}.title`)}</p>
+              <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                {t(`forClients.${key}.body`)}
+              </p>
+            </li>
+          ))}
         </ul>
       </section>
 

@@ -7,7 +7,7 @@ import { localeHrefLang, type Locale } from "@/i18n/routing";
 import { isLiveSubscription } from "@/lib/billing/plans";
 import { isBillingConfigured } from "@/lib/billing/stripe";
 import type { PlanId } from "@/lib/pricing";
-import { getActiveMembership } from "@/lib/queries/business";
+import { getActiveMembership, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,7 @@ export default async function BillingPage({
 }: PageProps<"/[locale]/dashboard/billing">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "billing");
 
   const membership = await getActiveMembership();
   if (!membership) return null;

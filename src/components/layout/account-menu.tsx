@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  BarChart3,
+  LifeBuoy,
   CalendarDays,
   Heart,
   LayoutDashboard,
@@ -30,6 +32,8 @@ type AccountMenuProps = {
   email: string | null;
   avatarUrl: string | null;
   hasBusiness: boolean;
+  /** Shows the way into the platform console for the person who runs Lavena. */
+  isPlatformAdmin?: boolean;
 };
 
 const LINKS = [
@@ -38,10 +42,12 @@ const LINKS = [
   { href: "/favorites", key: "favorites", icon: Heart },
   { href: "/reviews", key: "reviews", icon: Star },
   { href: "/settings", key: "settings", icon: Settings },
+  { href: "/support", key: "support", icon: LifeBuoy },
 ] as const;
 
-export function AccountMenu({ name, email, avatarUrl, hasBusiness }: AccountMenuProps) {
+export function AccountMenu({ name, email, avatarUrl, hasBusiness, isPlatformAdmin = false }: AccountMenuProps) {
   const t = useTranslations("nav");
+  const platform = useTranslations("platform");
   const auth = useTranslations("auth");
   const initials = (name ?? email ?? "?").trim().charAt(0).toUpperCase();
 
@@ -87,6 +93,14 @@ export function AccountMenu({ name, email, avatarUrl, hasBusiness }: AccountMenu
             {hasBusiness ? t("businessDashboard") : t("registerBusiness")}
           </Link>
         </DropdownMenuItem>
+        {isPlatformAdmin ? (
+          <DropdownMenuItem asChild>
+            <Link href="/platform" className="font-medium">
+              <BarChart3 className="size-4" aria-hidden />
+              {platform("menu")}
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuSeparator />
         {LINKS.map(({ href, key, icon: Icon }) => (
           <DropdownMenuItem key={href} asChild>

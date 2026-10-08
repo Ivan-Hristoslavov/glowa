@@ -26,11 +26,11 @@ export function buildIcs(event: CalendarEvent) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//glowa//booking//EN",
+    "PRODID:-//Lavena//booking//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${event.uid}@glowa`,
+    `UID:${event.uid}@lavena.eu`,
     `DTSTAMP:${toIcsStamp(new Date().toISOString())}`,
     `DTSTART:${toIcsStamp(event.startsAt)}`,
     `DTEND:${toIcsStamp(event.endsAt)}`,

@@ -95,6 +95,11 @@ export function PricingPlans({
               <p className="text-muted-foreground mt-2 min-h-10 text-sm leading-relaxed">
                 {t(`plans.${plan.id}.tagline`)}
               </p>
+              {/* What the plan does for the salon, in outcomes: a feature list
+                  says what exists, this says why a person would pay for it. */}
+              <p className="bg-secondary/50 mt-4 rounded-xl px-3.5 py-3 text-sm leading-relaxed lg:min-h-40">
+                {t(`plans.${plan.id}.outcome`)}
+              </p>
 
               <div className="mt-6">
                 <p className="flex items-baseline gap-1.5">
@@ -107,6 +112,11 @@ export function PricingPlans({
                   {t(`plans.${plan.id}.seats`)}
                   {annual && !free ? ` · ${t("billing.billedYearly")}` : ""}
                 </p>
+                {free ? null : (
+                  <p className="text-primary mt-2 inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium">
+                    {t("billing.trial")}
+                  </p>
+                )}
               </div>
 
               {action ? (

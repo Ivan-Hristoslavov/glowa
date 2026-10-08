@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { GlowaLogo } from "@/components/brand/glowa-logo";
 import { HeaderAccount } from "@/components/layout/header-account";
 import { HeaderFrame } from "@/components/layout/header-frame";
@@ -16,14 +18,15 @@ import { Link } from "@/i18n/navigation";
  * varies per visitor moved into `HeaderAccount`, a client island, and the
  * parts that react to scroll and route into `HeaderFrame` and `HeaderNav`.
  */
-export function SiteHeader() {
+export async function SiteHeader() {
+  const brand = await getTranslations("brand");
   return (
     <HeaderFrame>
       <div className="flex flex-1 items-center">
         <Link
           href="/"
           className="glowa-focus rounded-full transition-transform duration-300 hover:scale-[1.03]"
-          aria-label="glowa"
+          aria-label={brand("name")}
         >
           <GlowaLogo markClassName="size-7" />
         </Link>

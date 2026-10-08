@@ -1,16 +1,19 @@
-import { Info, Megaphone, Pencil } from "lucide-react";
+import { Info, Megaphone } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import Image from "next/image";
 
 import { PageHeader } from "@/components/admin/page-header";
-import { CampaignEditor, type CampaignDraft } from "@/components/admin/campaign-editor";
+import {
+  CampaignEditor,
+  EditCampaignButton,
+  type CampaignDraft,
+} from "@/components/admin/campaign-editor";
 import { CampaignSendButton } from "@/components/admin/campaign-send-button";
 import { EmptyState } from "@/components/common/empty-state";
 import { emptyStateArt, featureArt } from "@/lib/brand-assets";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { routing, type Locale } from "@/i18n/routing";
 import { isLocalizedText } from "@/lib/localized";
 import { availableChannels } from "@/lib/notifications/channels";
@@ -18,8 +21,7 @@ import {
   canManage,
   getActiveMembership,
   listCampaigns,
-  listCampaignStats,
-} from "@/lib/queries/business";
+  listCampaignStats, requireSection } from "@/lib/queries/business";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.marketing");
@@ -31,9 +33,9 @@ export default async function MarketingPage({
 }: PageProps<"/[locale]/dashboard/marketing">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "marketing");
 
   const t = await getTranslations("admin.marketing");
-  const common = await getTranslations("common");
   const membership = await getActiveMembership();
   if (!membership) return null;
 
@@ -162,16 +164,7 @@ export default async function MarketingPage({
                 </Badge>
                 {editable ? (
                   <>
-                    <CampaignEditor
-                      businessId={membership.businessId}
-                      campaign={draft}
-                      trigger={
-                        <Button variant="outline" size="sm">
-                          <Pencil className="size-3.5" aria-hidden />
-                          {common("edit")}
-                        </Button>
-                      }
-                    />
+                    <EditCampaignButton businessId={membership.businessId} campaign={draft} />
                     {campaign.status === "draft" ||
                     campaign.status === "scheduled" ? (
                       <CampaignSendButton

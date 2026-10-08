@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidatePublicSurfaces } from "@/lib/revalidate-public";
 import { z } from "zod";
 
 import { requireMembership } from "@/lib/actions/guard";
@@ -85,6 +86,7 @@ export async function respondToReview(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/reviews", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true };
 }
 
@@ -112,6 +114,7 @@ export async function setReviewStatus(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/reviews", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true };
 }
 

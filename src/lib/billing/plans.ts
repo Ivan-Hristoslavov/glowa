@@ -19,6 +19,9 @@ export function parsePriceLookupKey(
   return { plan: match[1] as PlanId, interval: match[2] as BillingInterval };
 }
 
+/** Free days on a salon's first subscription (card collected up front). */
+export const TRIAL_DAYS = 30;
+
 export const SUBSCRIPTION_STATUSES = [
   "trialing",
   "active",

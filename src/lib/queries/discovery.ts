@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { BusinessCategory } from "@/lib/business-categories";
+import { matchPlace, type Place } from "@/lib/places";
 import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
@@ -188,4 +189,33 @@ export async function listUpcomingClosures(businessId: string) {
   });
   if (error) return [];
   return data ?? [];
+}
+
+/**
+ * Category × town pairs that have a real (non-demo) active salon: the only
+ * landing pages worth linking to or listing in the sitemap.
+ */
+export async function listLandingCombos() {
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("businesses")
+    .select("category, locations!inner(city)")
+    .eq("status", "active")
+    .eq("is_demo", false)
+    .limit(20_000);
+
+  const seen = new Set<string>();
+  const combos: Array<{ category: BusinessCategory; place: Place }> = [];
+  for (const row of data ?? []) {
+    if (row.category === "other") continue;
+    for (const location of row.locations ?? []) {
+      const place = matchPlace(location.city);
+      if (!place) continue;
+      const key = `${row.category}/${place.id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      combos.push({ category: row.category, place });
+    }
+  }
+  return combos;
 }

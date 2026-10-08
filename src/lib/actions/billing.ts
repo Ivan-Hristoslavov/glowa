@@ -4,7 +4,7 @@ import { getLocale } from "next-intl/server";
 import { z } from "zod";
 
 import { requireMembership } from "@/lib/actions/guard";
-import { isLiveSubscription, priceLookupKey } from "@/lib/billing/plans";
+import { isLiveSubscription, priceLookupKey, TRIAL_DAYS } from "@/lib/billing/plans";
 import { getStripe, isBillingConfigured } from "@/lib/billing/stripe";
 import { publicEnv } from "@/lib/env";
 import { PLANS } from "@/lib/pricing";
@@ -94,7 +94,12 @@ export async function startCheckout(input: z.input<typeof checkoutSchema>): Prom
         : { customer_email: email }),
       client_reference_id: businessId,
       // Carried on the subscription so every later webhook knows the salon.
-      subscription_data: { metadata: { business_id: businessId } },
+      subscription_data: {
+        metadata: { business_id: businessId },
+        // The first month is free; a salon that has subscribed before does not
+        // get a second one (its row exists, whatever its status now).
+        ...(current ? {} : { trial_period_days: TRIAL_DAYS }),
+      },
       metadata: { business_id: businessId },
       allow_promotion_codes: true,
       billing_address_collection: "required",

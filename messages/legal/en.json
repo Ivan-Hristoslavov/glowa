@@ -10,24 +10,24 @@
   "docs": {
     "privacy": {
       "title": "Privacy policy",
-      "description": "What personal data Glowa processes, why, for how long, and what your rights are.",
+      "description": "What personal data Lavena processes, why, for how long, and what your rights are.",
       "intro": [
-        "This policy explains how Glowa processes your personal data when you look for a salon, book an appointment, create an account or run a business on the platform. It is written in plain language, and it is also the formal information required by Articles 13 and 14 of the General Data Protection Regulation (GDPR)."
+        "This policy explains how Lavena processes your personal data when you look for a salon, book an appointment, create an account or run a business on the platform. It is written in plain language, and it is also the formal information required by Articles 13 and 14 of the General Data Protection Regulation (GDPR)."
       ],
       "sections": [
         {
           "id": "controller",
           "heading": "1. Who is responsible for your data",
           "body": [
-            "The controller is {company}, company number {companyId}, registered at {address} (\"Glowa\", \"we\"). For anything about your personal data, write to {email}."
+            "The controller is {company}, company number {companyId}, registered at {address} (\"Lavena\", \"we\"). For anything about your personal data, write to {email}."
           ]
         },
         {
           "id": "roles",
           "heading": "2. Two different roles",
           "body": [
-            "Glowa is the controller for your account data, for the bookings you make through the platform, for reviews and for the use of the website.",
-            "Salons also use Glowa as their diary and client list. For the records a salon keeps about its own clients (visit history, internal notes, marketing lists) the salon is the controller and Glowa is a processor acting only on its instructions (Article 28 GDPR). For that data you can contact the salon directly; if you write to us, we will forward your request."
+            "Lavena is the controller for your account data, for the bookings you make through the platform, for reviews and for the use of the website.",
+            "Salons also use Lavena as their diary and client list. For the records a salon keeps about its own clients (visit history, internal notes, marketing lists) the salon is the controller and Lavena is a processor acting only on its instructions (Article 28 GDPR). For that data you can contact the salon directly; if you write to us, we will forward your request."
           ]
         },
         {
@@ -145,17 +145,17 @@
     },
     "terms": {
       "title": "Terms of use",
-      "description": "The rules for using Glowa, for clients and for businesses.",
+      "description": "The rules for using Lavena, for clients and for businesses.",
       "intro": [
-        "These terms govern the use of the Glowa website and services. By creating an account, booking an appointment or registering a business you accept them. Our details as a provider under Article 4 of the Bulgarian E-Commerce Act are on the \"Provider details\" page."
+        "These terms govern the use of the Lavena website and services. By creating an account, booking an appointment or registering a business you accept them. Our details as a provider under Article 4 of the Bulgarian E-Commerce Act are on the \"Provider details\" page."
       ],
       "sections": [
         {
           "id": "service",
-          "heading": "1. What Glowa is",
+          "heading": "1. What Lavena is",
           "body": [
-            "Glowa is an online platform where clients find beauty salons and specialists and book appointments, and where businesses run their diary, clients and online booking.",
-            "Glowa is an intermediary. The contract for the service itself (a haircut, a manicure and so on) is between you and the salon. The salon is responsible for the service, its quality, its price and for honouring the conditions it publishes."
+            "Lavena is an online platform where clients find beauty salons and specialists and book appointments, and where businesses run their diary, clients and online booking.",
+            "Lavena is an intermediary. The contract for the service itself (a haircut, a manicure and so on) is between you and the salon. The salon is responsible for the service, its quality, its price and for honouring the conditions it publishes."
           ]
         },
         {
@@ -172,14 +172,14 @@
           "list": [
             "A booking is a request to the salon. Some salons confirm appointments by hand; the status is shown in \"My bookings\" and in your email.",
             "Cancellation and change conditions are set by the salon and shown before you confirm. If you do not come and did not cancel, the salon may record a no-show.",
-            "Glowa is free for clients. You pay the salon at its prices, usually on the spot."
+            "Lavena is free for clients. You pay the salon at its prices, usually on the spot."
           ]
         },
         {
           "id": "reviews",
           "heading": "4. Reviews",
           "body": [
-            "A review can only be left by the account that made the booking, and only after the salon has marked the visit as completed. Every review on Glowa therefore comes from a real client of a real visit.",
+            "A review can only be left by the account that made the booking, and only after the salon has marked the visit as completed. Every review on Lavena therefore comes from a real client of a real visit.",
             "Reviews must be honest and must not contain insults, other people's personal data or advertising. We may remove a review that breaks these rules. We do not accept payment for reviews and do not hide negative reviews at a salon's request."
           ]
         },
@@ -204,7 +204,7 @@
           "id": "business",
           "heading": "7. Terms for businesses",
           "body": [
-            "A business is responsible for the accuracy of its services, prices, opening hours and team, and for having a lawful basis to process its clients' data in Glowa.",
+            "A business is responsible for the accuracy of its services, prices, opening hours and team, and for having a lawful basis to process its clients' data in Lavena.",
             "Plans and prices are published on the Pricing page, excluding VAT. During early access use is free; before any charging starts you will get notice, and you will not be charged without your explicit agreement.",
             "Changes to these terms that affect businesses are announced at least 15 days in advance, in line with Regulation (EU) 2019/1150. You can stop at any time and export your data."
           ]
@@ -213,12 +213,12 @@
           "id": "dpa",
           "heading": "8. Processing personal data on the business's behalf (Article 28 GDPR)",
           "body": [
-            "For the client data a business enters or receives in Glowa, the business is the controller and Glowa is the processor. By accepting these terms the parties agree as follows:"
+            "For the client data a business enters or receives in Lavena, the business is the controller and Lavena is the processor. By accepting these terms the parties agree as follows:"
           ],
           "list": [
             "Subject and duration: hosting and processing of client, booking and communication data for as long as the service is used.",
             "Categories of data: names, contact details, visit history, notes, preferences and marketing consents of the business's clients.",
-            "Glowa processes the data only on the business's documented instructions, including through the platform's settings.",
+            "Lavena processes the data only on the business's documented instructions, including through the platform's settings.",
             "Everyone with access is bound by confidentiality.",
             "We apply appropriate technical and organisational measures under Article 32 GDPR.",
             "Sub-processors are listed in the Privacy policy. We give advance notice of a new sub-processor and the business may object.",
@@ -232,7 +232,7 @@
           "id": "ip",
           "heading": "9. Content and intellectual property",
           "body": [
-            "The software, design and the Glowa brand are ours. Businesses keep the rights to the photos and texts they upload and allow us to show them on the platform while their profile is active."
+            "The software, design and the Lavena brand are ours. Businesses keep the rights to the photos and texts they upload and allow us to show them on the platform while their profile is active."
           ]
         },
         {
@@ -246,7 +246,7 @@
           "id": "termination",
           "heading": "11. Ending the service",
           "body": [
-            "You can stop using Glowa at any time. We may suspend an account that breaks these terms, telling you why."
+            "You can stop using Lavena at any time. We may suspend an account that breaks these terms, telling you why."
           ]
         },
         {
@@ -270,7 +270,7 @@
       "title": "Cookie policy",
       "description": "What we store in your browser and how to change your choice.",
       "intro": [
-        "Cookies are small files a website stores in your browser. Glowa keeps this to a minimum: no advertising cookies, no analytics cookies and no third-party tracking."
+        "Cookies are small files a website stores in your browser. Lavena keeps this to a minimum: no advertising cookies, no analytics cookies and no third-party tracking."
       ],
       "sections": [
         {
@@ -284,7 +284,7 @@
             "glowa_business – which business you have open in the business dashboard; 1 year.",
             "NEXT_LOCALE – the language you chose; until you close the browser.",
             "glowa_consent – your cookie choice; 6 months.",
-            "Local storage: theme (light or dark) and glowa.calendar.* (the calendar view in the business dashboard)."
+            "Local storage: theme (light or dark) and Lavena.calendar.* (the calendar view in the business dashboard)."
           ]
         },
         {
