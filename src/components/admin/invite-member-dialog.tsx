@@ -44,10 +44,10 @@ export function InviteMemberDialog({ businessId }: { businessId: string }) {
     startTransition(async () => {
       const result = await inviteMember({ businessId, email, role });
       if (!result.ok) {
-        toast.error(t("save"));
+        toast.error(result.code === "duplicate" ? t("inviteDuplicate") : t("inviteFailed"));
         return;
       }
-      toast.success(t("invited"));
+      toast.success(result.emailed ? t("invitedEmailed") : t("invitedNoEmail"));
       setOpen(false);
       setEmail("");
       router.refresh();

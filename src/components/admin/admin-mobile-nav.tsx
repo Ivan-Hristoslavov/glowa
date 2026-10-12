@@ -14,8 +14,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import type { BusinessRole } from "@/lib/queries/business";
 
-export function AdminMobileNav() {
+export function AdminMobileNav({ role }: { role: BusinessRole }) {
   const t = useTranslations("admin.nav");
   const [open, setOpen] = useState(false);
 
@@ -33,7 +34,7 @@ export function AdminMobileNav() {
           </SheetTitle>
         </SheetHeader>
         <div className="overflow-y-auto p-3">
-          <AdminNav onNavigate={() => setOpen(false)} />
+          <AdminNav role={role} onNavigate={() => setOpen(false)} />
         </div>
       </SheetContent>
     </Sheet>

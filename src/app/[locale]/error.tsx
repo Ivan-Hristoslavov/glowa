@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { reportClientError } from "@/lib/actions/errors";
 
 export default function LocaleError({
   error,
@@ -18,6 +19,11 @@ export default function LocaleError({
   useEffect(() => {
     // Surfaced to the server logs; the digest is what ties it to a request.
     console.error(error);
+    void reportClientError({
+      message: error.message || "Unknown error",
+      path: window.location.pathname,
+      digest: error.digest,
+    });
   }, [error]);
 
   return (

@@ -26,6 +26,7 @@ designed for Europe: Bulgarian, English and Romanian from day one.
 | Prompt 5 | Production polish, QA, Vercel | Not started |
 | 09-24 pass | Walkthrough as guest/customer/owner, fixes, landing redesign, motion | **Done** (PR #2, stacked on #1) |
 | 09-24 second pass | Next-up strip, Ctrl+K, salon closures, photo/logo uploads, published prices, flyer studio, email templates, customer conveniences | **Done** (PR #2) |
+| 10-05 Studio24 pass | Competitor research, walkthrough at three screen sizes, cookie notice, focused chrome for booking/onboarding, booking-funnel clarity, client CSV import, customer section on the landing page | **Done** (§8r) |
 
 **09-24 pass.** The database was built from the repository with `supabase
 start` (images pulled via `mirror.gcr.io`, because Docker Hub rate-limits and
@@ -113,14 +114,16 @@ src/
         page.tsx            landing: hero search + featured salons
         search/             discovery with filters (+ loading.tsx)
         business/[slug]/    profile page
-        business/[slug]/book/  booking funnel (noindex)
       (auth)/               signed-out surface
         actions.ts          signIn / signUp / signOut
         login/  signup/
       (customer)/           signed-in customer surface
         profile/            dashboard: counts, next appointment
         bookings/           list (+ loading.tsx) and [id]/ detail
-        favorites/  reviews/  settings/  onboarding/
+        favorites/  reviews/  settings/
+      (focus)/              a task in progress: same header, slim footer (§8r)
+        business/[slug]/book/  booking funnel (noindex)
+        onboarding/         create a salon
       (business)/           signed-in business surface
         layout.tsx          sidebar shell; redirects to /onboarding with no membership
         dashboard/          metrics + today's schedule
@@ -163,9 +166,7 @@ src/
     env.ts  format.ts  localized.ts  utils.ts
   types/database.ts
   proxy.ts
-messages/          bg.json · en.json · ro.json (969 keys each, verified equal)
-
-messages/          bg.json · en.json · ro.json (1,076 keys each, verified equal)
+messages/          bg.json · en.json · ro.json (1,703 keys each, verified equal)
 supabase/          migrations/ · seed.sql
 ```
 
@@ -1644,6 +1645,310 @@ developer's own account on 2026-09-24; that business was previously a throwaway 
 
 ---
 
+## 8r. The Studio24 pass (2026-10-05)
+
+Asked for: study the local incumbent (it charges salons for new clients and
+takes a share), find what GLOWA lacks, make the design clearer, and fix what
+people dislike about the competitor. The research and the ranked list of what
+is still missing are in [`docs/competitive-studio24.md`](./docs/competitive-studio24.md);
+this section records what was built and why it is built that way.
+
+**How it was done.** The sandbox cannot reach `*.supabase.co`, so the app ran
+against a local stack: start the Docker daemon (`dockerd &`, it is not running by
+default), then `npx supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta`
+(images come through the registries the sandbox allows; mailpit is rate-limited
+on Docker Hub, so it is left to the CLI's retry). `.env.local` (git-ignored)
+points at `127.0.0.1:54321`. The owner's showcase salon was loaded with
+`scripts/seed-showcase.sql`. Chromium (Playwright, `/opt/pw-browsers`) drove the
+site at 1440×900, 1366×768 and 390×844 as a guest, a customer and an owner.
+
+**What the walkthrough found, and what was done**
+
+- **The cookie notice sat on the first screen.** A 250 px card, bottom right: on
+  a laptop it covered the hero search's submit button; on a phone it took a
+  third of the first screen. Now one slim strip (`cookie-consent.tsx`), copy cut
+  to one sentence, accept and decline still equal weight, settings reachable
+  from the same line. New key `consent.settingsShort`.
+- **Tasks shared a footer with the pitch.** The booking funnel and onboarding
+  were under the marketing footer: "Have a salon? Register it" beneath a
+  customer's confirm button, and beneath a salon owner registering one. They
+  moved to a new `(focus)` route group (`layout.tsx`, `FocusFooter`): the same
+  `SiteHeader` (account and language stay reachable) and a slim footer with the
+  legal links and the cookie choice. URLs are unchanged; moving a page between
+  route groups does not change its path. The onboarding page now carries its
+  own container (the customer layout used to).
+- **Booking funnel.** The cancellation rule and "GLOWA won't block your account
+  over a cancelled booking, and won't phone you" sit under the title, before
+  the first choice (`booking.trustNoStrikes`; the cancellation line reuses
+  `business.cancellationPolicy`). The sticky bar shows what has been chosen so
+  far next to *Next* (`barLabel`/`barDetail`; *Back* collapses to an icon on a
+  phone). Services sit under category headings when there is more than one
+  category (`BookingService.categoryLabel`, resolved on the server). Time chips
+  are four per row on a phone.
+  - Both promises are true of the code: there is no cap on active bookings and
+    no logic anywhere that suspends a customer, and nothing in GLOWA phones
+    anyone. If either ever changes, change the copy first.
+- **Landing page.** A section for customers (`home.clients.*`): only free times,
+  changes without a phone call, fair rules. Until now the page spoke almost
+  only to salons below the hero. With exactly four featured salons the grid is
+  four wide instead of leaving one card alone. The hero subtitle is smaller on
+  a phone so the search is closer to the first screen.
+- **Client import** (`/dashboard/clients` → "Import from file", also the action
+  in the empty state). Files: `lib/crm/import.ts` (pure, tested: parsing,
+  header detection, normalising, dedupe), `lib/actions/crm-import.ts` (the one
+  server action), `components/admin/client-import.tsx` (the dialog). Decisions:
+  - Parsed and previewed **in the browser**; nothing is sent until "Import".
+    The server cleans every row again and trusts nothing.
+  - Reads UTF-8 first and falls back to **Windows-1251**: Excel on a Bulgarian
+    PC writes that unless "CSV UTF-8" is picked, and every name would otherwise
+    arrive as question marks. Delimiter (`,` `;` tab) is detected.
+  - Header detection knows bg/en/ro names; the owner can correct any column.
+    Unicode decomposition (NFD) must not be used to fold headers - it strips the
+    breve from Cyrillic "й" and "Имейл" stops matching (found by the test).
+  - A person already in the CRM is skipped - by email, by the last nine digits of
+    the phone (so `+359 88…` and `088…` match), or by bare name when there is
+    nothing else. Each 500-row request re-reads the CRM, so a large file dedupes
+    against its own earlier parts.
+  - **No marketing consent is recorded** (`consent_marketing` false, no date), so
+    imported clients get no campaign until the owner marks consent (campaign
+    audiences require it). No visits or spend are invented.
+  - Uses the existing manager-only INSERT policy; no migration.
+  - Ceiling 5,000 rows and 5 MB per file; a limit that is easy to raise.
+- **Salon pitch.** Two FAQ answers on `/for-business`: bringing clients in, and
+  taking them out (the export that already existed).
+- **Not reproduced:** one transient `Primitive.button failed to slot onto its
+  children` on the services page during the first cold compile; it did not
+  recur on a second load and the code has no cause that can be named. Watch for
+  it.
+
+**Second part of the pass (same day): pricing page, landing pages, go-to-market**
+
+- **Pricing page.** Each plan card now says what the plan does for the salon in
+  outcomes (`pricing.plans.<id>.outcome`), above the feature list; a "In every
+  plan" block (0% commission, deposits to the salon's own Stripe, CSV export
+  and import, three languages, installable app - each true today); and "What
+  your client gets - free" (no cost, instant confirmation, clear rules,
+  reminder + calendar).
+- **Service × town landing pages**: `/[locale]/salons/[category]/[city]`
+  (`/salons/hair-salon/sofia`; category slug = enum with hyphens, town = id from
+  `lib/places.ts`; `lib/seo/landing.ts`). Built on first request and cached an
+  hour (`generateStaticParams` returns nothing on purpose - hundreds of
+  combinations at build for no benefit). The salons shown are those whose
+  location city matches; with none, the nearest are shown and the page is
+  **`noindex`** - a page with nobody on it has nothing for a search engine. The
+  sitemap lists only combinations with a real, non-demo salon. Bulgarian takes
+  "във" before в/ф (`inPreposition`). Copy: `landing.*`. The home page links to up to twelve
+  "Popular searches" - only pairs with a real salon (`listLandingCombos`, also
+  used by the sitemap); the section is hidden until there are some.
+- **`docs/go-to-market.md`**: the path to the first salons and clients (who to
+  start with, a 90-day plan, channels, tricks for salon income and platform
+  income, what to measure, scripts, risks). No invented numbers; targets are to
+  be set after the first ten salons.
+- Not built, named there: a salon-refers-salon link, gift vouchers, Viber/SMS.
+
+**Decisions left to the owner**
+
+- The display font's Bulgarian letterforms make "вт" read "Bm" and "Екип" read
+  "Ekun" at UI sizes (see the end of the competitor note). Correct, accepted on
+  09-24, but the first thing a non-designer notices.
+- The big missing pieces are not styling: a password-less way to book, several
+  services in one visit, service variants and Viber/SMS. Ranked list in the
+  competitor note.
+
+---
+
+
+## 8s. Rename to Lavena and new identity (2026-10-05)
+
+The owner chose **Lavena** and asked for a total redesign. Done in code, on the
+PR branch, so it can be reverted as one unit:
+
+- **Name.** Every user-facing "GLOWA/Glowa/glowa" in `messages/**` (UI and legal),
+  the manifest, page title, JSON-LD, the email wordmark, the offline page, the
+  AI prompt, the Stripe app info and the Stripe product names now says Lavena.
+  Contact addresses moved to `hello@lavena.eu`, **a domain nobody owns yet**
+  (`lavena.eu` was free on 10-05, `.com` and `.app` were taken); register it
+  before launch, and check EUIPO/TMview and the Bulgarian Patent Office first.
+  Internal names are unchanged on purpose - `glowa-*` CSS utilities,
+  `--glowa-*` tokens, `GlowaLogo`/`GlowaMark`, the `glowa_consent` / `glowa_ref`
+  cookies, the `glowa:` events, the Vercel project - renaming them touches
+  hundreds of lines for nothing a visitor sees. (Cookie names change only if the
+  old ones should stop being honoured.)
+- **Mark.** A rounded "L" with a leaf growing from it, drawn as two shapes (a
+  stroke and a leaf) so it holds at 16 px and prints in one colour
+  (`components/brand/glowa-logo.tsx`; monochrome cuts the leaf out of the stem
+  with a mask). Favicon (`app/icon.svg`) and the app icons (`public/icon-*.png`,
+  `app/apple-icon.png`) are a white mark on a deep-lavender field.
+- **Palette.** Coral became lavender: `--glowa-coral` (the token keeps its old
+  name) is `#7556B5` light / `#B79BE8` dark, with soft, peach and a new
+  `--glowa-lilac` for the leaf; the same values replaced the hard-coded hexes in
+  the flyer studio, the confetti, the up-next strip, the email templates and the
+  offline page. White on `#7556B5` is about 5.5:1.
+  **Not re-validated:** the chart series pair (the validator run in §8a was for
+  coral + blue; plum and blue sit close in hue) and the colour-blind separation
+  of the calendar's staff colours. Re-run the dataviz check before launch.
+- **Not done - needs an image model.** The generated photographs and
+  illustrations (heroes, category photos, ten feature illustrations, empty
+  states, the share card `og-cover.webp`) are the old art direction and the
+  share card still carries the old mark. `scripts/generate-brand-assets.mjs`
+  regenerates them, and `npm run assets:social` rebuilds the card; both need
+  `OPENAI_API_KEY`, which this environment does not have. `build-social-card.mjs`
+  still draws the old mark geometry and must be updated with the new one.
+- The logo directions in `docs/brand/` are the old exploration and are obsolete.
+
+---
+
+## 8t. Tester-readiness pass (2026-10-05)
+
+Full write-up, with what must be switched on, in
+[`docs/test-readiness.md`](./docs/test-readiness.md). Every page was swept in
+three languages and two sizes; the guest → sign-up → booking → email journey,
+password reset (now cross-browser), team invitation and client import were
+driven in Chromium. Behaviour changed in four places that are easy to forget:
+
+- **Online bookings are confirmed immediately** (the customer guard in
+  `app.enforce_customer_booking_fields`), except a booking that asks for a
+  deposit, which stays `pending` and is confirmed by `settle_deposit` when paid.
+  This reverses "every online booking is pending until the salon confirms".
+- **A reminder in the past is never queued** (`app.appointment_notifications`).
+- **Password reset uses a plain implicit-flow client** (`createPublicClient`),
+  so the link works on another device. Sign-up confirmation still uses the PKCE
+  client, so a confirmation link opened in another browser can still fail.
+- **Team invitations send an email** (`lib/notifications/invitation.ts`), straight
+  through the email channel, not the outbox (the outbox is keyed to appointments).
+- Auth email templates live in `supabase/templates/` (local config only; paste
+  into the dashboard for production).
+- A translation patch must never turn a string key into a namespace - the invite
+  label broke that way once (`inviteEmail`); the message is now `inviteMail.*`.
+
+## 8u. Browser QA pass (2026-10-06)
+
+Every finding, with status, is in [`docs/qa-findings.md`](./docs/qa-findings.md)
+(one file on purpose). Stripe could **not** be exercised: no keys or account in
+the build environment. What changed and is easy to forget:
+
+- **Roles are enforced in the admin, not just on buttons.** One table,
+  `src/lib/admin-access.ts` (`canOpenSection`): owner/admin everything; manager
+  everything except `billing`, `payments`, `settings`; staff only `dashboard`,
+  `calendar`, `timeOff`. Every dashboard page calls `requireSection(locale, key)`
+  (`lib/queries/business.ts`) right after `setRequestLocale`, and the sidebar,
+  mobile drawer and Ctrl+K filter with the same function. A new admin page must
+  do both. RLS is still the data enforcement.
+- **Public pages are cached for an hour, so every action that changes what they
+  show calls `revalidatePublicSurfaces(businessId)`** (`lib/revalidate-public.ts`).
+  It revalidates the salon's page by its *literal* path in every locale -
+  `revalidatePath("/[locale]/business/[slug]", "page")` alone did not refresh
+  the prerendered copies in a production build (verified: saved text, stale
+  page). Use the helper, never the pattern, for the salon page.
+- **A server page must not hand a server-rendered `Button` to a client dialog as
+  `trigger`** (Radix `asChild` fails: "Primitive.button failed to slot", the page
+  silently falls back to client rendering). Build the trigger inside the client
+  module: `EditServiceButton`, `EditStaffButton`, `EditCampaignButton`.
+- **Account deletion works** (migration `20261006090000`): the customer write
+  guard lets the FK `ON DELETE SET NULL` update through when there is no signed-in
+  user and only `customer_profile_id`/`created_by`/`updated_at` change.
+  pgTAP: `account_deletion.test.sql`.
+- New services default to the whole team (a published salon with a service no
+  one performs has zero slots). Invitations are claimed at sign-up too.
+- Unknown paths under a locale go through `app/[locale]/[...rest]/page.tsx`
+  (`notFound()`), so the 404 is translated and has the layout; the root
+  `app/not-found.tsx` reads `messages/bg.json`.
+- Brand strings must come from `messages` (`brand.name`) - `<title>` template,
+  `og:site_name`, logo `aria-label`, `.ics`, download filenames (`lavena-*`) and
+  the service worker had kept "glowa".
+- The "leave a review" email falls back to `/bookings/<id>` (it used to link to
+  `/review/<id>`, which does not exist); "manage booking" links to the booking.
+- Dev-only noise that is not ours: React warns "Encountered a script tag while
+  rendering React component" (next-themes 0.4.6); it does not appear in a
+  production build. Redirecting a staff user from a forbidden section happens
+  after the layout has streamed (HTTP 200 plus a client redirect); `networkidle`
+  waits in tests can stall on the aborted stream - use `load`.
+
+- Body text turns off the font's Bulgarian localised forms (`locl`) so "вт"/"Екип" read right; headings keep them. A specialist's card has a "Time off" button (the calendar's block-time dialog).
+
+**Migrations still to apply to the live database:**
+`20261005120000_auto_confirm_bookings.sql`, `20261005120100_reminder_not_in_the_past.sql`,
+`20261006090000_account_deletion_cascade.sql`, `20261006120000_platform_admin.sql`.
+
+## 8v. Free first month and the platform console (2026-10-06)
+
+- **Free first month**: the subscription checkout passes `trial_period_days`
+  (`TRIAL_DAYS = 30` in `lib/billing/plans.ts`) the first time a salon subscribes;
+  card up front. A salon with a `business_subscriptions` row (any status) gets no
+  second trial. Plan cards say "First month free" (`pricing.billing.trial`). The
+  early-access window (`EARLY_ACCESS_UNTIL`) is separate and still means "nothing
+  is charged". Untested against real Stripe.
+- **Platform console** at `/{locale}/platform` (route group `(platform)`), for
+  whoever runs Lavena. Access = a row in `public.platform_admins`; there is no
+  UI or policy to add one. As the project owner, in SQL:
+  `insert into public.platform_admins (profile_id) select id from auth.users where email = '<you>';`
+  Everyone else gets a 404 (layout) and the data function refuses them too
+  (`public.platform_overview`, SECURITY DEFINER, checks `app.is_platform_admin()`).
+  Demo data is excluded from every number. Migration `20261006120000_platform_admin.sql`,
+  pgTAP `platform_admin.test.sql`. `types/database.ts` was edited by hand for the
+  new table and function (the local type generator needs postgres-meta, which the
+  local stack leaves out) - regenerate with `npm run db:types` when you can.
+- The console shows KPIs with sparklines and change vs the previous period, one
+  interactive chart (range 7/30/90/365, five metrics, crosshair + keyboard), a
+  nested sign-up-to-paying funnel, the subscription mix and a searchable, sortable
+  salon table with a "what to do" column (no services, unpublished, no bookings in
+  30 days, payment problem, trial ending). Revenue is an estimate from list
+  prices; Stripe is the ledger. Dates are cut in Europe/Sofia so the server and
+  browser render the same text.
+- New migration to apply live: `20261006120000_platform_admin.sql`.
+
+### Console, second step: moderation and support (same day)
+
+`/{locale}/platform?tab=...` has five sections: overview, **salons and content**
+(newest salons with every picture, remove one photo / logo / cover, suspend or
+restore a salon, hide or show a review), **people** (search by e-mail or name,
+block or unblock an account), **problems** (failed messages from the outbox with
+"try again", messages stuck in the queue over an hour, failed payments and
+refunds pending over a day) and an **audit log** (who changed what, with the
+reason). Rules to keep:
+
+- Every change is a SECURITY DEFINER function in migration
+  `20261006150000_platform_moderation.sql` that starts with
+  `app.require_platform_admin()` and writes `platform_audit_log` in the same
+  transaction. Table policies were not widened. pgTAP: `platform_moderation.test.sql`.
+- Blocking an account is `auth.admin.updateUserById(ban_duration)` from the
+  server action (`lib/actions/platform.ts`) after `isPlatformAdmin()`; it is
+  reversible, deletes nothing, and refuses the caller and other platform admins.
+  This is moderation for abuse - it does not contradict "Lavena does not block a
+  customer for cancelling", which is a product promise about cancellations.
+- A removed photo is only un-referenced; the file stays in storage.
+- `revalidatePublicSurfaces()` reads the slug with the service client, because a
+  suspended salon is not readable by the admin who suspends it.
+- `types/database.ts` has hand-added entries for these functions.
+- New migration to apply live: `20261006150000_platform_moderation.sql`.
+
+### Abuse limits, error log, support inbox, CI (2026-10-07)
+
+- **Rate limits** (`lib/rate-limit.ts`, `public.rate_limit_check`, service role
+  only): sign-in 8 per 10 min per address+e-mail and 40 per address; sign-up 6 an
+  hour; password reset 6 an hour per address and 3 per mailbox; support 5 an hour.
+  Fixed windows in `rate_limit_hits`. The limiter **fails open** if the counter is
+  unreachable. The address is `x-forwarded-for`; locally everyone shares one bucket.
+- **Captcha is optional**: `lib/turnstile.ts` + `<Turnstile />` on sign-up, password
+  reset and support. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`
+  together (Cloudflare Turnstile, free) and it switches on; without them nothing
+  changes. Not yet exercised against Cloudflare.
+- **Error log, no third party**: `src/instrumentation.ts` (`onRequestError`) and the
+  error screen (`reportClientError`) write to `error_events` through
+  `lib/errors/record.ts` (grouped by a fingerprint, at most 20 rows an hour per bug).
+  The console's *Errors* tab lists them. If Sentry is wanted later it can sit beside this.
+- **Support**: public page `/support` (also in the footer and the account menu) ->
+  `support_tickets`; the console's *Support* tab lists them with "reply by e-mail" and
+  done / reopen. A signed-in sender is linked to their account and salon.
+- **CI**: `.github/workflows/ci.yml` runs `npm run check`, `supabase test db` and the
+  production build against a local Supabase. It could not be run from here - the
+  first run on GitHub is its first test.
+- Google sign-in already exists (`components/auth/google-button.tsx`; it needs the
+  provider switched on in Supabase Auth).
+- New migration to apply live: `20261007090000_abuse_errors_support.sql`.
+
+---
+
 ## 9. Known advisor findings (reviewed, accepted)
 
 - `private.calendar_credentials` has RLS on and no policy — intentional: deny-all
@@ -1713,6 +2018,17 @@ traction claim may appear unless it is real.
 ---
 
 ## 11. Known TODOs for the next prompts
+
+00. **Before testers** (10-06): apply the three migrations above, set the keys
+   in `docs/test-readiness.md`, and walk the Stripe flow by hand with test keys
+   (deposit booking, subscription, refund) - the one area the QA pass could not
+   reach.
+
+0. **Beating the incumbent** (10-05): the plan to reach salons is
+   `docs/go-to-market.md`; the ranked gap list is in
+   `docs/competitive-studio24.md` - password-less booking, several services in
+   one visit, service variants, Viber/SMS, map in search, service × city pages,
+   embeddable widget. Supply (real salons) matters more than any of them.
 
 1. **Prompt 4** — integrations, AI and growth: Google Calendar OAuth end to end,
    the notification channel abstraction and actual sending (email first),
@@ -1873,3 +2189,18 @@ traction claim may appear unless it is real.
     days' notice to every business. The
     `/pricing` page has a savings calculator against the lowest published
     competitor rates, rounded in their favour; competitors are not named there.
+
+### Sign in with Google / Apple
+- `src/components/auth/google-button.tsx` exports `GoogleButton` and `AppleButton` (one shared `ProviderButton`, PKCE via `signInWithOAuth`, return to `/auth/callback?next=`). `getAuthProviders()` returns `{google, apple}` from `/auth/v1/settings`; `AuthForm` (login, signup, booking funnel) shows a button only when the provider is enabled, so nothing appears until it is configured in Supabase.
+- Config: `minimum_password_length = 8` (matches the zod rule). Dashboard steps (Google Cloud client, Apple Services ID + key + secret JWT that expires within 6 months, Private Relay, leaked-password protection, redirect URLs) are in `docs/test-readiness.md`. Real Google/Apple flows are untested here: they need accounts only the owner has.
+
+## 8w. Integrations: a salon's own website (2026-10-08)
+Full reference in `docs/integrations.md`; admin page `/dashboard/integrations` (owner/admin only, section `integrations` in `lib/admin-access.ts`).
+- **Partner API** `/api/v1` (`app/api/v1/*`): Bearer keys (`lv_live_...`, SHA-256 hash stored, shown once), scopes `read|bookings|catalog`, 120 req/min per key, bad-key limiter per IP. Service-role client, so every query is scoped to the key's business in code (`lib/api/auth.ts`). Reads, availability (the same `get_available_slots`), idempotent booking (`external_ref`), cancel, service upsert by the site's own id (`services.external_id`).
+- **`public.api_book_appointment` / `api_cancel_appointment`** are SECURITY DEFINER, service_role only. They re-check availability, set `app.trusted_write` for the insert/update, and rely on the exclusion constraint for races. New enum value `appointment_source = 'api'`; API bookings are confirmed at once and never take a deposit.
+- **Webhooks**: `webhook_endpoints` + `webhook_deliveries` outbox, trigger `appointments_enqueue_webhooks`, HMAC-signed (`lib/webhooks/sign.ts`), six tries over ~15 h, endpoint switched off after 10 failed deliveries. Delivery runs in `lib/webhooks/worker.ts`, driven by the existing cron route and pushed after API writes.
+- **Outbound calls** (`lib/net/safe-fetch.ts`): https only, no redirects, address checked at connect time against private/loopback/link-local ranges, size and time caps. `LAVENA_ALLOW_PRIVATE_FETCH=1` lifts the address check outside production only.
+- **Calendar import**: `calendar_feeds` (private iCal URL, admin-only) -> `lib/calendar-feeds/{parse,sync}.ts` (ical.js; recurrence, exceptions, zones, all-day; titles never read) -> `apply_calendar_feed` replaces that feed's rows in `staff_time_off` (`feed_id`). A failed fetch keeps the old blocks and stores an error code.
+- **Embed**: `public/embed.js` opens the booking page in a new tab (not an iframe: third-party cookies).
+- RLS: all four tables admin-only (`app.is_business_admin`); `key_hash` and `secret` have no select grant for the browser role. pgTAP `integrations.test.sql`; browser suite R01-R23 passed locally against a local HTTPS receiver.
+- Not done: staff/hours upsert via API, two-way calendar write-back, SMS/Viber, a public developer docs page (docs live in the repo).

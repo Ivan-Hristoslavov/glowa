@@ -106,39 +106,46 @@ export function CookieConsent() {
   return (
     <>
       {bannerOpen ? (
+        // One slim strip along the bottom edge. The first version was a card
+        // 250px tall in the corner: on a 1366x768 laptop it sat on top of the
+        // hero search's submit button, and on a phone it took a third of the
+        // first screen - the very first thing a new visitor met was a wall of
+        // text over the thing they came to do.
         <section
           aria-label={t("title")}
-          className="glowa-enter bg-card text-card-foreground border-border/80 fixed inset-x-3 bottom-3 z-50 rounded-2xl border p-4 shadow-xl sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md sm:p-5 print:hidden"
+          className="glowa-enter bg-card/95 text-card-foreground border-border/80 fixed inset-x-2 bottom-2 z-50 rounded-2xl border p-3 shadow-xl backdrop-blur sm:inset-x-4 sm:bottom-4 sm:mx-auto sm:max-w-3xl sm:p-3.5 print:hidden"
         >
-          <div className="flex gap-3">
-            <span className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-full">
-              <Cookie className="size-4" aria-hidden />
-            </span>
-            <div className="space-y-1.5">
-              <h2 className="text-sm font-semibold">{t("title")}</h2>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              <span className="bg-primary/10 text-primary hidden size-9 shrink-0 items-center justify-center rounded-full sm:flex">
+                <Cookie className="size-4" aria-hidden />
+              </span>
+              <p className="text-muted-foreground text-[0.8125rem] leading-snug">
+                <strong className="text-foreground font-semibold">{t("title")}.</strong>{" "}
                 {t("body")}{" "}
                 <Link href="/legal/cookies" className="text-foreground underline underline-offset-2">
                   {t("policyLink")}
                 </Link>
+                {" · "}
+                <button
+                  type="button"
+                  onClick={() => setSettingsOpen(true)}
+                  className="text-foreground glowa-focus rounded underline underline-offset-2"
+                >
+                  {t("settingsShort")}
+                </button>
               </p>
             </div>
+            {/* Equal weight on purpose: declining must be as easy as accepting. */}
+            <div className="grid shrink-0 grid-cols-2 gap-2 sm:flex">
+              <Button variant="outline" className="h-10 sm:px-4" onClick={() => decide(false)}>
+                {t("reject")}
+              </Button>
+              <Button variant="outline" className="h-10 sm:px-4" onClick={() => decide(true)}>
+                {t("accept")}
+              </Button>
+            </div>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button variant="outline" onClick={() => decide(false)}>
-              {t("reject")}
-            </Button>
-            <Button variant="outline" onClick={() => decide(true)}>
-              {t("accept")}
-            </Button>
-          </div>
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="text-muted-foreground hover:text-foreground glowa-focus mt-2 w-full rounded text-center text-xs underline-offset-2 hover:underline"
-          >
-            {t("settings")}
-          </button>
         </section>
       ) : null}
 

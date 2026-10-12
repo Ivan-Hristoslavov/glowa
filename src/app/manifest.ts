@@ -15,8 +15,8 @@ import { routing } from "@/i18n/routing";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "GLOWA — записвания и управление на салон",
-    short_name: "GLOWA",
+    name: "Lavena — записвания и управление на салон",
+    short_name: "Lavena",
     description:
       "Онлайн записвания, календар за екипа и клиентска база за салони за красота.",
     start_url: `/${routing.defaultLocale}`,

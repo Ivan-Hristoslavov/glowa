@@ -17,7 +17,7 @@ export function getStripe(): Stripe | null {
   if (!key) return null;
   if (!client) {
     client = new Stripe(key, {
-      appInfo: { name: "GLOWA", url: "https://glowa.bg" },
+      appInfo: { name: "Lavena", url: "https://lavena.eu" },
       maxNetworkRetries: 2,
     });
   }

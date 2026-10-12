@@ -67,7 +67,7 @@ export async function GET() {
   return new Response(body, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="glowa-clients-${membership.slug}-${date}.csv"`,
+      "Content-Disposition": `attachment; filename="lavena-clients-${membership.slug}-${date}.csv"`,
       "Cache-Control": "no-store",
     },
   });

@@ -19,7 +19,7 @@ export default async function OnboardingPage({
   const t = await getTranslations("admin.onboarding");
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr_18rem]">
+    <div className="mx-auto grid w-full max-w-4xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_18rem]">
       <div className="space-y-6">
         <div className="space-y-1.5">
           <h1 className="font-heading text-2xl sm:text-3xl">{t("title")}</h1>

@@ -86,14 +86,15 @@
   --glowa-cream: #fbf9f7;
   --glowa-surface: #ffffff;
   --glowa-ink: #111114;
-  --glowa-coral: #d96c61;
-  --glowa-soft: #eac2bb;
+  --glowa-coral: #7556b5;
+  --glowa-soft: #dccef3;
   --glowa-sage: #a9b6a6;
   --glowa-line: #ebe6e1;
   /* The "glow": a peach that sits between cream and coral. Marketing washes
      only, never a UI colour. It is what makes GLOWA's hero warm rather than
      the cool lavender every booking marketplace uses. */
-  --glowa-peach: #f7d3c4;
+  --glowa-peach: #e9ddf8;
+  --glowa-lilac: #c9b2f2;
 
   --background: var(--glowa-cream);
   --foreground: var(--glowa-ink);
@@ -103,16 +104,16 @@
   --popover-foreground: var(--glowa-ink);
 
   --primary: var(--glowa-coral);
-  --primary-foreground: #fffaf8;
-  --secondary: #f6efeb;
-  --secondary-foreground: #4a2e2a;
+  --primary-foreground: #ffffff;
+  --secondary: #f3eefa;
+  --secondary-foreground: #2d2347;
   --muted: #f4f1ee;
   --muted-foreground: #6a6461;
-  --accent: #fbefec;
-  --accent-foreground: #4a2e2a;
+  --accent: #f3edfb;
+  --accent-foreground: #2d2347;
 
   --destructive: #b3443c;
-  --destructive-foreground: #fffaf8;
+  --destructive-foreground: #ffffff;
   --success: #4e7a58;
   --success-foreground: #f7fbf7;
   --warning: #9a6a24;
@@ -131,9 +132,9 @@
   --sidebar: #f4f0ec;
   --sidebar-foreground: var(--glowa-ink);
   --sidebar-primary: var(--glowa-coral);
-  --sidebar-primary-foreground: #fffaf8;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #ebe4de;
-  --sidebar-accent-foreground: #4a2e2a;
+  --sidebar-accent-foreground: #2d2347;
   --sidebar-border: var(--glowa-line);
   --sidebar-ring: var(--glowa-coral);
 
@@ -142,7 +143,7 @@
      dE 19.3), normal-vision floor and 3:1 contrast all pass. Coral is the
      brand accent; blue is its CVD-safe partner - a green would read as the
      same hue as coral for protanopes. */
-  --viz-series-1: #d96c61;
+  --viz-series-1: #7556b5;
   --viz-series-2: #2a78d6;
   --viz-grid: color-mix(in oklab, var(--glowa-ink) 10%, transparent);
 
@@ -155,11 +156,12 @@
   --glowa-cream: #0b0e0e;
   --glowa-surface: #121616;
   --glowa-ink: #f7f2ed;
-  --glowa-coral: #ef8e83;
-  --glowa-soft: #4a3330;
+  --glowa-coral: #b79be8;
+  --glowa-soft: #33284a;
   --glowa-sage: #344238;
   --glowa-line: #26302f;
-  --glowa-peach: #3a2621;
+  --glowa-peach: #271e3a;
+  --glowa-lilac: #8d73c9;
 
   --background: var(--glowa-cream);
   --foreground: var(--glowa-ink);
@@ -169,7 +171,7 @@
   --popover-foreground: var(--glowa-ink);
 
   --primary: var(--glowa-coral);
-  --primary-foreground: #14100f;
+  --primary-foreground: #100d18;
   --secondary: #1d2422;
   --secondary-foreground: var(--glowa-ink);
   --muted: #1a201f;
@@ -178,11 +180,11 @@
   --accent-foreground: var(--glowa-ink);
 
   --destructive: #f08c84;
-  --destructive-foreground: #14100f;
+  --destructive-foreground: #100d18;
   --success: #86bd94;
   --success-foreground: #0d120f;
   --warning: #e0b264;
-  --warning-foreground: #14100f;
+  --warning-foreground: #100d18;
 
   --border: var(--glowa-line);
   --input: #2d3837;
@@ -197,7 +199,7 @@
   --sidebar: #0f1413;
   --sidebar-foreground: var(--glowa-ink);
   --sidebar-primary: var(--glowa-coral);
-  --sidebar-primary-foreground: #14100f;
+  --sidebar-primary-foreground: #100d18;
   --sidebar-accent: #1d2422;
   --sidebar-accent-foreground: var(--glowa-ink);
   --sidebar-border: var(--glowa-line);
@@ -205,7 +207,7 @@
 
   /* Re-stepped for the dark surface, not flipped: the light coral sits above
      the dark lightness band. Re-validated against #121616. */
-  --viz-series-1: #da6a62;
+  --viz-series-1: #7556b5;
   --viz-series-2: #3987e5;
   --viz-grid: color-mix(in oklab, var(--glowa-ink) 14%, transparent);
 }
@@ -223,6 +225,16 @@
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
+    /* Bulgarian localised letterforms read as "Bm" for "вт" and "Ekun" for
+       "Екип" at UI sizes. Headings keep them; running UI text does not. */
+    font-feature-settings: "locl" 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-heading {
+    font-feature-settings: normal;
   }
 
   /* The display cut is opt-in via .font-heading; body copy stays in the Text
@@ -598,4 +610,24 @@
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
+}
+
+/* Charts draw themselves in once; reduced-motion readers get them finished. */
+@keyframes lav-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes lav-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.lav-draw {
+  stroke-dasharray: 1;
+  animation: lav-draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.lav-fade {
+  animation: lav-fade 0.9s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lav-draw, .lav-fade { animation: none; }
 }

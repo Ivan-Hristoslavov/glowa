@@ -16,9 +16,11 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { ADMIN_LINKS } from "@/components/admin/admin-nav";
+import { adminGroupsFor } from "@/components/admin/admin-nav";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
+import { canOpenSection } from "@/lib/admin-access";
+import type { BusinessRole } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/client";
 
 type ClientHit = { id: string; full_name: string | null; phone: string | null; email: string | null };
@@ -33,7 +35,15 @@ type ClientHit = { id: string; full_name: string | null; phone: string | null; e
  * one they are working in, or a member of two salons would find the other
  * salon's clients and open them in the wrong workspace.
  */
-export function CommandMenu({ businessId, slug }: { businessId: string; slug: string }) {
+export function CommandMenu({
+  businessId,
+  slug,
+  role,
+}: {
+  businessId: string;
+  slug: string;
+  role: BusinessRole;
+}) {
   const t = useTranslations("admin.command");
   const nav = useTranslations("admin.nav");
   const locale = useLocale();
@@ -42,6 +52,10 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [clients, setClients] = useState<ClientHit[]>([]);
+  // The menu offers only what the role could open from the sidebar anyway.
+  const canSeeClients = canOpenSection(role, "clients");
+  const canSeeGrowth = canOpenSection(role, "growth");
+  const pages = adminGroupsFor(role).flatMap((group) => group.links);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -56,7 +70,7 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
 
   useEffect(() => {
     const term = query.trim();
-    if (term.length < 2) return;
+    if (!canSeeClients || term.length < 2) return;
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       const supabase = createClient();
@@ -74,7 +88,7 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [query, businessId]);
+  }, [query, businessId, canSeeClients]);
 
   function run(action: () => void) {
     setOpen(false);
@@ -129,7 +143,7 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
                 {t("empty")}
               </Command.Empty>
 
-              {clients.length > 0 ? (
+              {canSeeClients && clients.length > 0 ? (
                 <Command.Group heading={t("clients")} className={groupClass}>
                   {clients.map((client) => (
                     <Command.Item
@@ -149,13 +163,15 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
               ) : null}
 
               <Command.Group heading={t("actions")} className={groupClass}>
-                <Command.Item
-                  onSelect={() => run(() => router.push("/dashboard/calendar"))}
-                  className={itemClass}
-                >
-                  <CalendarPlus className="text-primary size-4" aria-hidden />
-                  {t("newAppointment")}
-                </Command.Item>
+                {canSeeClients ? (
+                  <Command.Item
+                    onSelect={() => run(() => router.push("/dashboard/calendar"))}
+                    className={itemClass}
+                  >
+                    <CalendarPlus className="text-primary size-4" aria-hidden />
+                    {t("newAppointment")}
+                  </Command.Item>
+                ) : null}
                 <Command.Item
                   onSelect={() =>
                     run(() => {
@@ -172,13 +188,15 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
                   <Copy className="text-primary size-4" aria-hidden />
                   {t("copyLink")}
                 </Command.Item>
-                <Command.Item
-                  onSelect={() => run(() => router.push("/dashboard/growth/flyer"))}
-                  className={itemClass}
-                >
-                  <FileImage className="text-primary size-4" aria-hidden />
-                  {t("flyer")}
-                </Command.Item>
+                {canSeeGrowth ? (
+                  <Command.Item
+                    onSelect={() => run(() => router.push("/dashboard/growth/flyer"))}
+                    className={itemClass}
+                  >
+                    <FileImage className="text-primary size-4" aria-hidden />
+                    {t("flyer")}
+                  </Command.Item>
+                ) : null}
                 <Command.Item
                   onSelect={() => run(() => router.push(`/business/${slug}`))}
                   className={itemClass}
@@ -200,7 +218,7 @@ export function CommandMenu({ businessId, slug }: { businessId: string; slug: st
               </Command.Group>
 
               <Command.Group heading={t("pages")} className={groupClass}>
-                {ADMIN_LINKS.map(({ href, key, icon: Icon }) => (
+                {pages.map(({ href, key, icon: Icon }) => (
                   <Command.Item
                     key={href}
                     value={`${nav(key)} ${key}`}

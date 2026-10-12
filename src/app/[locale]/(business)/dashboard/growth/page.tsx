@@ -17,8 +17,7 @@ import {
   getActiveMembership,
   getBusinessWorkspace,
   listBusinessClients,
-  listGrowthLinks,
-} from "@/lib/queries/business";
+  listGrowthLinks, requireSection } from "@/lib/queries/business";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.growth");
@@ -30,6 +29,7 @@ export default async function GrowthPage({
 }: PageProps<"/[locale]/dashboard/growth">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "growth");
 
   const t = await getTranslations("admin.growth");
   const membership = await getActiveMembership();

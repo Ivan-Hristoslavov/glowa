@@ -14,7 +14,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { Section } from "@/components/common/section";
 import { routing, type Locale } from "@/i18n/routing";
 import { isLocalizedText } from "@/lib/localized";
-import { canAdminister, getActiveMembership } from "@/lib/queries/business";
+import { canAdminister, getActiveMembership, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,6 +27,7 @@ export default async function BusinessSettingsPage({
 }: PageProps<"/[locale]/dashboard/settings">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "settings");
 
   const t = await getTranslations("admin.nav");
   const staff = await getTranslations("admin.staff");

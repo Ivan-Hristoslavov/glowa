@@ -10,24 +10,24 @@
   "docs": {
     "privacy": {
       "title": "Politica de confidențialitate",
-      "description": "Ce date personale prelucrează Glowa, de ce, cât timp și ce drepturi ai.",
+      "description": "Ce date personale prelucrează Lavena, de ce, cât timp și ce drepturi ai.",
       "intro": [
-        "Această politică explică modul în care Glowa prelucrează datele tale personale atunci când cauți un salon, faci o programare, îți creezi un cont sau administrezi o afacere pe platformă. Este scrisă pe înțelesul tuturor și reprezintă totodată informarea prevăzută la articolele 13 și 14 din Regulamentul general privind protecția datelor (GDPR)."
+        "Această politică explică modul în care Lavena prelucrează datele tale personale atunci când cauți un salon, faci o programare, îți creezi un cont sau administrezi o afacere pe platformă. Este scrisă pe înțelesul tuturor și reprezintă totodată informarea prevăzută la articolele 13 și 14 din Regulamentul general privind protecția datelor (GDPR)."
       ],
       "sections": [
         {
           "id": "controller",
           "heading": "1. Cine răspunde de datele tale",
           "body": [
-            "Operatorul este {company}, cod de identificare {companyId}, cu sediul în {address} („Glowa”, „noi”). Pentru orice întrebare despre datele personale, scrie-ne la {email}."
+            "Operatorul este {company}, cod de identificare {companyId}, cu sediul în {address} („Lavena”, „noi”). Pentru orice întrebare despre datele personale, scrie-ne la {email}."
           ]
         },
         {
           "id": "roles",
           "heading": "2. Două roluri diferite",
           "body": [
-            "Glowa este operator pentru datele contului tău, pentru programările făcute prin platformă, pentru recenzii și pentru utilizarea site-ului.",
-            "Saloanele folosesc Glowa și ca agendă și listă de clienți. Pentru evidențele pe care un salon le ține despre clienții săi (istoricul vizitelor, note interne, liste de marketing), operatorul este salonul, iar Glowa este persoană împuternicită care acționează numai pe baza instrucțiunilor acestuia (art. 28 GDPR). Pentru aceste date te poți adresa direct salonului; dacă ne scrii nouă, îi vom transmite cererea."
+            "Lavena este operator pentru datele contului tău, pentru programările făcute prin platformă, pentru recenzii și pentru utilizarea site-ului.",
+            "Saloanele folosesc Lavena și ca agendă și listă de clienți. Pentru evidențele pe care un salon le ține despre clienții săi (istoricul vizitelor, note interne, liste de marketing), operatorul este salonul, iar Lavena este persoană împuternicită care acționează numai pe baza instrucțiunilor acestuia (art. 28 GDPR). Pentru aceste date te poți adresa direct salonului; dacă ne scrii nouă, îi vom transmite cererea."
           ]
         },
         {
@@ -145,17 +145,17 @@
     },
     "terms": {
       "title": "Termeni și condiții",
-      "description": "Regulile de utilizare a Glowa pentru clienți și pentru firme.",
+      "description": "Regulile de utilizare a Lavena pentru clienți și pentru firme.",
       "intro": [
-        "Acești termeni reglementează utilizarea site-ului și a serviciilor Glowa. Prin crearea unui cont, efectuarea unei programări sau înregistrarea unei afaceri îi accepți. Datele noastre ca furnizor sunt pe pagina „Date despre furnizor”."
+        "Acești termeni reglementează utilizarea site-ului și a serviciilor Lavena. Prin crearea unui cont, efectuarea unei programări sau înregistrarea unei afaceri îi accepți. Datele noastre ca furnizor sunt pe pagina „Date despre furnizor”."
       ],
       "sections": [
         {
           "id": "service",
-          "heading": "1. Ce este Glowa",
+          "heading": "1. Ce este Lavena",
           "body": [
-            "Glowa este o platformă online prin care clienții găsesc saloane și specialiști în frumusețe și fac programări, iar firmele își administrează agenda, clienții și programările online.",
-            "Glowa este un intermediar. Contractul pentru serviciul propriu-zis (tuns, manichiură etc.) se încheie între tine și salon. Salonul răspunde de serviciu, de calitatea și prețul acestuia și de respectarea condițiilor afișate."
+            "Lavena este o platformă online prin care clienții găsesc saloane și specialiști în frumusețe și fac programări, iar firmele își administrează agenda, clienții și programările online.",
+            "Lavena este un intermediar. Contractul pentru serviciul propriu-zis (tuns, manichiură etc.) se încheie între tine și salon. Salonul răspunde de serviciu, de calitatea și prețul acestuia și de respectarea condițiilor afișate."
           ]
         },
         {
@@ -172,14 +172,14 @@
           "list": [
             "Programarea este o cerere către salon. Unele saloane confirmă manual; statusul apare în „Programările mele” și în e-mailul tău.",
             "Condițiile de anulare și modificare sunt stabilite de salon și afișate înainte de confirmare. Dacă nu te prezinți fără să anulezi, salonul poate înregistra neprezentarea.",
-            "Utilizarea Glowa este gratuită pentru clienți. Serviciul se plătește salonului, la prețurile acestuia, de obicei la fața locului."
+            "Utilizarea Lavena este gratuită pentru clienți. Serviciul se plătește salonului, la prețurile acestuia, de obicei la fața locului."
           ]
         },
         {
           "id": "reviews",
           "heading": "4. Recenzii",
           "body": [
-            "O recenzie poate fi lăsată doar de contul care a făcut programarea și doar după ce salonul a marcat vizita ca finalizată. Astfel, fiecare recenzie din Glowa provine de la un client real, după o vizită reală.",
+            "O recenzie poate fi lăsată doar de contul care a făcut programarea și doar după ce salonul a marcat vizita ca finalizată. Astfel, fiecare recenzie din Lavena provine de la un client real, după o vizită reală.",
             "Recenziile trebuie să fie sincere și să nu conțină insulte, date personale ale altor persoane sau reclamă. Putem elimina o recenzie care încalcă aceste reguli. Nu acceptăm plată pentru recenzii și nu ascundem recenziile negative la cererea unui salon."
           ]
         },
@@ -204,7 +204,7 @@
           "id": "business",
           "heading": "7. Termeni pentru firme",
           "body": [
-            "Firma răspunde de corectitudinea informațiilor despre servicii, prețuri, program și echipă și de existența unui temei legal pentru prelucrarea datelor clienților săi în Glowa.",
+            "Firma răspunde de corectitudinea informațiilor despre servicii, prețuri, program și echipă și de existența unui temei legal pentru prelucrarea datelor clienților săi în Lavena.",
             "Planurile și prețurile sunt publicate pe pagina „Prețuri”, fără TVA. În perioada de acces anticipat utilizarea este gratuită; înainte de începerea facturării vei primi o notificare și nu vei fi taxat fără acordul tău explicit.",
             "Modificările acestor termeni care afectează firmele sunt anunțate cu cel puțin 15 zile înainte, conform Regulamentului (UE) 2019/1150. Poți renunța oricând și îți poți exporta datele."
           ]
@@ -213,12 +213,12 @@
           "id": "dpa",
           "heading": "8. Prelucrarea datelor în numele firmei (art. 28 GDPR)",
           "body": [
-            "Pentru datele clienților pe care firma le introduce sau le primește în Glowa, firma este operator, iar Glowa este persoană împuternicită. Prin acceptarea acestor termeni, părțile convin următoarele:"
+            "Pentru datele clienților pe care firma le introduce sau le primește în Lavena, firma este operator, iar Lavena este persoană împuternicită. Prin acceptarea acestor termeni, părțile convin următoarele:"
           ],
           "list": [
             "Obiect și durată: găzduirea și prelucrarea datelor despre clienți, programări și comunicări, pe durata utilizării serviciului.",
             "Categorii de date: nume, date de contact, istoricul vizitelor, note, preferințe și consimțăminte de marketing ale clienților firmei.",
-            "Glowa prelucrează datele numai pe baza instrucțiunilor documentate ale firmei, inclusiv prin setările platformei.",
+            "Lavena prelucrează datele numai pe baza instrucțiunilor documentate ale firmei, inclusiv prin setările platformei.",
             "Toate persoanele cu acces au obligația de confidențialitate.",
             "Aplicăm măsuri tehnice și organizatorice adecvate, conform art. 32 GDPR.",
             "Subîmputerniciții sunt enumerați în Politica de confidențialitate. Anunțăm în prealabil orice subîmputernicit nou, iar firma poate obiecta.",
@@ -232,7 +232,7 @@
           "id": "ip",
           "heading": "9. Conținut și proprietate intelectuală",
           "body": [
-            "Software-ul, designul și marca Glowa ne aparțin. Firmele își păstrează drepturile asupra fotografiilor și textelor încărcate și ne permit să le afișăm pe platformă cât timp profilul lor este activ."
+            "Software-ul, designul și marca Lavena ne aparțin. Firmele își păstrează drepturile asupra fotografiilor și textelor încărcate și ne permit să le afișăm pe platformă cât timp profilul lor este activ."
           ]
         },
         {
@@ -246,7 +246,7 @@
           "id": "termination",
           "heading": "11. Încetare",
           "body": [
-            "Poți înceta oricând să folosești Glowa. Putem suspenda un cont care încalcă acești termeni, anunțându-te și precizând motivul."
+            "Poți înceta oricând să folosești Lavena. Putem suspenda un cont care încalcă acești termeni, anunțându-te și precizând motivul."
           ]
         },
         {
@@ -270,7 +270,7 @@
       "title": "Politica privind cookie-urile",
       "description": "Ce stocăm în browserul tău și cum îți poți schimba alegerea.",
       "intro": [
-        "Cookie-urile sunt fișiere mici pe care un site le salvează în browserul tău. Glowa folosește minimul necesar: fără cookie-uri de publicitate, fără cookie-uri de analiză și fără urmărire de către terți."
+        "Cookie-urile sunt fișiere mici pe care un site le salvează în browserul tău. Lavena folosește minimul necesar: fără cookie-uri de publicitate, fără cookie-uri de analiză și fără urmărire de către terți."
       ],
       "sections": [
         {
@@ -284,7 +284,7 @@
             "glowa_business – ce afacere ai deschisă în panoul de administrare; 1 an.",
             "NEXT_LOCALE – limba aleasă; până la închiderea browserului.",
             "glowa_consent – alegerea ta privind cookie-urile; 6 luni.",
-            "Stocare locală: theme (temă luminoasă sau întunecată) și glowa.calendar.* (vizualizarea calendarului în panoul de administrare)."
+            "Stocare locală: theme (temă luminoasă sau întunecată) și Lavena.calendar.* (vizualizarea calendarului în panoul de administrare)."
           ]
         },
         {

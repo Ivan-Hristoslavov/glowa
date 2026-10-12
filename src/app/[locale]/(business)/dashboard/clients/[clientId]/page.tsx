@@ -27,8 +27,7 @@ import { pickLocalized } from "@/lib/localized";
 import {
   canManage,
   getActiveMembership,
-  getBusinessClient,
-} from "@/lib/queries/business";
+  getBusinessClient, requireSection } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,6 +51,7 @@ export default async function ClientDetailPage({
 }: PageProps<"/[locale]/dashboard/clients/[clientId]">) {
   const { locale, clientId } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "clients");
 
   const t = await getTranslations("admin.clients");
   const calendar = await getTranslations("admin.calendar");

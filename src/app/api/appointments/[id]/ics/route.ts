@@ -42,7 +42,7 @@ export async function GET(
     return new NextResponse("Not found", { status: 404 });
   }
 
-  const businessName = appointment.businesses?.name ?? "glowa";
+  const businessName = appointment.businesses?.name ?? "Lavena";
   const serviceName =
     pickLocalized(appointment.services?.name, locale) ||
     pickLocalized(appointment.service_name_snapshot, locale);
@@ -76,7 +76,7 @@ export async function GET(
   return new NextResponse(ics, {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="glowa-${appointment.id.slice(0, 8)}.ics"`,
+      "Content-Disposition": `attachment; filename="lavena-${appointment.id.slice(0, 8)}.ics"`,
       "Cache-Control": "private, no-store",
     },
   });

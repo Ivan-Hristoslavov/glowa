@@ -76,6 +76,7 @@ export async function SiteFooter() {
         { href: "/legal/terms", label: legal("terms") },
         { href: "/legal/cookies", label: legal("cookies") },
         { href: "/legal/imprint", label: legal("imprint") },
+        { href: "/support", label: t("support") },
       ],
       cookieSettings: true,
     },
@@ -105,7 +106,7 @@ export async function SiteFooter() {
 
         <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_repeat(4,1fr)] lg:gap-8">
           <div className="space-y-5 sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="glowa-focus inline-block rounded-md" aria-label="glowa">
+            <Link href="/" className="glowa-focus inline-block rounded-md" aria-label={brand("name")}>
               <GlowaLogo showTagline tagline={brand("tagline")} markClassName="size-8" />
             </Link>
             <p className="text-muted-foreground max-w-xs text-sm leading-relaxed">

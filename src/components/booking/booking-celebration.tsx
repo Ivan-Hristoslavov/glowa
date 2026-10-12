@@ -8,7 +8,7 @@ type BookingCelebrationProps = {
   body: string;
 };
 
-const CONFETTI_COLOURS = ["#d96c61", "#eac2bb", "#a9b6a6", "#f3d9a4", "#ffffff"];
+const CONFETTI_COLOURS = ["#7556b5", "#dccef3", "#a9b6a6", "#f3d9a4", "#ffffff"];
 
 /**
  * The moment a booking lands. It is the one screen everyone who uses GLOWA as

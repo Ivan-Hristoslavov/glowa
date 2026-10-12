@@ -105,8 +105,8 @@ export default async function BookingDetailPage({
   const googleUrl = calendarProviders.google.buildAddUrl({
     uid: appointment.id,
     title: serviceName
-      ? `${serviceName} · ${appointment.businesses?.name ?? "glowa"}`
-      : (appointment.businesses?.name ?? "glowa"),
+      ? `${serviceName} · ${appointment.businesses?.name ?? "Lavena"}`
+      : (appointment.businesses?.name ?? "Lavena"),
     description: appointment.staff_profiles?.display_name ?? null,
     location: locationLine,
     startsAt: appointment.starts_at,

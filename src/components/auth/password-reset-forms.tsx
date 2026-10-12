@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 
 import type { AuthFormState } from "@/app/[locale]/(auth)/actions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Turnstile } from "@/components/common/turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,6 +67,8 @@ export function ForgotPasswordForm({ action }: { action: Action }) {
           autoFocus
         />
       </div>
+
+      <Turnstile />
 
       <SubmitButton label={t("sendReset")} pendingLabel={t("sending")} />
 

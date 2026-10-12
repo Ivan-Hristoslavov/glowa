@@ -186,7 +186,7 @@ export function organizationJsonLd(locale: Locale) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "GLOWA",
+    name: "Lavena",
     url: `${SITE}/${locale}`,
     logo: `${SITE}/brand/og-cover.webp`,
   };

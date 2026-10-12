@@ -2,6 +2,8 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
+import { redirect } from "@/i18n/navigation";
+import { canOpenSection, type AdminSection } from "@/lib/admin-access";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 
@@ -79,6 +81,17 @@ export async function getActiveMembership(): Promise<Membership | null> {
     memberships.find((membership) => membership.businessId === preferred) ??
     memberships[0]
   );
+}
+
+/**
+ * Sends someone away from a page their role may not open (see
+ * `lib/admin-access.ts`). Call it first in the page, before any data is read.
+ */
+export async function requireSection(locale: string, section: AdminSection) {
+  const membership = await getActiveMembership();
+  if (membership && !canOpenSection(membership.role, section)) {
+    redirect({ href: "/dashboard", locale });
+  }
 }
 
 export function canManage(role: BusinessRole) {

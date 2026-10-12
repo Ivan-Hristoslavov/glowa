@@ -288,7 +288,7 @@ export function SlotPicker({
                 <period.icon className="size-3.5" aria-hidden />
                 {t(period.key)}
               </p>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+              <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
                 {period.slots.map((slot) => {
                   const isSelected = value?.starts_at === slot.starts_at;
                   return (

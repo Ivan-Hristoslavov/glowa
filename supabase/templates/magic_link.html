@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="bg"><head><meta charset="utf-8"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;background:#fbf9f7;font-family:Arial,Helvetica,sans-serif;color:#111114;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fbf9f7;padding:32px 12px;"><tr><td align="center">
+<table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #ebe6e1;border-radius:20px;">
+<tr><td style="padding:28px 32px 0;font-size:13px;font-weight:800;letter-spacing:0.16em;color:#7556b5;">LAVENA</td></tr>
+<tr><td style="padding:12px 32px 0;font-size:24px;line-height:1.25;font-weight:700;">Вход в Lavena</td></tr>
+<tr><td style="padding:12px 32px 0;font-size:15px;line-height:1.55;color:#4b4658;">Натисни бутона, за да влезеш без парола. Връзката е валидна кратко и работи веднъж.</td></tr>
+<tr><td style="padding:24px 32px 0;"><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/bg/profile" style="display:inline-block;background:#7556b5;color:#ffffff;text-decoration:none;font-weight:700;font-size:15px;padding:14px 26px;border-radius:14px;">Вход</a></td></tr>
+<tr><td style="padding:20px 32px 0;font-size:12px;line-height:1.5;color:#7a7488;">Ако бутонът не работи, копирай този адрес в браузъра:<br><span style="word-break:break-all;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/bg/profile</span></td></tr>
+<tr><td style="padding:16px 32px 28px;font-size:12px;line-height:1.5;color:#7a7488;">Ако не си поискал вход, игнорирай писмото.</td></tr>
+</table></td></tr></table></body></html>

@@ -38,6 +38,7 @@ export default async function LoginPage({
       ) : null}
       <AuthForm
         google={providers.google}
+        apple={providers.apple}
         mode="sign-in"
         action={signInAction}
         nextPath={typeof next === "string" ? next : undefined}

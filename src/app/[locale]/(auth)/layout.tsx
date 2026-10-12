@@ -19,7 +19,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/[locale]">)
 
   return (
     <div className="relative grid min-h-dvh lg:grid-cols-[1fr_1.05fr]">
-      <div className="relative flex min-h-dvh flex-col">
+      <div className="relative flex min-h-dvh flex-col overflow-x-clip">
         <div
           aria-hidden
           className="bg-brand-soft/40 pointer-events-none absolute -top-36 -right-24 size-80 rounded-full blur-3xl lg:hidden"

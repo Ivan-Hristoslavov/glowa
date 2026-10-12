@@ -46,7 +46,7 @@ type Template = "editorial" | "bold" | "minimal";
 type Size = "A5" | "A4";
 
 const ACCENTS = [
-  { id: "coral", value: "#d96c61" },
+  { id: "coral", value: "#7556b5" },
   { id: "ink", value: "#0f1212" },
   { id: "sage", value: "#6f8f78" },
   { id: "plum", value: "#6e3b5b" },
@@ -289,7 +289,7 @@ export function FlyerStudio({ businessId, canCreateLink, business, links }: Flye
                   ) : (
                     <div
                       className="size-full"
-                      style={{ background: `linear-gradient(135deg, ${accent}, #eac2bb)` }}
+                      style={{ background: `linear-gradient(135deg, ${accent}, #dccef3)` }}
                     />
                   )}
                   {offer ? <OfferSticker text={offer} accent={accent} /> : null}

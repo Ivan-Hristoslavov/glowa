@@ -435,7 +435,7 @@ export default async function ForBusinessPage({
       <section className="mx-auto w-full max-w-3xl px-4 pb-16 sm:px-6 sm:pb-24">
         <h2 className="font-heading text-3xl sm:text-4xl">{t("faq.title")}</h2>
         <Accordion type="single" collapsible className="mt-6">
-          {(["price", "stripe", "phone", "clients"] as const).map((key) => (
+          {(["price", "switch", "exit", "stripe", "phone", "clients"] as const).map((key) => (
             <AccordionItem key={key} value={key}>
               <AccordionTrigger className="text-left text-base">{t(`faq.${key}.q`)}</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">

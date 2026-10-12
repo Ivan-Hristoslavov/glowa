@@ -29,8 +29,7 @@ import {
   canAdminister,
   getActiveMembership,
   getDepositOverview,
-  listPaymentRecords,
-} from "@/lib/queries/business";
+  listPaymentRecords, requireSection } from "@/lib/queries/business";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.payments");
@@ -43,6 +42,7 @@ export default async function PaymentsPage({
 }: PageProps<"/[locale]/dashboard/payments">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "payments");
 
   const t = await getTranslations("admin.payments");
   const membership = await getActiveMembership();

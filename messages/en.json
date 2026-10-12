@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "glowa",
+    "name": "Lavena",
     "tagline": "BEAUTY MOVES PEOPLE",
     "madeIn": "Built in Bulgaria, for the world"
   },
@@ -61,7 +61,8 @@
     "registerBusiness": "Register your salon",
     "nextVisit": "Next visit: {when} at {business}",
     "today": "Today",
-    "tomorrow": "Tomorrow"
+    "tomorrow": "Tomorrow",
+    "support": "Help"
   },
   "categories": {
     "hair_salon": "Hair salon",
@@ -100,7 +101,7 @@
     "eyebrow": "BEAUTY GETS EASIER",
     "titleLine1": "More beauty.",
     "titleLine2": "Less admin.",
-    "subtitle": "Glowa is the modern platform for online booking, salon management and happier clients — all in one place.",
+    "subtitle": "Lavena is the modern platform for online booking, salon management and happier clients — all in one place.",
     "ctaPrimary": "Start free",
     "ctaSecondary": "Find a salon",
     "searchPlaceholder": "Service, salon or city",
@@ -112,7 +113,7 @@
     },
     "featured": {
       "title": "Browse salons",
-      "subtitle": "Businesses taking bookings through Glowa.",
+      "subtitle": "Businesses taking bookings through Lavena.",
       "all": "See all"
     },
     "foundation": {
@@ -124,7 +125,7 @@
       "eyebrow": "EVERYTHING YOU NEED",
       "title": "Built for the people who make",
       "titleAccent": "the world more beautiful.",
-      "subtitle": "Glowa gives you the tools to run, organise and grow your business — simply and effectively.",
+      "subtitle": "Lavena gives you the tools to run, organise and grow your business — simply and effectively.",
       "booking": {
         "title": "Online booking",
         "body": "Clients book around the clock, with no phone tag and no waiting."
@@ -172,7 +173,7 @@
     },
     "ownerPrompt": "Run a salon?",
     "pill": "Book a salon in a minute, no phone call",
-    "ownerLink": "See GLOWA for salons",
+    "ownerLink": "See Lavena for salons",
     "search": {
       "what": "Manicure, haircut, salon…",
       "where": "City or near me",
@@ -238,7 +239,7 @@
       "tomorrow": "Tomorrow",
       "ticketLabel": "{day} at {time}: {service} at {salon}"
     },
-    "popular": "Popular:",
+    "popular": "Popular searches",
     "quick": {
       "haircut": "Haircut",
       "color": "Colour",
@@ -284,12 +285,28 @@
       "body": "Find a salon near you, or let your clients book you online.",
       "ctaCustomer": "Find a salon",
       "ctaBusiness": "I own a salon"
+    },
+    "clients": {
+      "title": "Booking that doesn't add to your worries",
+      "subtitle": "The rules are clear before you pick a time, not after.",
+      "live": {
+        "title": "Only free times",
+        "body": "You see the salon's real free times and get confirmation straight away, without waiting for anyone to call you back."
+      },
+      "easy": {
+        "title": "Changes without a phone call",
+        "body": "Cancel online in seconds and, at salons that allow it, reschedule yourself too. The booking goes into your calendar in one tap."
+      },
+      "fair": {
+        "title": "Fair rules",
+        "body": "Free cancellation within the salon's window. We don't block your account over a cancelled booking and we don't phone you. A deposit, if there is one, comes back when you cancel in time."
+      }
     }
   },
   "auth": {
     "loginTitle": "Welcome back",
     "loginSubtitle": "Sign in to manage your business and bookings.",
-    "signupTitle": "Create your GLOWA account",
+    "signupTitle": "Create your Lavena account",
     "signupSubtitle": "Free to start. No credit card.",
     "email": "Email",
     "password": "Password",
@@ -307,8 +324,9 @@
       "emailInUse": "An account with this email already exists.",
       "weakPassword": "Password must be at least 8 characters.",
       "generic": "Something went wrong. Please try again.",
-      "oauth": "Signing in with Google did not work. Try again or use your email.",
-      "invalidLink": "The link is invalid or has expired. Ask for a new one."
+      "oauth": "Signing in did not work. Try again or use your email.",
+      "invalidLink": "The link is invalid or has expired. Ask for a new one.",
+      "rateLimited": "Too many attempts. Wait a little and try again."
     },
     "forgotTitle": "Forgot your password",
     "forgotSubtitle": "Enter your email and we will send you a link to set a new one.",
@@ -348,7 +366,8 @@
     "sidePoint2": "A reminder before every visit",
     "sidePoint3": "Free for clients",
     "continueWithGoogle": "Continue with Google",
-    "or": "or"
+    "or": "or",
+    "continueWithApple": "Continue with Apple"
   },
   "search": {
     "title": "Find your next appointment",
@@ -406,7 +425,7 @@
     "noReviews": "No reviews yet.",
     "noReviewsBody": "Be the first to share how your visit went.",
     "googleReview": "Leave a Google review",
-    "googleReviewNote": "Opens this business's Google profile. Glowa does not manage Google reviews.",
+    "googleReviewNote": "Opens this business's Google profile. Lavena does not manage Google reviews.",
     "reviewsCount": "{count, plural, =0 {no reviews} one {# review} other {# reviews}}",
     "cancellationPolicy": "Free cancellation up to {hours} h before the appointment.",
     "leadTime": "Book at least {minutes} min before the start time.",
@@ -427,7 +446,7 @@
     "sectionsLabel": "Sections",
     "serviceCount": "{count, plural, one {# service} other {# services}}",
     "bookWith": "Book with {name}",
-    "verifiedVisit": "Visit booked on GLOWA",
+    "verifiedVisit": "Visit booked on Lavena",
     "salonReply": "Reply from {name}",
     "depositPolicy": "Some services take a small deposit when booked online. It is refunded in full if you cancel at least {hours} h before.",
     "directions": "Directions",
@@ -504,7 +523,7 @@
     "depositChip": "Deposit {amount}",
     "depositTitle": "{amount} deposit now",
     "depositBody": "The remaining {rest} is paid at the salon. Your deposit is refunded in full if you cancel at least {hours} h before.",
-    "depositHold": "We hold the slot for you for 30 minutes while you pay. Payment is handled by Stripe; your card details never pass through GLOWA.",
+    "depositHold": "We hold the slot for you for 30 minutes while you pay. Payment is handled by Stripe; your card details never pass through Lavena.",
     "depositLabel": "Deposit",
     "depositSummary": "{amount} now · {rest} at the salon",
     "payDeposit": "Pay {amount} deposit",
@@ -516,7 +535,8 @@
     "slotsCount": "{count, plural, =0 {no free times} one {# free time} other {# free times}}",
     "preselected": "Your time is picked. Check it and confirm.",
     "earlier": "Earlier days",
-    "later": "Later days"
+    "later": "Later days",
+    "trustNoStrikes": "Lavena won't block your account over a cancelled booking, and won't phone you."
   },
   "waitlist": {
     "cta": "Join the waitlist",
@@ -629,7 +649,7 @@
     "submitting": "Publishing…",
     "thanks": "Thanks for your review!",
     "googlePrompt": "Want to share it on Google too?",
-    "googleNote": "Opens the salon's public Google profile. Glowa does not post or manage Google reviews.",
+    "googleNote": "Opens the salon's public Google profile. Lavena does not post or manage Google reviews.",
     "businessReplied": "Reply from the salon",
     "alreadyReviewed": "You have already reviewed this visit.",
     "onlyAfterVisit": "You can review a visit once it is completed.",
@@ -670,7 +690,7 @@
   "settings": {
     "title": "Settings",
     "profile": "Profile",
-    "profileBody": "How you appear in Glowa and to salons.",
+    "profileBody": "How you appear in Lavena and to salons.",
     "fullName": "Full name",
     "phone": "Phone",
     "locale": "Language",
@@ -727,9 +747,9 @@
       "turnOff": "Turn off notifications",
       "enabled": "Notifications are on.",
       "disabled": "Notifications are off.",
-      "onNote": "This browser will get notifications even when GLOWA is closed.",
+      "onNote": "This browser will get notifications even when Lavena is closed.",
       "offNote": "We'll ask for permission once.",
-      "unsupported": "This browser doesn't support notifications. On iPhone, add GLOWA to your home screen first.",
+      "unsupported": "This browser doesn't support notifications. On iPhone, add Lavena to your home screen first.",
       "blocked": "Notifications are blocked for this site. Allow them in your browser settings.",
       "errors": {
         "unauthenticated": "Please sign in.",
@@ -813,7 +833,8 @@
       },
       "settingsSubtitle": "How your business looks and the rules for booking it.",
       "timeOff": "Days off",
-      "billing": "Subscription"
+      "billing": "Subscription",
+      "integrations": "Integrations"
     },
     "status": {
       "draft": "Draft",
@@ -919,7 +940,7 @@
         }
       },
       "value": {
-        "title": "What GLOWA brought you this month",
+        "title": "What Lavena brought you this month",
         "subtitle": "Only real bookings from your own diary — nothing estimated.",
         "online": "Booked online by clients themselves",
         "invited": "Came back after an invitation",
@@ -1059,7 +1080,7 @@
       "rebook": "Invite the client back after",
       "rebookOff": "No invitation",
       "rebookWeeks": "{count, plural, one {# week} other {# weeks}}",
-      "rebookHint": "If the client has not booked by then, GLOWA emails them in the salon's name with the first free times — with the same stylist, around the time they usually come. Nobody who already has a next visit, or who unsubscribed, is written to.",
+      "rebookHint": "If the client has not booked by then, Lavena emails them in the salon's name with the first free times — with the same stylist, around the time they usually come. Nobody who already has a next visit, or who unsubscribed, is written to.",
       "rebookChip": "Invite after {count, plural, one {# week} other {# weeks}}"
     },
     "staff": {
@@ -1067,6 +1088,12 @@
       "add": "Add specialist",
       "invite": "Invite by email",
       "inviteEmail": "Email",
+      "inviteMail": {
+        "subject": "You're invited to join {business} on Lavena",
+        "heading": "You're invited to {business}'s team",
+        "body": "{business} invited you as “{role}” on Lavena. Sign up with this email address and you get access straight away.",
+        "button": "Sign up"
+      },
       "inviteRole": "Role",
       "role": {
         "owner": "Owner",
@@ -1102,7 +1129,11 @@
       "permissionsBody": "Owner and admin manage everything. A manager runs the calendar, services and clients. A specialist sees the team calendar.",
       "invited": "Invitation saved",
       "inviteHint": "They get access as soon as they sign in with this email.",
-      "subtitle": "The people behind the chair, their roles and working days."
+      "subtitle": "The people behind the chair, their roles and working days.",
+      "invitedEmailed": "Invitation sent by email",
+      "invitedNoEmail": "The invitation is saved, but the email could not be sent. Ask them to sign up with this address.",
+      "inviteDuplicate": "This email is already invited.",
+      "inviteFailed": "The invitation could not be saved. Please try again."
     },
     "clients": {
       "title": "Clients",
@@ -1142,7 +1173,45 @@
       "call": "Call",
       "averageTicket": "Average ticket",
       "upcoming": "Upcoming",
-      "profileCard": "Client card"
+      "profileCard": "Client card",
+      "import": {
+        "button": "Import from file",
+        "title": "Bring your clients over",
+        "intro": "Upload a client list from another system or a spreadsheet. Usually that is a name, a phone number and an email.",
+        "choose": "Choose a file or drop it here",
+        "chooseHint": "CSV file, up to 5 MB",
+        "excelTip": "Have Excel or Google Sheets? Save the sheet as CSV (File → Save as, or Download → CSV) and upload it here. Most systems can export their clients as CSV.",
+        "rowsInFile": "{count, plural, one {# row} other {# rows}} in the file",
+        "otherFile": "Another file",
+        "mapTitle": "Which column holds what?",
+        "fields": {
+          "name": "Name",
+          "lastName": "Last name (if in its own column)",
+          "phone": "Phone",
+          "email": "Email",
+          "notes": "Notes"
+        },
+        "skipColumn": "— don't use —",
+        "unnamedColumn": "Column {number}",
+        "needIdentity": "Pick at least a name, phone or email column.",
+        "ready": "ready to import",
+        "left": "{count, plural, one {# row is skipped} other {# rows are skipped}} (empty or repeated)",
+        "rights": "I confirm these are my clients and I am entitled to keep their details and contact them.",
+        "submit": "{count, plural, one {Import # client} other {Import # clients}}",
+        "importing": "Importing… {done} of {total}",
+        "doneTitle": "{count, plural, =0 {No new clients} one {Added # client} other {Added # clients}}",
+        "doneBody": "Already in your list (skipped): {skipped}. Without a name, phone or email: {invalid}.",
+        "consentNote": "Imported clients have no marketing consent recorded, so they will not receive campaigns until you mark it on their card.",
+        "emptyHint": "Coming from another system? Bring your clients over with one file.",
+        "errors": {
+          "tooBig": "The file is over 5 MB. Split it into parts.",
+          "empty": "The file has no client rows.",
+          "tooMany": "The file has more than {max} rows. Split it into parts.",
+          "unreadable": "The file could not be read. Check that it is a CSV.",
+          "forbidden": "You are not allowed to add clients.",
+          "generic": "Something went wrong. Please try again."
+        }
+      }
     },
     "reviewsAdmin": {
       "title": "Reviews and reputation",
@@ -1160,7 +1229,7 @@
       "empty": "No reviews yet",
       "emptyBody": "Reviews appear after completed visits.",
       "googleTitle": "Google profile",
-      "googleBody": "Add a link to your public Google profile. Glowa only points clients there — it does not read or post Google reviews.",
+      "googleBody": "Add a link to your public Google profile. Lavena only points clients there — it does not read or post Google reviews.",
       "googleLabel": "Google review link",
       "googleSaved": "Link saved",
       "invitations": "Review invitations",
@@ -1211,7 +1280,7 @@
       "pitchPoint3": "You decide which services, and how much",
       "connect": "Connect Stripe",
       "adminOnly": "Only an owner or admin can connect payments.",
-      "stripeNote": "Setup happens on Stripe and takes about 10 minutes. GLOWA never sees your bank details.",
+      "stripeNote": "Setup happens on Stripe and takes about 10 minutes. Lavena never sees your bank details.",
       "reviewing": "Under review",
       "unfinished": "Unfinished",
       "pendingTitle": "Your Stripe account is not active yet",
@@ -1377,7 +1446,7 @@
       "send": "Send",
       "thinking": "Thinking…",
       "unavailable": "The AI assistant is not configured",
-      "unavailableBody": "Add OPENAI_API_KEY on the server to switch it on. The assistant runs server-side only and receives aggregate figures, not client personal data.",
+      "unavailableBody": "The assistant isn't switched on for the platform yet. When it is, it will answer questions about your salon's figures and draft messages, without seeing clients' personal data.",
       "disclaimer": "The assistant can be wrong. Check important numbers in the calendar and analytics.",
       "dataNote": "We send only aggregate metrics for the selected period — no names, emails or phone numbers."
     },
@@ -1392,7 +1461,7 @@
       "remove": "Remove",
       "gallery": "Gallery",
       "addPhotos": "Add photos",
-      "makeCover": "Cover",
+      "makeCover": "Make cover",
       "photoAlt": "Photo {number}",
       "uploading": "{count, plural, one {Uploading # photo…} other {Uploading # photos…}}",
       "saved": "Photos saved",
@@ -1442,7 +1511,7 @@
     },
     "subscription": {
       "title": "Subscription",
-      "body": "What Glowa costs and which plan fits your team. During early access you can use everything for free.",
+      "body": "What Lavena costs and which plan fits your team. During early access you can use everything for free.",
       "status": "Early access · free",
       "recommended": "{count, plural, one {For # specialist} other {For # specialists}}",
       "compare": "Compare plans",
@@ -1556,11 +1625,11 @@
     },
     "billing": {
       "title": "Subscription",
-      "subtitle": "Choose the plan that fits your team. Payment goes through Stripe; your card is never stored by Glowa.",
+      "subtitle": "Choose the plan that fits your team. Payment goes through Stripe; your card is never stored by Lavena.",
       "success": "Thank you! Your subscription is active. If it does not show yet, refresh in a few seconds.",
       "cancelled": "Payment was cancelled. Nothing was charged.",
       "earlyAccess": "Early access · free",
-      "earlyAccessBody": "You can choose a plan now or keep using Glowa for free during early access.",
+      "earlyAccessBody": "You can choose a plan now or keep using Lavena for free during early access.",
       "notConfiguredBody": "Payments are not switched on yet. Everything is free; we will tell you before any charging starts.",
       "currentPlan": "{plan} · {interval}",
       "interval": {
@@ -1586,6 +1655,147 @@
         "generic": "Something went wrong. Please try again."
       },
       "freePlan": "Free — nothing to pay"
+    },
+    "integrations": {
+      "title": "Connect your website",
+      "subtitle": "Let your own site book into Lavena, get told when a booking changes, and keep a calendar you already use in step.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "errors": {
+        "invalid": "Some details are missing or wrong.",
+        "forbidden": "Only an owner or admin can do this.",
+        "not_a_member": "You do not have access to this salon.",
+        "unauthenticated": "Sign in again to continue.",
+        "not_found": "That item no longer exists.",
+        "limit": "You have reached the limit. Remove one first.",
+        "unsafe_url": "The address must be a public https:// address.",
+        "duplicate": "That calendar is already connected for this person.",
+        "generic": "Something went wrong. Try again."
+      },
+      "embed": {
+        "title": "Booking button for your site",
+        "description": "Put a Lavena booking button on any page of your site. It opens your booking page, where clients pick a service and a time.",
+        "linkTitle": "A plain link",
+        "linkBody": "Works everywhere, even in a page builder that does not allow scripts.",
+        "scriptTitle": "A button with a script",
+        "scriptBody": "Any element marked data-lavena-book opens your booking page in a new tab. Add data-lavena-service set to a service id to start at that service.",
+        "buttonText": "Book now",
+        "note": "Clients sign in or sign up on Lavena to finish. For a fully custom booking form on your own site, use the API below."
+      },
+      "keys": {
+        "title": "API keys",
+        "description": "A key lets your website read your services and free times and make bookings. Treat it like a password and keep it on your server, never in a web page.",
+        "name": "Name",
+        "namePlaceholder": "My website",
+        "scopesTitle": "What this key may do",
+        "scopes": {
+          "read": {
+            "label": "Read",
+            "hint": "Services, team, free times and bookings."
+          },
+          "bookings": {
+            "label": "Bookings",
+            "hint": "Create and cancel bookings."
+          },
+          "catalog": {
+            "label": "Services",
+            "hint": "Create and update services."
+          }
+        },
+        "create": "Create key",
+        "createdTitle": "Your new key",
+        "createdBody": "Copy it now. For your safety it is not shown again.",
+        "keyLabel": "API key",
+        "done": "I have copied it",
+        "empty": "No keys yet.",
+        "lastUsed": "Last used {when}",
+        "neverUsed": "Never used",
+        "revoke": "Revoke",
+        "revokedToast": "Key revoked. It stops working immediately.",
+        "revokedCount": "{count, plural, one {# revoked key is hidden.} other {# revoked keys are hidden.}}"
+      },
+      "webhooks": {
+        "title": "Notifications to your site (webhooks)",
+        "description": "Lavena calls your address when a booking is created, moved or cancelled. Each call is signed, so you can check it really came from us; if your server is down we try again for about 15 hours.",
+        "flush": "Send waiting now",
+        "url": "Address (https)",
+        "note": "Note (optional)",
+        "events": "Events",
+        "eventsHint": "Leave all unticked to receive every event.",
+        "eventNames": {
+          "created": "Booking created",
+          "rescheduled": "Booking moved",
+          "cancelled": "Booking cancelled",
+          "status_changed": "Status changed (completed, no-show…)"
+        },
+        "allEvents": "All events",
+        "add": "Add address",
+        "secretTitle": "Signing secret",
+        "secretBody": "Use it to check the Lavena-Signature header on each call. Copy it now - it is not shown again.",
+        "secretLabel": "Secret",
+        "empty": "No addresses yet.",
+        "active": "Active",
+        "paused": "Paused",
+        "switchedOff": "Switched off after repeated failures",
+        "lastSuccess": "Last delivered {when}",
+        "noSuccessYet": "Nothing delivered yet",
+        "failures": "{count} failed in a row",
+        "test": "Send test",
+        "testOk": "Your server answered {status}.",
+        "testFail": "Could not deliver: {error}",
+        "pause": "Pause",
+        "resume": "Turn on",
+        "delete": "Delete",
+        "recent": "Recent deliveries",
+        "colWhen": "When",
+        "colEvent": "Event",
+        "colTo": "To",
+        "colResult": "Result",
+        "deliveryStatus": {
+          "queued": "Waiting",
+          "sending": "Sending",
+          "delivered": "Delivered",
+          "failed": "Failed"
+        },
+        "attempts": "{count} tries",
+        "errorCodes": {
+          "http": "Your server answered {status}",
+          "timeout": "No answer in time",
+          "network": "Could not connect",
+          "too_large": "Answer too large",
+          "unsafe_url": "Address not allowed",
+          "endpoint_inactive": "Address is switched off"
+        }
+      },
+      "feeds": {
+        "title": "Import your calendar",
+        "description": "Paste the private iCal address of a calendar you already keep (Google Calendar, Apple, Outlook, your own system). Times marked busy there become unavailable on Lavena for that team member. Event titles are never copied.",
+        "noStaff": "Add a team member first.",
+        "staff": "Team member",
+        "name": "Name",
+        "namePlaceholder": "Google Calendar",
+        "url": "Calendar address (iCal)",
+        "urlHelp": "Google Calendar: Settings → your calendar → Secret address in iCal format. webcal:// links work too.",
+        "add": "Connect calendar",
+        "empty": "No calendars connected.",
+        "blocks": "{count, plural, one {# busy block} other {# busy blocks}}",
+        "lastSynced": "Synced {when}",
+        "neverSynced": "Not synced yet",
+        "keptOldBlocks": "The previous busy times are kept until it works again.",
+        "syncNow": "Sync now",
+        "delete": "Remove calendar",
+        "syncOk": "Done: {count, plural, one {# busy block} other {# busy blocks}} copied.",
+        "syncFailed": "Could not read the calendar: {error}",
+        "errorCodes": {
+          "http": "The calendar server answered {status}",
+          "timeout": "No answer in time",
+          "network": "Could not connect",
+          "too_large": "File too large",
+          "unsafe_url": "Address not allowed",
+          "not_calendar": "That address is not an iCal calendar"
+        },
+        "note": "Calendars refresh about once a day and whenever you press Sync now. Times are read in your salon's time zone unless the calendar says otherwise."
+      }
     }
   },
   "notifications": {
@@ -1644,7 +1854,7 @@
     },
     "footer": {
       "signature": "The {business} team",
-      "sentBy": "Sent with GLOWA",
+      "sentBy": "Sent with Lavena",
       "unsubscribe": "Unsubscribe from marketing",
       "noInvitations": "No more invitations from {business}"
     },
@@ -1681,26 +1891,30 @@
       "billedYearly": "billed once a year",
       "save": "2 months free",
       "billedMonthly": "Billed every month",
-      "orYearly": "or {amount} / month billed yearly"
+      "orYearly": "or {amount} / month billed yearly",
+      "trial": "First month free"
     },
     "plans": {
       "solo": {
         "name": "Solo",
         "tagline": "For one professional working on their own.",
         "seats": "1 professional",
-        "audience": "Small business"
+        "audience": "Small business",
+        "outcome": "You work alone and the phone never stops. Clients book themselves, a deposit protects your slots from no-shows, and invitations bring the regulars back."
       },
       "studio": {
         "name": "Studio",
         "tagline": "For a small team. Less than one seat costs elsewhere.",
         "seats": "Up to 5 professionals",
-        "audience": "Medium business"
+        "audience": "Medium business",
+        "outcome": "A team of up to 5 in one calendar. Everyone has their own schedule, and you see occupancy and revenue and can message clients who haven't been in for a while."
       },
       "salon": {
         "name": "Salon",
         "tagline": "For a large salon with roles, audit and priority help.",
         "seats": "Unlimited team",
-        "audience": "Large business"
+        "audience": "Large business",
+        "outcome": "You're growing: several locations, roles and permissions, an action log and an AI assistant that answers questions about your numbers."
       }
     },
     "features": {
@@ -1736,17 +1950,17 @@
     "faq": {
       "title": "Frequently asked questions",
       "q1": "What does Solo include?",
-      "a1": "Everything one professional needs: the calendar, online booking, client records, deposits, reminders and your page on glowa. No commission and no contract. If you grow into a team, move to Studio.",
+      "a1": "Everything one professional needs: the calendar, online booking, client records, deposits, reminders and your page on Lavena. No commission and no contract. If you grow into a team, move to Studio.",
       "q2": "What do I pay during early access?",
       "a2": "Nothing. Every plan is free until {date}. Before any billing starts we'll tell you at least 30 days ahead, and you choose your plan yourself.",
       "q3": "Do you take a share of revenue or of new clients?",
-      "a3": "No. The subscription is fixed. A client who finds you through glowa is yours — no commission, not even on the first visit.",
+      "a3": "No. The subscription is fixed. A client who finds you through Lavena is yours — no commission, not even on the first visit.",
       "q4": "What about deposits?",
-      "a4": "A deposit goes straight to your Stripe account. Glowa adds no fee — you pay only Stripe's standard card fee.",
+      "a4": "A deposit goes straight to your Stripe account. Lavena adds no fee — you pay only Stripe's standard card fee.",
       "q5": "What happens to my data if I leave?",
       "a5": "It stays yours. Export your clients and bookings any time; closing your account doesn't hold your content back.",
       "q6": "Do clients pay to book?",
-      "a6": "No. Booking through glowa is free for clients.",
+      "a6": "No. Booking through Lavena is free for clients.",
       "q7": "Can I change plan?",
       "a7": "Yes, any time. The change applies from the next billing period."
     },
@@ -1784,21 +1998,50 @@
       "newClients": "New clients from the platform per month",
       "average": "Average first-visit bill",
       "theirs": "Typical platform",
-      "ours": "Glowa",
+      "ours": "Lavena",
       "perMonth": "per month",
       "savedYear": "You save per year",
       "savedMonth": "That's {amount} every month.",
       "assumptions": "Assumptions: ~€17 a month for one professional or ~€12 per team seat, and 20% commission on a new client's first visit (minimum ~€5) — the lowest published rates as of September 2026, rounded in the competitor's favour. Excludes VAT and payment fees, which are similar everywhere."
     },
-    "metaTitle": "Pricing — no commission, no contract"
+    "metaTitle": "Pricing — no commission, no contract",
+    "included": {
+      "title": "In every plan",
+      "commission": "0% commission — including clients who find you through Lavena",
+      "deposits": "No-show deposits paid straight into your own Stripe account",
+      "export": "Export your clients to CSV any time",
+      "import": "Import clients from a file — moving over from another system takes minutes",
+      "languages": "A page in Bulgarian, English and Romanian",
+      "app": "Installs as an app on phone and tablet"
+    },
+    "forClients": {
+      "title": "What your client gets — free",
+      "subtitle": "A salon that is easier to book earns trust before the first visit.",
+      "free": {
+        "title": "No cost to the client",
+        "body": "Booking through Lavena costs nobody anything."
+      },
+      "instant": {
+        "title": "Instant confirmation",
+        "body": "They see real free times and don't wait for anyone to call back."
+      },
+      "rules": {
+        "title": "Clear rules",
+        "body": "The cancellation window is written before they pick a time. No account blocking."
+      },
+      "remind": {
+        "title": "Reminder and calendar",
+        "body": "An email reminder and one tap to add the booking to their calendar."
+      }
+    }
   },
   "forBusiness": {
-    "metaTitle": "GLOWA for salons",
+    "metaTitle": "Lavena for salons",
     "metaDescription": "Online booking, a team calendar, no-show deposits and a beautiful page for your salon.",
     "eyebrow": "For salons and studios",
     "title": "The calendar that fills the chair.",
     "titleAccent": "The deposit that protects it.",
-    "subtitle": "GLOWA brings online booking, a team calendar, deposits and a beautiful salon page together in one place. In Bulgarian, English and Romanian from day one.",
+    "subtitle": "Lavena brings online booking, a team calendar, deposits and a beautiful salon page together in one place. In Bulgarian, English and Romanian from day one.",
     "ctaPrimary": "Start for free",
     "ctaShowcase": "See a sample salon",
     "heroPoint1": "No credit card",
@@ -1891,11 +2134,19 @@
       },
       "phone": {
         "q": "Does it work on a phone and a tablet?",
-        "a": "Yes. GLOWA installs as an app on your phone, and on the front-desk tablet appointments move with a finger."
+        "a": "Yes. Lavena installs as an app on your phone, and on the front-desk tablet appointments move with a finger."
       },
       "clients": {
         "q": "What do clients see?",
         "a": "Your salon page with photos, services, prices, team and reviews, and booking in a minute with an email confirmation and reminder."
+      },
+      "switch": {
+        "q": "I'm coming from another platform. Can I bring my clients?",
+        "a": "Yes. Under Clients choose “Import from file” and upload a CSV - from Excel, Google Sheets or an export from your old system. You say which column is which and see a preview before anything is saved. Clients you already have are not duplicated. Visit history does not come across: it is built from bookings made in Lavena."
+      },
+      "exit": {
+        "q": "Can I take my clients with me if I decide to leave?",
+        "a": "Yes, any time and without asking anyone: Clients → “Export CSV”. The clients are yours, not the platform's."
       }
     },
     "cta": {
@@ -1922,13 +2173,13 @@
     "forSalons": "For salons",
     "cities": "Cities",
     "findSalon": "Find a salon",
-    "whyGlowa": "Why glowa",
+    "whyGlowa": "Why Lavena",
     "registerSalon": "List your salon",
     "ctaTitle": "Own a salon?",
     "ctaBody": "Calendar, deposits and online booking — no commission.",
     "customers": "For clients",
     "business": "For business",
-    "company": "Glowa",
+    "company": "Lavena",
     "myBookings": "My bookings",
     "login": "Sign in",
     "register": "Register a salon",
@@ -1936,11 +2187,12 @@
     "dashboard": "Business dashboard",
     "contact": "Contact",
     "languages": "Български · English · Română",
-    "rights": "© {year} Glowa. All rights reserved.",
+    "rights": "© {year} Lavena. All rights reserved.",
     "favorites": "Favourites",
     "legal": "Legal",
     "ctaButton": "Register your salon",
-    "backHome": "Back to the home page"
+    "backHome": "Back to the home page",
+    "support": "Help and support"
   },
   "legal": {
     "privacy": "Privacy",
@@ -1951,7 +2203,7 @@
   },
   "consent": {
     "title": "Cookies, only the ones we need",
-    "body": "We use cookies to keep you signed in and remember your language. With your consent we also remember which QR code or referral brought you, so the salon gets the credit. No ads, no tracking.",
+    "body": "For sign-in and language. With your consent we also remember which QR code or referral brought you. No ads, no tracking.",
     "policyLink": "Learn more",
     "accept": "Accept",
     "reject": "Necessary only",
@@ -1963,15 +2215,16 @@
     "attributionTitle": "Referrals and QR codes",
     "attributionBody": "Remembers for 30 days which QR code or link you came from, so the booking is credited to the right salon or friend.",
     "noTracking": "We use no advertising or analytics cookies and share no data with ad networks.",
-    "save": "Save my choice"
+    "save": "Save my choice",
+    "settingsShort": "Settings"
   },
   "whyPay": {
     "eyebrow": "Why pay when others are free",
     "title": "When booking is “free”, you pay with your clients.",
-    "subtitle": "Free platforms usually earn from a commission on new clients and from paid placement in search. GLOWA takes a flat subscription and nothing else — so everything in it is built to bring your clients back to you, not on to the next salon in the list.",
+    "subtitle": "Free platforms usually earn from a commission on new clients and from paid placement in search. Lavena takes a flat subscription and nothing else — so everything in it is built to bring your clients back to you, not on to the next salon in the list.",
     "rebook": {
       "title": "Your clients come back on their own",
-      "body": "When a manicure or a cut is due again, GLOWA invites the client in the salon's name with up to three real free times — with the same stylist, around the hour they usually come. One tap and they are at the confirm step. Nobody who already has a visit, or who unsubscribed, is written to."
+      "body": "When a manicure or a cut is due again, Lavena invites the client in the salon's name with up to three real free times — with the same stylist, around the hour they usually come. One tap and they are at the confirm step. Nobody who already has a visit, or who unsubscribed, is written to."
     },
     "waitlist": {
       "title": "A freed slot doesn't stay empty",
@@ -1990,5 +2243,275 @@
       "body": "Every month the dashboard shows how many visits were booked online, how many clients came back after an invitation and how much in deposits you kept. Counted from your own diary — nothing estimated."
     },
     "seePricing": "See pricing"
+  },
+  "landing": {
+    "metaTitle": "{category} in {city} — book online",
+    "metaDescription": "Free times, prices and photos: {categoryLower} in {city}. Book online in a minute, with instant confirmation and clear cancellation rules.",
+    "h1": "{category} in {city}",
+    "intro": "See photos, services and prices and book a free time at a {categoryLower} in {city} — online, in a minute. Times are live and the cancellation rules are clear before you confirm.",
+    "points": {
+      "live": "Live free times",
+      "rules": "Clear cancellation rules",
+      "free": "Free for the client"
+    },
+    "count": "{count, plural, one {# salon} other {# salons}} in {city}",
+    "noneTitle": "No {categoryLower} in {city} on Lavena yet",
+    "noneBody": "Here are the nearest to the town.",
+    "otherCategories": "More in {city}",
+    "otherPlaces": "{category} in other towns",
+    "ownerTitle": "Run a {categoryLower} in {city}?",
+    "ownerBody": "Calendar, deposits and online booking — no commission. Bring your clients over from a file in minutes.",
+    "ownerCta": "See how it works"
+  },
+  "platform": {
+    "title": "Platform console",
+    "subtitle": "Every salon, booking and euro in one place. Only you see this.",
+    "back": "Back to my salon",
+    "range": {
+      "7": "7 days",
+      "30": "30 days",
+      "90": "90 days",
+      "365": "1 year"
+    },
+    "rangeLabel": "Period",
+    "kpi": {
+      "salons": "Salons",
+      "salonsNote": "{active} published",
+      "users": "Users",
+      "bookings": "Bookings",
+      "bookedValue": "Booked value",
+      "mrr": "Monthly revenue (estimate)",
+      "mrrNote": "{paying, plural, =0 {No paying salons yet} one {# paying salon} other {# paying salons}}",
+      "trial": "On free trial",
+      "trialNote": "{amount} / month once they pay",
+      "vsPrevious": "vs the previous {days} days",
+      "noChange": "no change",
+      "online": "{share}% online"
+    },
+    "chart": {
+      "title": "What is happening",
+      "metric": "Metric",
+      "bookings": "Bookings",
+      "onlineBookings": "Online bookings",
+      "businesses": "New salons",
+      "users": "New users",
+      "bookedValue": "Booked value",
+      "total": "Total for the period: {value}",
+      "peak": "Best day: {value}",
+      "tableCaption": "Data by day"
+    },
+    "funnel": {
+      "title": "From sign-up to paying",
+      "help": "Where salons drop off. Each step is a share of the one before.",
+      "registered": "Registered",
+      "services": "With a service",
+      "published": "Published",
+      "booking": "With a first booking",
+      "paying": "Trial or paid plan"
+    },
+    "mix": {
+      "title": "Subscriptions",
+      "empty": "No subscriptions yet. They appear when a salon starts its free month.",
+      "plan": "{plan, select, solo {Solo} studio {Studio} salon {Salon} other {{plan}}}",
+      "status": {
+        "trialing": "Trial",
+        "active": "Paying",
+        "past_due": "Payment overdue",
+        "other": "Other"
+      }
+    },
+    "cat": {
+      "title": "Salons by type"
+    },
+    "table": {
+      "title": "Salons",
+      "search": "Search a salon or town",
+      "salon": "Salon",
+      "status": "Status",
+      "plan": "Plan",
+      "bookings30": "Bookings (30 days)",
+      "bookingsTotal": "Total",
+      "clients": "Clients",
+      "created": "Created",
+      "lastBooking": "Last booking",
+      "attention": "What to do",
+      "open": "Open the page",
+      "empty": "No salons match these filters.",
+      "never": "none yet",
+      "noPlan": "—",
+      "count": "{count, plural, one {# salon} other {# salons}}"
+    },
+    "filter": {
+      "all": "All",
+      "attention": "Need attention",
+      "active": "Published",
+      "draft": "Drafts",
+      "paying": "With a plan"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Published",
+      "suspended": "Suspended",
+      "archived": "Archived"
+    },
+    "flag": {
+      "noServices": "No services yet - help them add some",
+      "unpublished": "Not published - nudge them to publish",
+      "noBookings": "Published but no bookings in 30 days",
+      "paymentIssue": "Payment problem",
+      "trialEnding": "Trial ends soon",
+      "ok": "All good"
+    },
+    "revenueNote": "Revenue is an estimate from list prices, before discounts and VAT. The real numbers are in Stripe.",
+    "loadError": "The data did not load. Try again in a moment.",
+    "updated": "Updated {time}",
+    "demoNote": "Demo salons are not counted.",
+    "menu": "Platform console",
+    "tabs": {
+      "label": "Console sections",
+      "overview": "Overview",
+      "salons": "Salons and content",
+      "people": "People",
+      "problems": "Problems",
+      "audit": "Log",
+      "errors": "Errors",
+      "support": "Support"
+    },
+    "mod": {
+      "salonsTitle": "Salons and photos",
+      "salonsHelp": "The newest salons with their pictures. Remove an inappropriate picture or suspend the whole salon.",
+      "suspend": "Suspend salon",
+      "restore": "Restore salon",
+      "suspended": "Suspended",
+      "viewPage": "View page",
+      "noPhotos": "No photos uploaded.",
+      "removePhoto": "Remove photo",
+      "logo": "Logo",
+      "cover": "Cover",
+      "gallery": "Gallery",
+      "reviewsTitle": "Latest reviews",
+      "noReviews": "No reviews yet.",
+      "hideReview": "Hide review",
+      "showReview": "Show again",
+      "hidden": "Hidden",
+      "noComment": "(no text)",
+      "reply": "Salon's reply",
+      "noSalons": "No real salons yet.",
+      "confirmSuspend": "Suspend \"{name}\"? Its page leaves the site and bookings stop until you restore it.",
+      "confirmRestore": "Put \"{name}\" back on the site?",
+      "confirmPhoto": "Remove this picture from the salon's page?",
+      "confirmReview": "Hide this review from the public page?",
+      "reasonPrompt": "Reason (optional, saved in the log):",
+      "done": "Done"
+    },
+    "people": {
+      "title": "People",
+      "help": "Find an account by e-mail or name. A blocked account cannot sign in; nothing is deleted and you can undo it.",
+      "search": "E-mail or name",
+      "searchButton": "Search",
+      "account": "Account",
+      "joined": "Joined",
+      "lastSeen": "Last sign-in",
+      "bookings": "Bookings",
+      "salons": "Salons",
+      "status": "Status",
+      "active": "Active",
+      "blocked": "Blocked",
+      "block": "Block",
+      "unblock": "Unblock",
+      "platformAdmin": "Platform admin",
+      "never": "never",
+      "empty": "No accounts found.",
+      "confirmBlock": "Block {email}? They cannot sign in until you unblock them.",
+      "confirmUnblock": "Unblock {email}?"
+    },
+    "problems": {
+      "title": "What is not working for people",
+      "summary": "Last 7 days: {sent} messages sent, {failed} failed.",
+      "stuck": "{count, plural, one {# message has} other {# messages have}} been waiting over an hour. Usually the scheduled job (CRON) is not running.",
+      "failedTitle": "Messages that failed (30 days)",
+      "noFailed": "No failed messages. Good.",
+      "eventLabel": "Message",
+      "salon": "Salon",
+      "error": "Error",
+      "attempts": "Attempts",
+      "when": "When",
+      "retry": "Try again",
+      "retried": "Back in the queue",
+      "paymentsTitle": "Payments with a problem",
+      "noPayments": "No failed payments or delayed refunds.",
+      "amount": "Amount",
+      "kind": "Kind",
+      "paymentStatus": "{kind, select, deposit {Deposit} full {Payment} refund {Refund} other {{kind}}} · {status, select, failed {failed} pending {pending} other {{status}}}",
+      "event": {
+        "booking_confirmation": "Confirmation",
+        "reminder": "Reminder",
+        "reschedule": "Reschedule",
+        "cancellation": "Cancellation",
+        "review_request": "Review request",
+        "waitlist_offer": "Waitlist offer",
+        "rebook_nudge": "Rebook invitation",
+        "marketing": "Campaign"
+      }
+    },
+    "audit": {
+      "title": "Action log",
+      "help": "Everything you changed from the console: who and when.",
+      "empty": "No actions recorded yet.",
+      "when": "When",
+      "who": "Who",
+      "what": "What",
+      "reason": "Reason: {reason}",
+      "action": "{action, select, business_status {Salon status} remove_media {Photo removed} review_status {Review} block_account {Account blocked} unblock_account {Account unblocked} retry_notification {Message retried} clear_errors {Error cleared} support_status {Support request} other {{action}}}"
+    },
+    "errors": {
+      "forbidden": "You are not allowed to do that.",
+      "invalid": "Invalid request.",
+      "failed": "That did not work. Try again.",
+      "self": "You cannot block your own account.",
+      "admin": "A platform admin's account cannot be blocked from here."
+    },
+    "errors_": {
+      "title": "Errors on the site (30 days)",
+      "help": "Every error the site caught, grouped by cause. If something is listed here, someone saw a broken page.",
+      "empty": "No errors. Good.",
+      "message": "Error",
+      "where": "Where",
+      "times": "Times (24 h / total)",
+      "last": "Last seen",
+      "clear": "Clear",
+      "cleared": "Cleared",
+      "source": "{source, select, client {in the browser} other {on the server}}",
+      "confirmClear": "Clear this error from the list? If it happens again it will show up again."
+    },
+    "support_": {
+      "title": "Help requests",
+      "help": "Everything people wrote from the support page. Reply by e-mail and mark it done.",
+      "empty": "No requests yet.",
+      "open": "Open",
+      "done": "Done",
+      "markDone": "Mark done",
+      "reopen": "Reopen",
+      "reply": "Reply by e-mail",
+      "salon": "Salon: {name}",
+      "page": "Page: {page}"
+    }
+  },
+  "support": {
+    "title": "Help and support",
+    "subtitle": "Tell us what is not working or what you do not understand. We reply to the e-mail you enter. If you are in your salon, say when it happened.",
+    "name": "Name",
+    "email": "E-mail for the reply",
+    "subject": "Subject",
+    "message": "What happened?",
+    "messageHint": "The more detail, the faster we can help.",
+    "send": "Send",
+    "sentTitle": "We got your message",
+    "sentBody": "We will reply to the e-mail you gave.",
+    "errors": {
+      "invalid": "Check the e-mail and fill in the subject and the message.",
+      "rateLimited": "Too many messages in a short time. Try again later.",
+      "failed": "That did not work. Try again in a moment."
+    }
   }
 }

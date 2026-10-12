@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePublicSurfaces } from "@/lib/revalidate-public";
 
 const schema = z.object({
   appointmentId: z.uuid(),
@@ -64,5 +65,8 @@ export async function submitReview(input: {
 
   revalidatePath("/[locale]/bookings/[id]", "page");
   revalidatePath("/[locale]/reviews", "page");
+  // The new review moves the salon's rating on its page, in search and on the
+  // home page.
+  await revalidatePublicSurfaces(appointment.business_id);
   return { ok: true };
 }

@@ -40,3 +40,11 @@ rates, converted to euros and rounded **in the competitor's favour** (€17 solo
 €12 per seat, 20% commission with a €5 minimum), and the page states those
 assumptions under the result. Competitors are not named on the public page.
 Re-check the figures before changing the copy; they move.
+
+## What the page says (10-05)
+
+Every plan card leads with the outcome for the salon, then the feature list.
+Under the plans: what is in every plan (0% commission, deposits to the salon's
+own Stripe, CSV export and import, three languages, installable app) and what
+the salon's client gets for free. Every line maps to something that exists.
+Levers for income, and the ones we refuse, are in `docs/go-to-market.md` §5.

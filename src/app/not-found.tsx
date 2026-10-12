@@ -1,27 +1,30 @@
 import type { Route } from "next";
 import Link from "next/link";
 
+import messages from "../../messages/bg.json";
 import { routing } from "@/i18n/routing";
 
 import "./globals.css";
 
 /**
- * Reached only for paths outside any locale (there is no root layout, so this
- * page renders its own document). Locale-aware 404s live in [locale]/not-found.
+ * Reached only for requests that never matched a locale (there is no root
+ * layout, so this page renders its own document); every path under a locale
+ * lands on `[locale]/not-found` through the `[...rest]` catch-all. It cannot
+ * read the visitor's locale, so it speaks the default one.
  */
 export default function GlobalNotFound() {
+  const { errors, brand } = messages;
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang={routing.defaultLocale} className="h-full antialiased" suppressHydrationWarning>
       <body className="bg-background text-foreground flex min-h-full flex-col items-center justify-center gap-4 px-6 text-center">
-        <h1 className="text-3xl font-semibold">Page not found</h1>
-        <p className="text-muted-foreground">
-          The link may be outdated or the page has moved.
-        </p>
+        <p className="text-primary text-sm font-medium tracking-[0.2em] uppercase">404</p>
+        <h1 className="text-3xl font-semibold">{errors.notFoundTitle}</h1>
+        <p className="text-muted-foreground">{errors.notFoundBody}</p>
         <Link
           href={`/${routing.defaultLocale}` as Route}
           className="text-primary underline underline-offset-4"
         >
-          Go to glowa
+          {errors.goHome} · {brand.name}
         </Link>
       </body>
     </html>

@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/admin/page-header";
 import { AssistantPanel } from "@/components/admin/assistant-panel";
 import type { Locale } from "@/i18n/routing";
 import { isAssistantConfigured } from "@/lib/ai";
-import { getActiveMembership } from "@/lib/queries/business";
+import { getActiveMembership, requireSection } from "@/lib/queries/business";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.assistant");
@@ -17,6 +17,7 @@ export default async function AssistantPage({
 }: PageProps<"/[locale]/dashboard/assistant">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireSection(locale, "assistant");
 
   const t = await getTranslations("admin.assistant");
   const membership = await getActiveMembership();

@@ -1,11 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidatePublicSurfaces } from "@/lib/revalidate-public";
 import { z } from "zod";
 
 import { requireMembership } from "@/lib/actions/guard";
+import { sendTeamInvitation } from "@/lib/notifications/invitation";
 
-export type CatalogResult = { ok: true; id?: string } | { ok: false; code: string };
+export type CatalogResult =
+  | { ok: true; id?: string; /** An invitation email reached a provider. */ emailed?: boolean }
+  | { ok: false; code: string };
 
 const localizedText = z.object({
   bg: z.string().trim().max(1000).optional(),
@@ -103,6 +107,7 @@ export async function upsertService(
   }
 
   revalidatePath("/[locale]/dashboard/services", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true, id: data.id };
 }
 
@@ -122,6 +127,7 @@ export async function deleteService(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/services", "page");
+  await revalidatePublicSurfaces(businessId);
   return { ok: true };
 }
 
@@ -205,6 +211,7 @@ export async function upsertStaff(
 
   revalidatePath("/[locale]/dashboard/staff", "page");
   revalidatePath("/[locale]/dashboard/calendar", "page");
+  await revalidatePublicSurfaces(parsed.data.businessId);
   return { ok: true, id: data.id };
 }
 
@@ -224,6 +231,7 @@ export async function deleteStaff(
   if (error) return { ok: false, code: "generic" };
 
   revalidatePath("/[locale]/dashboard/staff", "page");
+  await revalidatePublicSurfaces(businessId);
   return { ok: true };
 }
 
@@ -254,10 +262,28 @@ export async function inviteMember(
     status: "invited",
   });
 
-  if (error) return { ok: false, code: "generic" };
+  if (error) return { ok: false, code: error.code === "23505" ? "duplicate" : "generic" };
+
+  // The invitation is saved either way; the email is the courtesy that tells
+  // the invitee about it, and whether it went is reported back.
+  const { data: business } = await guard.supabase
+    .from("businesses")
+    .select("name")
+    .eq("id", parsed.data.businessId)
+    .maybeSingle();
+  let emailed = false;
+  try {
+    emailed = await sendTeamInvitation({
+      email: parsed.data.email.toLowerCase(),
+      businessName: business?.name ?? "",
+      role: parsed.data.role,
+    });
+  } catch {
+    emailed = false;
+  }
 
   revalidatePath("/[locale]/dashboard/staff", "page");
-  return { ok: true };
+  return { ok: true, emailed };
 }
 
 const timeOffSchema = z.object({

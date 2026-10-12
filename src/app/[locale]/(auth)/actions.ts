@@ -7,10 +7,13 @@ import { redirect as nextRedirect } from "next/navigation";
 import { z } from "zod";
 
 import { redirect } from "@/i18n/navigation";
+import { clientIp, withinLimit } from "@/lib/rate-limit";
+import { passesCaptcha } from "@/lib/turnstile";
 import { publicEnv } from "@/lib/env";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 import { claimPendingInvitations } from "@/lib/queries/business";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 
 export type AuthFormState = {
   status: "idle" | "error" | "check-email" | "signed-in";
@@ -33,6 +36,23 @@ const signUpSchema = credentialsSchema.extend({
  */
 const unreachable = { status: "idle" } as const satisfies AuthFormState;
 
+/**
+ * Brute force and mass sign-up are stopped here, before Supabase is asked. The
+ * per-address-and-mail limit stops a guessed password; the per-address one
+ * stops a script rotating through mail addresses.
+ */
+async function signInAllowed(email: string) {
+  const ip = await clientIp();
+  return (
+    (await withinLimit("login", 8, 600, `${ip}:${email}`)) &&
+    (await withinLimit("login-ip", 40, 600, ip))
+  );
+}
+
+async function signUpAllowed(formData: FormData) {
+  return (await withinLimit("signup", 6, 3600)) && (await passesCaptcha(formData));
+}
+
 /** Only same-origin relative paths may be used as a post-login destination. */
 function safeNextPath(value: FormDataEntryValue | null) {
   return safeRedirectPath(value);
@@ -52,6 +72,10 @@ export async function signInAction(
 
   if (!parsed.success) {
     return { status: "error", message: t("invalidCredentials") };
+  }
+
+  if (!(await signInAllowed(parsed.data.email))) {
+    return { status: "error", message: t("rateLimited") };
   }
 
   const supabase = await createClient();
@@ -92,9 +116,19 @@ export async function signUpAction(
     return { status: "error", message: tooShort ? t("weakPassword") : t("generic") };
   }
 
+  if (!(await signUpAllowed(formData))) {
+    return { status: "error", message: t("rateLimited") };
+  }
+
   const next = safeNextPath(formData.get("next"));
   const result = await createAccount(parsed.data, locale, next);
   if (result.status !== "signed-in") return result;
+
+  // Someone invited to a salon's team signs up from the invitation email, with
+  // the dashboard as their destination. Sign-in claims the invitation before
+  // redirecting; sign-up did not, so the dashboard found no membership and
+  // sent them to "create your business" - the one screen they do not need.
+  await claimPendingInvitations();
 
   revalidatePath("/", "layout");
   if (next) {
@@ -169,8 +203,14 @@ export async function inlineAuthAction(
       const tooShort = parsed.error.issues.some((i) => i.path[0] === "password");
       return { status: "error", message: tooShort ? t("weakPassword") : t("generic") };
     }
+    if (!(await signUpAllowed(formData))) {
+      return { status: "error", message: t("rateLimited") };
+    }
     const result = await createAccount(parsed.data, locale, next);
-    if (result.status === "signed-in") revalidatePath("/", "layout");
+    if (result.status === "signed-in") {
+      await claimPendingInvitations();
+      revalidatePath("/", "layout");
+    }
     return result;
   }
 
@@ -180,6 +220,10 @@ export async function inlineAuthAction(
   });
   if (!parsed.success) {
     return { status: "error", message: t("invalidCredentials") };
+  }
+
+  if (!(await signInAllowed(parsed.data.email))) {
+    return { status: "error", message: t("rateLimited") };
   }
 
   const supabase = await createClient();
@@ -220,7 +264,23 @@ export async function requestPasswordReset(
     return { status: "error", message: t("generic") };
   }
 
-  const supabase = await createClient();
+  // A reset sends mail from our address to someone else's: limit it per
+  // address (a script) and per mailbox (a person being flooded).
+  const resetOk =
+    (await withinLimit("reset-ip", 6, 3600)) &&
+    (await withinLimit("reset-mail", 3, 3600, parsed.data.email)) &&
+    (await passesCaptcha(formData));
+  if (!resetOk) {
+    const t = await getTranslations("auth.errors");
+    return { status: "error", message: t("rateLimited") };
+  }
+
+  // A plain client with the implicit flow, not the request's PKCE one. A PKCE
+  // reset link only works in the browser that asked for it (the code verifier
+  // lives in that browser's cookie), and people ask for a reset on a laptop and
+  // open the email on a phone. The link carries a plain `token_hash` that
+  // /auth/confirm verifies anywhere; nothing is signed in until it is used.
+  const supabase = createPublicClient();
   await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=/${locale}/reset-password`,
   });

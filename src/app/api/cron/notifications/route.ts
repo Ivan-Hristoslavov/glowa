@@ -1,13 +1,15 @@
 import { after } from "next/server";
 
 import { refuseUnlessCron } from "@/lib/cron-auth";
+import { runIntegrationsMaintenance } from "@/lib/integrations-maintenance";
 import { runNotificationWorker } from "@/lib/notifications/worker";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 /**
- * Drains the notification outbox. Driven by a scheduler (Vercel Cron, or any
+ * Drains the notification outbox, then the integrations' timers (webhook
+ * deliveries and calendar feeds). Driven by a scheduler (Vercel Cron, or any
  * HTTP caller holding the secret) rather than a long-lived process, so the
  * queue survives a deploy and a cold start costs nothing.
  *
@@ -22,7 +24,10 @@ export async function GET(request: Request) {
 
   try {
     const report = await runNotificationWorker(50);
-    return Response.json({ ok: true, ...report });
+    // One scheduler drives everything that runs on a timer: the integrations
+    // (webhooks, calendar feeds) ride along and fail on their own.
+    const integrations = await runIntegrationsMaintenance();
+    return Response.json({ ok: true, ...report, integrations });
   } catch (cause) {
     console.error("notification worker failed", cause);
     return Response.json({ ok: false, error: "worker_failed" }, { status: 500 });
@@ -39,6 +44,7 @@ export async function POST(request: Request) {
     after(async () => {
       // A second pass catches anything enqueued while the first was running.
       await runNotificationWorker(50).catch(() => undefined);
+      await runIntegrationsMaintenance().catch(() => undefined);
     });
   }
   return response;

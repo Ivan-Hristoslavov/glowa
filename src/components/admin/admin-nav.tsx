@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageSquareText,
+  Plug,
   QrCode,
   Scissors,
   Settings,
@@ -20,6 +21,8 @@ import type { LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { canOpenSection } from "@/lib/admin-access";
+import type { BusinessRole } from "@/lib/queries/business";
 import { cn } from "@/lib/utils";
 
 /**
@@ -43,6 +46,7 @@ export type AdminLink = {
     | "analytics"
     | "assistant"
     | "billing"
+    | "integrations"
     | "settings";
   icon: LucideIcon;
 };
@@ -81,6 +85,7 @@ export const ADMIN_GROUPS: AdminGroup[] = [
     key: "account",
     links: [
       { href: "/dashboard/billing", key: "billing", icon: CreditCard },
+      { href: "/dashboard/integrations", key: "integrations", icon: Plug },
       { href: "/dashboard/settings", key: "settings", icon: Settings },
     ],
   },
@@ -97,14 +102,28 @@ export function activeAdminLink(pathname: string): AdminLink | undefined {
     );
 }
 
-export function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
+/** The groups a role may see; a group with no link left disappears. */
+export function adminGroupsFor(role: BusinessRole): AdminGroup[] {
+  return ADMIN_GROUPS.map((group) => ({
+    ...group,
+    links: group.links.filter((link) => canOpenSection(role, link.key)),
+  })).filter((group) => group.links.length > 0);
+}
+
+export function AdminNav({
+  role,
+  onNavigate,
+}: {
+  role: BusinessRole;
+  onNavigate?: () => void;
+}) {
   const t = useTranslations("admin.nav");
   const pathname = usePathname();
   const active = activeAdminLink(pathname);
 
   return (
     <nav className="flex flex-col gap-5" aria-label={t("menu")}>
-      {ADMIN_GROUPS.map((group) => (
+      {adminGroupsFor(role).map((group) => (
         <div key={group.key} className="space-y-1">
           {group.key !== "account" ? (
             <p className="text-muted-foreground/80 px-3 text-[0.68rem] font-medium tracking-[0.14em] uppercase">

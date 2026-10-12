@@ -59,7 +59,7 @@ export function GrowthLinkCard({
     const href = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = href;
-    anchor.download = `glowa-${link.code}.svg`;
+    anchor.download = `lavena-${link.code}.svg`;
     anchor.click();
     URL.revokeObjectURL(href);
   }

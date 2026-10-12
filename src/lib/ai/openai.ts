@@ -11,7 +11,7 @@ const MODEL = "gpt-4.1-mini";
 
 function systemPrompt(context: AssistantContext) {
   return [
-    "You are the operations assistant inside GLOWA, a booking and CRM platform for beauty businesses.",
+    "You are the operations assistant inside Lavena, a booking and CRM platform for beauty businesses.",
     "You are talking to the owner or a manager of one salon.",
     "",
     "Rules you must follow:",
