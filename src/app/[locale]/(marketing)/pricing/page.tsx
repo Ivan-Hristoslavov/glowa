@@ -72,7 +72,7 @@ export default async function PricingPage({
   }).format(new Date(`${EARLY_ACCESS_UNTIL}T00:00:00Z`));
 
   return (
-    <main className="relative mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+    <main className="relative mx-auto w-full max-w-6xl overflow-x-clip px-4 py-14 sm:px-6 sm:py-20">
       <div
         aria-hidden
         className="bg-brand-peach pointer-events-none absolute -top-24 left-1/2 -z-10 h-80 w-[46rem] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
